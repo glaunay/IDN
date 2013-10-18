@@ -1,0 +1,19 @@
+.glmolHeader {
+    min-height : 50px;
+    background-color:rgba(234, 234, 174, 0.8);
+}
+
+.glmolFooter {
+    padding : 5px;    
+}
+
+.glmolFooter div.molecularSequence table tr:nth-child(1) {    
+    font-family : 'courrier';
+    font-size : 0.5em;
+    color : rgba(51, 204, 255, 1);
+    text-align:center;
+} 
+
+.glmolFooter div.molecularSequence table tr:nth-child(2) td.pushed{
+    background-color : rgba(205, 205, 193, 1);
+}

@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+
+=pod Profiling statements
+#!/usr/bin/perl -d:NYTProf
+$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
+=cut
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+# custom
+use common;
+use pdbMetaContainer;
+
+Log::Log4perl->init("./conf/structureFetcher.conf");
+my $logger = get_logger();
+
+
+=pod
+    Given a pdb identifier returns the json object storing all core related
+    information plus the PDB atom records
+=cut
+
+$logger->info("*** CGI activation at " . common::getTime());
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+my $queryData = decode_json($params{'POSTDATA'});
+$logger->info("query content:\n" . Dumper($queryData));
+
+my $configuration =  {
+    pdbRawRepo => "../../data/molecularData/pdb",
+    pdbMetaRepo => "../../data/molecularData/pdd"
+};
+
+my $container = {
+    atomRecord => '',
+    sseArray => [],
+    pdbnumArray => [],
+    aaSeqArray => []
+};
+
+if(defined($queryData->{ pdbName })) {
+    my ($fname) = $queryData->{ pdbName } =~ /^(.{4})/;
+    $fname = uc($fname);
+    my $fLoc =  $configuration->{ pdbRawRepo } . "/" . $fname . ".pdb";
+    if (-e $fLoc) {
+	$container->{ atomRecord } = common::fileStringify(fileLoc => $fLoc);    
+#	$logger->info($container->{ atomRecord });
+    } else {
+	$logger->info("No file at $fLoc");
+    }
+    
+    
+
+    if ($queryData->{ pdbName } =~ /^([\w]{4})(.{1})$/) {
+	my $coreName = lc($1) . uc($2);
+	my $coreFolder = $configuration->{ pdbMetaRepo } . "/" . $queryData->{ pdbName };
+	my $pdbMetaObject = pdbMetaContainer->new(CoreName => $coreName
+						  ,CoreFolder => $configuration->{ pdbMetaRepo } . "/$coreName",
+						  CoreDef => "NONE");
+	#$logger->trace(Dumper($pdbMetaObject) );
+	$container->{ pdbnumArray } = $pdbMetaObject->get_pdbnum_array();
+	my $sseData = $pdbMetaObject->sse_subseq(); 
+	my $seqData =  $pdbMetaObject->aa_subseq();	
+	
+	$container->{ sseArray } = $sseData->{ array };
+	$container->{ aaSeqArray } = $seqData->{ array };
+    }          
+}
+
+
+my $jsonObject = encode_json($container);
+
+print $query->header('application/json');      # create the HTTP header
+print "$jsonObject";
+
