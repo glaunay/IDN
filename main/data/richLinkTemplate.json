@@ -1,0 +1,89 @@
+{ 
+"version" : "richLink_1.0",
+"associationDescriptor" : {
+  "name" : "dummy",	
+  "Experiments" : "listType_experimentDescriptor",
+  "knowledge" : "dummy"
+},
+"experimentDescriptor" : {
+            "name" : "dummy",
+	    "knowledgeSupport" : "dummy",	
+            "PartnerDetails" : "listType_partnerDescriptor",
+	    "Interaction_Detection_Method" : "dummyCV1",
+            "Experiment_modification" : "dummy",
+            "Publication" : "listType_publicationDescriptor",
+            "Host_System" : "dummy",
+            "Interaction_Type" : "dummyCV",
+            "Figure" : "dummy",
+	    "sourceDatabase" : "dummy",
+	    "IMEx_ID_Experiment" : "dummy",
+	    "Kinetics" : "kineticsDescriptor"
+},
+"kineticsDescriptor" : {
+            "KD1_nM" : "dummy", 
+            "KD2_nM" : "dummy",
+            "Range_nM" : "dummy",
+            "AssociationRate1" : "dummy",
+            "AssociationRate2" : "dummy",
+            "DissociationRate1" : "dummy",
+            "DissociationRate2" : "dummy",
+            "Kinetics_Comments" : "dummy",
+            "Interaction_Model" : "dummy"
+},
+"publicationDescriptor" : {
+	 "pmid" : "dummy",
+	 "imex" : "dummy"
+},
+"partnerDescriptor" : {
+                    "name" : "dummy",
+                    "BioRole" : "dummy",
+                    "ExpRole" : "dummy",
+                    "Detect_Meth" : "dummy",
+                    "Species" : "dummy",
+                    "Accession_Number" : "dummy",
+		    "Isoform" : "dummy",
+                    "Features" : {
+		    	       "experimental" : "listType_knownExperimentalFeatureDescriptor",
+               	       	       "binding" : "listType_bindingSiteDataDescriptor",
+			       "ptm" : "listType_ptmDescriptor",
+			       "pointMutation" : "listType_pointMutationDescriptor"
+		    }
+                },
+"rangeData" : {
+	    "start" : "conditional",
+	    "stop" : "conditional",
+	    "isLinked" : "conditional"
+},
+"knownExperimentalFeatureDescriptor" : {
+	 "name" : "dummy",
+	 "other_data" : "dummy",
+	 "Detection_Method" : "dummyCV",	
+	 "Known_Experimental_Feature_Type" : "dummyCV",
+	 "sequenceData" : "listType_rangeData"	  			
+},
+"bindingSiteDataDescriptor" : {
+        "name" : "dummy",
+	"other_data" : "dummy",
+	"Detection_Method" : "dummyCV",	
+        "Binding_Site_Type" : "dummyCV",
+	"Binding_Site_Domain" : "dummy",	
+        "sequenceData" : "listType_rangeData"	
+},
+"ptmDescriptor" : {
+	"name" : "dummy",
+	"other_data" : "dummy",
+	"Detection_Method" : "dummyCV",			    
+	"Post_Translation_Modification_Type" : "dummyCV",
+	"Post_Translation_Modification_Choice" : "dummy",		
+	"sequenceData" :   "listType_rangeData"		    	
+},
+"pointMutationDescriptor" : {
+	"name" : "dummy",
+	"other_data" : "dummy",
+	"Detection_Method" : "dummyCV",			    
+	"Point_Mutation_Type" : "dummy",		
+	"sequenceData" :   "listType_rangeData"		    	
+}
+			  
+
+}

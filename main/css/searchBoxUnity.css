@@ -1,0 +1,45 @@
+
+.loadinggif {
+    background:url('../img/ajax-loading-searchBar.gif') no-repeat right center;
+    background-position: 95%;
+}
+
+.highlight .comments {
+    padding-left:10px;  
+}
+
+.highlight .identifier {
+    padding-left:10px;
+}
+
+ul.typeahead.dropdown-menu {
+    overflow-y : scroll;
+    max-height : 200px;
+    max-width : 450px;
+    overflow-x : hidden;
+}
+
+.highlight:hover {    
+   /* cursor:auto;
+    background-color:rgba(255, 255, 242, 1);*/
+}
+
+.highlight .comments {
+    color : rgba(168,168,168, 1); 
+}
+
+.unity::-webkit-input-placeholder {
+    font-size:0.85em;
+}
+
+.unity:-moz-placeholder { /* Firefox 18- */
+    font-size:0.85em;
+}
+
+.unity::-moz-placeholder {  /* Firefox 19+ */
+    font-size:0.85em;
+}
+
+.unity:-ms-input-placeholder {  
+    font-size:0.85em;
+}

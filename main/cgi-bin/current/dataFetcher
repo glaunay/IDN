@@ -1,0 +1,103 @@
+#!/usr/bin/perl
+
+=pod Profiling statements
+#!/usr/bin/perl -d:NYTProf
+$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
+=cut
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use IO::Socket::UNIX qw( SOCK_STREAM );
+use CGI;
+use Ace 1.51;
+use Ace::Browser::AceSubs qw(:DEFAULT DoRedirect);
+use Ace::Browser::SearchSubs;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use matrixDB::interactionReport;
+use common;
+use networkMapperAce;
+use miscDataLayer;
+use psicquicQuery;
+use psimi;
+use mergedAssociation;
+
+
+
+Log::Log4perl->init("./conf/dataFetcher.conf");
+my $logger = get_logger(); 
+
+=pod
+  Pure ace based network construction
+
+  receives : - the list of central nodes
+             - the list of deleted nodes
+             - the list of search criterion
+=cut
+
+$logger->info("*** CGI activation at " . common::getTime());
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55666)  || AceError ("Couldn't open database");
+our $nameMutator = biomoleculeMapper->new (template => '../data/biomoleculeMapper.json');
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+my $queryData = decode_json($params{'POSTDATA'});
+$logger->info("query content:\n" . Dumper($queryData));
+
+our $socketMI = IO::Socket::UNIX->new(
+    Type => SOCK_STREAM,
+    Peer => '/tmp/miSocket',
+    )
+    or $logger->logdie("Can't connect to server: $!");;
+
+
+my $results = [];
+foreach my $dataElement (@{ $queryData->{ data } }) {
+    my $container;
+    if ($dataElement->{ type } eq "association") {
+	$container = getDataAssociation(
+	    options => { 
+		providers => $queryData->{ providers }
+	    },
+	    name => $dataElement->{ name },
+	    template => '../data/richLinkTemplate.json'
+	    );	
+    }
+    push (@{ $results }, $container);
+}
+
+my $jsonString = encode_json($results);
+print $query->header('application/json');
+print "$jsonString\n";
+
+sub getDataAssociation {
+    my $p = common::arg_parser(@_);
+    
+    open JSON ,"< " . $p->{ template } or die $!;
+    my @jsonStr = <JSON>; 
+    close JSON;
+    
+    my $dataTemplate = decode_json(join ('', @jsonStr));		
+    
+    my $linkObject = matrixDB::interactionReport::fetchAssociation (
+	name => $p->{ name },
+	DB => $DB,
+	template => $dataTemplate, 	
+	socketCv => $socketMI
+	);
+    
+    (!defined $linkObject) && $logger->logdie("Link named $p->{ name } returned empty Object\n");
+    
+    
+    return $linkObject;
+}

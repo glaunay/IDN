@@ -1,0 +1,73 @@
+.idleDiv {    
+    -webkit-border-radius: 0px 0px 10px 10px;
+    -moz-border-radius: 0px 0px 10px 10px;
+    border-radius: 0px 0px 10px 10px;
+    padding-top: 5px;
+    text-align:center;
+    font-size : 1.5em;
+}
+
+div#blocker {
+    background : rgba(0,0,0,0.1);
+    z-index : 1000;
+    position : absolute;
+    top : 0px;
+    left : 0px;
+    width : 3000px;
+    height : 3000px;
+    margin-top : -5px;
+}
+
+.idleDiv.rendererMsg {
+    background: #e4efc0; /* Old browsers */
+    background: -moz-linear-gradient(top, #e4efc0 0%, #abbd73 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e4efc0), color-stop(100%,#abbd73)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #e4efc0 0%,#abbd73 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #e4efc0 0%,#abbd73 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #e4efc0 0%,#abbd73 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #e4efc0 0%,#abbd73 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e4efc0', endColorstr='#abbd73',GradientType=0 ); /* IE6-9 */
+//    background : rgba(0,0,0, 0.7);
+    color : black;    
+}
+
+.idleDiv.queryMsg {
+    background : rgba(0,0,0, 0.7);
+    color : white;    
+}
+
+
+@-webkit-keyframes opacity {
+	0% { opacity: 1; }
+	100% { opacity: 0; }
+}
+@-moz-keyframes opacity {
+	0% { opacity: 1; }
+	100% { opacity: 0; }
+}
+
+.idleDiv span {
+    font-size:3em;
+    -webkit-animation-name: opacity;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    
+    -moz-animation-name: opacity;
+    -moz-animation-duration: 1s;
+    -moz-animation-iteration-count: infinite;
+}
+
+.networkSearchDiv.loadMsg span:nth-child(1) {
+    margin-left : 5px;
+}
+
+.networkSearchDiv.loadMsg span:nth-child(2) {
+    -webkit-animation-delay: 100ms;
+    -moz-animation-delay: 100ms;
+}
+
+.networkSearchDiv.loadMsg span:nth-child(3) {
+    -webkit-animation-delay: 300ms;
+    -moz-animation-delay: 300ms;
+}
+

@@ -1,0 +1,244 @@
+#paletteMaxiWrapper {
+    padding : 5px 5px 15px 15px;
+    position: relative;
+    top: -444px;
+    left: 299px;    
+ }
+
+#paletteMiniWrapper.bookmarkWrapper {
+    min-height : 40px;
+    padding : 6px 24px 0px 37px;;
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 0px 10px 10px 0px;
+    -moz-border-radius: 0px 10px 10px 0px;
+    border-radius: 0px 10px 10px 0px;
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    margin-left : -10px;
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;   
+    cursor : pointer;
+}
+
+#paletteMaxiWrapper {
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    margin-left : -10px;
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;
+}
+
+.picker-header {
+    height : 35px;
+    width : 250px;
+    padding : 5px 5px 5px 5px;
+}
+
+.picker-header i {
+    cursor : pointer;
+}
+
+ #picker { width: 200px; height: 200px; }
+ #slide { width: 30px; height: 200px; }
+
+/* Common stuff */
+.picker-wrapper, 
+.slide-wrapper {
+    position: relative;
+    float: left;
+}
+.picker-indicator,
+.slide-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+.picker,
+.slide {
+    cursor: crosshair;
+    float: left;
+}
+
+/* Default skin */
+
+.cp-default {
+    background-color: gray;
+    padding: 12px;
+    box-shadow: 0 0 40px #000;
+    border-radius: 15px;
+    float: left;
+}
+.cp-default .picker {
+    width: 200px;
+    height: 200px;
+}
+.cp-default .slide {
+    width: 30px;
+    height: 200px;
+}
+.cp-default .slide-wrapper {
+    margin-left: 10px;
+}
+.cp-default .picker-indicator {
+    width: 5px;
+    height: 5px;
+    border: 2px solid darkblue;
+    -moz-border-radius: 4px;
+    -o-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    opacity: .5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    filter: alpha(opacity=50);
+    background-color: white;
+}
+.cp-default .slide-indicator {
+    width: 100%;
+    height: 10px;
+    left: -4px;
+    opacity: .6;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+    filter: alpha(opacity=60);
+    border: 4px solid lightblue;
+    -moz-border-radius: 4px;
+    -o-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    background-color: white;
+}
+
+/* Small skin */
+
+.cp-small {
+    padding: 5px;
+    background-color: white;
+    float: left;
+    border-radius: 5px;
+}
+.cp-small .picker {
+    width: 100px;
+    height: 100px;
+}
+.cp-small .slide {
+    width: 15px;
+    height: 100px;
+}
+.cp-small .slide-wrapper {
+    margin-left: 5px;
+}
+.cp-small .picker-indicator {
+    width: 1px;
+    height: 1px;
+    border: 1px solid black;
+    background-color: white;
+}
+.cp-small .slide-indicator {
+    width: 100%;
+    height: 2px;
+    left: 0px;
+    background-color: black;
+}
+
+/* Fancy skin */
+
+.cp-fancy {
+    padding: 10px;
+/*    background-color: #C5F7EA; */
+    background: -webkit-linear-gradient(top, #aaa 0%, #222 100%);   
+    float: left;
+    border: 1px solid #999;
+    box-shadow: inset 0 0 10px white;
+}
+.cp-fancy .picker {
+    width: 200px;
+    height: 200px;
+}
+.cp-fancy .slide {
+    width: 30px;
+    height: 200px;
+}
+.cp-fancy .slide-wrapper {
+    margin-left: 10px;
+}
+.cp-fancy .picker-indicator {
+    width: 24px;
+    height: 24px;
+    background-image: url(http://cdn1.iconfinder.com/data/icons/fugue/bonus/icons-24/target.png);
+}
+.cp-fancy .slide-indicator {
+    width: 30px;
+    height: 31px;
+    left: 30px;
+    background-image: url(http://cdn1.iconfinder.com/data/icons/bluecoral/Left.png);
+}
+
+/* Normal skin */
+
+.cp-normal {
+    padding: 10px;
+    background-color: white;
+    float: left;
+    border: 4px solid #d6d6d6;
+    box-shadow: inset 0 0 10px white;
+}
+.cp-normal .picker {
+    width: 200px;
+    height: 200px;
+}
+.cp-normal .slide {
+    width: 30px;
+    height: 200px;
+}
+.cp-normal .slide-wrapper {
+    margin-left: 10px;
+}
+.cp-normal .picker-indicator {
+    width: 5px;
+    height: 5px;
+    border: 1px solid gray;
+    opacity: .5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    filter: alpha(opacity=50);
+    background-color: white;
+    pointer-events: none;
+}
+.cp-normal .slide-indicator {
+    width: 100%;
+    height: 10px;
+    left: -4px;
+    opacity: .6;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+    filter: alpha(opacity=60);
+    border: 4px solid gray;
+    background-color: white;
+    pointer-events: none;
+}

@@ -1,0 +1,298 @@
+#cartLargeWrapper {
+  //  margin-left : 15px;    
+}
+
+
+.helpTooltip h6 {
+    margin-top : 5px;
+    margin-bottom : 3px;
+}
+
+@keyframes notify
+{
+    from {padding : 8px;top : -20px;left : 70px;}
+    to {padding : 9px;top : -21px;left : 69px;}
+}
+
+@-webkit-keyframes notify /* Safari and Chrome */
+{
+     from {padding : 8px;top : -20px;left : 70px;}
+    to {padding : 9px;top : -21px;left : 69px;}
+    /*from {padding : 8px}    
+    to {padding : 9px}*/
+}
+
+
+
+.plusNotification {
+    -webkit-animation-duration: 0.5s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count : infinite;
+    animation-duration: 0.5s;
+
+    background: -webkit-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:    -moz-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:     -ms-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:      -o-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:         radial-gradient( circle at center, rgb(0,255,102), rgb(0,153,51));
+    
+    height:25px;
+    width:25px;
+    -moz-border-radius:25px;
+    -webkit-border-radius:25px;
+
+    padding:8px;
+    text-align:center;
+    color:white;
+    position:absolute;
+    z-Index : 10000;
+    top : -20px;
+    left : 70px;    
+    font-size : 2em;
+}
+
+
+
+
+
+.glowing {
+    outline: none!important;
+    border-color: #9ecaed!important;
+    box-shadow: 0 0 30px #9ecaed!important; 
+}
+
+@keyframes glowing
+{
+    from {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 1px #9ecaed;}
+    to {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 10px #9ecaed;}
+}
+
+@-webkit-keyframes glowing /* Safari and Chrome */
+{
+    from {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 1px #9ecaed;}    
+    to {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 10px #9ecaed;}
+}
+
+#cartBookmarkWrapper {
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count : infinite;
+    animation-duration: 1s;
+
+    min-height: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 0px 10px 10px 0px;
+    -moz-border-radius: 0px 10px 10px 0px;
+    border-radius: 0px 10px 10px 0px;
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    margin-left : -10px;
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;
+}
+
+ #cartBookmarkWrapper:hover {
+    cursor : pointer;
+}
+
+.cartMini {
+    -webkit-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius:  6px 6px 6px 6px;
+    border-radius: 6px 6px 6px 6px;    
+    background-color: rgba(139, 139, 159, .5);  
+    color :   rgba(0, 0, 0, 1);  
+    height : 25px;    
+    padding : 5px;
+    padding-left: 10px;
+    display: none;
+}
+
+.cartMini i {
+    padding-top : 5px;
+    padding-right : 5px;
+}
+
+ .cartBody ul .icon-li {
+/*    border : 1px black solid;*/
+    line-height : 2.25em; 
+}
+
+
+
+ .cartHeader {
+    padding : 10px;
+        
+    -webkit-border-radius: 4px 4px 0px 0px;
+    -moz-border-radius:  4px 4px 0px 0px;
+    border-radius: 4px 4px 0px 0px;    
+
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;   
+    -webkit-box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;
+}
+
+ .cartHeader .icon-question-sign {
+    vertical-align:center;
+    padding-top : 0px;
+}
+
+ .cartHeader  {
+    text-align:center;
+}
+
+ i:hover {
+    cursor:pointer;
+}
+
+ .setExp {
+    padding : 8px 15px 8px 20px;
+    text-align:center;
+}
+ .setPrd {
+    text-align:center;
+    padding : 8px 20px 8px 15px;
+}
+
+ .cartFooter {
+    padding: 10px 14px 11px 16px;
+    -webkit-border-radius: 0px 0px 4px 4px;
+    -moz-border-radius:  0px 0px 4px 4px;
+    border-radius: 0px 0px 4px 4px;  
+
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;   
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;
+
+}
+
+ .cartFooter .goBut {
+    vertical-align: middle;
+    padding : 4px 25px 4px 25px;;
+}
+
+ .cartFooter .goBut span {
+    padding-left : 10px;
+}
+
+
+ .cartBody {
+    background-color: rgba(238, 238, 244, .7);
+    height : 150px;
+    overflow: auto;   
+    outline: none;
+    
+    -webkit-box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
+}
+
+ .cartBody div.defaultCriterion {
+    padding-top: 50px;
+    text-align:center;
+    font-size : 1.2em;
+}
+
+@-webkit-keyframes opacity {
+	0% { opacity: 1; }
+	100% { opacity: 0; }
+}
+@-moz-keyframes opacity {
+	0% { opacity: 1; }
+	100% { opacity: 0; }
+}
+
+ .cartBody div.defaultCriterion span {
+    font-size:3em;
+    -webkit-animation-name: opacity;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    
+    -moz-animation-name: opacity;
+    -moz-animation-duration: 1s;
+    -moz-animation-iteration-count: infinite;
+}
+
+ .cartBody div.defaultCriterion span:nth-child(2) {
+    -webkit-animation-delay: 100ms;
+    -moz-animation-delay: 100ms;
+}
+
+ .cartBody div.defaultCriterion span:nth-child(3) {
+    -webkit-animation-delay: 300ms;
+    -moz-animation-delay: 300ms;
+}
+
+
+ .cartBody ul {
+    width : 85%;
+    max-width : 85%;
+    margin: 0px 0 0px 20px;
+    padding : 0px 0px 0px 10px;   	
+    //    background-color: rgba(238, 238, 244, .7);    
+}
+
+ .cartBody li div.litteral {
+    text-overflow: ellipsis;   
+    overflow: hidden;    
+//    white-space: nowrap;
+//    text-align : center;
+    padding-left : 5px;
+    width : 80%;
+}
+
+ .cartBody li div.span2 {
+    vertical-align : middle;
+}
+
+ .cartBody li {
+    white-space: nowrap
+}
+
+ .cartBody li .row-fluid {
+    padding-top : 5px;
+}
+
+ .cartBody li .row-fluid:hover {
+  /*  color: rgba(255, 255, 255, 1);   
+    background-color: rgba(139, 139, 159, .7);    
+    box-shadow: inset 0 0 0 10em rgba(255, 255, 255, .5); */
+    font-weight : bold;
+}
+
+

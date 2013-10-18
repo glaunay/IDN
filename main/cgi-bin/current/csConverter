@@ -1,0 +1,85 @@
+#!/usr/bin/perl
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use Data::UUID;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+
+use common;
+
+Log::Log4perl->init("./conf/csConverter.conf");
+my $logger = get_logger(); 
+
+$logger->info("*** CGI activation at " . common::getTime());
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+
+my $ug  = new Data::UUID;
+my $uuid = $ug->create();
+my $tag = $ug->to_string( $uuid );
+
+
+`mkdir ../html/tmp/cs_$tag`;
+
+#$logger->info($params{'POSTDATA'});
+my $mainContainer = decode_json($params{'POSTDATA'});
+#$logger->info(Dumper($mainContainer));
+foreach my $key (keys (%{$mainContainer}))  {
+    $logger->info("$key\n");
+}
+
+my $naString = "Common_Name (class=java.lang.String)\n";
+my $sifString = '';
+
+#$logger->info(Dumper($mainContainer));
+
+foreach my $link (@{$mainContainer->{ linksData }}) {
+    my @names;
+    foreach my $nodeType (qw/source target/) {
+#	$logger->info( "titi $nodeType");
+#	$logger->info(Dumper($link));
+	my $index = $link->{ $nodeType };
+#	$logger->info("pointed node:\n" . Dumper($mainContainer->{ nodeData }->[$index]) );
+	push @names, $mainContainer->{ nodeData }->[$index]->{ name };	
+    }
+    $sifString .= join (" pp ", @names) . "\n";
+}
+
+foreach my $node (@{$mainContainer->{ nodeData }}) {
+    defined($node->{ common }) || next;
+    $naString .= "$node->{ name } = $node->{ common}\n";
+}
+
+open SIF, ">../html/tmp/cs_$tag/network.sif" or die $!;
+print SIF "$sifString";
+close SIF;
+
+open NAF, ">../html/tmp/cs_$tag/network.na" or die $!;
+print NAF "$naString";
+close NAF;
+
+`cd ../html/tmp/;tar -cjf cs_$tag.tar.bz cs_$tag`;
+
+
+my $response;
+$response = {
+    status => 'OK',
+    fileLocation => "tmp/cs_$tag.tar.bz" # put relative url here
+};
+
+print $query->header('application/json');      # create the HTTP header
+print encode_json ($response);
+
+

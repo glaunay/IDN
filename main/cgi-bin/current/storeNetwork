@@ -1,0 +1,120 @@
+#!/usr/bin/perl
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use Data::UUID;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+use CHI;	  
+#custom
+use common;
+
+our $CACHE_ADDRESS = "/tmp/networkCache_DVL2";
+Log::Log4perl->init("./conf/storeNetwork.conf");
+my $logger = get_logger(); 
+
+$logger->info("*** CGI activation at " . common::getTime());
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+my $mainContainer = decode_json($params{'POSTDATA'});
+
+$logger->trace(Dumper($mainContainer));
+if ($mainContainer->{ type } eq "write") {
+    my $tag = cacheWriter(serializedNetwork => { links => $mainContainer->{ links },
+						 nodes => $mainContainer->{ nodes }});
+    print $query->header('application/json');      # create the HTTP header
+    print '{"uid" : "' . $tag . '"}';
+    exit;
+} elsif($mainContainer->{ type } eq "read") {
+    my $networkContainer = cacheReader (key => $mainContainer->{ userKey });
+    
+    my $response = defined $networkContainer ? $networkContainer : {errorStatus => "notFound", inputKey => $mainContainer->{ userKey }};
+    my $string = encode_json($response);
+    print $query->header('application/json');      # create the HTTP header
+    print $string;
+    exit;
+}
+
+
+
+sub setUID {
+    my $ug  = new Data::UUID;    
+    my $uuid = $ug->create();
+    my $tag = $ug->to_string( $uuid );
+   
+    return $tag;
+};
+
+=pod read network cache for specified key
+    fill nodeArray and link attribute  no annotation of link is cached out
+=cut
+sub cacheReader {
+    my $p = common::arg_parser(@_);
+
+    $logger->trace("You specified a previous network Identifier \"$p->{ key }\", trying to read out of cache ...");
+    my $cache = CHI->new(
+	serializer => 'Data::Dumper',
+	driver     => 'File',
+	root_dir   => $CACHE_ADDRESS,
+	cache_size => '500m'
+	);
+     
+    my $dataContainer = $cache->get($p->{ key });
+    if (!defined ($dataContainer)){
+	my $cacheContent = $cache->dump_as_hash( );
+	$logger->error("No key named \"$p->{ key }\" in current cache content\n" . Dumper($cacheContent));
+	return;
+    }
+    
+# populate object
+     my $container = {
+	 node => $dataContainer->{ nodes },
+	 links => $dataContainer->{ links }
+     };
+     $logger->trace("CACHING OUT:\n" . Dumper($container));
+     
+     return $container;
+}
+
+=pod write network to cache; optional acces key can be specified
+
+=cut
+
+sub cacheWriter {
+    my $p = common::arg_parser(@_);
+    
+    my $tag = defined $p->{ UItag } ? $p->{ UItag } : setUID();
+    
+    my $cache = CHI->new(
+	serializer => 'Data::Dumper',
+	driver     => 'File',
+	root_dir   => $CACHE_ADDRESS,
+	cache_size => '500m' 
+	);
+
+    $logger->trace("Data to store:\n" . Dumper($p->{ serializedNetwork }));
+   
+    $cache->set($tag , $p->{ serializedNetwork }, "8 hours");
+    
+    $logger->info("cache writing network tagged '" 
+		  . $tag . "' at " . $CACHE_ADDRESS
+ 	);
+    
+    my $report = $cache->dump_as_hash( );
+    $logger->trace("CHI content:\n" . Dumper($report));
+
+    return $tag;
+}
+
+
+

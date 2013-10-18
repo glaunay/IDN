@@ -1,0 +1,172 @@
+/* homepage css markup */
+
+body {
+    background-color: #D6EBFF;/*#fbfbfc#EBF5FF;*/
+    height: 100%;
+    width:100%;
+/* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    /* Negative indent footer by it's height */
+    margin: 0 auto -60px;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
+    height: 60px;
+}
+#footer {
+    height:80px;
+    background-color: #f5f5f5;
+    padding-top:5px;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+    #footer {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+
+#contentOne div.content {
+   /* margin-bottom : 5px;
+    padding :9px;*/
+}
+
+div.mainContent {
+    width:95%;
+ }
+
+#headerBox table {
+    background :  #fbfbfc;/*whiteSmoke;*/
+}
+
+#headerBox table td:nth-child(2) {
+    text-align:center;
+    font-size:1em;
+}
+
+#headerBox {
+/*    margin-bottom: 2px;
+    border: 1px solid #e5e5e5;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    min-height : 80px;*/
+}
+
+#mainHeader {
+padding-left : 20px;
+padding-right : 20px;
+margin-bottom : 10px;
+margin-top : 5px;
+width : 100%;
+}
+
+#headerBox h4 {
+    text-align:center;
+    font-size :1.4em;
+    padding : 0px;
+}
+
+#headerBox table th {
+    text-align:center;
+    font-size:0.9em;
+    padding:4px;
+    /*padding-left : 2px;
+    padding-right : 2px; */
+}
+
+#headerBox table td {
+    font-size:0.75em;
+    padding:3px;
+}
+
+.headerBoxWrapper {
+    padding-right:65px;
+/*   vertical-align : center;*/
+}
+dl.societies img {
+    width : 55px;
+    margin-bottom: 9px;
+//   float:right;
+    
+}
+
+.accordion-heading {
+    background-color : white;
+}
+
+.accordion-inner  {
+    /*background-color : #D6EBFF;*/
+    background-color : #FFFFF0;
+}
+#top-accordion {
+    -webkit-border-radius: 15px 15px 0px 0px;
+    -moz-border-radius: 15px 15px 0px 0px;
+    border-radius: 15px 15px 0px 0px;
+
+}
+#toggleOne {
+    -webkit-border-radius: 15px 15px 0px 0px;
+    -moz-border-radius: 15px 15px 0px 0px;
+    border-radius: 15px 15px 0px 0px;
+}
+.accordion-base {
+    -webkit-border-radius: 0px 0px 15px 15px;
+    -moz-border-radius: 0px 0px 15px 15px;
+    border-radius: 0px 0px 15px 15px;
+}
+
+#bottom-accordion {
+    -webkit-border-radius: 15px 15px 0px 0px;
+    -moz-border-radius: 15px 15px 0px 0px;
+    border-radius: 15px 15px 0px 0px;
+}
+ul.accordionSubList {
+    list-style: none;
+    margin-left : 0px;
+}
+
+.accordionSubList li {
+    padding: 0px 0; 
+}
+
+.pubmedLink {
+    font-size : 0.8em;
+    color : #3f4c6b;
+    text-decoration:underline;
+}
+ 
+.container {
+    width : 100%;
+}
+
+#mainCentral {
+    min-height : 450px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: white;/*#fbfbfc#EBF5FF;*/
+   /* margin-right : 5px;*/
+    padding : 25px 25px 25px 45px;
+}
+
+#contentFive li {
+    margin : 5px 0px 5px 0px;
+}
+#mainHeader a:hover {text-decoration:none;}
+
+#contentTwo dt {
+    margin-top : 25px;
+}

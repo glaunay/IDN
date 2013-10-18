@@ -1,0 +1,321 @@
+#!/usr/bin/perl
+
+=pod Profiling statements
+#!/usr/bin/perl -d:NYTProf
+$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
+=cut
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use Ace 1.51;
+use Ace::Browser::AceSubs qw(:DEFAULT DoRedirect);
+use Ace::Browser::SearchSubs;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use matrixDB::interactionReport;
+use common;
+use networkMapperAce;
+use miscDataLayer;
+use psicquicQuery;
+use psimi;
+use mergedAssociation;
+
+
+Log::Log4perl->init("./conf/interactomAce.conf");
+my $logger = get_logger(); 
+
+=pod
+  Pure ace based network construction
+
+  receives : - the list of central nodes
+             - the list of deleted nodes
+             - the list of search criterion
+=cut
+
+$logger->info("*** CGI activation at " . common::getTime());
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55666)  || AceError ("Couldn't open database");
+our $nameMutator = biomoleculeMapper->new (template => '../data/biomoleculeMapper.json');
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+my $queryData = decode_json($params{'POSTDATA'});
+$logger->info("query content:\n" . Dumper($queryData));
+$logger->info("interactom expansion start");
+
+
+my $dataContainer = getKnwonData($queryData);
+
+
+$dataContainer->{ association }->{'addCenter'} = createCritBiomoleculeList($queryData,'addCenter'); 
+
+closeAllNetwork($dataContainer);
+
+$logger->trace("main data container:\n" . Dumper($dataContainer));
+# All new center nodes will have to carry center:true.
+
+my $networkObject = networkMapperAce->new (	
+    mappersFileDef => {'UniprotKW' => '../data/upKeywordTree.json', 'nameMutator' => '../data/biomoleculeMapper.json'},
+    mappersSocketDef => {'MI' => '/tmp/miSocket', 'GO' => '/tmp/goSocket' },  
+    DB => $DB,
+    aceBiomoleculeList => $dataContainer->{ biomolecule }->{ new });
+
+
+my $annotationTemplate = $queryData->{ completeAnnotation } eq "no" ? "../data/nutshellTemplate.json" : "../data/richLinkTemplate.json";
+$logger->info("---->$annotationTemplate");
+$networkObject->addLink( 
+    template => $annotationTemplate, aceAssociationList => $dataContainer->{ association }->{ new }
+    ); 
+
+$networkObject->addNodeAttributes( nodeAceList => $dataContainer->{ association }->{'addCenter'},
+				   attributes => { central => 'true' } );
+
+$logger->trace("NetworkObject Complete" . Dumper ($networkObject));
+
+my $jsonObject = $networkObject->getJSON (nodeDataType => 'LOCAL');
+
+$jsonObject = JSONaddNewCenter($jsonObject,$dataContainer);
+
+print $query->header('application/json');      # create the HTTP header
+print "$jsonObject";
+
+open TEST, ">/tmp/network.json";
+print TEST "$jsonObject\n";
+close TEST;
+$logger->trace("TIMEprofile:(exit)");     
+
+
+sub JSONaddNewCenter {
+    my ($jsonObject,$dataContainer) = @_;
+    
+    
+    my $copy = $jsonObject;
+    
+    my @array;
+    foreach my $aceObj (@{ $dataContainer->{ biomolecule }->{'newCenter'} }) {
+	push @array, "\"" .  $nameMutator->mutateToRegular(key => $aceObj->name) . "\"";	
+    }
+    my $string = join (',', @array);
+    
+    $copy =~ s/^{/{"newCenters" : [$string],/;
+    
+    return $copy;
+}
+
+=pod Merge old and add centers
+    Get all their "closed" interations
+    separate nodes and links which were previously unknwon
+=cut
+
+sub closeAllNetwork {
+    my $dataContainer = shift;
+    
+    # merge center set
+    $DB->raw_query("clear");
+    $DB->raw_query("kget oldCenterNodes");
+    $DB->raw_query("spush");
+    $DB->raw_query("kget addCenter");
+    $DB->raw_query("sor");
+    $DB->raw_query("spop");
+    $DB->raw_query("kstore newCenter");
+    my @biomoleculeNewCenter = $DB->fetch(-query=>'Type');
+    $dataContainer->{ biomolecule }->{'newCenter'} = \@biomoleculeNewCenter;
+    
+    my $closedNetwork = makeClosure('newCenter', 'all');
+    $dataContainer->{ association }->{ 'allAssociation' } = $closedNetwork->{ association };
+    $dataContainer->{ biomolecule }->{ 'allBiomolecule' } = $closedNetwork->{ biomolecule };
+    
+    # select the subset of biomolecule and nodes that are not currently knwon
+    createKeyset('biomolecule', $dataContainer->{ biomolecule }->{ 'allBiomolecule' }, 'allBiomolecule');
+    createKeyset('biomolecule', $dataContainer->{ biomolecule }->{ 'oldAllNodes' }, 'oldAllNodes');
+    
+    $DB->raw_query("clear");
+    $DB->raw_query("kget allBiomolecule");
+    $DB->raw_query("spush");
+    $DB->raw_query("kget oldAllNodes");
+    $DB->raw_query("sminus");
+    $DB->raw_query("spop");
+    $DB->raw_query("kstore newNodes");        
+    my @biomoleculeNew = $DB->fetch(-query=>'Type');
+    $dataContainer->{ biomolecule }->{ new } = \@biomoleculeNew; 
+
+    createKeyset('association', $dataContainer->{ association }->{ 'allAssociation' }, 'allAssociation');
+    createKeyset('association', $dataContainer->{ association }->{ 'oldAllAssociation' }, 'oldAllAssociation');
+
+    $DB->raw_query("clear");
+    $DB->raw_query("kget allAssociation");
+    $DB->raw_query("spush");
+    $DB->raw_query("kget oldAllAssociation");
+    $DB->raw_query("sminus");
+    $DB->raw_query("spop");
+    $DB->raw_query("kstore newAssociations");        
+    my @associationNew = $DB->fetch(-query=>'Kind');
+    $dataContainer->{ association }->{ new } = \@associationNew; 
+    
+}
+
+
+
+=pod    
+    This will not work if user can change the provider selection at any time
+=cut
+sub getKnwonData {
+    my $query = shift;
+    
+    for (my $i = 0; $i < scalar(@{ $query->{ data }->{ centralNodes } }); $i++) {
+	my $node = $query->{ data }->{ centralNodes }->[$i];      
+	my $name = $nameMutator->mutateToMatrixdb (key => $node->{ name });
+	$logger->info("$name");
+	$DB->raw_query("find biomolecule $name");
+	my $sAct = $i == 0 ? "spush" : "sor";
+	$logger->trace("$sAct");
+	$DB->raw_query($sAct);
+    }
+    $DB->raw_query("clear");
+    $DB->raw_query("spop");
+    $DB->raw_query("kstore oldCenterNodes");
+    my @biomoleculeCenter = $DB->fetch(-query=>'Type');
+    #my @obj = $DB->keyset("*");
+    
+    $DB->raw_query("follow association");
+    my @assoc = $DB->fetch(-query=>'Kind');
+    $DB->raw_query("kstore oldAssociationFromCenter");    
+    $DB->raw_query("follow biomolecule");
+    $DB->raw_query("kstore oldAllNodes");
+    my @biomolecule = $DB->fetch(-query=>'Type');
+    
+      
+    my $data = makeClosure ('oldCenterNodes', 'old');
+
+    $logger->trace("dim:: previous network selection assoc " . scalar(@{ $data->{ association } }) .
+		   " biomol " . scalar(@biomolecule) );
+    return {
+	association => { 
+	    'oldAssociationFromCenter' => \@assoc, 
+	    'oldAllAssociation' =>  $data->{ association },
+	},
+	biomolecule => {
+	    'oldAllNodes' => \@biomolecule,
+	    'oldCenterNodes' => \@biomoleculeCenter
+	}    
+    };
+
+}
+
+=pod
+    given a list of ace objects, a type and a name 
+    create the corresponding keyset named "name" in current ace thread
+=cut
+sub createKeyset {
+    my $type = shift;    
+    my $objList = shift;
+    my $kname = shift;
+    
+    my $first = 1;
+
+    $DB->raw_query('clear');
+    foreach my $aceObject (@{ $objList }) {
+	my $sAct = $first ? 'spush' : 'sor';
+#	$logger->trace("trying to " . $sAct . " " . $aceObject->name);
+	$DB->raw_query("find $type " . $aceObject->name);
+	$DB->raw_query("$sAct");
+	$first = 0;
+    }
+    $DB->raw_query('clear');
+    $DB->raw_query('spop');
+    $DB->raw_query("kstore $kname");        
+
+    my $queryCrit = 'Type';
+    if ($type eq "association") {$queryCrit = 'Kind';}
+    
+    my @tmp = 	$DB->fetch(-query=> "$queryCrit");
+    $logger->trace("keyset $kname [ ". scalar(@tmp) . " elements ] is created");
+}
+
+
+=pod make closure on a set of center nodes, following ntm email
+     a prefix can be specified 
+    returns the list of nodes/edges as ace objects
+=cut
+sub makeClosure {
+    my $biomoleculeStartSet = shift;
+    my $prefix = shift;
+
+    $DB->raw_query('clear');
+    $DB->raw_query("kget $biomoleculeStartSet");
+    $DB->raw_query('follow association');
+    $DB->raw_query('follow biomolecule');
+# on a maintenant les new-center ainsi que leurs voisins directs
+    $DB->raw_query("kstore ${prefix}B1");
+    $DB->raw_query('follow association');
+    $DB->raw_query("kstore ${prefix}A1");
+    $DB->raw_query('follow biomolecule');
+    $DB->raw_query('spush');
+    $DB->raw_query("kget ${prefix}B1");
+    $DB->raw_query('sminus');
+    $DB->raw_query('spop');
+    $DB->raw_query('follow association');
+    $DB->raw_query('spush');
+    $DB->raw_query("kget ${prefix}A1");
+    $DB->raw_query('swap');
+    $DB->raw_query('sminus');
+    $DB->raw_query('spop');
+    $DB->raw_query("kstore ${prefix}Aclose");
+    
+    my @associationObjects = $DB->fetch(-query=>'Kind');
+    
+    $DB->raw_query("kget ${prefix}B1");
+    my @biomoleculeObjects = $DB->fetch(-query=>'Type');
+
+    return { association => \@associationObjects,
+	     biomolecule => \@biomoleculeObjects
+    };
+}
+
+
+=pod
+    crit positive biomolecule will have to carry central : true !!!, we create a special keyset for that
+=cut
+
+
+sub createCritBiomoleculeList {
+    my $query = shift;
+    my $kname = shift;
+    $DB->raw_query("Clear");
+    my $first = 1;  
+    foreach my $crit (@{ $query->{ data }->{ searchCrit } }) {
+	my $sAct = $first ? "spush" : "sor";
+	
+	if ($crit->{ type } eq "biomolecule") {
+	    my $name = $nameMutator->mutateToMatrixdb (key => $crit->{ name });
+	    $DB->raw_query("find biomolecule $name");
+	    $DB->raw_query("$sAct");
+	} elsif($crit->{ type } eq "publication") {
+	    $DB->raw_query("find publication $crit->{ name }");
+	    $DB->raw_query("follow association");
+	    $DB->raw_query("follow biomolecule");	    
+	    $DB->raw_query("$sAct");	   
+	}
+	
+	$first = 0;
+    }
+
+    $DB->raw_query("spop");
+    $DB->raw_query("kstore $kname");
+    my @obj = $DB->fetch(-query=>'Type');
+    $logger->trace("dim:: crit based biomolecule selection" . scalar(@obj));
+    $logger->trace(Dumper(@obj) );
+
+    return \@obj;   
+}
+

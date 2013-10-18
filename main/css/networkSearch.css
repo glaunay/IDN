@@ -1,0 +1,114 @@
+#loopBookmarkWrapper {
+    min-height: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 0px 10px 10px 0px;
+    -moz-border-radius: 0px 10px 10px 0px;
+    border-radius: 0px 10px 10px 0px;
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    margin-left : -10px;
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;
+}
+
+#loopBookmarkWrapper:hover {
+    cursor : pointer;
+}
+
+#loopLargeWrapper .go .popover {
+    background-color : rgba(255, 51, 51, .9);   
+    border : 2px solid rgba(255, 51, 51, 1);
+     -webkit-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
+    padding : 5px;
+}
+
+#loopLargeWrapper .go .popover-title{
+    background-color : rgba(255, 51, 51, .0);   
+    color : white;
+    text-shadow: 0 0px 0px rgba(255, 255, 255, 0);
+    text-align : center;
+    font-size:0.9em;
+}
+
+#loopLargeWrapper .go .arrow{
+    background-color : rgba(255, 51, 51, .9);   
+    border : 1px solid rgba(255, 51, 51, 1);
+    padding : 0px;
+}
+
+#loopLargeWrapper .go .popover-content{
+    background-color : rgba(255, 51, 51, 0.0);   
+    color:white;
+    text-shadow: 0 0px 0px rgba(255, 255, 255, 0);
+    font-size:0.7em;
+}
+
+#loopLargeWrapper {
+    padding : 20px 20px 20px 20px;
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 0px 10px 10px 0px;
+    -moz-border-radius: 0px 10px 10px 0px;
+    border-radius: 0px 10px 10px 0px;
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    margin-left : -10px;
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;
+}
+
+#loopLargeWrapper .closeCall {
+  //  border-right: 10px solid #777777;
+    padding-right : 10px;
+    margin-right : 10px
+}
+
+
+#loopLargeWrapper .btn.go {
+    padding : 10px;
+    margin-left : 10px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px;   
+}
+
+#loopLargeWrapper .btn.add {
+    padding : 10px;
+    margin-left : 10px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px;
+}
+
+#loopLargeWrapper li {
+    padding-left : 10px;
+    padding-right : 5px;
+    cursor:pointer;
+}
+
+#loopLargeWrapper li i {
+    color: green;
+}

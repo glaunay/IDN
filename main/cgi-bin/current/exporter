@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+
+=pod CGI interface to batik 1.7
+    
+=cut
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+use JSON;
+use lib qw(lib/perl);
+use Data::UUID;
+
+#from CPAN
+use CGI;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+
+our $BATIK_PATH="../../../dependencies/batik-1.7";
+Log::Log4perl->init("./conf/exporter.conf");
+my $logger = get_logger(); 
+
+my $ug    = new Data::UUID;
+my $uuid = $ug->create();
+my $tag = $ug->to_string( $uuid );
+
+my $query = CGI->new();
+
+my @names = $query->param;
+
+my %params = $query->Vars;
+
+$logger->trace(Dumper(%params));
+
+my $htmlString = '<?xml version="1.0" standalone="no"?>' . "\n" .
+    ' <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"' . "\n" .  '"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">' . "\n";
+
+
+my $filename = "../../html/tmp/$tag.svg";
+open SVG, ">$filename" or die $!;
+foreach my $value (@{$query->{keywords}}) {
+    $htmlString .= "$value ";
+}
+$htmlString =~ s/(<[\s]*svg[^>]+)>/$1 xmlns="http:\/\/www.w3.org\/2000\/svg"\nxmlns:xlink="http:\/\/www.w3.org\/1999\/xlink">/;
+print SVG $htmlString;
+close SVG;
+
+my $target = $filename;
+$target =~ s/svg$/tif/;
+
+warn "running: java -jar ${BATIK_PATH}/batik-rasterizer.jar $filename";# 1&2> /dev/null";
+`java -jar ${BATIK_PATH}/batik-rasterizer.jar -m 'image/tiff' $filename`; #1&2> /dev/null`;
+my $response;
+my $location = "tmp/$tag.tif";
+if (-e $target) {
+   `gzip -f -c $target > $target.gz`;
+    $response = {
+	status => 'OK',
+	fileLocation => "$location.gz" # put relative url here
+    };
+} else {
+    $response = {
+	status => 'ERROR'	
+    };
+}
+
+print $query->header('application/json');      # create the HTTP header
+print encode_json ($response);
+
