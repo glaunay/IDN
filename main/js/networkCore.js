@@ -370,8 +370,6 @@ function coreInit (opt) {
 	    	.call(node_drag)
 		.each(
 		    function (d){		
-			console.log("adding node");
-			console.dir(options);
 			if (options === 'static') {
 			    d.x = parseFloat(d.x);
 			    d.px = parseFloat(d.px);

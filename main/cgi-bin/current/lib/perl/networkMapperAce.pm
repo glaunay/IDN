@@ -472,6 +472,12 @@ sub summonLocalNodeWriter {
 	    (@{$node->{ $key }} > 0) || return "";
 	    return "\"$key\" : [\"" . join ('","', @{$node->{ $key }}) . "\"],";
 	},
+	pdb =>  sub {
+	    my $node = shift;
+	    my $key = shift;
+	    (@{$node->{ $key }} > 0) || return "";
+	    return "\"$key\" : [\"" . join ('","', @{$node->{ $key }}) . "\"],";
+	},
 	molecularWeight => sub {
 	    my $node = shift;
 	    my $key = shift;
@@ -555,7 +561,7 @@ sub getJSON {
     my $jsonData = "\"id\" : \"" . $self->{ UItag } . "\",\"nodeData\" : [";
     foreach my $node (@{$self->{ nodeArray }}) {
 	my $nodeAsString;
-	foreach my $key (qw /name common biofunc tissue uniprotKW pfam tpm go gene specie type molecularWeight relationship central betweenness/) {
+	foreach my $key (qw /name common biofunc tissue uniprotKW pfam tpm go gene pdb specie type molecularWeight relationship central betweenness/) {
 	    if ($key eq "central") {
 		if (defined($node->{ $key })) {$nodeAsString .= '"central" : true,';}
 		next; 
@@ -870,7 +876,8 @@ sub _fillingNodes {
 		isComponentOf => [],
 		boundTo => [] 
 	    },
-	    id => ""
+	    id => "",
+	    pdb => []
 	};
 	# Set the original object and summon its mapper
 	my $mapper = summonLocalDataMapper();
@@ -909,7 +916,7 @@ sub _fillingNodes {
 	    
 	    ($key eq "aceAccessor") && next;
 	    
-	    ($key ne "common"    && $key ne "biofunc" &&
+	    ($key ne "common"    && $key ne "biofunc" && $key ne "pdb" &&
 	     $key ne "uniprotKW" && $key ne "go"      && 
 	     $key ne "specie"  &&  $key ne "molecularWeight" && $key ne "relationship" &&
 	     $key ne "tissue" && $key ne "betweenness") && next; ## developement purpose
@@ -1049,6 +1056,15 @@ sub summonLocalDataMapper {
 		push @array, $dom->name;
 	    }
 	    return \@array;	    
+	},
+	pdb => sub {
+	    my $aceObject = shift @_;
+	    my @val = $aceObject->get('PDB');
+	    my @array;
+	    foreach my $dom (@val) {
+		push @array, $dom->name;
+	    }
+	    return \@array;
 	},
 	relationship => sub {
 	    my $aceObject = shift @_;
