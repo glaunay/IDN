@@ -1382,7 +1382,7 @@ GLmol.prototype.colorAtoms = function(atomlist, c) {
     for (var i in atomlist) {
 	var atom = this.atoms[atomlist[i]]; if (atom == undefined) continue;              
 	atom.color = c;
-	console.dir(atom);	
+	//console.dir(atom);	
    }
 };
 

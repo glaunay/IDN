@@ -1,15 +1,90 @@
-#elementInfo {
-    
+#elementInfo {    
+    color : white;
 }
 
 #elementInfo .upmark{
-    
+    padding : 5px 10px 5px 10px;
+    -moz-border-radius: 15px 15px 0px 0px;
+    border-radius: 15px 15px 0px 0px;
+    background : rgba(0, 0, 0, 0.8);
+	
+}
+
+#elementInfo .ei-main{
+    overflow : auto;  
+    -moz-border-radius: 0px 15px 15px 15px;
+    border-radius: 0px 15px 15px 15px;
+    background : rgba(0, 0, 0, 0.8);        
 }
 
 #elementInfo .ei-header{
-    
+    padding : 15px 10px 10px 10px;
 }
 
+#elementInfo .ei-header i {
+    font-size : 1.5em; 
+    margin-top : -5px;
+    margin-right : 0pxx;
+    cursor : pointer;
+}
+
+
 #elementInfo .ei-body{
-    
+    overflow:auto;   
+    padding : 5px;
+}
+#elementInfo .pdbDiv {
+    margin: 0 auto;    
+}
+
+#elementInfo .ei-body > div{
+    padding : 5px;
+}
+
+
+#elementInfo .category-header {
+    font-size : 1.15em;
+}
+
+#elementInfo .category-header i {
+    cursor : pointer;
+    font-size : 1.25em;
+}
+
+#elementInfo .category-content {
+    display : none;
+
+}
+
+#elementInfo .pdbChange i {
+    cursor : pointer;
+    font-size: 2em;
+}
+
+#elementInfo i:hover {
+    color : rgb(135,206,250);
+}
+
+#elementInfo .pdbChange i.icon-chevron-left {
+    position: absolute;
+    left: 10px;
+    top: 145px;
+}
+
+#elementInfo #glmolWidget canvas:hover {
+    cursor:pointer;
+}
+
+#elementInfo .pdbChange i.icon-chevron-right {
+    position: absolute;
+    right: 10px;
+    top: 145px;
+}
+
+#elementInfo .pdbDiv div.molLoader {
+    z-index: 9999999;
+    background: green;
+    color : white;
+    text-align : center;
+    font-size: 2em;   
 }

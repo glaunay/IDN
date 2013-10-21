@@ -32,10 +32,10 @@ function ei_test() {
 	weight: 2,
 	x: 809.9553477290684,
 	y: 421.7995313214508,
-	pdb : ["3emlA"]
+	pdb : ["3emlA", "3emlA"]
     };    
     
-    var widget = initElementInfo({width : '350px', height : '400px',
+    var widget = initElementInfo({width : '350px', height : '600px',
 				  target : 'body',
 				  callback : {}				  
 				 });
@@ -56,32 +56,42 @@ function initElementInfo(opt) {
        alert ("no DOM target to initialize elementInfo component");
        return null;
    }
-    var width = opt.width ? opt.width : '200px';
-    var height = opt.height ? opt.height : '200px';
+    var width = opt.width ? opt.width : '350px';
+    var height = opt.height ? opt.height : '600px';
 
     var computeCss = function () {
-	return {element : {position : 'absolute', top : '50px', right : '50px', width : "250px", height : "350px"} ,
-		upmark :  {position : 'absolute', top : '40px', right : '50px', width : "250px", height : "350px"}};
+	console.dir(this);
+	return {main : {position : 'absolute', top : '50px', left : '50px', width : this.width, 'max-height' : this.height} ,
+		upmark :  {position : 'absolute', top : '20px', left : '50px'}};
     };    
     if (opt.callback.computeCss)
 	computeCss = opt.callback.computeCss;
-    var molViewer = GLmolInit({width : '150px', height : '150px', target : '#elementInfo .pdbDiv'});
+    var molViewer = GLmolInit({width : '200px', height : '200px', target : '#elementInfo .pdbDiv'});
     return {
+	molViewIndex : null,
 	target : opt.target,
 	molViewer : molViewer,
 	computeCss : computeCss,
 	selector : opt.target + ' div#elementInfo',
 	data : null,
+	height : height,
+	width : width,
+	baseUrl : {
+	    uniprotKeyWord : "http://www.uniprot.org/keywords/",
+	    uniprot : "http://www.uniprot.org/uniprot/",
+	    pdb : "www.rcsb.org",
+	    taxon : "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id="
+	},
 	draw : function (data) {
 	    console.log("lets draw");
 	    this.data = data;
 	    
-	    $(this.target).append('<div id="elementInfo"><div class="upmark"></div><div class="ei-header"></div><div class="ei-body"></div></div>');
+	    $(this.target).append('<div id="elementInfo"><div class="upmark"></div><div class="ei-main"><div class="ei-header"></div><div class="ei-body"></div></div><div>');
 
 	    var self = this;
 	    $( window ).resize(function() {
 				   var newWindowCss = self.computeBookmarkPosition();	    
-				   $(self.selector).css(newWindowCss.element);
+				   $(self.selector + ' .ei-main').css(newWindowCss.main);
 				   $(self.selector + ' .upmark').css(newWindowCss.upmark);
 			       });
 	    console.log(this.data);
@@ -89,21 +99,33 @@ function initElementInfo(opt) {
 	    } else {
 		this.generateNodeContent();
 	    }
+	    console.log("totot");
+	    var styleObj = this.computeCss();
+	    console.dir(styleObj);
+	    $(this.selector + ' .upmark').css(styleObj.upmark); 
+	    $(this.selector + ' .ei-main').css(styleObj.main); 
+
 	},
 	erase : function () {
 
 	},
+	displayMoleculeLoader : function () {
+	    $(this.selector + ' .pdbDiv').append('<div class="molLoader"><i class="icon-spin icon-rotate-right"></i></div>');
+	    var h =$(this.selector + ' .pdbDiv').height();
+	    $(".molLoader").css({"margin-top" : -h});
+	    $(".molLoader").css({"height" : h, "width" : "100%", "padding-top" : 0.5 * h});
+	},	
 	generateLinkContent : function (){
 
 	},
 	generateNodeContent : function () {	    
 	    console.log("generating node content");
 	    $(this.selector + ' .upmark').text(this.data.name);
-	    $(this.selector + ' .ei-header').append(this.data.common + '<i class="icon-remove-circle pull right"></i>');
+	    $(this.selector + ' .ei-header').append(this.data.common + '<i class="icon-remove-circle pull-right"></i>');
 	    var self = this;
 	    // Systematic are name common and betweeness weight
 	    if (this.data.type === "protein") {
-		var tags = ['PDB', 'biofunc', 'molecularWeight', 'uniprotKW'];
+		var tags = ['pdb', 'biofunc', 'molecularWeight', 'uniprotKW'];
 		for (var i = 0; i < tags.length; i++) {
 		    var elem = tags[i];
 		    if (this.data[elem]) {	
@@ -112,6 +134,14 @@ function initElementInfo(opt) {
 		    }
 		}
 	    }
+
+	    $(this.selector + ' .category-header i')
+		.on('click', function (){
+			console.log("coucou");
+			$(this).parent().siblings('.category-content').toggle( "fast", function() {
+										   // Animation complete.
+									       });
+		    });
 	    
 	    /*Protein_Fragment*/
 	    
@@ -127,25 +157,51 @@ function initElementInfo(opt) {
 	},
 	bodyContentGenerate : {
 	    biofunc : function () {
-		$(this.selector + ' ei-body').append('<div class="biofuncDiv">' + this.data.biofunc + '</div>');
+		$(this.selector + ' .ei-body').append('<div class="biofuncDiv"><div class="category-header">Biological function<i class="icon-collapse pull-right"></i></div><div class="category-content">' + this.data.biofunc + '</div></div>');
 	    },
 	    molecularWeight : function () {
 		var self = this;
-		$(this.selector + ' ei-body').append('<div class="daltonDiv">' + this.data.molecularWeight + '</div>');
+		console.log("MW tag");
+		$(this.selector + ' .ei-body').append('<div class="daltonDiv">' + this.data.molecularWeight + '</div>');
 	    },
 	    uniprotKW : function (){
 		var self = this;
-		$(this.selector + ' ei-body').append('<div class="uniprotKwDiv"><ul></ul></div>');
+		$(this.selector + ' .ei-body').append('<div class="uniprotKwDiv"><div class="category-header">UniprotKeyword<i class="icon-collapse pull-right"></i></div><div class="category-content"><ul class="term-list"></ul></div></div>');
 		console.dir(this);
 		this.data.uniprotKW.forEach(function (elem) {
-						$(self.target + ' .uniprotKwDiv').append('<li>' + elem + '</li>');
+						$(self.target + ' .uniprotKwDiv ul').append('<li><a href="' + self.baseUrl.uniprotKeyword + elem + '">' + elem + '</a></li>');
 					    });
 	    },
-	    PDB : function () {
+	    pdb : function () {
+		var self = this;
+		console.log("pdb tag");
 		console.dir(this);
-		$(this.selector + ' ei-body').append('<div class="pdbDiv"></div>');	
-		this.molViewer.draw();
-		this.molViewer.draw(this.data.pdb[0]);		
+		$(this.selector + ' .ei-body').append('<div class="pdbDiv"></div>');	
+		this.molViewer.draw({loadCompleteCallBack : function(){$(this.selector + ' .molLoader').remove();}});		
+		this.molViewer.load(this.data.pdb[0]);
+
+		if (this.data.pdb.length > 0) {
+		    $(this.selector + ' .ei-body div.pdbDiv')
+			.append('<div class="pdbChange"><i class="icon-chevron-right"></i></div>')
+			.prepend('<div class="pdbChange"><i class="icon-chevron-left"></i></div>'); 
+		}
+
+
+		this.molViewIndex = 0;
+		$(".pdbChange i").on('click', function (){
+					 self.displayMoleculeLoader();
+					 if ($(this).hasClass('icon-chevron-left')) {
+					  self.molViewIndex =  self.molViewIndex > 0
+					      ? self.molViewIndex - 1 : self.data.pdb.length - 1;
+				      } else {
+					  self.molViewIndex = self.molViewIndex < self.data.pdb.length - 1 
+					      ? self.molViewIndex + 1 : 0;
+				      }
+					 console.log("-->" + self.molViewIndex);
+					 self.molViewer.load(self.data.pdb[self.molViewIndex]);
+				     });
+		
+		console.log("done");
 	    }
 	}
 	

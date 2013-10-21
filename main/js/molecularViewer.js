@@ -10,8 +10,14 @@ function GLmolInit (opt) {
     var width = opt.width ? opt.width : '500px';
     var height = opt.height ? opt.height : '400px';
     
+    var complete = function (){	
+    };
+    if (opt.loadCompleteCallback)
+	complete = opt.loadCompleteCallback;
     return {
 	opt : opt,
+//	callbackSuccess : success,
+	callbackLoadComplete : complete,
 	width : width,
 	height : height,
 	glmol : null,
@@ -22,7 +28,7 @@ function GLmolInit (opt) {
 	    
 	    var scaffold = '<div class="glmolHeader"></div>'
 		+ '<div id="glmolWidget" style="width: ' + width + '; height: ' + height  + 
-		'; background-color: black;"></div>'
+		'; background-color: none;"></div>'
 		+ '<textarea id="glmolWidget_src" style="display: none;"></textarea>'
 		+ '<div class="glmolFooter"></div>';
 	    
@@ -68,17 +74,18 @@ function GLmolInit (opt) {
 		       processData : false,
 		       dataType: 'json',
 		       complete : function () {
-	 
+			   self.callbackLoadComplete();
 		       },
 		       error: function (request, type, errorThrown){  //timeout", "error", "abort", and "parsererror".
 			   ajaxErrorDecode(request, type, errorThrown);
 			   
 		       }, 
-		       success : function (data, textStatus, jqXHR){			   
-			   $('#' + self.srcSelector).val(data.atomRecord);
+		       success : function (data, textStatus, jqXHR){	
+			   $(self.srcSelector).val(data.atomRecord);
 			   self.glmol.loadMolecule();
 		 	   self.storeSequences(data);
 			   self.drawFooter();
+			  // self.callbackSuccess();
 		       }
 		   });
 		       /*
@@ -126,21 +133,26 @@ function GLmolInit (opt) {
 	},
 	drawFooter : function () { /*Append sequence descriptor to widget --> IMPLEMENT FOR n CHAINID */
 	    var self = this;	    
-
+	    
 	    var HTML = '<div class="molecularSerie"></div>' // future svg sse descriptions
 		+      '<div class="molecularSequence"><table class="Xsequence"><thead><tr></tr></thead><tbody><tr class="index"></tr>'
 		+ '<tr class="sequence"></tr></tbody></table></div>'; 
 	    
-	    $('#' + this.opt.target + " .glmolFooter").append(HTML);
+	    $(this.opt.target + " .glmolFooter div.Xsequence")
+		.each (function (){
+			   $(this).dataTable().fnDestroy();
+		       });
+	    $(this.opt.target + " .glmolFooter").empty().append(HTML);
+	    
 	    for (var i = 0; i < self.aaSeqArray.length; i++){
-		$('#' + this.opt.target + ' .molecularSequence thead tr').append('<th></th>');
-		$('#' + this.opt.target + ' .molecularSequence tr.sequence').append('<td>' + self.aaSeqArray[i]
+		$(this.opt.target + ' .molecularSequence thead tr').append('<th></th>');
+		$(this.opt.target + ' .molecularSequence tr.sequence').append('<td>' + self.aaSeqArray[i]
 										    +  '</td>');
 		if ((i + 1)%5 === 0) 
-		    $('#' + this.opt.target + ' .molecularSequence tr.index').append('<td>' 
+		    $(this.opt.target + ' .molecularSequence tr.index').append('<td>' 
 										     + (i+1) + '</td>');			
 		else 
-		    $('#' + this.opt.target + ' .molecularSequence .index').append('<td></td>');		
+		    $(this.opt.target + ' .molecularSequence .index').append('<td></td>');		
 	    }
 	    
 	    $('.Xsequence').dataTable( {   "sDom": "tS",

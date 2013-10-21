@@ -9,10 +9,17 @@
 
 .glmolFooter div.molecularSequence table tr:nth-child(1) {    
     font-family : 'courrier';
-    font-size : 0.5em;
+    font-size : 0.7em;
     color : rgba(51, 204, 255, 1);
     text-align:center;
 } 
+
+.glmolFooter div.molecularSequence table tr:nth-child(2) td {
+    min-width : 1em;
+    max-width : 1em;
+    cursor : crosshair;
+    text-align:center;
+}
 
 .glmolFooter div.molecularSequence table tr:nth-child(2) td.pushed{
     background-color : rgba(205, 205, 193, 1);
