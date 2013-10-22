@@ -12,12 +12,23 @@ function GLmolInit (opt) {
     
     var complete = function (){	
     };
-    if (opt.loadCompleteCallback)
-	complete = opt.loadCompleteCallback;
+    var error = function (){	
+    };
+    var success = function (){	
+    };
+
+    if (opt.callbackLoadComplete)
+	complete = opt.callbackLoadComplete;
+    if (opt.callbackLoadError)
+	error = opt.callbackLoadError;
+    if (opt.callbackLoadSuccess)
+	success = opt.callbackLoadSuccess;
+
     return {
 	opt : opt,
-//	callbackSuccess : success,
+	callbackLoadSuccess : success,
 	callbackLoadComplete : complete,
+	callbackLoadError : error,
 	width : width,
 	height : height,
 	glmol : null,
@@ -78,14 +89,14 @@ function GLmolInit (opt) {
 		       },
 		       error: function (request, type, errorThrown){  //timeout", "error", "abort", and "parsererror".
 			   ajaxErrorDecode(request, type, errorThrown);
-			   
+			   self.callbackLoadError();
 		       }, 
 		       success : function (data, textStatus, jqXHR){	
 			   $(self.srcSelector).val(data.atomRecord);
 			   self.glmol.loadMolecule();
 		 	   self.storeSequences(data);
 			   self.drawFooter();
-			  // self.callbackSuccess();
+			   self.callbackLoadSuccess();			   
 		       }
 		   });
 		       /*
@@ -130,6 +141,13 @@ function GLmolInit (opt) {
 			     self.glmol.rebuildScene();
 			     self.glmol.show();
 			 }, 500000);  
+	},
+	erase : function () {
+	    $(this.opt.target + " .glmolFooter div.Xsequence")
+		.each (function (){
+			   $(this).dataTable().fnDestroy();
+		       });
+	    $(this.opt.target).empty(); 
 	},
 	drawFooter : function () { /*Append sequence descriptor to widget --> IMPLEMENT FOR n CHAINID */
 	    var self = this;	    

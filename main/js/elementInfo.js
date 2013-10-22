@@ -66,11 +66,11 @@ function initElementInfo(opt) {
     };    
     if (opt.callback.computeCss)
 	computeCss = opt.callback.computeCss;
-    var molViewer = GLmolInit({width : '200px', height : '200px', target : '#elementInfo .pdbDiv'});
+      
     return {
 	molViewIndex : null,
 	target : opt.target,
-	molViewer : molViewer,
+	molViewer : null,
 	computeCss : computeCss,
 	selector : opt.target + ' div#elementInfo',
 	data : null,
@@ -105,15 +105,60 @@ function initElementInfo(opt) {
 	    $(this.selector + ' .upmark').css(styleObj.upmark); 
 	    $(this.selector + ' .ei-main').css(styleObj.main); 
 
-	},
-	erase : function () {
+	    $(this.selector + ' .icon-remove-circle').on('click', function (){self.erase();});
 
 	},
-	displayMoleculeLoader : function () {
-	    $(this.selector + ' .pdbDiv').append('<div class="molLoader"><i class="icon-spin icon-rotate-right"></i></div>');
-	    var h =$(this.selector + ' .pdbDiv').height();
-	    $(".molLoader").css({"margin-top" : -h});
-	    $(".molLoader").css({"height" : h, "width" : "100%", "padding-top" : 0.5 * h});
+	startMolViewer : function () {
+	    var self = this;
+	    this.molViewer = GLmolInit({width : '250px', height : '200px', target : '#elementInfo .pdbDiv', 
+			       callbackLoadSuccess : function (){ 
+				   console.log("success");
+				   self.toggleMoleculeLoader();
+				   $(self.selector + ' #glmolWidget').show();
+				   $(self.selector + ' .glmolFooter').show();
+			       },
+			       callbackLoadError : function (){ 
+				   console.log("ERROR LOADING PDB");
+			       }
+			      });
+	},
+	erase : function () {
+	    var self = this;
+	    this.toggleMoleculeLoader("show");
+	    $(this.selector).fadeToggle({duration : 200, easing : "swing", complete : function (){ $(self.selector).empty();}});
+	  
+	},
+	toggleMoleculeLoader : function (opt) {
+	    console.log("TOGGLER");	    
+	    if(opt) {
+		if (opt === "show")
+		    if($(this.selector + ' .molLoader').length > 0)
+			return;
+		if (opt === "hide")
+		    if($(this.selector + ' .molLoader').length === 0)
+			return;
+	    }
+
+	    if ($(this.selector + ' .molLoader').length === 0) {				    
+		var html = '<div class="molLoader"><i class="icon-spin icon-rotate-right"></i></div>';
+		if ($(this.selector + ' .pdbDiv .pdbChange').length > 0) {
+		    var elem = $(this.selector + ' .pdbDiv .pdbChange')[0];
+		    $(elem).after(html);
+		} else {	
+		    $(this.selector + ' .pdbDiv').append(html);		   
+		}
+	
+		var h = $(this.selector + ' #glmolWidget').height();
+		h = h ? h : "100px";
+		$(".molLoader").css({"width" : h, "height" : "170px", "padding-top" : 0.5 * h});
+		$(this.selector + ' #glmolWidget').hide();
+		$(this.selector + ' .glmolFooter').hide();	    
+				
+
+	    } else {
+		console.log("i shall remove");
+		$(this.selector + ' .molLoader').remove();
+	    }
 	},	
 	generateLinkContent : function (){
 
@@ -124,20 +169,18 @@ function initElementInfo(opt) {
 	    $(this.selector + ' .ei-header').append(this.data.common + '<i class="icon-remove-circle pull-right"></i>');
 	    var self = this;
 	    // Systematic are name common and betweeness weight
-	    if (this.data.type === "protein") {
-		var tags = ['pdb', 'biofunc', 'molecularWeight', 'uniprotKW'];
-		for (var i = 0; i < tags.length; i++) {
+	    self.bodyVisitCardGenerate();	   
+	    var tags = ['pdb', 'biofunc', 'relationship', 'uniprotKW'];
+	    for (var i = 0; i < tags.length; i++) {
 		    var elem = tags[i];
-		    if (this.data[elem]) {	
-			console.log("i have " + elem + ' content');
-			self.bodyContentGenerate[elem].call(this);
-		    }
+		if (this.data[elem]) {	
+		    console.log("i have " + elem + ' content');
+		    self.bodyContentGenerate[elem].call(this);
 		}
 	    }
-
+	    
 	    $(this.selector + ' .category-header i')
-		.on('click', function (){
-			console.log("coucou");
+		.on('click', function (){		
 			$(this).parent().siblings('.category-content').toggle( "fast", function() {
 										   // Animation complete.
 									       });
@@ -154,6 +197,57 @@ function initElementInfo(opt) {
 	    /* Inorganic */	    
 	    
 	    /* Prot*/
+	},
+	bodyVisitCardGenerate : function () {	    
+	    var cv = '<div class="summary"><table class="cv" ><tbody></tbody></table></div>';
+	    $(this.selector + ' .ei-body').append(cv);
+	    var tags = ["Type", "Specie", "Molecular weight", "Length", "Current interactors", "Registred interactors"]; 
+	    var self = this;
+	    var writer = {
+		cnt : 0,
+		Type : function(){	
+		    if (!self.data.type) return null;
+		    this.cnt++;
+		    return '<dl><dt>Type</dt><dd>' + self.data.type + '</dd></dl>';
+		},
+		Specie : function () {
+		    if (!self.data.specie) return null;
+		    this.cnt++;
+		    return '<dl><dt>Specie</dt><dd><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='
+			+ self.data.specie + '" target="_blank">' + self.data.specie + '</a></dd></dl>';
+		},
+		Length : function () {
+		    if(!self.data.seqLength) return null;
+		    this.cnt++;
+		    return '<dl><dt>amino acid number</dt><dd>' + self.data.seqLength + '</dd></dl>';
+		},
+		"Current interactors" : function () {
+		    if(!self.data.weight) return null;
+		    this.cnt++;
+		    return '<dl><dt>Current network</dt><dd>' + self.data.weight + ' interactors</dd></dl>';
+		},
+		"Registred interactors" : function () {
+		    if(!self.data.betweenness) return null;
+		    this.cnt++;
+		    return '<dl><dt>Registred in databases</dt><dd>' +  self.data.betweenness +  'interactors</dd></dl>';
+		},
+		"Molecular weight": function () {
+		    if(!self.data.molecularWeight) return null;
+		    this.cnt++;
+		    return '<dl><dt>Molecular weight</dt><dd>' + self.data.molecularWeight + ' Da</dd></dl>';
+		}
+	    };	 
+	    console.log(tags);
+	    for (var i = 0; i < tags.length; i++) {	
+		console.log(tags[i]);
+		console.dir(writer);
+		var html = writer[tags[i]]();		
+		if (!html) continue;
+		if((writer.cnt -1) %3 === 0 || writer.cnt == 1)
+		    $(this.selector + " .summary table tbody").append('<tr></tr>');
+		$(this.selector + " .summary table tbody tr:last-child").append('<td>' + html + '</td>');
+	    }
+	    
 	},
 	bodyContentGenerate : {
 	    biofunc : function () {
@@ -174,22 +268,32 @@ function initElementInfo(opt) {
 	    },
 	    pdb : function () {
 		var self = this;
-		console.log("pdb tag");
-		console.dir(this);
+		if (!this.molViewer)
+		    this.startMolViewer();
+		
 		$(this.selector + ' .ei-body').append('<div class="pdbDiv"></div>');	
-		this.molViewer.draw({loadCompleteCallBack : function(){$(this.selector + ' .molLoader').remove();}});		
-		this.molViewer.load(this.data.pdb[0]);
-
-		if (this.data.pdb.length > 0) {
+		var e = $(this.selector + ' div.pdbDiv')[0];
+		var top = jQuery(e).offset().top;
+		console.log(top);
+		
+		this.molViewer.draw();
+		this.toggleMoleculeLoader();		
+		if (this.data.pdb.length > 1) {		  
 		    $(this.selector + ' .ei-body div.pdbDiv')
 			.append('<div class="pdbChange"><i class="icon-chevron-right"></i></div>')
 			.prepend('<div class="pdbChange"><i class="icon-chevron-left"></i></div>'); 
 		}
+		top += 75;
+		console.log("-->" + top);
+		$(this.selector + " .pdbChange i").css({top : top + "px"});
+		this.molViewer.load(this.data.pdb[0]);
+		
+		
 
 
 		this.molViewIndex = 0;
 		$(".pdbChange i").on('click', function (){
-					 self.displayMoleculeLoader();
+					 self.toggleMoleculeLoader();
 					 if ($(this).hasClass('icon-chevron-left')) {
 					  self.molViewIndex =  self.molViewIndex > 0
 					      ? self.molViewIndex - 1 : self.data.pdb.length - 1;
@@ -202,6 +306,9 @@ function initElementInfo(opt) {
 				     });
 		
 		console.log("done");
+	    },
+	    relationship : function () {
+		
 	    }
 	}
 	
