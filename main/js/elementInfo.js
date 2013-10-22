@@ -35,9 +35,10 @@ function ei_test() {
 	pdb : ["3emlA", "3emlA"]
     };    
     
-    var widget = initElementInfo({width : '350px', height : '600px',
-				  target : 'body',
-				  callback : {}				  
+    var widget = initElementInfo({
+				     width : '350px', height : '600px',
+				     target : 'body',
+				     callback : {}				  
 				 });
 
     widget.draw(nodeTest);
@@ -105,7 +106,7 @@ function initElementInfo(opt) {
 	    $(this.selector + ' .upmark').css(styleObj.upmark); 
 	    $(this.selector + ' .ei-main').css(styleObj.main); 
 
-	    $(this.selector + ' .icon-remove-circle').on('click', function (){self.erase();});
+	    $(this.selector + ' .icon-remove-circle').on('click', function (){self.destroy();});
 
 	},
 	startMolViewer : function () {
@@ -116,16 +117,17 @@ function initElementInfo(opt) {
 				   self.toggleMoleculeLoader();
 				   $(self.selector + ' #glmolWidget').show();
 				   $(self.selector + ' .glmolFooter').show();
+				   $(self.selector + ' .pdbBanner').show();
 			       },
 			       callbackLoadError : function (){ 
 				   console.log("ERROR LOADING PDB");
 			       }
 			      });
 	},
-	erase : function () {
+	destroy : function () {
 	    var self = this;
 	    this.toggleMoleculeLoader("show");
-	    $(this.selector).fadeToggle({duration : 200, easing : "swing", complete : function (){ $(self.selector).empty();}});
+	    $(this.selector).fadeToggle({duration : 200, easing : "swing", complete : function (){ $(self.selector).remove();}});
 	  
 	},
 	toggleMoleculeLoader : function (opt) {
@@ -150,9 +152,10 @@ function initElementInfo(opt) {
 	
 		var h = $(this.selector + ' #glmolWidget').height();
 		h = h ? h : "100px";
-		$(".molLoader").css({"width" : h, "height" : "170px", "padding-top" : 0.5 * h});
+		$(".molLoader").css({"width" : h, "height" : "191px", "padding-top" : 0.5 * h});
 		$(this.selector + ' #glmolWidget').hide();
-		$(this.selector + ' .glmolFooter').hide();	    
+		$(this.selector + ' .glmolFooter').hide();	
+		$(this.selector + ' .pdbBanner').hide();	    
 				
 
 	    } else {
@@ -168,9 +171,9 @@ function initElementInfo(opt) {
 	    $(this.selector + ' .upmark').text(this.data.name);
 	    $(this.selector + ' .ei-header').append(this.data.common + '<i class="icon-remove-circle pull-right"></i>');
 	    var self = this;
-	    // Systematic are name common and betweeness weight
+
 	    self.bodyVisitCardGenerate();	   
-	    var tags = ['pdb', 'biofunc', 'relationship', 'uniprotKW'];
+	    var tags = ['pdb', 'biofunc', 'relationship']; //, 'uniprotKW'
 	    for (var i = 0; i < tags.length; i++) {
 		    var elem = tags[i];
 		if (this.data[elem]) {	
@@ -181,7 +184,10 @@ function initElementInfo(opt) {
 	    
 	    $(this.selector + ' .category-header i')
 		.on('click', function (){		
+			var iconElem = this;
 			$(this).parent().siblings('.category-content').toggle( "fast", function() {
+										   
+										   $(iconElem).toggleClass("icon-collapse").toggleClass("icon-collapse-top");
 										   // Animation complete.
 									       });
 		    });
@@ -213,7 +219,7 @@ function initElementInfo(opt) {
 		Specie : function () {
 		    if (!self.data.specie) return null;
 		    this.cnt++;
-		    return '<dl><dt>Specie</dt><dd><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='
+		    return '<dl><dt>Specie</dt><dd><a href="' + self.baseUrl.taxon + '/'
 			+ self.data.specie + '" target="_blank">' + self.data.specie + '</a></dd></dl>';
 		},
 		Length : function () {
@@ -229,7 +235,7 @@ function initElementInfo(opt) {
 		"Registred interactors" : function () {
 		    if(!self.data.betweenness) return null;
 		    this.cnt++;
-		    return '<dl><dt>Registred in databases</dt><dd>' +  self.data.betweenness +  'interactors</dd></dl>';
+		    return '<dl><dt>Registred in databases</dt><dd>' +  self.data.betweenness +  ' interactors</dd></dl>';
 		},
 		"Molecular weight": function () {
 		    if(!self.data.molecularWeight) return null;
@@ -271,10 +277,12 @@ function initElementInfo(opt) {
 		if (!this.molViewer)
 		    this.startMolViewer();
 		
-		$(this.selector + ' .ei-body').append('<div class="pdbDiv"></div>');	
+		
+		var pdbCode = this.data.pdb[0].match(/^.{4}/);
+		$(this.selector + ' .ei-body').append('<div class="pdbDiv"><div class="pdbBanner"><div class="pull-left">PDB structure Code <a' 
+						      + ' href="' + self.baseUrl.pdb + '/' + pdbCode[0] + '" target="_blank">'
+						      + pdbCode[0] + '</a></div><div class="pull-right">1/' +  this.data.pdb.length + '</div></div></div>');	
 		var e = $(this.selector + ' div.pdbDiv')[0];
-		var top = jQuery(e).offset().top;
-		console.log(top);
 		
 		this.molViewer.draw();
 		this.toggleMoleculeLoader();		
@@ -283,6 +291,7 @@ function initElementInfo(opt) {
 			.append('<div class="pdbChange"><i class="icon-chevron-right"></i></div>')
 			.prepend('<div class="pdbChange"><i class="icon-chevron-left"></i></div>'); 
 		}
+		var top = jQuery(e).offset().top;
 		top += 75;
 		console.log("-->" + top);
 		$(this.selector + " .pdbChange i").css({top : top + "px"});
@@ -295,14 +304,20 @@ function initElementInfo(opt) {
 		$(".pdbChange i").on('click', function (){
 					 self.toggleMoleculeLoader();
 					 if ($(this).hasClass('icon-chevron-left')) {
-					  self.molViewIndex =  self.molViewIndex > 0
-					      ? self.molViewIndex - 1 : self.data.pdb.length - 1;
-				      } else {
-					  self.molViewIndex = self.molViewIndex < self.data.pdb.length - 1 
-					      ? self.molViewIndex + 1 : 0;
-				      }
+					     self.molViewIndex =  self.molViewIndex > 0
+						 ? self.molViewIndex - 1 : self.data.pdb.length - 1;
+					 } else {
+					     self.molViewIndex = self.molViewIndex < self.data.pdb.length - 1 
+						 ? self.molViewIndex + 1 : 0;
+					 }
 					 console.log("-->" + self.molViewIndex);
 					 self.molViewer.load(self.data.pdb[self.molViewIndex]);
+					 var pdbCode = self.data.pdb[self.molViewIndex].match(/^.{4}/);					
+					 $(self.selector + ' .pdbBanner').empty().append(
+					     '<div class="pull-left">PDB structure Code <a' 
+						 + ' href="' + self.baseUrl.pdb  + '/' + pdbCode[0] + '" target="_blank">'					     
+						 + pdbCode[0] + '</a></div><div class="pull-right">' + (self.molViewIndex + 1) + '/' +  self.data.pdb.length + '</div></div></div>');	
+					     
 				     });
 		
 		console.log("done");

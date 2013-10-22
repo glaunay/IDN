@@ -12,8 +12,8 @@
 
 #elementInfo .ei-main{
     overflow : auto;  
-    -moz-border-radius: 0px 15px 15px 15px;
-    border-radius: 0px 15px 15px 15px;
+    -moz-border-radius: 0px 0px 0px 15px;
+    border-radius: 0px 0px 0px 15px;
     background : rgba(0, 0, 0, 0.8);        
 }
 
@@ -84,7 +84,7 @@
 
 #elementInfo .pdbChange i.icon-chevron-right {
     position: absolute;
-    right: 30px;
+    left: 310px;
     top: 145px;
 }
 
@@ -112,3 +112,10 @@
     font-size : 0.9em
 }
 
+#elementInfo .summary tbody dd {
+    color : rgba(255, 255, 209, 1.0);
+}
+
+#elementInfo .pdbBanner {
+    overflow:hidden;
+}
