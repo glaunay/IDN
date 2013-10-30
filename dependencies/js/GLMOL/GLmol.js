@@ -1707,5 +1707,37 @@ GLmol.prototype.doFunc = function(func) {
     func(this);
 };
 
+
+GLmol.prototype.getChainColor = function () {
+    var chainList = [];    
+    var colorData = [];
+    
+    for (var i = 0 ; i < this.atoms.length; i++) {	  	
+	var atom = this.atoms[i];
+	//console.log(atom);
+	if (atom == undefined) continue;
+	if(atom.hetflag) continue;
+	
+	var bool = true;
+	for (var j = 0; j < chainList.length; j++) {
+	    if (chainList[j] === atom.chain) {
+		bool = false;
+		break;
+	    }
+	}
+	if (!bool) continue;
+	chainList.push(atom.chain);
+	var color = new TCo(0);
+	color.setHSV((atom.chain.charCodeAt(0) * 5) % 17 / 17.0, 1, 0.9);
+	
+	colorData.push({
+			   chain : atom.chain,
+			   color : 'rgb(' + Math.round(color.r * 255) + ', '
+			       + Math.round(color.g * 255) + ', ' + Math.round(color.b * 255) + ')'
+		       });
+    }
+    return colorData;
+};
+    
 return GLmol;
 }());

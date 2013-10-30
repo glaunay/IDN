@@ -34,12 +34,7 @@ function networkTest_alpha (opt) {
 				      }});    
     vizObject.tabular.draw();
 				    
-							    
-
-    vizObject.core.registerCom({tabular : vizObject.tabular.getTabularSelector()});
-    
     var legendDivHTML = vizObject.core.generateSymbolLegend({target : "body"});    
-
     
     console.log("starting widgets");       
     vizObject.cartCtrl = initCartCtrl({ target : "#vizContainer",	
@@ -79,7 +74,7 @@ function networkTest_alpha (opt) {
 		       vizObject.cartCtrl.addCriterion(critObj);		     
 		   }
 		 });
-   
+    
     $(opt.target).append('<div id="networkLoopContainer"></div>');
     vizObject.networkLoop = initNetworkSearch(
 	{
@@ -110,6 +105,9 @@ function networkTest_alpha (opt) {
     );
     vizObject.paintCtrl.draw();
 
+
+    vizObject.elementInfo = initElementInfo({width : '350px', height : '600px', target : 'body',callback : {}});
+    
     vizObject.idleDiv = startIdle({target : 'body', parent : vizObject.networkWindow});
     
     vizObject.scheduler = schedulerInit ({   chunkSize : 10,
@@ -162,6 +160,13 @@ function networkTest_alpha (opt) {
      * 
      */
 
+    vizObject.core.registerCom({tabular : vizObject.tabular.getTabularSelector()});
+    // , elementInfo : vizObject.elementInfo
+    $(vizObject.core.target).on('mouseOverElement', function(event, d) {
+				    console.log(d);
+				    vizObject.elementInfo.destroy();
+				    vizObject.elementInfo.draw(d);				    
+				});
     $(vizObject.core.target).on('linkDataToFetch', function(event, d) {
 				    vizObject.scheduler.add(d);
 				    vizObject.tabular.setWait({nodeTab : "wait", linkTab : "wait"});				    

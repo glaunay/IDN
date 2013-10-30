@@ -242,7 +242,7 @@ function coreInit (opt) {
 	},
 	registerCom : function (data) { /* register the component to communicate with as jquery selector DOM ELEMENT*/
 	    if ('tabular' in data)
-		this.targetCom['tabular'] = data.tabular;	    	    
+		this.targetCom['tabular'] = data.tabular;	    	    	    
 	},
 	resize : function () {
 	    /*Maybe not needed*/
@@ -409,7 +409,8 @@ function coreInit (opt) {
 						    over : function () {
 							if ('tabular' in self.targetCom) {
 							    $(self.targetCom.tabular).trigger('nodeScroll', [d3.select(node).datum()]);
-							}											
+							}						
+							$(self.target).trigger('mouseOverElement', d);
 						    },
 						    timeout : 500,
 						    out : function (){}

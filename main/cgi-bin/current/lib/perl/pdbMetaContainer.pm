@@ -91,13 +91,14 @@ sub new {
     }
     # Parse and read Ca distances matrix
     $self->{ cadist_file } = "$self->{ location }/$self->{ name }.cadist";
-    unless (-e $self->{ cadist_file }) {
-        $logger->error("$self->{ name } missing cadist file"); 
-        return; 
-    }
-    unless ($self->read_cc_map ($self->{ cadist_file })){
-       $logger->error("read_ca_map error \"$self->{ cadist_file }\"");
-       return;
+    if (! -e $self->{ cadist_file }) {
+        $logger->warn("$self->{ name } missing cadist file"); 
+	# return; 
+    } else {
+	if (! $self->read_cc_map ($self->{ cadist_file })){
+	    $logger->error("read_ca_map error \"$self->{ cadist_file }\"");
+	    return;
+	}
     }
 
 # Kaksi does not provide mali blocks or states files   

@@ -7,6 +7,24 @@
     padding : 5px;    
 }
 
+
+#segid-toggle.btn-group a.btn.dropdown-toggle {
+    padding : 5px 5px 15px 5px;
+    font-size : 10px; 
+}
+
+#segid-toggle.btn-group .dropdown-menu {
+    width : 2em;
+    min-width : 2em;
+    text-align : center;
+    cursor : pointer;
+}
+
+#segid-toggle.btn-group {
+    position:absolute;
+    left : 3px;
+}
+
 .glmolFooter div.molecularSequence table tr:nth-child(1) {    
     font-family : 'courrier';
     font-size : 0.7em;

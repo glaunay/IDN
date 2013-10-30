@@ -689,7 +689,7 @@ sub ReadPir {
 # returns true if all argument are defined variables
 # warning array
 sub slid {
-    return 0 unless (defined (@_));
+    return 0 unless (scalar(@_) > 0);
     #print ">@_<\n";
 #    print ">".scalar(@_)."<\n";
 #    print ">>" . @_ . "<<\n";

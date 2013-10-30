@@ -32,7 +32,7 @@ function ei_test() {
 	weight: 2,
 	x: 809.9553477290684,
 	y: 421.7995313214508,
-	pdb : ["3emlA", "3emlA"]
+	pdb : ["3s35", "3s35"]
     };    
     
     var widget = initElementInfo({

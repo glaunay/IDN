@@ -1,6 +1,9 @@
 /**
  * Widget embedding GLMOL
  * 
+ * TO drawFooter, list sequence using colorCode
+ * Click event must target correct segid -> implies atom selection expression w/ segid
+ * 
  */
 
 
@@ -33,7 +36,11 @@ function GLmolInit (opt) {
 	height : height,
 	glmol : null,
 	srcSelector : opt.target + ' #glmolWidget_src',
-	residueSel : {},
+	residueSel : [],
+	pdbnumArray : null,
+	aaSeqArray : null,
+	sseArray : null,
+	chainidArray : null,
 	draw : function () {
 	    $(this.opt.target).css({"max-width" : width, overflow : "hidden"});
 	    
@@ -110,9 +117,12 @@ function GLmolInit (opt) {
 	    
 	},
 	storeSequences : function (data) { // Store the pdbnum sse and aaseq array out of ajax
+	    console.log("storing");
+	    console.log(data);
 	    this.pdbnumArray = data.pdbnumArray;
 	    this.aaSeqArray = data.aaSeqArray;
 	    this.sseArray = data.sseArray;
+	    this.chainidArray = data.chainidArray;
 	},
 	cycleTest : function () {
 	    var i = 10;
@@ -152,86 +162,153 @@ function GLmolInit (opt) {
 	drawFooter : function () { /*Append sequence descriptor to widget --> IMPLEMENT FOR n CHAINID */
 	    var self = this;	    
 	    
+	    var colorCode = this.glmol.getChainColor();
+	    self.colorChainCode = {};
+	    for (var i = 0; i < colorCode.length; i++) {
+		self.colorChainCode[colorCode[i].chain] = colorCode[i].color;
+	    }
 	    var HTML = '<div class="molecularSerie"></div>' // future svg sse descriptions
-		+      '<div class="molecularSequence"><table class="Xsequence"><thead><tr></tr></thead><tbody><tr class="index"></tr>'
-		+ '<tr class="sequence"></tr></tbody></table></div>'; 
+		+      '<div class="molecularSequence"></div>'; 
+	    
+
+	    var dropHtml = '<div id="segid-toggle" class="btn-group dropup">'
+		+ '<a class="btn dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">'
+//		+ 'Chain' 
+		+ '<span class="caret"></span>'
+		+ '</a>'
+		+ '<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">'
+		+ '</ul>'
+		+ '</div>';
+	    
 	    
 	    $(this.opt.target + " .glmolFooter div.Xsequence")
 		.each (function (){
 			   $(this).dataTable().fnDestroy();
 		       });
-	    $(this.opt.target + " .glmolFooter").empty().append(HTML);
+	    	 
+	    $(this.opt.target + " .glmolFooter").empty().append(dropHtml);
+	    $(this.opt.target + " .glmolFooter .dropdown-menu")
+		.each(function(){
+			  for (var i = 0; i < self.chainidArray.length; i++) {
+			      var segid = self.chainidArray[i];
+			      var color = self.colorChainCode[segid];
+			      $(this).append('<li style="color:' +  color
+					     + ';">' + segid + '</li>');			      
+			  } 
+		      });
+	    $(this.opt.target + " .glmolFooter .dropdown-menu li")
+		.on('click', function () {			
+			var iShow = $(this).index();
+			$(self.opt.target + ' .molecularSequence > div')
+			    .each(function (index, elem){
+				      if (index === iShow) {					 				     
+					  $(this).show();
+				      } else {
+					  $(this).hide();
+				      } 					
+				  });
+		    });
 	    
-	    for (var i = 0; i < self.aaSeqArray.length; i++){
-		$(this.opt.target + ' .molecularSequence thead tr').append('<th></th>');
-		$(this.opt.target + ' .molecularSequence tr.sequence').append('<td>' + self.aaSeqArray[i]
-										    +  '</td>');
-		if ((i + 1)%5 === 0) 
-		    $(this.opt.target + ' .molecularSequence tr.index').append('<td>' 
-										     + (i+1) + '</td>');			
-		else 
-		    $(this.opt.target + ' .molecularSequence .index').append('<td></td>');		
+	    $(this.opt.target + " .glmolFooter").append(HTML);
+	 
+	    for (var j = 0; j < self.chainidArray.length; j++) {	
+		$(this.opt.target + ' .glmolFooter .molecularSequence')
+		    .append('<table class="Xsequence"><thead><tr></tr></thead><tbody><tr class="index"></tr>'
+			    + '<tr class="sequence"></tr></tbody></table>');
+		for (var i = 0; i < self.aaSeqArray[j].length; i++){
+		    $(this.opt.target + ' .molecularSequence table:last-child thead tr').append('<th></th>');
+		    $(this.opt.target + ' .molecularSequence table:last-child tr.sequence').append('<td>' + self.aaSeqArray[j][i]
+										  +  '</td>');
+		    if ((i + 1)%5 === 0) 
+			$(this.opt.target + ' .molecularSequence table:last-child tr.index').append('<td>' 
+										   + (i+1) + '</td>');			
+		    else 
+			$(this.opt.target + ' .molecularSequence table:last-child .index').append('<td></td>');		
+		}
 	    }
-	    
+	    var cnt = 0;
 	    $('.Xsequence').dataTable( {   "sDom": "tS",
 					   "bSort": false,
 					   "sScrollX": "100%",
 					   "sScrollXInner": "110%",
 					   "bScrollCollapse": true,
-					   "fnInitComplete" : function (oSettings) {					       					   
-					       
+					   "fnInitComplete" : function (oSettings) {
 					       this.$('tr.sequence').find('td')
-						   .each(function(){
+						   .each(function(){							 
 							     var tdElem = this;
-							     $(this).css({"color":"red"});
-
+							     var segid = self.chainidArray[cnt];
+							     var color = self.colorChainCode[segid];
+							     $(this).css({"color":color});
+							     
 							     $(this).on('click',function(){
+									    var index = $(this).closest('.dataTables_wrapper').index();
+									    console.log("->" + index);	
 									    $(this).toggleClass('pushed');
 									    if($(this).hasClass('pushed')) {
-										self.addResidueSelection({absNum : $(tdElem).index()});
+										self.addResidueSelection(
+										    {absNum : $(tdElem).index(), 
+										     chainNumber:index});
 									    } else {
-										self.delResidueSelection({absNum : $(tdElem).index()});
+										
+										self.delResidueSelection(
+										    {absNum : $(tdElem).index(),
+										     chainNumber: index});
 									    }
 									    self.colorSelResidue();
 									});
-							     
-							    /* $(this).hoverIntent( 
-								 {
-								     over : function () {
-									 self.pickResidue($(tdElem).index());
-								     },
-								     timeout : 500,
-								     out : function (){
-									 console.log("hiding");
-								     }
-								 });*/
-							 });	    
+
+							 });
+					       cnt++;					       
 					   }
-				       });	
+				       });
+	    $('.molecularSequence > div').each(function (index, elem){
+				     if (index > 0) {					 				     
+					 $(this).hide();
+				     }
+				 });
+	    
 	}, 
 	addResidueSelection : function (data) {
-	    if (data.hasOwnProperty('absNum')) {
-		var pdbnum = parseInt(this.pdbnumArray[data.absNum]);
-		if (! isASCII(pdbnum)) {
+	    if (data.hasOwnProperty('absNum')) {				
+		console.dir(data);
+		console.log(this.chainidArray[data.chainNumber]);
+		var selector = {
+		    pdbnum : parseInt(this.pdbnumArray[data.chainNumber][data.absNum]),
+		    chain : this.chainidArray[data.chainNumber],
+		    atomIndex : []
+		};
+		if (! isASCII(selector.pdbnum)) {
 		    alert("not an ascii");
 		    return;
 		}
-		if (! this.residueSel[pdbnum]) {
-		    this.residueSel[pdbnum] = [];		
-		    for (var i = 1; i < this.glmol.atoms.length;i++) {
-			if(this.glmol.atoms[i] == undefined) continue;
-			if(this.glmol.atoms[i].resi === pdbnum){			    
-			    this.residueSel[pdbnum].push(i);
-			}
-		    }
+		for (var i = 0; i < this.residueSel; i++) {
+		 if (this.residueSel[i].pdbnum === selector.pdbnum && this.residueSel[i].chain === selector.chain)
+		     return;
 		}
+
+		
+		for (var i = 1; i < this.glmol.atoms.length;i++) {
+		    if(this.glmol.atoms[i] == undefined) continue;
+		    if(this.glmol.atoms[i].resi === selector.pdbnum && this.glmol.atoms[i].chain === selector.chain){			    
+			selector.atomIndex.push(i);
+		    }		
+		}
+		this.residueSel.push(selector);
 	    }
 	},				       
 	delResidueSelection : function (data) {
 	    if (data.hasOwnProperty('absNum')) {
-		var pdbnum = this.pdbnumArray[data.absNum];
-		if (this.residueSel[pdbnum])
-		    delete this.residueSel[pdbnum];		
+		var selector = {
+		    pdbnum : parseInt(this.pdbnumArray[data.chainNumber][data.absNum]),
+		    chain : this.chainidArray[data.chainNumber],
+		    atomIndex : []
+		};		
+		for (var i = 0; i < this.residueSel; i++) {
+		    if (this.residueSel[i].pdbnum === selector.pdbnum && this.residueSel[i].chain === selector.chain) {
+			this.residueSel.splice(i, 1);
+			return;
+		    }			
+		}
 	    }
 	},				       
 	colorSelResidue : function () {
@@ -239,8 +316,8 @@ function GLmolInit (opt) {
 	    
 	    var list = [];
 	    console.log(self.residueSel);
-	    for (nres in self.residueSel) {
-		list.push.apply(list, self.residueSel[nres]);
+	    for (var i = 0; i < self.residueSel.length;i++) {
+		list.push.apply(list, self.residueSel[i].atomIndex);
 	    }
 	    console.log(list);
 	    self.glmol.defineRepresentation = function() { 

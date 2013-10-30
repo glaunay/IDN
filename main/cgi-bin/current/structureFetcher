@@ -48,12 +48,13 @@ my $container = {
     atomRecord => '',
     sseArray => [],
     pdbnumArray => [],
-    aaSeqArray => []
+    aaSeqArray => [],
+    chainidArray => []
 };
 
 if(defined($queryData->{ pdbName })) {
     my ($fname) = $queryData->{ pdbName } =~ /^(.{4})/;
-    $fname = uc($fname);
+    $fname = lc($fname);
     my $fLoc =  $configuration->{ pdbRawRepo } . "/" . $fname . ".pdb";
     if (-e $fLoc) {
 	$container->{ atomRecord } = common::fileStringify(fileLoc => $fLoc);    
@@ -62,27 +63,63 @@ if(defined($queryData->{ pdbName })) {
 	$logger->info("No file at $fLoc");
     }
     
-    
-
     if ($queryData->{ pdbName } =~ /^([\w]{4})(.{1})$/) {
-	my $coreName = lc($1) . uc($2);
+	my $chainid =  uc($2);
+	my $coreName = lc($1) . $chainid;
 	my $coreFolder = $configuration->{ pdbMetaRepo } . "/" . $queryData->{ pdbName };
-	my $pdbMetaObject = pdbMetaContainer->new(CoreName => $coreName
-						  ,CoreFolder => $configuration->{ pdbMetaRepo } . "/$coreName",
+	my $pdbMetaObject = pdbMetaContainer->new(CoreName => $coreName,
+						  CoreFolder => $configuration->{ pdbMetaRepo } . "/$coreName",
 						  CoreDef => "NONE");
 	#$logger->trace(Dumper($pdbMetaObject) );
-	$container->{ pdbnumArray } = $pdbMetaObject->get_pdbnum_array();
+	my $pdbnumList = $pdbMetaObject->get_pdbnum_array();
 	my $sseData = $pdbMetaObject->sse_subseq(); 
 	my $seqData =  $pdbMetaObject->aa_subseq();	
-	
-	$container->{ sseArray } = $sseData->{ array };
-	$container->{ aaSeqArray } = $seqData->{ array };
-    }          
+	push @{ $container->{ pdbnumArray } }, $pdbnumList;
+	push @{ $container->{ sseArray } }, $sseData->{ array };
+	push @{ $container->{ aaSeqArray } },  $seqData->{ array };
+	push @{ $container->{ chainidArray } }, $chainid;
+    }        
+    elsif ($queryData->{ pdbName } =~ /^([\w]{4})$/) {
+	$logger->trace("HOhoho");
+	my $coreName = lc($1);
+	my $coreFolder = $configuration->{ pdbMetaRepo } . "/" . $queryData->{ pdbName };
+	my $chainidList = guessChainidList($coreFolder);
+	$logger->trace(Dumper($chainidList));
+	foreach my $chainid (@{ $chainidList }) {
+	    my $pdbMetaObject = pdbMetaContainer->new(CoreName => "$coreName$chainid",
+						      CoreFolder => $configuration->{ pdbMetaRepo } . "/$coreName",
+						      CoreDef => "NONE");
+	    #$logger->trace(Dumper($pdbMetaObject) );
+	    my $pdbnumList = $pdbMetaObject->get_pdbnum_array();
+	    my $sseData = $pdbMetaObject->sse_subseq(); 
+	    my $seqData =  $pdbMetaObject->aa_subseq();	
+	    push @{ $container->{ pdbnumArray } }, $pdbnumList;
+	    push @{ $container->{ sseArray } }, $sseData->{ array };
+	    push @{ $container->{ aaSeqArray } }, $seqData->{ array };
+	    push @{ $container->{ chainidArray } }, $chainid;
+	    
+	}        
+    }
 }
 
+$logger->trace("Final Structure Container:\n" . Dumper($container));
 
 my $jsonObject = encode_json($container);
 
 print $query->header('application/json');      # create the HTTP header
 print "$jsonObject";
 
+
+sub guessChainidList {
+    my $folder = shift;
+
+    my $list = common::readDirContent($folder);
+    my @chainidList;
+    foreach my $item (@{ $list }) {
+	if($item =~ /^.{4}(.).fasta/) {
+	    push @chainidList, $1;
+	}
+    }
+
+    return \@chainidList;
+}
