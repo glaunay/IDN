@@ -163,9 +163,9 @@ function networkTest_alpha (opt) {
     vizObject.core.registerCom({tabular : vizObject.tabular.getTabularSelector()});
     // , elementInfo : vizObject.elementInfo
     $(vizObject.core.target).on('mouseOverElement', function(event, d) {
+				    console.log("mouseOverElement");
 				    console.log(d);
-				    vizObject.elementInfo.destroy();
-				    vizObject.elementInfo.draw(d);				    
+				    vizObject.elementInfo.update(d);				   				    
 				});
     $(vizObject.core.target).on('linkDataToFetch', function(event, d) {
 				    vizObject.scheduler.add(d);

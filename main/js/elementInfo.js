@@ -61,9 +61,11 @@ function initElementInfo(opt) {
     var height = opt.height ? opt.height : '600px';
 
     var computeCss = function () {
-	console.dir(this);
-	return {main : {position : 'absolute', top : '50px', left : '50px', width : this.width, 'max-height' : this.height} ,
-		upmark :  {position : 'absolute', top : '20px', left : '50px'}};
+	//console.dir(this);
+	var top = $(window).height() * 1 / 3;
+	var left = $(window).width() * 1 / 4;
+	return {main : {position : 'absolute', top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
+		upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px'}};
     };    
     if (opt.callback.computeCss)
 	computeCss = opt.callback.computeCss;
@@ -100,9 +102,9 @@ function initElementInfo(opt) {
 	    } else {
 		this.generateNodeContent();
 	    }
-	    console.log("totot");
+	    //console.log("totot");
 	    var styleObj = this.computeCss();
-	    console.dir(styleObj);
+	    //console.dir(styleObj);
 	    $(this.selector + ' .upmark').css(styleObj.upmark); 
 	    $(this.selector + ' .ei-main').css(styleObj.main); 
 
@@ -114,35 +116,51 @@ function initElementInfo(opt) {
 	    this.molViewer = GLmolInit({width : '250px', height : '200px', target : '#elementInfo .pdbDiv', 
 			       callbackLoadSuccess : function (){ 
 				   console.log("success");
-				   self.toggleMoleculeLoader();
+				   self.toggleMoleculeLoader({display : "hide"});
 				   $(self.selector + ' #glmolWidget').show();
 				   $(self.selector + ' .glmolFooter').show();
 				   $(self.selector + ' .pdbBanner').show();
 			       },
 			       callbackLoadError : function (){ 
 				   console.log("ERROR LOADING PDB");
+				   self.toggleMoleculeLoader({display : "hide"});
+				   self.toggleMoleculeLoader({display : "show", type : "error"});
 			       }
 			      });
 	},
-	destroy : function () {
+	update : function (d) {
 	    var self = this;
-	    this.toggleMoleculeLoader("show");
-	    $(this.selector).fadeToggle({duration : 200, easing : "swing", complete : function (){ $(self.selector).remove();}});
-	  
+	    if ($(this.selector).length > 0) {			    
+		console.log("update");
+		this.destroy(function(){self.draw(d);});
+	    } else {
+		this.draw(d);
+	    }
+	},
+	destroy : function (callback) {
+	    var self = this;
+	    if (!callback) {
+		callback = function (){};
+	    }
+	    console.log(callback);
+	    this.toggleMoleculeLoader({display : "show"});
+	    $(this.selector).fadeToggle({duration : 200, easing : "swing", complete : function (){ $(self.selector).remove();callback();}});
 	},
 	toggleMoleculeLoader : function (opt) {
-	    console.log("TOGGLER");	    
+	    var html = '<div class="molLoader"><i class="icon-spin icon-rotate-right"></i></div>';
 	    if(opt) {
-		if (opt === "show")
+		if (opt.display === "show")
 		    if($(this.selector + ' .molLoader').length > 0)
 			return;
-		if (opt === "hide")
+		if (opt.display === "hide")
 		    if($(this.selector + ' .molLoader').length === 0)
 			return;
+		if (opt.type)
+		    html = opt.type === "error" ? '<div class="molLoader"><i class="icon-remove icon-4x"></i></div>' : html;
 	    }
 
 	    if ($(this.selector + ' .molLoader').length === 0) {				    
-		var html = '<div class="molLoader"><i class="icon-spin icon-rotate-right"></i></div>';
+	
 		if ($(this.selector + ' .pdbDiv .pdbChange').length > 0) {
 		    var elem = $(this.selector + ' .pdbDiv .pdbChange')[0];
 		    $(elem).after(html);
@@ -167,7 +185,7 @@ function initElementInfo(opt) {
 
 	},
 	generateNodeContent : function () {	    
-	    console.log("generating node content");
+	    //console.log("generating node content");
 	    $(this.selector + ' .upmark').text(this.data.name);
 	    $(this.selector + ' .ei-header').append(this.data.common + '<i class="icon-remove-circle pull-right"></i>');
 	    var self = this;
@@ -177,7 +195,7 @@ function initElementInfo(opt) {
 	    for (var i = 0; i < tags.length; i++) {
 		    var elem = tags[i];
 		if (this.data[elem]) {	
-		    console.log("i have " + elem + ' content');
+		  //  console.log("i have " + elem + ' content');
 		    self.bodyContentGenerate[elem].call(this);
 		}
 	    }
@@ -245,8 +263,8 @@ function initElementInfo(opt) {
 	    };	 
 	    console.log(tags);
 	    for (var i = 0; i < tags.length; i++) {	
-		console.log(tags[i]);
-		console.dir(writer);
+		/*console.log(tags[i]);
+		console.dir(writer);*/
 		var html = writer[tags[i]]();		
 		if (!html) continue;
 		if((writer.cnt -1) %3 === 0 || writer.cnt == 1)

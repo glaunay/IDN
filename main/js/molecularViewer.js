@@ -99,6 +99,11 @@ function GLmolInit (opt) {
 			   self.callbackLoadError();
 		       }, 
 		       success : function (data, textStatus, jqXHR){	
+			   
+			   if (!data.atomRecord) {
+			       self.callbackLoadError();
+			   }
+			   console.log(data.atomRecord);
 			   $(self.srcSelector).val(data.atomRecord);
 			   self.glmol.loadMolecule();
 		 	   self.storeSequences(data);

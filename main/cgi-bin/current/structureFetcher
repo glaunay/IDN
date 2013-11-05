@@ -80,9 +80,8 @@ if(defined($queryData->{ pdbName })) {
 	push @{ $container->{ chainidArray } }, $chainid;
     }        
     elsif ($queryData->{ pdbName } =~ /^([\w]{4})$/) {
-	$logger->trace("HOhoho");
 	my $coreName = lc($1);
-	my $coreFolder = $configuration->{ pdbMetaRepo } . "/" . $queryData->{ pdbName };
+	my $coreFolder = $configuration->{ pdbMetaRepo } . "/$coreName";
 	my $chainidList = guessChainidList($coreFolder);
 	$logger->trace(Dumper($chainidList));
 	foreach my $chainid (@{ $chainidList }) {
