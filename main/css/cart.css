@@ -1,0 +1,249 @@
+.navigueBar a{
+	color : white ; 
+	text-decoration: none;
+}
+.header{
+	background-color: black ;
+	height: 30px;
+	clear : both ;
+	white-space:nowrap;
+}
+.navigueBar{
+	height: inherit;
+	float : left;
+	display: inline;
+	background-color:inherit;
+	text-align: left;
+	margin-left:30px;
+}
+.content{
+	margin-top: 50px;
+	min-height:  700px;
+	padding: 30px 30px 30px 30px;
+	border-bottom: 1px #CFFFC8 solid;
+	/*background: #AFEBDA;*/
+
+}
+.content h3{
+	margin-left :  -25px;
+
+}
+.content p {
+	margin-bottom: 40px;
+}
+.info{
+	float : left;
+	margin-left: 50px;
+}
+
+.icon-white {
+	color: white;
+}
+.navigueBar a:hover{
+	color : white ; 
+	text-decoration: underline;
+}
+.cartDraw{
+	float:right;
+	width:100%;
+
+
+}
+.leftThing{
+	padding-left: 40px;
+	float : left;
+	border-left: solid grey 1px;
+	width: 122px;
+
+}
+.clearDiv, .drop{
+	float:inherit;
+	color:white;
+	min-width: 50px;
+	min-height: 30px;
+	
+}
+.ico{
+	float:inherit;
+	color:white;
+	
+	min-height: 30px;
+	}
+ul.liste{
+	font-size: 0.8em;
+	right: 0px;
+	width: 209px;
+	max-height: 103px;
+	overflow-y: auto;
+	left : auto;
+	padding-right:4px;
+	border-top: 0;
+	border-radius: 0 0 0 0;
+	text-align: center;
+	margin-top : 0;
+}
+ul.clear{
+
+}
+#pastille{
+	margin-top : 4px;
+	width:auto;
+	text-align: center;
+	border-radius:20%;
+	border:1px solid; 
+	
+	padding: 0px 5px 0px 5px;
+}
+
+#pastille:not(.noData){
+	background: rgb(124, 124, 233);
+}
+.noData{
+	 color:grey;
+	 background: rgb(98, 92, 124);
+}
+.liCart{
+	color:black;
+}
+.tabSel{
+	background-color : white;
+	color : black ;
+}
+.clearDiv{
+	/* 
+	 border-width: 20px;
+ 	width: 160px;
+ 	height: 160px;
+	//border-image: radial-gradient(white, black) 10%;
+	border-image: radial-gradient(
+	rgba(255, 255, 255, 1), rgba(0, 0, 0, 1)
+	) 15%;
+	border-bottom : 0px;
+	border-top : 0px;
+	*/
+	border-right : 1px solid rgba(0,0,0,0.2);
+	border-left : solid 1px grey;
+	//margin-top: 0.2em;
+}
+.cart{
+	right:0;
+	float: right;
+	width: 215px;
+}
+.clearDiv a:hover{
+	color : white ; 
+
+}
+.liCart{
+	
+}
+.ico{
+	margin-right: 10px;
+}
+.clearDiv a.cog {
+	text-align: center;
+	font-size:0.8em;
+}
+a.leftalign{
+	text-align: left;
+}
+ul.liste i{
+	margin-top:3px;
+}
+.leftalign{
+	text-align: left;
+}
+.lastDiv{
+	padding-right: 7px;
+}
+.clearDiv a.cog i{
+	margin-top: 4px;
+}
+.dataTables_wrapper tbody tr {
+    height: 50px; 
+}
+.tooltip-inner{
+	max-width: 800px;
+}
+.dataTables_wrapper tbody tr td:last-child i:hover{
+	cursor: pointer;
+}
+.cart:hover{
+	cursor: pointer;
+}
+.drop ul li div div:nth-child(-n+2):hover{
+	cursor: default;
+}
+/*body{
+	background-image: url(../img/network.png);
+	background-repeat: no-repeat;
+}*/
+ul.pdb{
+	top:auto;
+	left:150px;
+	width : 200px;
+	max-height : 150px;
+	overflow: auto;
+	padding-left:10px;
+	text-align: center;
+}
+i.pdbView{
+	cursor: pointer;
+}
+.niceRed{
+	color : rgb(187, 38, 38); 
+	font-weight : bold;
+}
+
+
+div.dataTables_paginate {
+    float: left;
+    margin: 0;
+}
+div.dataTables_filter{
+    float: left;
+    margin: 0;
+}
+/*#DataTables_Table_0_wrapper{
+	left : 30%;
+}
+#DataTables_Table_1_wrapper,#DataTables_Table_2_wrapper{
+	left: 5%;
+}*/
+td div.row-fluid div.inlineTable{
+	
+	padding : 5px 5px 5px 5px;
+	font-size : 0.75em;
+	border: dashed 1px #A2B5F3;
+
+}
+
+td.supportingXp div.row-fluid{
+	
+}
+
+table.dataTable td.supportingXp {
+		background: #F5F2FF;
+		padding: 0 0 0 0;
+}
+/*div.svg{
+	overflow : auto;
+}*/
+
+
+.axis {
+  font: 10px sans-serif;
+  
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+p.cursorChange{
+	cursor: pointer;
+}
+
+

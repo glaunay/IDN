@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+
+=pod Profiling statements
+#!/usr/bin/perl -d:NYTProf
+$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
+=cut
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use Ace 1.51;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use common;
+use newPort;
+
+Log::Log4perl->init("./conf/newPortDevel.conf");
+my $logger = get_logger();
+
+$logger->info("*** CGI activation at " . common::getTime());
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||
+     AceError ("Couldn't open database");
+
+my $query = CGI->new();
+$logger->info(Dumper( $query ));
+my $data = newPort::getData({
+			     type => $query->{ type }->[0],
+			     value => $query->{ value }->[0],
+			     DB => $DB
+			    });
+$logger->trace(Dumper( $data ));
+my $jsonString = encode_json($data);
+open LOG, ">/tmp/reportLatest.json";
+print LOG "$jsonString\n";
+close LOG;
+#print $query->header,                    # create the HTTP header
+#  $query->start_html('brand new'), # start the HTML
+#  $query->h1('welcome to Newport4'),         # level 1 header
+#  $query->end_html;
+#my $jsonString = '';
+#print $query->header('application/json');      # create the HTTP header
+#print "callback($jsonString);";
+
+my $urlRoot = "http://matrixdb.ibcp.fr:9999";
+
+my $htmlContent = 
+"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" .
+"<html lang=\"en-US\" xml:lang=\"en-US\" xmlns=\"http://www.w3.org/1999/xhtml\">".
+"<head><meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=windows-1252\"/>" .
+"<link rel=\"stylesheet\" href=\"$urlRoot/css/bootstrap.min.css\"/>" .
+"<link href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\" rel=\"stylesheet\">" .
+"<link rel=\"stylesheet\" href=\"$urlRoot/css/report.css\"/>" .
+"<link rel=\"stylesheet\" href=\"$urlRoot/css/cart.css\"/>" .
+"<link rel=\"stylesheet\" type=\"text/css\" href=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css\">" .
+"<script src=\"http://code.jquery.com/jquery-1.10.1.min.js\"></script>" .
+"<script src=\"http://d3js.org/d3.v3.min.js\"></script>" .
+"<script type=\"text/javascript\" charset=\"utf8\" src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/bootstrap.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/jquery.cookie.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$urlRoot/js/reportMaestro.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$urlRoot/js/report.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$urlRoot/js/cart.js\"></script>" .
+"<script type=\"text/javascript\">" .  '$(function(){'  . "runReportMaestro({cart : true, reportDiv : \"#reportDiv\", jsonData : " . $jsonString . "})})</script>" .
+"<title>MatrixDB report</title></head><body><div id = \"reportDiv\"></div>FISH</body></html>\n";
+$logger->info ("HTML content:\n" . $htmlContent);
+print $query->header;
+print "$htmlContent\n";
+

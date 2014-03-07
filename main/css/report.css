@@ -1,0 +1,30 @@
+/*
+  Css stylesheet for all aceBrowset report html
+*/
+
+body {
+    padding-top : 40px;
+}
+
+.anchor {
+    min-height:40px;
+    max-height:40px;
+}
+
+.innerHeader {    
+    background:#eee;
+    font-weight:200;
+    font-size:1.5em;
+    padding : 10px 10px 10px 5px;
+    margin-top:10px;
+}
+
+#interDiv {
+	width: 80%;
+	padding-left: 10px;
+}
+
+path {
+  stroke: #fff;
+  fill-rule: evenodd;
+}
