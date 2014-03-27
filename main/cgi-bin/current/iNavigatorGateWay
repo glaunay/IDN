@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+use JSON;
+
+Log::Log4perl->init("./conf/iNavigatorGateWay.conf");
+my $logger = get_logger();
+
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+#my $queryData = decode_json($params{'POSTDATA'});
+$logger->info("query content:\n" . Dumper(%params));
+
+my $dataContainer = {};
+foreach my $tag (qw / biomolecule publication goTerm keyword /) {
+  my @array = $query->param($tag);
+  (@array == 0) && next;
+  $dataContainer->{ $tag } = \@array;
+}
+
+#my $dataString = encode_json($dataContainer);
+
+my $jsNetworkStartupCallString = %{$dataContainer} 
+  ? "litteralLoader(". encode_json($dataContainer) .")" . "\n"
+  : '' ;
+
+
+
+my $fTemplateLoc = "../../data/iNavigatorHtmlTemplate.txt";
+open HTML, "<$fTemplateLoc" or $logger->logdie("Cant open $fTemplateLoc");
+my $htmlOut = '';
+while(<HTML>) {
+  if($_=~ /litteralLoader/) {
+    $jsNetworkStartupCallString eq '' && next;
+    $htmlOut .= $jsNetworkStartupCallString;
+    next;
+  }
+  $htmlOut .= $_;
+}
+
+print $query->header('text/html');
+print $htmlOut;
