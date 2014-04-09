@@ -46,6 +46,7 @@ open HTML, "<$fTemplateLoc" or $logger->logdie("Cant open $fTemplateLoc");
 my $htmlOut = '';
 while(<HTML>) {
   $_ =~ s/href="css/href="http:\/\/matrixdb.ibcp.fr:9999\/css/;
+  $_ =~ s/href="dependencies\/css/href="http:\/\/matrixdb.ibcp.fr:9999\/dependencies\/css/;
   $_ =~ s/src="js/src="http:\/\/matrixdb.ibcp.fr:9999\/js/;
   $_ =~ s/src="dependencies/src="http:\/\/matrixdb.ibcp.fr:9999\/dependencies/;
   if($_=~ /litteralLoader/) {
