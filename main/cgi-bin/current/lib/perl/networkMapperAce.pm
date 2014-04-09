@@ -7,61 +7,8 @@ use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
 
 use biomoleculeMapper;
 use strict;
-
+use newPort; # recent matrixdb biomolecule interface
 our $logger = get_logger ("networkMapper");
-=pod TO DO
-    - Add mapperSocket to networkObject
-    
-  *get rid of that  $mapableObject = $dataLayer->{ core };
-  make of uniprot&co heritage of miscDataLayer
-  *get rid of ugly json string (nodewriter)
-    
-    SPECIFICATIONS
-
-  *linkData specs:       IE "richLink_1.0"
-    link : {
-    Adata : [
-             ["Unique identifier for interactor A", ...  ],
-             ["Alternative identifier for interactor A", ...  ],     
-             ["Aliases for A", ...  ],                              
-             ["NCBI Taxonomy identifier for interactor A", ...  ],    
-             ["Biological role A", ...  ],                            
-             ["Experimental role A", ...  ],                          
-             ["Interactor type A", ...  ],                          
-             ["Annotations for interactor A", ...  ],                 
-             ["Xref for interactor A", ...  ],
-             ["Stoichiometry for interactor A"],
-             ["Participant identification method for interactor A"]
-    ],
-    Bdata : [
-                ...  
-                    ],
-    iData : [
-             ["Interaction detection methods", ... ],
-             ["Identifier of the publication", ... ],
-             ["Interaction types", ... ],
-             ["Annotations for the interaction", ... ],
-             ["Parameters of the interaction", ... ],
-             ["Interaction identifier(s)", ... ]
-            ] 
-}   
- 
-    
-    NODE MAPPING CASE CHECKED
-    acedb : name, type, common
-    uniprot: name, type, commo
-    
-    
-    NOTE
-    psicquic incoming data name are of the form 
-    database:moleculeID we clean them.
-    if we fail to fetch data from matrixDB we fall back to datalayer.
-    added location => [] attributes in nodemapper from miscDataLayer::uniprot
-
-   
-
-    # NOTE TYPE is a simple string  could evolve to encompass more data notably genuine or inferred character    
-=cut
 
 use lib qw(lib/perl);
 
@@ -78,51 +25,50 @@ use psimi::interactionReport;
 use miscAssociationLayer;
 use matrixdbQuery;
 
-=pod
-    This module maps a list of biomolecule and their interactions in a json
-    object embarking required attributes to be used in the networkt javascript module
+#    This module maps a list of biomolecule and their interactions in a json
+#    object embarking required attributes to be used in the networkt javascript module'
     
 
-  ---- networkNodes prototype ----
-   	my $node = {
-            index => scalar [Mandatory]
-	    name => $biomoleculeName,
-            common => "",                                  
-            biofunc => "",
-            tissue => [],
-            uniprotKW => [],
-	    pfam => [],
-            tpm => [],
-	    go => [],
-	    gene => {
-		geneName => [],
-		synonym => [],
-		uniGene => []
-	    }, 	    
-	    specie => "",	    
-            type => "",
-            relationship => {
-		isFragmentOf => [],
-		hasFragment => [],
-		hasComponent => [],
-		isComponentOf => [],
-		boundTo => [] 
-	    },
-            location => [],
-            id = ''
-	};
+#  ---- networkNodes prototype ----
+#   	my $node = {
+#            index => scalar [Mandatory]
+#	    name => $biomoleculeName,
+#            common => "",                                  
+#            biofunc => "",
+#            tissue => [],
+#            uniprotKW => [],
+#	    pfam => [],
+#            tpm => [],
+#	    go => [],
+#	    gene => {
+#		geneName => [],
+#		synonym => [],
+#		uniGene => []
+#	    }, 	    
+#	    specie => "",	    
+#            type => "",
+#            relationship => {
+#		isFragmentOf => [],
+#		hasFragment => [],
+#		hasComponent => [],
+#		isComponentOf => [],
+#		boundTo => [] 
+#	    },
+#            location => [],
+#            id = ''
+#	};
+#
+#     ---- networkEdges specifications ----
+#     link = {"source":0 ,"target":1, "type" : "boundTo/partOf/fragmentOf/association"},'
 
-     ---- networkEdges specifications ----
-     link = {"source":0 ,"target":1, "type" : "boundTo/partOf/fragmentOf/association"},
-=cut
 
 
-=pod new
-    Object constructor
-    biomoleculeArray : list of matrixdb biomolecule identifier; [MANDATORY]
-    interactionArray : list of biomolecule association; [OPTIONAL]
-    AssociationObject (see asssociationObject.pm)
-=cut
+#    new
+#    Object constructor'
+#    'biomoleculeArray : list of matrixdb biomolecule identifier; [MANDATORY]'
+#    'interactionArray : list of biomolecule association; [OPTIONAL]'
+#    'AssociationObject (see asssociationObject.pm)'
+
 sub new {
         my $self = {};
         my $class = shift;
@@ -157,10 +103,10 @@ sub new {
 	
 	return $self;
 }
-=pod createLinkAccessors 
-    USE ONLY when network is reloaded from previous
-    otherwise use createLink (push,register)
-=cut
+#=pod createLinkAccessors 
+#    USE ONLY when network is reloaded from previous
+#    otherwise use createLink (push,register)
+#=cut
 sub createLinkAccessors {
     my $self = shift;
     for (my $iLink = 0; $iLink < @{ $self->{ links } }; $iLink++ ) {
@@ -207,10 +153,10 @@ sub _setSockets {
     $logger->info("successfully set [$info] sockets");    
 }
 
-=pod
-mapper can be static (hash table) --> store under staticMapper attribute
-    or objects -> base attribute of their own
-=cut
+#=pod
+#mapper can be static (hash table) --> store under staticMapper attribute
+#    or objects -> base attribute of their own
+#=cut
 sub _setMappers {
     my $self = shift;
     my $fileDef = shift;
@@ -222,15 +168,15 @@ sub _setMappers {
 	    $logger->trace("name mutator successfully read from $fileDef->{ $key }");
 	    next;	   
 	}
-	
+
 	my $file = $fileDef->{ $key };
 	open MAP, "<$file" or die $!;
 	my $mapText = <MAP>;
 	close MAP;    
 	$self->{ staticMappers }->{ $key } = decode_json ($mapText);
     	$info .= " $key ";
-    }	
-    
+    }
+
     $logger->info("successfully set [$info] tree mappers");   
 }
 
@@ -241,10 +187,11 @@ sub _pushLink {
     
     my $id = scalar(@{$self->{ links }});
     push @{$self->{ links }}, {
-	id => $id,
-	source => $self->{ nameMutator }->mutateToRegular(key => $iName),
-	target => $self->{ nameMutator }->mutateToRegular(key => $jName),
-	type => "association" # boundTo/partOf/fragmentOf/association
+			       id => $id,
+			       type => 'association',
+			       source => $self->{ nameMutator }->mutateToRegular(key => $iName),
+			       target => $self->{ nameMutator }->mutateToRegular(key => $jName),
+			       type => "association" # boundTo/partOf/fragmentOf/association
     };
     $self->_registerLink(iName => $self->{ nameMutator }->mutateToRegular(key => $iName),
 			 jName => $self->{ nameMutator }->mutateToRegular(key => $jName));
@@ -282,28 +229,27 @@ sub _getLink {
 }
 
 
-=pod Create the basic source, target (int) attributes of each link
-     Also create a LinkTable referencing all knwon links
-=cut
+# =pod Create the basic source, target (int) attributes of each link
+#     Also create a LinkTable referencing all knwon links
+# =cut
 sub _createLinks {
     my $self = shift;   
     my $p = common::arg_parser (@_);
     
     defined ($p->{ aceAssociationList }) || $logger->logdie("missing parameter");
-    $logger->trace("COUCOU");
     foreach my $associationObject (@{$p->{ aceAssociationList }} ) {	    
 	my $partnerArray = $self->_getAssociationPartners($associationObject);
 	$self->_pushLink($partnerArray->[0]->name, $partnerArray->[1]->name);
     }
     $logger->trace("managed to create a " . scalar (@{$self->{ links }}) . " link attributes");
     #warn "managed to create a " . scalar (@{$self->{ links }}) . " link attributes";
-    return;	 
-    
+    return;
 }
-=pod _registerLink Populates the $self->{ idLinkTable }, $self->{ nameLinkTable } attributes
-    An optional argument iLink can be specified to reference a link somewhere in the linkArray
-    otherwise the referenced link will be the last in the linkArray
-=cut
+
+#=pod _registerLink Populates the $self->{ idLinkTable }, $self->{ nameLinkTable } attributes
+#    An optional argument iLink can be specified to reference a link somewhere in the linkArray
+#    otherwise the referenced link will be the last in the linkArray
+#=cut
 sub _registerLink {
     my $self = shift;
     my $p = common::arg_parser(@_);
@@ -329,21 +275,19 @@ sub _registerLink {
 
 }
 
-=pod _jsonNodeNameFixer
-A HACK TO RETURN STANDARD BIOMOLECULE NAME
-create a hash table referencing a node by both its name and ist aceAccessor (if any)
-then we loop over partner names in json data list aaData and replace any string by
-the actual name of the node referenced through this string
-=cut  
+# _jsonNodeNameFixer
+# A HACK TO RETURN STANDARD BIOMOLECULE NAME
+# create a hash table referencing a node by both its name and ist aceAccessor (if any)
+# then we loop over partner names in json data list aaData and replace any string by
+# the actual name of the node referenced through this string
 sub _jsonNodeNameFixer {
     my $self = shift;
     my $p = common::arg_parser (@_);
- 
+
     my $target = $p->{ jsonString };
-    
+
     $logger->warn("JSME::\n".$target);
-    
-    my $dataContainer = decode_json($target);    
+    my $dataContainer = decode_json($target);
     for (my $i = 0; $i < @{$dataContainer->{ aaData } }; $i++){
 	for my $j (0,5) {
 	    my $name = $self->{ nameMutator }->mutateToRegular (key => $dataContainer->{ aaData }->[$i]->[$j]);
@@ -355,9 +299,7 @@ sub _jsonNodeNameFixer {
     }
     $target = encode_json($dataContainer);
 
-   
-    return $target
-
+    return $target;
 }
 
 sub _jsonNodeNameFixerOld {
@@ -365,8 +307,6 @@ sub _jsonNodeNameFixerOld {
     my $p = common::arg_parser (@_);
 
     my $target = $p->{ jsonString };
-    
-    
     my $shortCutNodePool = {};
     foreach my $node (@{$self->{ nodeArray }}) {
 	$shortCutNodePool->{ $node->{ name } } = $node;
@@ -375,7 +315,6 @@ sub _jsonNodeNameFixerOld {
 	}
     }
     $logger->trace("shortCut node pool:\n" . Dumper($shortCutNodePool));
-    
     $logger->trace("Trying to load json object");
     my $dataContainer = decode_json($target);
     $logger->trace(Dumper($dataContainer));
@@ -388,47 +327,30 @@ sub _jsonNodeNameFixerOld {
 	    $dataContainer->{ aaData }->[$i]->[$j] = defined ($altName) ? $altName : $name;
 	}
     }
-    
     $target = encode_json($dataContainer);
-
     return $target
 }
 
-=pod addTo inject network description in a json object
-=cut
-
+#addTo inject network description in a json object
 sub addTo {
     my $self = shift;
     my $p = common::arg_parser(@_);
     
-
     if ($p->{ format } eq 'JSON') {
-	my $jsonData = $self->getJSON ();
-	
-	my $targetJsonString = $p->{ target };
-	$targetJsonString =~ s/}[\n\s]*$/,\n"network" : $jsonData\n}\n/;
-
-
-	if (common::listExist($p->{ options }), 'nodeNameFixer') {
-	    $targetJsonString = $self->_jsonNodeNameFixer( jsonString => $targetJsonString );
-	}
-	
-	return $targetJsonString;
+      my $jsonData = $self->getJSON ();
+      my $targetJsonString = $p->{ target };
+      $targetJsonString =~ s/}[\n\s]*$/,\n"network" : $jsonData\n}\n/;
+      
+      
+      if (common::listExist($p->{ options }), 'nodeNameFixer') {
+	$targetJsonString = $self->_jsonNodeNameFixer( jsonString => $targetJsonString );
+      }
+      return $targetJsonString;
     }
-  
-}
-
-
-=pod	index => sub {
-	    my $node = shift;
-	    my $key = shift;
-	    ($node->{ $key } ne "") || return "";
-	    return "\"$key\" : $node->{ $key },";
-	},
-=cut
+  }
 
 sub summonLocalNodeWriter {
-# nodes
+			   # nodes
     my $nodeWriter = {
 	name => sub {
 	    my $node = shift;
@@ -558,55 +480,84 @@ sub getJSON {
 	$self->setUID();
     }
     
-    my $jsonData = "\"id\" : \"" . $self->{ UItag } . "\",\"nodeData\" : [";
-    foreach my $node (@{$self->{ nodeArray }}) {
-	my $nodeAsString;
-	foreach my $key (qw /name common biofunc tissue uniprotKW pfam tpm go gene pdb specie type molecularWeight relationship central betweenness/) {
-	    if ($key eq "central") {
-		if (defined($node->{ $key })) {$nodeAsString .= '"central" : true,';}
-		next; 
-	    }
-	    my $tmp = $nodeWriter->{ $key }($node, $key);	    	 	    
-	    
-	    $tmp eq "" && next;
-	    $nodeAsString .= $tmp;
-	}
-	$nodeAsString =~ s/,$//;
-	$jsonData .= "{$nodeAsString},\n";
-    }
-    $jsonData =~ s/,\n$/\n]\n/;
-    if (@{$self->{ nodeArray }} == 0) {
-	$jsonData = "\"nodeData\" : []\n";
-    }
+    my $dataContainer = {
+			 id => $self->{ UItag },
+			 titi => 'toto',
+			 nodeData => $self->{ nodeArray },
+			 linksData => $self->{ links },
+			 networkData => {
+					 upKeywordTree => defined($self->{ networkData }->{ upKeywordTree })
+					 ? $self->{ networkData }->{ upKeywordTree } : undef,
+					 goKeywordTree => defined($self->{ networkData }->{ goKeywordTree })
+					 ? $self->{ networkData }->{ goKeywordTree } : undef
+					}
+			};
+    my $jsonString = encode_json($dataContainer);
+    $jsonString =~ s/("source":|"target":)"([\d]+)"/$1$2/g;
+    return $jsonString;
+# foreach my $key (qw/upKeywordTree goKeywordTree/) {
+#	if (defined($self->{ networkData }->{ $key })) {
+#	    push @tmp, encode_json ($self->{ networkData }->{ $key }); 
+#	}	
+#    }
 
-    $logger->trace("Empty Exepriment debug");
-    foreach my $l (@{$self->{ links }}) {
-	$logger->trace(Dumper($l));
-    }
+
+
+#    my $jsonData = "\"id\" : \"" . $self->{ UItag } . "\",\"nodeData\" : [";
+#    foreach my $node (@{$self->{ nodeArray }}) {
+#	my $nodeAsString;
+#	foreach my $key (qw /name common biofunc tissue uniprotKW pfam tpm go gene pdb specie type molecularWeight relationship central betweenness/) {
+#	    if ($key eq "central") {
+#		if (defined($node->{ $key })) {$nodeAsString .= '"central" : true,';}
+#		next; 
+#	    }
+#	    my $tmp = $nodeWriter->{ $key }($node, $key);
+#	    $tmp eq "" && next;
+#	    $nodeAsString .= $tmp;
+#	}
+#	$logger->info("TOTO " . Dumper($node));	
+#	$logger->info("TITO " . Dumper($node->{ additionalData }));	
+#	my $addString = encode_json({additionalData => $node->{ additionalData }});
+#	$logger->info("TITI " . $addString);
+#	$addString =~ s/^\{(.*)\}$/$1/;
+#	$nodeAsString .= $addString;
+
+	#$nodeAsString =~ s/,$/,a/;
+#	$jsonData .= "{$nodeAsString},\n";
+#    }
+#    $jsonData =~ s/,\n$/\n]\n/;
+#    if (@{$self->{ nodeArray }} == 0) {
+#	$jsonData = "\"nodeData\" : []\n";
+#    }
+
+#    $logger->trace("Empty Exepriment debug");
+#    foreach my $l (@{$self->{ links }}) {
+#	$logger->trace(Dumper($l));
+#    }
     
 
     # Add links
-    if (@{$self->{ links }} > 0) {
-	$logger->trace("About to encode link data structure:\n" . Dumper($self->{ links }));
-	my $linkAsJSON = encode_json ($self->{ links });
+#    if (@{$self->{ links }} > 0) {
+#	$logger->trace("About to encode link data structure:\n" . Dumper($self->{ links }));
+#	my $linkAsJSON = encode_json ($self->{ links });
 	
-	$linkAsJSON =~ s/("source":|"target":)"([\d]+)"/$1$2/g;
+#	$linkAsJSON =~ s/("source":|"target":)"([\d]+)"/$1$2/g;
 
 
-	$jsonData .= ",\"linksData\" : $linkAsJSON\n";	
-    } else {
-	$jsonData .= ",\"linksData\" : []\n";	
-    }
+#	$jsonData .= ",\"linksData\" : $linkAsJSON\n";	
+#    } else {
+#	$jsonData .= ",\"linksData\" : []\n";	
+#    }
 
-    my @tmp;   
-    foreach my $key (qw/upKeywordTree goKeywordTree/) {
-	if (defined($self->{ networkData }->{ $key })) {
-	    push @tmp, encode_json ($self->{ networkData }->{ $key }); 
-	}	
-    }
-    $jsonData = @tmp > 0  ne "" ? "{$jsonData, \"networkData\" : [ ". join (",", @tmp) .  " ]}" : "{$jsonData, \"networkData\" : [] }";
+#    my @tmp;   
+#    foreach my $key (qw/upKeywordTree goKeywordTree/) {
+#	if (defined($self->{ networkData }->{ $key })) {
+#	    push @tmp, encode_json ($self->{ networkData }->{ $key }); 
+#	}	
+#    }
+#    $jsonData = @tmp > 0  ne "" ? "{$jsonData, \"networkData\" : [ ". join (",", @tmp) .  " ]}" : "{$jsonData, \"networkData\" : [] }";
     
-    return $jsonData;
+#    return $jsonData;
 }
 
 sub _extractInteractorName {
@@ -633,10 +584,8 @@ sub _extractInteractorName {
     #my @array = ($jsonObject)
 }
 
-=pod deleteLinks
-    All links will be deleted but for one specified as argument
-=cut
-
+#deleteLinks
+#All links will be deleted but for one specified as argument
 sub deleteLinks {
     my $self = shift;
     my $p = common::arg_parser(@_);
@@ -658,10 +607,8 @@ sub deleteLinks {
 }
 
 
-=pod pruneLinks
-    suppress link for which the source and / or the target node are not in the node list anymore    
-=cut
-
+# pruneLinks
+# suppress link for which the source and / or the target node are not in the node list anymore    
 sub pruneLinks {
     my $self = shift;
     
@@ -685,11 +632,10 @@ sub pruneLinks {
     $self->{ links } = $newLinkList;    
 }
 
-=pod deleteNodes
-    suppress a subset of nodes
-    options can be specified to keep rest of the object intact
-    we do not alter IDaccessor key will stiull exist but value will be undef
-=cut 
+# deleteNodes
+#    suppress a subset of nodes
+#    options can be specified to keep rest of the object intact
+#   we do not alter IDaccessor key will stiull exist but value will be undef
 sub deleteNodes {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -725,22 +671,13 @@ sub deleteNodes {
 
 sub deleteAllNodes {
     my $self = shift;
-=pod 
-   for (my $index = 0; $index < @{ $self->{ nodeArray } }; $index++) {
-	$self->{ nodeArray }->[$index]->{ status } = "removed";	    	
-	splice (@{$self->{ nodeArray }}, $index, 1);	
-    }
-=cut
+#   for (my $index = 0; $index < @{ $self->{ nodeArray } }; $index++) {
+#	$self->{ nodeArray }->[$index]->{ status } = "removed";	    	
+#	splice (@{$self->{ nodeArray }}, $index, 1);	
+#    }
     $self->{ nodeArray } = [];
     $logger->trace("post deletion " . scalar (@{ $self->{ nodeArray }}));
 }
-
-
-=pod
-    fill Go terms datastructure
-    
-=cut
-
 
 sub getFreeID {
     my $self  = shift;
@@ -817,10 +754,8 @@ sub computeUpKeywordTree {
 
 }
 
-=pod
-    return a datastructure sorting all uniprot keyword occurences
-    preprocessing for the client navigator
-=cut
+#    return a datastructure sorting all uniprot keyword occurences
+#    preprocessing for the client navigator
 sub getUpKeywordTree {
     my $self = shift;
     defined ($self->{ networkData }->{ upKeywordTree }) && return $self->{ networkData }->{ upKeywordTree }; 
@@ -831,10 +766,8 @@ sub getUpKeywordTree {
 
 
 
-=pod fill all biomolecule related fields
-    TODO : miscDataLayer fall back failure, handle/skip the data mapping
- 
-=cut
+# fill all biomolecule related fields
+#    TODO : miscDataLayer fall back failure, handle/skip the data mapping
 sub _fillingNodes {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -850,285 +783,27 @@ sub _fillingNodes {
 
 	my $biomoleculeName = $self->{ nameMutator }->mutateToMatrixdb (key => $biomoleculeObject->name);
 	# the target container
-	my $node = {
-	    name => '',
-	    molecularWeight => '',
-	    aceAccessor => '', # for meta types
-            common => "",                                  # Partially tested
-            biofunc => "",
-            tissue => [],
-            uniprotKW => [],                               # now a list of {id:"", term:""}
-	    pfam => [],
-            tpm => [],
-	    go => [],                                      # now a list of {id:"", term:""}
-	    betweenness => 0, # number of association where biomolecule is reported --> hyperlink to association page
-	    gene => {
-		geneName => [],
-		synonym => [],
-		uniGene => []
-	    }, 	    
-	    specie => "",	    
-            type => "",
-            relationship => {
-		isFragmentOf => [],
-		hasFragment => [],
-		hasComponent => [],
-		isComponentOf => [],
-		boundTo => [] 
-	    },
-	    id => "",
-	    pdb => []
-	};
-	# Set the original object and summon its mapper
-	my $mapper = summonLocalDataMapper();
+	my $node = newPort::getData({type => "biomolecule", context => 'networkNode',
+				     value => $biomoleculeName,
+				     DB => $self->{ DB }});
 	
-
-
-#	my @tmpAceObjects = $self->{ DB }->fetch (-query => "query find biomolecule $biomoleculeName");
-#	my $aceObject = scalar(@tmpAceObjects) > 0 ? shift @tmpAceObjects : undef;
-	my $aceObject = $biomoleculeObject;
-
-	my $mapableObject;
-	$logger->info("mapping data for node named $biomoleculeName");
-
-	# We should not have to mutate molecule name to regular
-	if (!defined ($aceObject)){
-	    $logger->warn("no ace object fetched for NODE \"$biomoleculeName\" try to fall back to miscDataLayer");	  
-	    my $dataLayer = miscDataLayer->new(name => $biomoleculeName);	    
-	    defined ($dataLayer) 
-		? $logger->warn ("successfully fetch Object named \"$biomoleculeName\" from miscDatalayer")
-		: $logger->warn ("was unable to fetch Object named \"$biomoleculeName\" from miscDatalayer");
-	    $mapper = $dataLayer->summonDataMapper(template => $node);
-	    $mapableObject = $dataLayer->getCoreObject();
-	} else {
-	    $mapableObject = $aceObject;
-	}
+	$self->_setNodeIdentity(node => $node, string => $biomoleculeName);#, 
+	#				dataObject => $mapableObject);
 	
-	$logger->trace("index num $cnt \"$biomoleculeName\"");
-
-	$self->_setNodeIdentity(node => $node, string => $biomoleculeName, 
-				dataObject => $mapableObject);
-	
-	# Fill the container
-	$logger->trace("Node to fill is :\n" . Dumper($node));
-	foreach my $key (keys (%{$node}))  {
-	    $logger->trace("FILLING : $node->{ name } ". $key);
-	    
-	    ($key eq "aceAccessor") && next;
-	    
-	    ($key ne "common"    && $key ne "biofunc" && $key ne "pdb" &&
-	     $key ne "uniprotKW" && $key ne "go"      && 
-	     $key ne "specie"  &&  $key ne "molecularWeight" && $key ne "relationship" &&
-	     $key ne "tissue" && $key ne "betweenness") && next; ## developement purpose
-	    
-	    ($key eq "name" || $key eq "type" || 
-	     $key eq "tpm" || $key eq "tissue")  && next;
-	    $logger->trace("FILLED OK");
-	    $node->{ $key } = $mapper->{ $key }($mapableObject);
-	}
-
-	# Deal with the go and uniprot hash table
-	my @goContainerList = ();
-	foreach my $term (@{$node->{ 'go' }}) {
-	    if ($term !~ /GO:[\d]+/) {
-		$logger->warn ("Not at valid GO term \"$term\" involved data structure is \n" . Dumper($node));
-		next;
-	    }
-	   
-	    my $goContainer;
-	    #my $goContainer = localSocket::runGoRequest(with => $self->{ socketMappers }->{ 'GO' }, 
-	    #	 					type => 'goNodeSelector', selectors => { id => $term });
-	    defined $goContainer || next;
-	    push @goContainerList, $goContainer;
-	}
-	$node-> { 'go' } = \@goContainerList;
-	
-	$logger->trace("node Lookup\n". Dumper ($node));
-
-	# NOTE TYPE is a simple string  could evolve to encompass more data notably genuine or inferred character
-	my $tmpName = $self->{ nameMutator }->mutateToMatrixdb(key => $node->{ name }); 
-	
-	if ($tmpName =~ /^MULT/) {
-	    $node->{ type } = 'multimer'; 
-	} elsif ($tmpName =~ /^CAT/) {
-	    $node->{ type } = 'cation'; 
-	} elsif ($tmpName =~ /^PFRAG/) {
-	    $node->{ type } = 'fragment'; 
-	} elsif ($tmpName =~ /^LIP/) {
-	    $node->{ type } = 'lipid'; 
-	} elsif ($tmpName =~ /^GAG/) {
-	    $node->{ type } = 'glycosaminoglycan'; 
-	} elsif (common::isUniprotID(string => $tmpName)) {
-	    $node->{ type } = 'protein'; 
-	} else {	
-	    $node->{ type } = 'biomolecule'; 
-	}
 	# Store the node	
-	$node->{ status } = 'active';	
-	push @{$self->{ nodeArray }}, $node;	
+	$node->{ status } = 'active';
+	push @{$self->{ nodeArray }}, $node;
     }
 
     $logger->trace("filled node array content:\n" . Dumper ($self->{ nodeArray }));
-    
     $logger->trace("subroutine time stamps:\n\tstart:$sTime\n\tstop:".common::getTime());
-    
 }
-
-=pod LocalMapper(MATRIXDB STORAGE)
-    attribute must match canonical node attributes
-    
-=cut
-sub summonLocalDataMapper {
-    my $localMapper = {
-	aceAccessor => sub {
-	    my $aceObject = shift @_;
-	    foreach my $string (qw/Molecule_Processing CheBI_identifier EBI_xref/) {
-		my ($val) = $aceObject->get($string);
-		(defined($val)) && return $val;
-	    }
-	    return '';
-	},
-	common => sub {
-	    my $aceObject = shift @_;
-	    my $map = "";
-	    foreach my $string (qw/Multimer_Name Other_Multimer_Name FragmentName Other_Fragment_Name Common_Name Other_Name GAG_Name Other_GAG_Name Cation_Name Glycolipid_Name Phospholipid_Name Inorganic_Name Other_Inorganic_Name/) {
-		my ($val) = $aceObject->get($string);
-		if (defined($val)) {
-		    $map .= "$val, ";
-		}
-	    }
-	    $map =~ s/, $//;
-	    return $map;
-	},
-	biofunc => sub {
-	    my $aceObject = shift @_;
-	    my $map = "";
-	    foreach my $string (qw/Function GAG_Structure Zone Other_informations Molar_MassGAG Location More_info Stoichiometry Definition/) {		
-		my ($val) = $aceObject->get($string);
-		if (defined($val)) {
-		    $map .= "$val, ";
-		}
-	    }
-	    $map =~ s/, $//;
-	    return $map;
-	},
-	betweenness => sub {
-	    my $aceObject = shift @_;
-	    my @val = $aceObject->get('Association');
-	    return scalar (@val);
-	},
-	uniprotKW => sub {
-	    my $aceObject = shift @_;
-	    my @val = $aceObject->get('Keywrd');
-	    my @array;
-	    foreach my $kw (@val) {
-		push @array, $kw->name;
-	    }
-	    return \@array;
-	},
-	molecularWeight => sub {
-	    my $aceObject = shift @_;
-	    my ($val) = $aceObject->get("Molecular_Weight");	    
-	    my $string = defined ($val) ? $val->name : "";
-	    return $string;
-	},
-	go => sub {
-	    my $aceObject = shift @_;
-	    return [];  # Debugging purpose
-	    my @val = $aceObject->get('GO');
-	    my @array;
-	    foreach my $go (@val) {
-		push @array, $go->name;
-	    }
-	    return \@array;	   
-	},
-	specie => sub {
-	    my $aceObject = shift @_;
-	    my ($val) = $aceObject->get("In_Species");	    
-	    my $string = defined ($val) ? $val->name : "";
-	    return $string;
-	},
-	pfam => sub {
-	    my $aceObject = shift @_;
-	    my @val = $aceObject->get('Pfam');
-	    my @array;
-	    foreach my $dom (@val) {
-		push @array, $dom->name;
-	    }
-	    return \@array;	    
-	},
-	pdb => sub {
-	    my $aceObject = shift @_;
-	    my @val = $aceObject->get('PDB');
-	    my @array;
-	    foreach my $dom (@val) {
-		push @array, $dom->name;
-	    }
-	    return \@array;
-	},
-	relationship => sub {
-	    my $aceObject = shift @_;
-
-	    my $miniMap = { # aceDB key => network key
-		Belongs_to => "isFragmentOf",
-		ContainsFragment => "hasFragment",
-		Component => "hasComponent",
-		In_multimer => "isComponentOf",
-		Bound_Coval_to => "boundTo" 		    
-	    };
-	    my $container = {
-		isFragmentOf => [],
-		hasFragment => [],
-		hasComponent => [],
-		isComponentOf => [],
-		boundTo => [] 	
-	    };
-	    
-	    my ($subTree) = $aceObject->at('Relationships');
-	    while (defined ($subTree)) {
-		my @col = $subTree->col(); 		
-		foreach my $val (@col) {
-		    $logger->trace("THIS IS A TEST " . $subTree->name . " --> ". $val->name);		    
-		    push @{$container->{ $miniMap->{ $subTree->name } }}, $val->name;
-		}		
-		$subTree = $subTree->down();
-	    }	    
-	    $logger->trace("THIS IS ALL " . Dumper($container));
-	    return $container;
-	},
-	gene => sub {	  
-	    my $aceObject = shift @_;
-	    my $container = {
-		geneName => [],
-		synonym => [],
-		uniGene => []
-	    };
-	    warn "geneseeker " . $aceObject->name;
-	    foreach my $geneTag (keys (%{$container})) { #
-		my $subTree = $aceObject->get($geneTag);
-		(defined ($subTree)) || next;
-		warn "$geneTag SubFound::" . $subTree->asAce();
-		my @col = $subTree->col();		
-		foreach my $val (@col) {
-		    push @{$container->{ $geneTag }}, $val->name;
-		}
-	    }	    
-	    return $container;
-	}
-
-    };
-    
-    return $localMapper;
-}
-
 
 sub getNodeIndex {
     my $self = shift;
     my $p = common::arg_parser (@_);
     
     (defined ($p->{ name })) || return;
-    
-    
 
     my $i = 0;
     my @buffer;
@@ -1152,22 +827,17 @@ sub addNodeAttributes {
     my $self = shift;
     my $p = common::arg_parser (@_);
     if (defined($p->{ nodeAceList })){
-	#$logger->trace('toutotu');
 	foreach my $obj (@{ $p->{ nodeAceList } }){
-#	    $logger->trace("yess" . Dumper($obj));
 	    my $name = $obj->name;
 	    my $node = $self->{ nameNodeTable }->{ $name };
-	 
-#	    $logger->trace("i amm here" . Dumper($self->{ nodeNameTable }));
 	    defined($node) || next;	    
 	    $logger->trace("setting node $name as new center");
 	    foreach my $key (keys(%{$p->{ attributes } })){
-		$node->{ $key } = $p->{ attributes }->{ $key };
+	      $node->{ $key } = $p->{ attributes }->{ $key };
 	    }
-	}
+	  }
 	return;
-    }
-
+      }
     
     foreach my $option (@{ $p->{ attr } }) {
 	if ($option eq "id") {
@@ -1260,11 +930,10 @@ sub getNodeAsID {
     return;
 }
 
-=pod add link element to an preexisting network
-    first create link
-    then supplement data to edges
-    mergedAssociationObject argument must be provided
-=cut
+# add link element to an preexisting network
+#    first create link
+#    then supplement data to edges
+#    mergedAssociationObject argument must be provided
 sub addLink {
     my $self = shift;
     my $p = common::arg_parser(@_);
@@ -1277,11 +946,10 @@ sub addLink {
 }
 
 
-=pod supplement biological data to egdes
-    by attaching to each link the proper data container 
-    coping with the specified format.
-    Two sources can be combined, local & psimi object list (presumably out of a psicquic query)
-=cut
+# supplement biological data to egdes
+#    by attaching to each link the proper data container 
+#    coping with the specified format.
+#    Two sources can be combined, local & psimi object list (presumably out of a psicquic query)
 sub addLinkData {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -1343,14 +1011,12 @@ sub setUID {
     $self->{ UItag } = $ug->to_string( $uuid );
 }
 
-=pod setNodeIdentity
-    This method try to enforce the use of a common/regular node name
-    where node->{ name } are 
-    PRO features leads to ${UNIPROTID}-PRO_XXXXXXXX
-    CHEBI compound CHEBI:XXXX
-    MULTIMER 
-
-=cut
+# setNodeIdentity
+#    This method try to enforce the use of a common/regular node name
+#    where node->{ name } are 
+#    PRO features leads to ${UNIPROTID}-PRO_XXXXXXXX
+#    CHEBI compound CHEBI:XXXX
+#    MULTIMER 
 sub _setNodeIdentity {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -1366,8 +1032,6 @@ sub _setNodeIdentity {
 	return;
     }
     $node->{ name } = $p->{ string };
-    
-    $logger->trace('returning' . Dumper($node));
     
     return ;
 }

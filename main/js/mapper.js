@@ -12,32 +12,21 @@ function initBarSearchMapper (){
 		_grasInput : function(data){  // { stringSearch : options.string, longText : data[i].Term, type : "GO", id : data[i].id, count : 0 }			
 
 			var count = data.hasOwnProperty('count') ? data.count : 0;
-			var charMax = 28 ;
+			var charMax = 40 ;
 			var newString = "";
 			if(count>0){charMax -= 4; newString = "(" + count + ")";}
 			if(count>100){charMax -= 2;}
-			regExpression = new RegExp("\\w*" + data.stringSearch + "\\w*",'i');
-			regGras = new RegExp(data.stringSearch,'i');
-			var matchReg = data.longText.match(regExpression);
 			var dataAttr = 'data-type="' + data.type + '" data-value="' + data.id + '"';
 			
-			charMax -= matchReg[0].length ;
-			
+			if(!data.longText){return "error bug"}
 			if(charMax > data.longText.length - 6 ){
 				newString = '<a ' + dataAttr + '>' + data.longText + newString + '</a>';
-				newString = newString.replace(regGras,"<b>" + data.stringSearch + "</b>");
+				
 				return newString;
 			}
-			
-			if(charMax > matchReg.index + matchReg[0].length){
-				newString = data.longText.substring(0,charMax + matchReg[0].length -8) + '...' + newString;
-				newString = newString.replace(regGras,"<b>" + data.stringSearch + "</b>");
-				newString= '<a data-toggle="tooltip" ' + dataAttr + ' data-delay=\'{"show":"1000", "hide":"1000"}\' title="' + data.longText + '">' + newString + '</a>';
-				return newString;
-			}else{
+			else{
 
-				newString = data.longText.substring(0,charMax-10) + '...' + data.longText.substring(matchReg.index,matchReg.index + matchReg[0].length) + '...' + newString;
-				newString = newString.replace(regGras,"<b>" + data.stringSearch + "</b>");
+				newString = data.longText.substring(0,charMax-6) + '...';
 				newString= '<a data-toggle="tooltip" ' + dataAttr + ' data-delay=\'{"show":"1000", "hide":"1000"}\' title="' + data.longText + '">' + newString + '</a>';
 				return newString;
 				
@@ -65,7 +54,7 @@ function initBarSearchMapper (){
 				}
 			}else{
 				for( i=0 ; i<data.length ; i++ ){
-						tableData.push(data[i].Term);
+						tableData.push(self._grasInput({ stringSearch : options.string, longText : data[i].Term, type : "GO", id : data[i].id}));
 						if(tableData.length===sizeLimit){
 							return tableData;
 						}						
@@ -83,7 +72,8 @@ function initBarSearchMapper (){
 				for( i=0 ; i<data.length ; i++ ){
 					if (data[i].Title.match(regExp)){
 					//	tableData.push(self._grasInput(options.string,data[i].Title,data[i].count));
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "IMEX-ID", id : data[i].id, count : data[i].count}));
+					
+						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "publication", id : data[i].pmid, count : data[i].count}));
 						if (tableData.length===sizeLimit){
 							return tableData;
 						}							
@@ -91,7 +81,7 @@ function initBarSearchMapper (){
 				}
 			}else{
 				for( i=0 ; i<data.length ; i++ ){
-						tableData.push(data[i].Title);
+						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "publication", id : data[i].pmid, count : data[i].count}));
 						if(tableData.length===sizeLimit){
 							return tableData;
 						}						
@@ -117,7 +107,7 @@ function initBarSearchMapper (){
 				}
 			}else{
 				for( i = 0 ; i < data.length ; i++ ){
-						tableData.push(data[i].name);
+						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].name, type : "biomolecule", id : data[i].id, count : data[i].count}));
 						if(tableData.length === sizeLimit){
 							return tableData;
 							}					
@@ -143,7 +133,7 @@ function initBarSearchMapper (){
 				}
 			}else{
 				for( i=0 ; i<data.length ; i++ ){
-						tableData.push(data[i].Identifier);
+						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].name, type : "keywrd", id : data[i].id, count : data[i].count}));
 						if(tableData.length === sizeLimit){
 							return tableData;
 							}					
@@ -169,7 +159,7 @@ function initBarSearchMapper (){
 				}
 			}else{
 				for( i=0 ; i < data.length ; i++ ){
-						tableData.push(data[i].Title);	
+						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "publication", id : data[i].id, count : data[i].count}));	
 						if(tableData.length === sizeLimit){
 							return tableData;
 						}						
@@ -195,7 +185,7 @@ function initBarSearchMapper (){
 				}
 			}else{
 				for( i = 0 ; i < data.length ; i++ ){
-						tableData.push(data[i].id);	
+						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].id, type : "author", id : data[i].id, count : data[i].count}));		
 						if(tableData.length===sizeLimit){
 							return tableData;
 						}						
@@ -220,7 +210,7 @@ function initBarSearchMapper (){
 				}
 			}else{
 				for( i = 0 ; i < data.length ; i++ ){
-						tableData.push(data[i].id);	
+						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].id, type : "biomolecule", id : data[i].id, count : data[i].count}));		
 						if(tableData.length===sizeLimit){
 							return tableData;
 						}						

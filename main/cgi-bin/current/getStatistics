@@ -1,0 +1,139 @@
+#!/usr/bin/perl
+
+=pod Profiling statements
+#!/usr/bin/perl -d:NYTProf
+$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
+=cut
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use Ace 1.51;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use common;
+Log::Log4perl->init("./conf/getStatistics.conf");
+my $logger = get_logger();
+
+my $query = CGI->new();
+#$logger->info(Dumper $query ));
+my $dataContainer = readStatistics({
+				    location => '../data/statisticsLatest',
+				    timeInterval => 0
+				   });
+
+if (!defined($dataContainer)) {
+  $dataContainer = createStatistics();
+}
+$logger->info(Dumper($dataContainer));
+
+
+
+#my $jsonContainer = json_encode($dataContainer);
+##
+#open FOUT, ">$fLastStat";
+#print FOUT, "$jsonContainer";
+#print $query->header('application/json');      # create the HTTP header
+#print $dataContainer;
+#}
+
+
+sub readStatistics {
+  my $p = shift;
+
+  my $dataContainer = {};
+  if (-e $p->{ location }) {
+    if (open LAST, "<$p->{ location }") {
+      my $txt = '';
+      while(<LAST>) {$txt .= $_;}
+      close LAST;
+      $dataContainer = json_decode($txt);
+    }
+  }
+  my $pStamp = defined ($dataContainer->{ timeStamp }) ? 
+    $dataContainer->{ timeStamp } : 0; 
+  my $stamp = time();
+  $logger->info($stamp);
+  if ($stamp - $pStamp < $p->{ timeInterval }) {
+    $logger->info("latest statitics recent enough using snapshot of " .
+		  "$dataContainer->{ date }");
+    return $dataContainer;
+  }
+
+  return undef;
+}
+
+sub createStatistics {
+
+  my $dataContainer = {
+		     date => `date +"%Y%m%d"`,
+		     timeStamp => time (),
+		     interactors => {
+				     total => 0,
+				     protein => 0,
+				     fragment => 0,
+				     multimer => 0,
+				     gag => 0
+				    },
+		     associations => {
+				      total => 0,
+				      proteinProtein => 0,
+				      proteinFragment => 0,
+				      proteinMultimer => 0,
+				      proteinGag => 0,
+				      fragmentMultimer => 0,
+				      fragmentFragment => 0,
+				      fragmentGag => 0,
+				      multimerProtein => 0,
+				      multimerMultimer => 0,
+				      multimerGag => 0
+				     }
+		    };
+
+
+
+  our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||
+    AceError ("Couldn't open database");
+  
+  my $r = $DB->raw_query('find Association');
+  if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ associations }->{ total } = $1;
+  }
+  $r = $DB->raw_query('follow biomolecule');
+  if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ interactors }->{ total } = $1;
+  }
+  $r = $DB->raw_query('kstore allInteractors');
+  
+  $DB->raw_query('query find Biomolecule where Source');
+  $DB->raw_query('kstore allProt');
+  $DB->raw_query('spush');
+  $DB->raw_query('kget allInteractors');
+  $DB->raw_query('sand');
+  $DB->raw_query('spop');
+  #$logger->info($r);
+  if ($r =~ /([\d]+) Active Object/) {
+    $dataContainer->{ interactors }->{ protein } = $1;
+  }
+
+  $DB->raw_query('query find biomolecule where FragmentName');
+  $DB->raw_query('kstore allGag');
+  $DB->raw_query('spush');
+  $DB->raw_query('kget allInteractors');
+  $DB->raw_query('sand');
+  $DB->raw_query('spop');
+  #$logger->info($r);
+  if ($r =~ /([\d]+) Active Object/) {
+    $dataContainer->{ interactors }->{ gag } = $1;
+  }
+  return $dataContainer;
+}

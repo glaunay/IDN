@@ -1,75 +1,38 @@
-.navigueBar a{
-	color : white ; 
-	text-decoration: none;
-}
-.header{
-	background-color: black ;
-	height: 30px;
-	clear : both ;
-	white-space:nowrap;
-}
-.navigueBar{
-	height: inherit;
-	float : left;
-	display: inline;
-	background-color:inherit;
-	text-align: left;
-	margin-left:30px;
-}
-.content{
-	margin-top: 50px;
-	min-height:  700px;
-	padding: 30px 30px 30px 30px;
-	border-bottom: 1px #CFFFC8 solid;
-	/*background: #AFEBDA;*/
 
-}
-.content h3{
-	margin-left :  -25px;
-
-}
-.content p {
-	margin-bottom: 40px;
-}
-.info{
-	float : left;
-	margin-left: 50px;
-}
-
-.icon-white {
+div.cart .icon-white {
 	color: white;
+	margin-top: 6px;
 }
-.navigueBar a:hover{
-	color : white ; 
-	text-decoration: underline;
-}
-.cartDraw{
+
+div.cart .cartDraw{
 	float:right;
 	width:100%;
+	height: 100%;
 
 
 }
-.leftThing{
+div.cart .leftThing{
 	padding-left: 40px;
 	float : left;
 	border-left: solid grey 1px;
 	width: 122px;
-
+	cursor: default;
+	height: inherit;
 }
-.clearDiv, .drop{
+div.cart .clearDiv, .drop{
 	float:inherit;
 	color:white;
 	min-width: 50px;
 	min-height: 30px;
+	height: inherit;
 	
 }
-.ico{
+div.cart .ico{
 	float:inherit;
 	color:white;
-	
 	min-height: 30px;
 	}
-ul.liste{
+div.cart ul.liste{
 	font-size: 0.8em;
 	right: 0px;
 	width: 209px;
@@ -82,11 +45,11 @@ ul.liste{
 	text-align: center;
 	margin-top : 0;
 }
-ul.clear{
+div.cart ul.clear{
 
 }
-#pastille{
-	margin-top : 4px;
+div.cart #pastille{
+	margin-top : 9px;
 	width:auto;
 	text-align: center;
 	border-radius:20%;
@@ -95,21 +58,23 @@ ul.clear{
 	padding: 0px 5px 0px 5px;
 }
 
-#pastille:not(.noData){
+div.cart #pastille:not(.noData){
 	background: rgb(124, 124, 233);
+	
 }
-.noData{
+div.cart .noData{
 	 color:grey;
 	 background: rgb(98, 92, 124);
+
 }
-.liCart{
+div.cart .liCart{
 	color:black;
 }
-.tabSel{
+div.cart .tabSel{
 	background-color : white;
 	color : black ;
 }
-.clearDiv{
+div.cart .clearDiv{
 	/* 
 	 border-width: 20px;
  	width: 160px;
@@ -123,127 +88,51 @@ ul.clear{
 	*/
 	border-right : 1px solid rgba(0,0,0,0.2);
 	border-left : solid 1px grey;
-	//margin-top: 0.2em;
+
 }
-.cart{
+div.cart {
 	right:0;
 	float: right;
 	width: 215px;
+	height: 100%;
 }
-.clearDiv a:hover{
+div.cart .clearDiv a:hover{
 	color : white ; 
 
 }
-.liCart{
+div.cart .liCart{
 	
 }
-.ico{
+div.cart .ico{
 	margin-right: 10px;
 }
-.clearDiv a.cog {
+div.cart .clearDiv a.cog {
 	text-align: center;
 	font-size:0.8em;
 }
-a.leftalign{
+div.cart a.leftalign{
 	text-align: left;
 }
-ul.liste i{
+div.cart ul.liste i{
 	margin-top:3px;
 }
-.leftalign{
+div.cart .leftalign{
 	text-align: left;
 }
-.lastDiv{
+div.cart .lastDiv{
 	padding-right: 7px;
 }
-.clearDiv a.cog i{
-	margin-top: 4px;
+div.cart .clearDiv a.cog i{
+	margin-top: 9px;
 }
-.dataTables_wrapper tbody tr {
-    height: 50px; 
-}
-.tooltip-inner{
-	max-width: 800px;
-}
-.dataTables_wrapper tbody tr td:last-child i:hover{
-	cursor: pointer;
-}
+
 .cart:hover{
 	cursor: pointer;
 }
-.drop ul li div div:nth-child(-n+2):hover{
-	cursor: default;
-}
-/*body{
-	background-image: url(../img/network.png);
-	background-repeat: no-repeat;
-}*/
-ul.pdb{
-	top:auto;
-	left:150px;
-	width : 200px;
-	max-height : 150px;
-	overflow: auto;
-	padding-left:10px;
-	text-align: center;
-}
-i.pdbView{
+div.cart div.active:hover{
 	cursor: pointer;
 }
-.niceRed{
-	color : rgb(187, 38, 38); 
-	font-weight : bold;
+div.cart li div.span8{
+	margin-bottom: 0;
+	min-height: 1px;
 }
-
-
-div.dataTables_paginate {
-    float: left;
-    margin: 0;
-}
-div.dataTables_filter{
-    float: left;
-    margin: 0;
-}
-/*#DataTables_Table_0_wrapper{
-	left : 30%;
-}
-#DataTables_Table_1_wrapper,#DataTables_Table_2_wrapper{
-	left: 5%;
-}*/
-td div.row-fluid div.inlineTable{
-	
-	padding : 5px 5px 5px 5px;
-	font-size : 0.75em;
-	border: dashed 1px #A2B5F3;
-
-}
-
-td.supportingXp div.row-fluid{
-	
-}
-
-table.dataTable td.supportingXp {
-		background: #F5F2FF;
-		padding: 0 0 0 0;
-}
-/*div.svg{
-	overflow : auto;
-}*/
-
-
-.axis {
-  font: 10px sans-serif;
-  
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-p.cursorChange{
-	cursor: pointer;
-}
-
-

@@ -68,13 +68,14 @@ sub getPartnerDetails {
   return $data;
 }
 
+# account for homology, return a list
 sub getAssociation {
   my $aceObject = shift;
   
   my @aceBuffer = $aceObject->follow('Association');
   defined(@aceBuffer > 0) || return undef;
 
-  return $aceBuffer[0]->name;
+  return [$aceBuffer[0]->name];
 }
 
 sub getPublication {
@@ -170,7 +171,19 @@ sub isPositiveControl {
 
 sub getXref {
   my $aceObject = shift;
-  return undef;
+  my @xrefTags = qw / HPRD_xref DIP_xref IntAct_xref MINT_xref BioGrid_xref InnateDB_xref /;
+  my @data;
+  foreach my $xrefTag (@xrefTags) {
+    my $aceBuffer = $aceObject->at($xrefTag, 1);
+    defined($aceBuffer) || return undef;
+    while (defined($aceBuffer)) {
+      push @data, { provider => $xrefTag, value =>  $aceBuffer->name };
+      $aceBuffer = $aceBuffer->down();
+    }
+  }
+
+  @data == 0 && return undef;
+  return \@data;
 }
 
 sub getBindingSiteComment{

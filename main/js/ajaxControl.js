@@ -24,7 +24,7 @@ function networkExpand (data, callback) {
     
     //    var parent = settings.parent;
 
-   // console.log(data);
+    console.dir(data);
     var requestObject = {
 	completeAnnotation : "no",
 	providers : vizObject.getProviderList(),
@@ -34,11 +34,7 @@ function networkExpand (data, callback) {
 	    searchCrit : data
 	}
     };
-
-//    console.dir(requestObject);
-
     
-
     var JSONText = JSON.stringify(requestObject);
     
     var httpRequest =  $.ajax(
@@ -257,7 +253,7 @@ function loadNetwork (uidString, callback) {
              success : function (data) {
 		 console.log("success");
                  console.dir(data);                 
-		 callback({nodeData : data.node, linksData : data.links});		 
+		 callback({nodeData : data.nodes, linksData : data.links});		 
              },
              complete : function (resp){
 		 $(".exporterIdle").animate({

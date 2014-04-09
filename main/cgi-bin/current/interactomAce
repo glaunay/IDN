@@ -43,7 +43,7 @@ my $logger = get_logger();
 =cut
 
 $logger->info("*** CGI activation at " . common::getTime());
-our $DB = Ace->connect(-host  => 'localhost', -port  => 55666)  || AceError ("Couldn't open database");
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||$logger->error ("Couldn't open database");
 our $nameMutator = biomoleculeMapper->new (template => '../data/biomoleculeMapper.json');
 
 # retrieving get parameters
@@ -54,7 +54,7 @@ $logger->info("query content:\n" . Dumper($queryData));
 $logger->info("interactom expansion start");
 
 
-my $dataContainer = getKnwonData($queryData);
+my $dataContainer = getKnownData($queryData);
 
 
 $dataContainer->{ association }->{'addCenter'} = createCritBiomoleculeList($queryData,'addCenter'); 
@@ -78,7 +78,7 @@ $networkObject->addLink(
     ); 
 
 $networkObject->addNodeAttributes( nodeAceList => $dataContainer->{ association }->{'addCenter'},
-				   attributes => { central => 'true' } );
+				   attributes => { central => 1 } ); # 'true'
 
 $logger->trace("NetworkObject Complete" . Dumper ($networkObject));
 
@@ -169,7 +169,7 @@ sub closeAllNetwork {
 =pod    
     This will not work if user can change the provider selection at any time
 =cut
-sub getKnwonData {
+sub getKnownData {
     my $query = shift;
     
     for (my $i = 0; $i < scalar(@{ $query->{ data }->{ centralNodes } }); $i++) {

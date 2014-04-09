@@ -544,7 +544,10 @@ sub arg_parser {
     my %hash;
     my @noarg;
     for (my $i = 0; $i < @_; $i++) {
-        (defined($_[$i])) || die "undefined argument \"" . $_[$i - 1] . "\" provided to parser\n";
+        if (!defined($_[$i])){
+	    print STDERR "[@_] -> undefined argument \"" . $_[$i - 1] . "\" provided to parser\n";
+	    die;
+	}
         if ($_[$i] =~ /^--/) {
             push @noarg, $i;
         }

@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+=pod Profiling statements
+#!/usr/bin/perl -d:NYTProf
+$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
+=cut
+
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib qw(lib/perl);
+
+#from CPAN
+use CGI;
+use Ace 1.51;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use common;
+Log::Log4perl->init("./conf/getStatistic.conf");
+my $logger = get_logger();
+
+my $query = CGI->new();
+#$logger->info(Dumper $query ));
+
+my $fLastStat = 'data/statisticsLatest';
+if (-e 'data/statisticsLatest') {
+  open LAST, "data/statisticsLatest"
+}
+
+my $dataContainer = {
+		     interactors => {
+				     protein => 0,
+				     fragment => 0,
+				     multimer => 0,
+				     gag => 0
+				    },
+		     associations => {
+				      proteinProtein => 0,
+				      proteinFragment => 0,
+				      proteinMultimer => 0,
+				      proteinGag => 0,
+				      fragmentMultimer => 0,
+				      fragmentFragment => 0
+				      fragmentGag => 0,
+				      multimerProtein => 0,
+				      multimerMultimer => 0,
+				      multimerGag => 0
+				     }
+		    };
+};
+
+

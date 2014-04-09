@@ -21,10 +21,33 @@ sub getData {
   common::slid($p->{ type }, $p->{ value }, $p->{ DB }) || 
       $logger->logdie("type/value/DB parameter required :\n" . Dumper($p));
 
-  my $dataContainer = {};
+  my $dataContainer = {};  
+  my $context = defined ($p->{ context }) ? $p->{ context } : 'contentReport';
+
   if ($p->{ type } eq "biomolecule") {
-    $dataContainer = newPort::biomolecule::get({name => $p->{ value }, DB => $p->{ DB }});
+    my $size = $context eq "networkNode" ? 'short' : 'long';
+    $dataContainer = newPort::biomolecule::get({name => $p->{ value }, 
+						DB => $p->{ DB }, size => $size});
+    
     $dataContainer->{ type } = $p->{ type };
+    if ($context eq 'networkNode') {
+      if ($dataContainer->{ name } =~ /^MULT/) {
+	$dataContainer->{ type } = 'multimer'; 
+      } elsif ($dataContainer->{ name } =~ /^CAT/) {
+	$dataContainer->{ type } = 'cation'; 
+      } elsif ($dataContainer->{ name } =~ /^PFRAG/) {
+	$dataContainer->{ type } = 'fragment'; 
+      } elsif ($dataContainer->{ name } =~ /^LIP/) {
+	$dataContainer->{ type } = 'lipid'; 
+      } elsif ($dataContainer->{ name } =~ /^GAG/) {
+	$dataContainer->{ type } = 'glycosaminoglycan'; 
+      } elsif (common::isUniprotID(string => $dataContainer->{ name })) {
+	$dataContainer->{ type } = 'protein'; 
+      } else {	
+	$dataContainer->{ type } = 'biomolecule'; 
+      }
+    }
+    
   }
 
  if ($p->{ type } eq "experiment") {
@@ -35,6 +58,7 @@ sub getData {
   if ($p->{ type } eq "association") {
     $dataContainer = newPort::association::get({name => $p->{ value }, DB => $p->{ DB }});
     $dataContainer->{ type } = $p->{ type };
+    bindBiomoleculeName ({associationContainer => $dataContainer, DB => $p->{ DB }});
   }
   
   if ($p->{ type } eq "publication") {
@@ -43,6 +67,50 @@ sub getData {
   }
   
 
-  $logger->info("newPort interface returning:\n" . Dumper($dataContainer));  
+  $logger->trace("newPort interface returning:\n" . Dumper($dataContainer));  
   return $dataContainer;
 }
+
+
+sub bindBiomoleculeName {
+  my $p = shift;
+  $p->{ associationContainer }->{ partnerCommon } = {};
+  foreach my $biomoleculeName (@{ $p->{ associationContainer }->{ partnerNames } }) {
+    my $biomoleculeContainer =  newPort::biomolecule::get({name => $biomoleculeName, DB => $p->{ DB }});
+    $p->{ associationContainer }->{ partnerCommon }->{ $biomoleculeName } = $biomoleculeContainer->{ common };
+  }
+}
+
+
+
+
+sub getInteractomTemplate {
+  return {
+	  index => undef,
+	  name => undef,
+	  common => undef,                                  
+	  biofunc => undef,
+	  tissue => [],
+	  uniprotKW => [],
+	  pfam => [],
+	  tpm => [],
+	  go => [],
+	  gene => {
+		   geneName => [],
+		   synonym => [],
+		uniGene => []
+	    }, 	    
+	  specie => undef,	    
+	  type => undef,
+	  relationship => {
+			   isFragmentOf => [],
+			   hasFragment => [],
+			   hasComponent => [],
+			   isComponentOf => [],
+			   boundTo => [] 
+			  },
+	  location => [],
+	  id => undef
+	 };
+}
+1;

@@ -1,30 +1,412 @@
-/*
-  Css stylesheet for all aceBrowset report html
-*/
+div#reportDiv .navigueBar a{
+	color : white ; 
+	text-decoration: none;
+	cursor: pointer;
+}
+div#reportDiv .header{
+	background-color: black ;
+	height: 40px;
+	clear : both ;
 
-body {
-    padding-top : 40px;
+	
+}
+div#reportDiv .navigueBar{
+	height: 30px;
+	float : left;
+	display: inline;
+	background-color:inherit;
+	margin-top: 10px;
+	margin-right: 35px;
+	}
+
+div#reportDiv .content{
+
+	min-height:  700px;
+	padding: 10px 30px 10px 30px;
+	overflow: auto;
+	/*background: #AFEBDA;*/
+}
+div#reportDiv .content h3{
+	text-align: center;
+
+}
+div#reportDiv .content p {
+	margin-bottom: 20px;
+}
+div#reportDiv .info{
+	float : left;
+}
+div#reportDiv .navigueBar a:hover{
+	color : white ; 
+	text-decoration: underline;
+}
+div#reportDiv .dataTables_wrapper tbody tr {
+    height: 50px; 
+}
+div#reportDiv .tooltip-inner{
+	max-width: 800px;
+}
+div#reportDiv .dataTables_wrapper tbody tr td:last-child i:hover{
+	cursor: pointer;
+}
+div#reportDiv .drop ul li div div:nth-child(-n+2):hover{
+	cursor: default;
+}
+div#reportDiv ul.pdb{
+	top:auto;
+	left:auto;
+	width : 200px;
+	max-height : 150px;
+	overflow: auto;
+	padding-left:10px;
+	text-align: center;
+}
+div#reportDiv i.pdbView{
+	cursor: pointer;
+}
+div#reportDiv .niceRed{
+	color : rgb(187, 38, 38); 
+	font-weight : bold;
+}
+div#reportDiv div.dataTables_paginate {
+    float: left;
+    margin: 0;
+}
+div#reportDiv div.dataTables_filter{
+    float: left;
+    margin: 0;
+   
+}
+div#reportDiv div.dataTables_filter input{
+	 width: 100px;
+}
+div#reportDiv td div.row-fluid div.inlineTable{
+	
+	padding : 5px 5px 5px 5px;
+	font-size : 0.75em;
+	border: dashed 1px #A2B5F3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+div#reportDiv td.supportingXp div.row-fluid{
+	
+}
+div#reportDiv table.dataTable td.supportingXp {
+		background: #F5F2FF;
+		padding: 0 0 0 0;
+}
+div#reportDiv .axis {
+  font: 10px sans-serif;
+  
+}
+div#reportDiv .axis path, div#reportDiv .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+div#reportDiv p.cursorChange{
+	cursor: pointer;
+}
+div#reportDiv div div.bindingSite div.divTitre{
+	background: rgba(250, 245, 191, 1);
+}
+div#reportDiv div.bindingSite {
+	background: rgba(250, 245, 191, 0.75);
+	height: 100%;
+
+}
+div#reportDiv div div.xpModif div.divTitre{
+	background:#D2D5CC;
+}
+div#reportDiv div.xpModif{
+	background:rgba(210, 213, 204, 0.63);
+	height: 100%;
+
+}
+div#reportDiv div.partner1 p, div#reportDiv div.partner2 p {
+	margin-left : 10px;
+}
+div#reportDiv div.partner1 div.divTitre{
+	background: rgba(197, 252, 208, 1) ;
+}
+div#reportDiv div.partner1  {
+	background: rgba(197, 252, 208, 0.7) ;
+	border-radius: 5px;
+}
+div#reportDiv div.partner2 div.divTitre{
+	background: #FFB3B6;
+} 
+div#reportDiv div.partner2 {
+	background: rgba(255, 179, 182, 0.77);
+	border-radius: 5px;
+
+} 
+div#reportDiv span.addCart{
+	float:right;
+}
+div#reportDiv  span.publi{
+	float:right;
 }
 
-.anchor {
-    min-height:40px;
-    max-height:40px;
+div#reportDiv div.xpDetail div.divTitre{
+	background: #CCD1D1;
 }
-
-.innerHeader {    
-    background:#eee;
-    font-weight:200;
-    font-size:1.5em;
-    padding : 10px 10px 10px 5px;
-    margin-top:10px;
+div#reportDiv div.xpDetail{
+	background: #DCE2E2;
+	border-radius: 5px;
 }
-
-#interDiv {
-	width: 80%;
+div#reportDiv div.kinetic div.divTitre{
+	background: #DBD0D0;
+}
+div#reportDiv div.kinetic{
+	background: rgba(219, 208, 208, 0.5);
+	border-radius: 5px;
+}
+div#reportDiv div.commentDetail div.divTitre{
+	background: #E8E0FF;
+}
+div#reportDiv div.commentDetail{
+	background: rgba(232, 224, 255, 0.59);
+	border-radius: 5px;
+}
+div#reportDiv div.publicationDetail div.divTitre{
+	background: #D7D5DD;
+}
+div#reportDiv div.publicationDetail{
+	background: rgba(215, 213, 221, 0.61);
+	border-radius: 5px;
+}
+div#reportDiv  div.interactionDetail div.divTitre{
+	background: #E9E8D7;
+}
+div#reportDiv div.interactionDetail{
+	background: rgba(233, 232, 215, 0.67);
+	border-radius: 5px;
+}
+div#reportDiv  div.featureContent{
+	padding: 0 10px 0 10px;
+}
+div#reportDiv  div.span4{
+	min-height: 150px;
+	margin-bottom: 10px;
+}
+div#reportDiv li div.span4{
+	min-height: 0px;
+	margin-bottom: 0px;
+}
+div#reportDiv .contentXp{
+	margin-top: 20px;
+	
+	padding: 10px 10px 10px 10px;
+	/*background: #AFEBDA;*/
+}
+div#reportDiv .contentXp h3{
+	text-align: center;
+}
+div#reportDiv div.divTitre{
+	border-radius: 5px;
+	font-size: 1.5em;
+	font-weight: bold;
+	text-align: center;
+	padding-bottom: 10px;
+	min-height: 30px;
+	padding-top: 10px;
+	
+}
+div#reportDiv div.postitContent{
 	padding-left: 10px;
+	padding-right: 10px;
+	
+}
+div#reportDiv div.divTitre i{
+	float: right;
+	margin-top:-10px; 
+}
+div#reportDiv div.inPostit div.odd div.divTitre{
+	background: #DBD0D0;
+}
+div#reportDiv div.inPostit div.odd{
+	background: rgba(219, 208, 208, 0.5);
+}
+div#reportDiv div.inPostit div.even div.divTitre{
+	background: rgba(146, 161, 189, 1);
+}
+div#reportDiv div.inPostit div.even{
+	background: rgba(146, 161, 189, 0.67);
+}
+div#reportDiv div.general div.divTitre{
+	background: rgba(195, 205, 243, 1);
+}
+div#reportDiv div.general{
+	background: rgba(195, 205, 243, 0.67);
+	margin-bottom: 20px
+}
+div#reportDiv div.inPostit,div.span8{
+	margin-bottom: 10px;
+}
+div#reportDiv  div.divTitre i.fa-external-link{
+	float: none;
+	margin-top:0;
+}
+div#reportDiv div.content.infoBio{
+	min-height: 0;
+	padding-top:50px;
+}
+div#reportDiv div.btn-group a{
+	height: 20px;
+
+}
+div#reportDiv div.btn-group i{
+	font-size: 1.5em;
+	margin-top: 3px;
+}
+div#reportDiv div.btn-group a:first-child{
+	color: white;
+
+}
+div#reportDiv div.btn-group a:last-child{
+	background-image:none; 
+	background-color: rgb(61, 69, 75);
+	color: white;
+	font-size: inherit;
+	text-shadow: none;
+}
+div#reportDiv div.btn-group{
+	font-size: 0.8em;
+	
+}
+div#reportDiv dt.hReport{
+	font-weight: bold;
+	margin : 0 5px 0 0;
+	float: left;
+}
+div#reportDiv div.content.barChart{/*copy paste bootstrap must adapt webKit*/
+	min-height: 0px !important;
+	padding: 20px 0 0 0;
+	margin:0 30px 0 30px;
+	border-bottom-color: rgb(204, 204, 204);
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-image-outset: 0px;
+	border-image-repeat: stretch;
+	border-image-slice: 100%;
+	border-image-source: none;
+	border-image-width: 1;
+	border-left-color: rgb(204, 204, 204);
+	border-left-style: solid;
+	border-left-width: 1px;
+	border-right-color: rgb(204, 204, 204);
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-top-color: rgb(204, 204, 204);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-top-style: solid;
+	border-top-width: 1px;
+}
+div#reportDiv span.cartBio{
+	float: right;
+	margin-top: -15px;
+}
+div#reportDiv dd{
+
+}
+div#reportDiv span#topLogo .icon-white {
+	color: white;
+	margin-top: 6px;
+	font-size: 2em;
+	margin-left: 10px;
+}
+div#reportDiv div.reportTarget{ 
+	color : white; 
+	float : left;
+	text-align:left;
+	margin-left: 5px;
+}
+div#reportDiv div.pdb.postitContent{
+	min-height: 368px;
+	
+}
+div#reportDiv div.assocTable div.title{
+	font-weight:bold;
+	text-align: center;
+	
+}
+div#reportDiv div.Small:nth-child(odd) div.divTitre{
+	background: rgba(144, 209, 235, 1);
+}
+div#reportDiv div.row-fluid div.Small:nth-child(odd) {
+	background: rgba(144, 209, 235, 0.67);
+}
+div#reportDiv div.Small:nth-child(even) div.divTitre{
+	background: rgba(111, 172, 103, 1);
+}
+div#reportDiv div.row-fluid div.Small:nth-child(even) {
+	background: rgba(111, 172, 103, 0.67);
+}
+div#reportDiv div.Small{
+	margin-top: 20px;
+	border-radius: 5px;
+}
+div#reportDiv div.Small:nth-child(even) div.divTitre{
+	background: rgba(111, 172, 103, 1);
+}
+div#reportDiv div.abstract {
+	background: rgba(231, 120, 120, 0.67);
+	border-radius: 5px;
+}
+div#reportDiv div.abstract div.divTitre {
+	background: rgba(231, 120, 120, 1);
+}
+div#reportDiv div.publicationContent{
+	margin-top : 30px;
+}
+div#reportDiv div.abstract div.postitContent {
+	padding: 20px;
+	text-align: justify;
+}
+div#reportDiv div.assocTable{
+	margin-top: 30px;
+}
+div#reportDiv div.assocTable div.topHead{
+	height: 50px ;
+	text-align: center;
+	font-size: 1.5em;
+}
+div#reportDiv div.center{
+	margin-left: auto;
+	margin-right: auto;
+	width: 450px;
+}
+div#reportDiv div.associationContent{
+	margin-top: 30px;
+}
+div#reportDiv div.uniprot div.dataTables_wrapper{
+	width: 1140px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div#reportDiv div.Go div.dataTables_wrapper{
+	width: 1150px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div#reportDiv div.assocTable div.dataTables_wrapper{
+	width: 510px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div#reportDiv div.structurePdb{
+	min-height: 400px;
+}
+div#reportDiv div.centralXp{
+	width: 700px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-path {
-  stroke: #fff;
-  fill-rule: evenodd;
+div#reportDiv dd{
+	text-align: justify;
 }

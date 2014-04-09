@@ -1,10 +1,8 @@
 package newPort::association;
-
 use strict;
 use Data::Dumper;
 
 use common;
-
 use Log::Log4perl qw(get_logger);
 our $logger = get_logger ("newPort::association");
 
@@ -56,8 +54,20 @@ sub get {
 	  supportByAssociation => getInferrence($aceObject),
 	  supportToAssociation => getSupportTo($aceObject),
 	  directExperiments => getExperiments($aceObject),
-	  sourceDatabases => getSourceDatabase ($aceObject)
+	  sourceDatabases => getSourceDatabase ($aceObject),
+	  partnerNames => getPartnerNames ($aceObject)
 	 };
+}
+
+sub getPartnerNames {
+  my $aceObject = shift;
+  
+  my @aceBuffers = $aceObject->follow('BioMolecule');
+  
+  my @names = map {$_->name;} @aceBuffers;
+
+  @names == 0 && return undef;
+  return \@names;
 }
 
 sub getStatus {

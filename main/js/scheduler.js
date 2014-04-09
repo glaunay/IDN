@@ -17,6 +17,8 @@ function schedulerInit (opt) {
     var nThread = opt.nThread ? opt.nThread : 1;
     
     return {
+	onExhaustionCallback : opt.onExhaustionCallback 
+	    ? opt.onExhaustionCallback : function() {console.log("default exhaustion CB");},
 	period : period,
 	nThread : nThread,
 	jobMaker : opt.jobMaker,
@@ -26,18 +28,33 @@ function schedulerInit (opt) {
 	add : function (data, options) { // add one input to list
 /*	    console.dir("adding");
 	    console.dir(data);*/
+	    this.exhausted = false;
 	    this.inputList.push(data);
 	},
 	delete : function (data) {
 	    
 	},
+	exhausted : true,
+	checkExhaustionStatus : function () {
+	    if(this.exhausted) return;
+
+	    for (var iThread = 0; iThread < this.nThread; iThread++) {	
+		if (this.threadStatus[iThread].mode !== "listening") return;
+	    }
+	    this.exhausted = true;
+	  
+	    this.onExhaustionCallback();		
+	},
 	pump : function (nThread) {
 	    var self = this;	 
 	    var status = self.threadStatus[nThread];
-	    if (self.inputList.length === 0) {
+	    if (self.inputList.length === 0) {	
+		
+		self.checkExhaustionStatus();
+		
 		if (! status.mode === "listening") {
 		    console.log("thread " + nThread + " nothing to pump, listening ...");			
-		    status.mode = "listening";		
+		    status.mode = "listening";		    
 		}
 		return;
 	    }

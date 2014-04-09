@@ -66,9 +66,10 @@ sub runCvRequest {
     };
 
     if (defined ($p->{ askFor })) {
-	$request->{ content }->{ askFor } = $p->{ askFor };
-    } elsif (defined ($p->{ isSonOf })) {
-	$request->{ content }->{ isSonOf } = $p->{ isSonOf };
+		$request->{ content }->{ askFor } = $p->{ askFor };
+    }
+    if (defined ($p->{ isSonOf })) {
+		$request->{ content }->{ isSonOf } = $p->{ isSonOf };
     }
     
     my $jsonRequest = encode_sereal ($request);

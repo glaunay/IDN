@@ -40,9 +40,9 @@ function initPalette (opt) {
 	draw : function() {
 	    var self = this;
 	    
-	    var miniHTML = '<div id="paletteMiniWrapper" class="bookmarkWrapper"><i class="icon-tint icon-4x"></i></div>';	    
+	    var miniHTML = '<div id="paletteMiniWrapper" class="bookmarkWrapper"><i class="fa fa-tint fa-4x"></i></div>';	    
 	    var maxiHTML = '<div id="paletteMaxiWrapper" class="cp-default">'
-		+ '<div class="picker-header"><i class="closeBut icon-collapse-alt icon-2x pull-left"></i></div>'
+		+ '<div class="picker-header"><i class="closeBut fa fa-minus-square-o fa-2x pull-left"></i></div>'
 		+            '<div class="picker-wrapper">'
 		+            '<div id="picker" class="picker"></div>'
 		+            '<div id="picker-indicator" class="picker-indicator"></div>'

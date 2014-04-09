@@ -102,12 +102,32 @@ if(defined($queryData->{ pdbName })) {
 }
 
 $logger->trace("Final Structure Container:\n" . Dumper($container));
+$container->{ atomRecord } = chopPastFirstModel($container->{ atomRecord });
 
 my $jsonObject = encode_json($container);
 
 print $query->header('application/json');      # create the HTTP header
 print "$jsonObject";
 
+sub chopPastFirstModel {
+  my $pdbString = shift;
+  my @array;
+  my $bRead = 1;
+  
+  foreach my $line (split ("\n", $pdbString)) {
+    if ($line =~ /^MODEL[\s]+([\d]+)/) {
+      if ($1 > 1) {$bRead = 0;}
+    }
+    if ($line =~ /^ENDMDL/) {
+      if($bRead) {push @array, $line;}
+      $bRead = 1;
+      next;
+    }
+    $bRead || next;
+    push @array, $line;
+  }
+  return join("\n", @array);
+}
 
 sub guessChainidList {
     my $folder = shift;

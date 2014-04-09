@@ -25,51 +25,147 @@ sub get {
     return {};
   }
 
+  my $size = defined($p->{ size }) ? $p->{ size } : 'long';
+ 
+  $logger->warn("SZSZSZ $size");
+  my $interactionTree = $size eq 'long' ? getInteractions($aceObject) : undef;
+  my $bindingSiteTree = $size eq 'long' ? getBindingSite ($aceObject) : undef;
+
+  my $keywordSet = $size eq 'long' ? getUniprotKW($aceObject) : undef;
+  my $goSet = $size eq 'long' ? getGO($aceObject) : undef;
   return {
+#	  uniprotFragID => getUniprotFragmentID(),
 	  name => $p->{ name },
 	  common => getCommonName($aceObject),
+	  moreInfo => getMoreInfo($aceObject),
+	  stoichiometry => getStochiometry($aceObject),
 	  molecularWeight => getMolecularWeight($aceObject),		
 	  biofunc => getBioFunc($aceObject),
-	  tissue => getTissue($aceObject),
-	  uniprotKW => getUniprotKW($aceObject),
 	  pfam => getPfam($aceObject),
+	  interpro => getInterpro($aceObject),
 	  pdb => getPdb($aceObject),
-	  tpm => getTPM($aceObject),
-	  go => getGO($aceObject),
 	  gene => getGene($aceObject),
 	  specie => getSpecie($aceObject),	    
 	  type => getType($aceObject),
 	  relationship => getRelationships($aceObject),
 	  location => getLocation($aceObject),
-	  bindingSite => getBindingSite ($aceObject),
-	  interactions => getInteractions($aceObject)
+	  bindingSite => $bindingSiteTree,
+	  interactions => $interactionTree,
+	  comments => getComments($aceObject),
+	  xref => getXref($aceObject),
+	  aaNumber => getAaNumber($aceObject),
+	  uniprotKW => $keywordSet,
+	  go => $goSet
 	 };
+}
+=pod # Deprecated use Xref instead
+sub getUniprotFragmentID {
+  my $aceObject = shift;
+  my $aceBuffer = $aceObject->get('Molecule_Processing', 1);
+  defined($aceBuffer) || return undef;
+  
+  return $aceBuffer->name;
+}
+=cut
+
+sub getAaNumber {
+  my $aceObject = shift;
+  my $aceBuffer = $aceObject->get('aa_number', 1);
+  defined($aceBuffer) || return undef;
+  
+  return $aceBuffer->name;
+}
+sub getInterpro{
+  my $aceObject = shift;
+  my @values = $aceObject->follow("InterPro");
+  @values == 0 && return undef;
+
+  my @data;
+  foreach my $iprAceObject (@values) {
+    my $tmpData = {id => $iprAceObject->name, EntryName => undef};
+    foreach my $key (keys (%{ $tmpData })) {
+      my @val = $iprAceObject->get($key);
+      (@val > 0) || next;
+      $tmpData->{ $key } = $val[0]->name;
+    }
+    push @data, $tmpData;
+  }
+  @data == 0 && return undef;
+
+  return { type => 'interproList', data => \@data };
+}
+
+sub getXref{
+  my $aceObject = shift;
+  my @tags = qw / CheBI_identifier KEGG_Compound EBI_xref LipidMaps Molecule_Processing /;
+  my @xrefList;
+  foreach my $tag (@tags) {
+    my $aceNode = $aceObject->get($tag, 1);
+    defined($aceNode) || next;
+    push @xrefList, { $tag => $aceNode->name };
+  }
+  
+  @xrefList == 0 && return undef;
+  return \@xrefList;
+}
+
+sub getComments {
+  my $aceObject = shift;
+  
+  my @tags = qw / GAG_Structure Other_informations Zone Category More /;
+  
+  my @data;
+  foreach my $tag (@tags) {
+    my $aceBuffer = $aceObject->get($tag, 1);
+    defined($aceBuffer) || next;
+    push @data, $aceBuffer->name;
+  }
+  @data == 0 && return undef;
+  
+  return { type => 'comments', data => \@data };
+}
+
+sub getMoreInfo{
+  my $aceObject = shift;
+  my $aceBuffer = $aceObject->get('More_info', 1);
+  defined($aceBuffer) || return undef;
+
+  return $aceBuffer->name;
+}
+sub getStochiometry{
+  my $aceObject = shift;
+  my $aceBuffer = $aceObject->get('Stoichiometry', 1);
+  defined($aceBuffer) || return undef;
+
+  return $aceBuffer->name;
 }
 
 sub getCommonName {
   my $aceObject = shift;
-  my @array;
+  my $dataContainer = {};
   foreach my $tag (qw( 
 		       Common_Name Other_Name FragmentName Other_Fragment_Name 
 		       GAG_Name Other_GAG_Name Glycolipid_Name Phospholipid_Name Multimer_Name 
-		       Other_Multimer_Name Inorganic_Name Other_Inorganic_Name)
+		       Other_Multimer_Name Inorganic_Name Other_Inorganic_Name Cation_Name)
 		  ) {
     my @values = $aceObject->get($tag);
-   
-    (@values == 0) && next;
-    my $tmp = {$tag => []};
-    foreach my $value (@values) {
-      push @{$tmp->{ $tag }}, $value->name;
-    }
-    push @array, $tmp;
-  }
-  $logger->trace(Dumper(@array));
-  return \@array;
-}
 
-sub getExternalRef {
- # my $aceObject = shift;
-  return {};
+    (@values == 0) && next;
+    $dataContainer->{ $tag } = [];
+    foreach my $value (@values) {
+      push @{ $dataContainer->{ $tag } }, $value->name;
+    }
+  }
+  my @stack;
+  foreach my $key (keys (%{ $dataContainer })) {
+    foreach my $val (@{$dataContainer->{ $key }}) {
+      push @stack, $val;
+    }
+  }
+  $dataContainer->{ anyNames } = \@stack; 
+  $logger->trace(Dumper($dataContainer));
+  
+  return $dataContainer;
 }
 
 sub getPdb {
@@ -85,12 +181,11 @@ sub getPdb {
 		 determinationMethod =>  @val > 0 ? $val[0]->name : undef
 		};
   }
-  
+ 
   return { type => 'pdbList',
 	   data => \@data
 	 };
 }
-
 
 sub getBioFunc {
   my $aceObject = shift;
@@ -103,12 +198,6 @@ sub getBioFunc {
     $string .= $val->name;
   }
   return $string;
-}
-
-# Tiisue Free tesxt + UniGene
-sub getTissue {
- # my $aceObject = shift;
-  return {};
 }
 
 sub getUniprotKW {
@@ -158,13 +247,6 @@ sub getPfam {
   
   return { type => 'pfamList', data => \@data };
 }
-
-
-sub getTPM {
- # my $aceObject = shift;
-  return {};
-}
-
 
 sub getGO {
   my $aceObject = shift;
@@ -236,7 +318,7 @@ sub getType {
 sub getRelationships {
   my $aceObject = shift;
   
-  my $tmp = {
+  my $tmp = {	    
 	     Belongs_to => [],  # XREF ContainsFragment
 	     ContainsFragment => [], # XREF Belongs_to //  fragments of the biomolecule
 	     Component => [], # XREF In_multimer
@@ -260,14 +342,14 @@ sub getMolecularWeight {
   my $aceObject = shift;
   my @array;
   for my $tag (qw (Molecular_WeightPept_KDa Molecular_Weight )) {
-    my @value = $aceObject->get($tag);
-    (@value == 0) && next;
-    foreach my $val (@value) {
-      $val = $tag eq "Molecular_WeightPept_KDa" ? $val->name."000" : $val->name;
-      push @array, {$tag => $val};
-    }
+    my $aceBuffer = $aceObject->get($tag, 1);
+    (defined $aceBuffer) || next;
+    my $string = $tag eq "Molecular_WeightPept_KDa" 
+      ? $aceBuffer->name."000" : $aceBuffer->name;
+    return $string
   }
-  return \@array;
+  
+  return undef;
 }
 
 sub getLocation {
@@ -283,10 +365,17 @@ sub getLocation {
 					    data => undef
 					   },
 		       tissue => undef,
+		       comments => undef,
 		       compartiment => undef
 		      };
-  
-  my $aceBuffer = $aceObject->get('Subcellular_location', 1);
+  #
+  # Get General tissue comment from uniprot
+  my $aceBuffer = $aceObject->get('Tissue_Specificity', 1);
+  if (defined($aceBuffer)) {
+    $dataContainer->{ comments } = $aceBuffer->name;
+  }
+ 
+  $aceBuffer = $aceObject->get('Subcellular_location', 1);
   if (defined($aceBuffer)) {
     $dataContainer->{ compartiment } = [];
   }
@@ -295,9 +384,23 @@ sub getLocation {
     push @{$dataContainer->{ compartiment }}, $compartimentString;
     $aceBuffer = $aceBuffer->down();
   }
-
+  # Put GAG location in compartiment
+  $aceBuffer = $aceObject->get('Location', 1);
+  while(defined($aceBuffer)) {
+    my $compartimentString = defined($aceBuffer) ? $aceBuffer->name : undef;
+    push @{$dataContainer->{ compartiment }}, $compartimentString;
+    $aceBuffer = $aceBuffer->down();
+  }
+  # Put Personnal KW in compartiment
+  $aceBuffer = $aceObject->get('Personal_Keyword', 1);
+  while(defined($aceBuffer)) {
+    my $compartimentString = defined($aceBuffer) ? $aceBuffer->name : undef;
+    push @{$dataContainer->{ compartiment }}, $compartimentString;
+    $aceBuffer = $aceBuffer->down();
+  }
+  
   $aceBuffer = $aceObject->get('Tissue_specificity', 1);
-  $dataContainer->{ tissue } = defined($aceBuffer) ? $aceBuffer->name : undef;
+  $dataContainer->{ comments } = defined($aceBuffer) ? $aceBuffer->name : undef;
   
   my @aceObjects = $aceObject->follow('UniGene');
   if (@aceObjects == 0) {
@@ -313,30 +416,45 @@ sub getLocation {
   }
   
   $aceBuffer = $aceUniGeneObject->at('Data', 1);
-  defined($aceBuffer) || return $dataContainer;
+#  defined($aceBuffer) || return $dataContainer;
+  
   my $expressionData = {};
-  while(defined($aceBuffer)) {
-    $expressionData->{ $aceBuffer->name } = [];
-    my @expressionAceObjList = $aceBuffer->tags();
-    my @value = map {$_->name ne '' ? $_->name : '0';} @expressionAceObjList;
-    for (my $i = 0; $i < @expressionAceObjList ; $i++) {
-      my $aceCurrExpressionObject = $expressionAceObjList[$i];
-      $aceCurrExpressionObject = $aceCurrExpressionObject->right(1);
-      while(defined($aceCurrExpressionObject)) {
-	my @array = ($value[$i], $aceCurrExpressionObject->name);	
+    while(defined($aceBuffer)) {
+      $expressionData->{ $aceBuffer->name } = [];
+      my @expressionAceObjList = $aceBuffer->tags();
+      my @value = map {$_->name ne '' ? $_->name : '0';} @expressionAceObjList;
+      for (my $i = 0; $i < @expressionAceObjList ; $i++) {
+	my $aceCurrExpressionObject = $expressionAceObjList[$i];
 	$aceCurrExpressionObject = $aceCurrExpressionObject->right(1);
-	
-	push @array, $aceCurrExpressionObject->name;
-	$array[2] =~ s/_/ /g;
-	push @{ $expressionData->{ $aceBuffer->name } }, \@array;
-
-	$aceCurrExpressionObject = $aceCurrExpressionObject->down();
-
+	while(defined($aceCurrExpressionObject)) {
+	  my @array = ($value[$i], $aceCurrExpressionObject->name);	
+	  $aceCurrExpressionObject = $aceCurrExpressionObject->right(1);
+	  
+	  push @array, $aceCurrExpressionObject->name;
+	  $array[2] =~ s/_/ /g;
+	  push @{ $expressionData->{ $aceBuffer->name } }, \@array;
+	  
+	  $aceCurrExpressionObject = $aceCurrExpressionObject->down();
+	  
+	}
       }
+      $aceBuffer = $aceBuffer->down(1);
     }
-    $aceBuffer = $aceBuffer->down(1);
+  
+  $dataContainer->{ expressionLevels }->{ data } = %{ $expressionData } 
+    ? $expressionData 
+      : undef;
+  
+  
+  $aceBuffer = $aceUniGeneObject->at('Express', 1);
+  if (defined ($aceBuffer)) {
+    $dataContainer->{ tissue } = [];
+    while (defined($aceBuffer)) {
+      push @{ $dataContainer->{ tissue } }, $aceBuffer->name;
+      $aceBuffer = $aceBuffer->down();
+    }
   }
-  $dataContainer->{ expressionLevels }->{ data } = $expressionData;
+
   $logger->info(Dumper($dataContainer));
   return $dataContainer;
 }
@@ -375,7 +493,9 @@ sub getInteractions {
     my $tmp = { 
 	       kind => undef,
 	       supportingExperiments => [],
-	       partner =>  $biomAceObject->name
+	       partner =>  { id => $biomAceObject->name,
+			     common => getCommonName($biomAceObject)
+			   }
 	      };
     
     my @topPartners = $assocAceObj->follow("biomolecule");
@@ -384,7 +504,8 @@ sub getInteractions {
     }
     foreach my $mol (@topPartners) {
       if ($biomAceObject->name ne $mol->name) {
-	$tmp->{ partner } = $mol->name;
+	$tmp->{ partner }->{ id } = $mol->name;
+	$tmp->{ partner }->{ common } = getCommonName($mol);
       }
     }
     my @values = $assocAceObj->get('InferredFrom');

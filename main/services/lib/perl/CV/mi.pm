@@ -69,8 +69,9 @@ sub _getNode {
 	my $bool = 1;
 	foreach my $selKey (keys (%{$p->{ selectorSet }})) {
 	    my $value = $p->{ selectorSet }->{ $selKey };
+	    #warn Dumper($node);
 	    if (!defined ($node->{ $selKey })) { $bool = 0;last; }
-	 #   print "@{$node->{ $selKey }} vs $value\n";
+		   #warn "@{$node->{ $selKey }} vs $value\n";
 	    if (!common::listExist ($node->{ $selKey }, $value)){ $bool = 0; last; }
 	}
 	$bool || next; 
@@ -85,24 +86,27 @@ sub _getNode {
 sub _getNodeSloppy { 
     my $self = shift;
     my $p = common::arg_parser (@_);
-    
+
     foreach my $node (@{$self->{ termsList }}) {
 	my $bool = 1;
 	foreach my $selKey (keys (%{$p->{ selectorSet }})) {
+	    
 	    if (!defined ($node->{ $selKey })) { $bool = 0;last; }
-
+	#	warn "getting node value of $selKey from ";
+	#	warn Dumper($node);	
+	
 	    my $value = $p->{ selectorSet }->{ $selKey };
 
 	    foreach my $kValue (@{$node->{ $selKey }}) {		
-		foreach my $word (split(/[\s]+/, $value)) {
-		    warn "checking \"$kValue\" vs /$word/\n";
-		    $word =~ s/[\[\]\(\)]/ /g;
-		    if ( $kValue !~ /$word/) {			
-			$bool = 0;
-			last;
-		    }
+			foreach my $word (split(/[\s]+/, $value)) {
+		#    	warn "checking \"$kValue\" vs /$word/\n";
+		    	$word =~ s/[\[\]\(\)]/ /g;
+		    	if ( $kValue !~ /$word/) {			
+				$bool = 0;
+				last;
+		    	}
 		    $bool || last;
-		}
+			}
 	    }	
 	}
 	$bool || next; 
@@ -114,9 +118,6 @@ sub _getNodeSloppy {
     return;
 
 }
-
-
-
 
 
 =pod
@@ -192,45 +193,70 @@ sub _checkParent {
     return 0;
 }
 
+sub _getLineage {
+	my $self = shift;
+	my ($cNode, $nodeArray) = @_;
+    defined ($cNode) || return;
+    my $leave = { data => $cNode, parents => []};
+    push @{ $nodeArray }, $leave;
+    foreach my $pNode (@{$cNode->{ parentRef }}) {
+		$self->_getLineage ($pNode, $nodeArray);
+   	}
+}
+
 # handle response for error 
 sub request {
     my $self = shift;
     
     my $requestContainer = shift;
+    warn Dumper($requestContainer);
+
+    if (exists($requestContainer->{ isSonOf }) ) {
+    	# lineage for now we dont make use of specified sonOf node
+		if (exists ($requestContainer->{ askFor })) {
+    		if ($requestContainer->{ askFor } eq "lineage") {
+        		warn "--->getLineage";
+        		my $cNode = $self->_getNodeSloppy (selectorSet => $requestContainer->{ selectors });
+    			my $leave = { name => "leave", parents => [] };
+
+    			$self->_getLineage($cNode, $leave->{ parents });
+    			warn Dumper($leave);
+    		}
+    		warn "returning lineage stuff";
+			return;
+		}
 
     # test if a given node is sonof
-    if (exists($requestContainer->{ isSonOf })) {
-	my $pSelectors = $requestContainer->{ isSonOf };
+    	my $pSelectors = $requestContainer->{ isSonOf };
+		$logger->print ("perform a is son of search");
+		my $cNode = $self->_getNode (selectorSet => $requestContainer->{ selectors });
 	
-	$logger->print ("perform a is son of search");
-	my $cNode = $self->_getNode (selectorSet => $requestContainer->{ selectors });
+		my $isSonBool = $self->_checkParent (node => $cNode, selectorSet => $pSelectors);
 	
-	my $isSonBool = $self->_checkParent (node => $cNode, selectorSet => $pSelectors);
-	
-	my $dataValue = $isSonBool ? 'isSon' : 'notSon';
-	return {
-	    dataSource => "mi",
-	    dataValue => [$dataValue],
-	    dataType => "parentalBoolean"
-	}
-    # simple attribute query
+		my $dataValue = $isSonBool ? 'isSon' : 'notSon';
+		return {
+	    	dataSource => "mi",
+	    	dataValue => [$dataValue],
+	    	dataType => "parentalBoolean"
+		}
     } elsif (exists ($requestContainer->{ askFor })) {
-	my $attrList = '';
-	$attrList = $self->get (attribute => $requestContainer->{ askFor },
-				selectorSet => $requestContainer->{ selectors },
-				options => ['sloppySearch']
-	    );
-	if (!defined ($attrList)) {
-	    $attrList = ['N/A'];
-	} else {
-	    #print "handsome ! ". Dumper ($requestContainer->{ selectors }) . " -- delivered --> @{$attrList}\n"; 
-	}
-	return {
-	    dataSource => "mi",
-	    dataValue => $attrList,
-	    dataType => $requestContainer->{ askFor }
-	}
-    }
+    	# simple attribute query
+   			my $attrList = '';
+			$attrList = $self->get (attribute => $requestContainer->{ askFor },
+					selectorSet => $requestContainer->{ selectors },
+					options => ['sloppySearch']
+	    	);
+			if (!defined ($attrList)) {
+	    		$attrList = ['N/A'];
+			} else {
+	    	#print "handsome ! ". Dumper ($requestContainer->{ selectors }) . " -- delivered --> @{$attrList}\n"; 
+			}
+			return {
+	   			dataSource => "mi",
+	   		 	dataValue => $attrList,
+	   	 		dataType => $requestContainer->{ askFor }
+			};
+    } 
 
 }
 

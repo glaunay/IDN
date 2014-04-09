@@ -5,19 +5,19 @@
   <head>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=windows-1252" />
     <!--- <title>MatrixDB : Database of extracellular molecular interactions</title>  -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" />
+    <link rel="stylesheet" href="dependencies/css/bootstrap.min.css" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">   
     <link rel="stylesheet" href="css/index.css" />
     <link href="img/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-	<link href="../css/myBar.css" rel="stylesheet"/>
+    <link href="../css/barSearch.css" rel="stylesheet"/>
 	
     <!--<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>-->
     <script type="text/javascript" src="../../dependencies/js/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="js/myBarSearch.js"></script>
-	<script type="text/javascript" src="js/mapper.js"></script>
-	<script type="text/javascript" src="js/formContact.js"></script>
-	<script type="text/javascript" src="dependencies/js/bootstrap.js"></script>
-
+    <script type="text/javascript" src="js/barSearch.js"></script>
+    <script type="text/javascript" src="js/mapper.js"></script>
+    <script type="text/javascript" src="js/formContact.js"></script>
+    <script type="text/javascript" src="dependencies/js/bootstrap.js"></script>
+  
 	<script type="text/javascript">    
 	$(  
 			<!-- page onload event -->
@@ -26,8 +26,8 @@
 						targetDiv:'#searchBar',
 						staticHref : 'cgi-bin/current/newPort'
 					}
-        			 barSearch = initMyBarSearch(options); 
-        			barSearch.draw();
+        		barSearch = initBarSearch(options); 
+        		barSearch.draw();
         		
         		
         			}
@@ -290,8 +290,8 @@
                     Once exported under <a href="http://www.cytoscape.org" target="_blank">Cytoscape</a>
                     format, you can use the full power of Cytoscape to obtain
                     the most relevant network representation. <br />
-                    <a href="http://www.cytoscape.org/download.php" target="_blank">Download
-                      Cytoscape</a> <a href="http://www.cytoscape.org/download.php"
+                    <a href="http://www.cytoscape.org/download.html" target="_blank">Download
+                      Cytoscape</a> <a href="http://www.cytoscape.org/download.html"
                       target="_blank"><i class="icon-download-alt"></i></a></div>
                 </dd>
               </dl>
@@ -359,7 +359,7 @@
                     Proteomics. 2009. <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/19755719"
                       target="_blank">Pubmed</a> </li>
                   <li>A cell surface interaction network of neural leucine-rich
-                    repeat receptors. S�llner et al. Genome Biol. 2009. <a class="pubmedLink"
+                    repeat receptors. Söllner et al. Genome Biol. 2009. <a class="pubmedLink"
                       href="http://www.ncbi.nlm.nih.gov/pubmed/19765300" target="_blank">Pubmed</a></li>
                   <li>The extracellular LRR and IgSF neuroreceptor interaction
                     network. Bushell et al. Genome Res. 2008. <a class="pubmedLink"
@@ -576,7 +576,7 @@ var d="";for(var i=0;i<721;i++)d+=String.fromCharCode(("\"l}+ H-aoL=v&`TVeAqMW~Q
   </br>
   <!-- mise en place de la balise recaptcha --> 
   <INPUT TYPE="reset" class="form-control"  VALUE="Effacer">  
-  <INPUT TYPE="submit" style="float: right" class="form-control" VALUE="Envoyer" >
+  <INPUT TYPE="submit" style="float: right;margin-right: 38%;" class="form-control" VALUE="Envoyer" >
 </form>
   
 		</div> <br />

@@ -45,7 +45,8 @@ my $logger = get_logger();
 =cut
 
 $logger->info("*** CGI activation at " . common::getTime());
-our $DB = Ace->connect(-host  => 'localhost', -port  => 55666)  || AceError ("Couldn't open database");
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || 
+  $logger->logdie ("Couldn't open database");
 our $nameMutator = biomoleculeMapper->new (template => '../data/biomoleculeMapper.json');
 
 # retrieving get parameters

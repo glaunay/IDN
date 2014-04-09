@@ -27,16 +27,19 @@ function initCart (options){
 		alert("Cant get targetDiv element in document");
 		return;
 	}
+	
 	return {
 		targetDomElem : elem,
 		wrapperClass : 'mycart',
 		wrapperSel : '.mycart',	
 		data : defaultEaten.data,//data générer depuis le cookie
 		tick : undefined,//clock
+		rootUrlForNetwork : "http://matrixdb.ibcp.fr:9999/cgi-bin/current/iNavigatorGateWay",
 		registerItem : {
 			'biomolecule' : '<i class="fa fa-spinner"></i>',
-			'pubmed' : '<i class="fa fa-book"></i>',
-			'other' : '<i class="fa fa-pencil"></i>'
+			'publication' : '<i class="fa fa-book"></i>',
+			'goTerm' : '<i class="fa fa-pencil"></i>',
+			'keyword' : '<i class="fa fa-pencil"></i>'
 		},
 		_startTick : function () {//demarre le refresh
 			var self = this;
@@ -57,14 +60,11 @@ function initCart (options){
 		},
 		_tickPulse : function(){//refresh
 			var self = this;
-		
+			self._hrefNetWork()
 			var newData = this._isDataChanged();
 			if (!newData) {
-
-				console.dir(this.data.length);
 				return;
 			}
-			console.log('data change')
 			this.data = newData;
 			self.draw();
 
@@ -74,7 +74,10 @@ function initCart (options){
 			$(self.targetDomElem).find('div>div.ico:first>div').remove();
 			$(self.targetDomElem).find('div>div.ico:first').append('<div id= "pastille" >' + self.data.length + '</div>');
 			if( self.data.length < 1){
-				$(self.targetDomElem).find('div>div.ico:first>div').addClass('noData');		
+				$(self.targetDomElem).find('div>div.ico:first>div').addClass('noData');
+				$(self.targetDomElem).find('div.leftThing').removeClass("active")		
+			}else{
+				$(self.targetDomElem).find('div.leftThing').addClass("active")
 			}
 		},
 		addItem : function(item){//ajoute un item au cart item {type : "type" :value : "name"}
@@ -98,6 +101,7 @@ function initCart (options){
 				event.stopPropagation();
 				});
 			$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul').click(function(){event.stopPropagation();});
+			self._hrefNetWork()
 		},
 		delItem : function(item,icoclick){//supprime un item du cart
 			var self = this;
@@ -113,6 +117,7 @@ function initCart (options){
     		$.cookie('cartCookie',{type : 'cartCookie', data : self.data});
 			self.draw();
 			if(icoclick){self._clickDrop();}
+			self._hrefNetWork()
 
 		},
 		_clear : function(){// supprime tout les items
@@ -120,14 +125,15 @@ function initCart (options){
 			$.cookie("cartCookie",{type : "cartCookie", data : []});
 			self.data = [];
 			self.draw();
+			self._hrefNetWork()
 			return ;
 		},
 		draw : function(){// dessine le composant cart
 			var self = this ;
 			$(self.targetDomElem).find('div.cartDraw').remove();//ligne du dessous a la fin rajouter le link ver le constructeur
-			$(self.targetDomElem).append('<div class = "cartDraw"><div class = "clearDiv "><a class ="drop cog" data-toggle="dropdown "><i class="fa fa-cog  fa-2x"></i></a><ul class="dropdown-menu liste"><li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li><li class = "liCart"><a class = "leftalign"><i class="fa fa-gavel"></i> Build items interactions network</a></li><li class="divider"></li><li class="liCart"><a class = "leftalign"><i class ="fa fa-question"></i> Help</a></li></ul></div><div class = "leftThing"><div class = "ico"><div id= "pastille" >' + self.data.length + '</div></div><div class = "drop "> <a class ="drop" data-toggle="dropdown "><i class="fa fa-shopping-cart fa-2x icon-white dropArrow"></i></a><ul class="dropdown-menu liste "></ul></div></div></div>');
+			$(self.targetDomElem).append('<div class = "cartDraw"><div class = "clearDiv "><a class ="drop cog" data-toggle="dropdown "><i class="fa fa-cog  fa-2x"></i></a><ul class="dropdown-menu liste"><li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li><li class = "liCart"><a class = "leftalign linkToNetwork" target = "_blank"><i class="fa fa-gavel"></i> Build items interactions network</a></li><li class="divider"></li><li class="liCart"><a class = "leftalign"><i class ="fa fa-question"></i> Help</a></li></ul></div><div class = "leftThing"><div class = "ico"><div id= "pastille" >' + self.data.length + '</div></div><div class = "drop "> <a class ="drop" data-toggle="dropdown "><i class="fa fa-shopping-cart fa-2x icon-white dropArrow"></i></a><ul class="dropdown-menu liste "></ul></div></div></div>');
 			self._refreshCount(true)	
-			
+			self._hrefNetWork()
 			self._ajoutListe(self.data);
 						$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul>li>div>div:last-child').click(function(){
 				self.delItem({value : $(this).parent().parent().attr('name')},true);
@@ -197,6 +203,15 @@ function initCart (options){
 				$(self.targetDomElem).find('div.cartDraw >div> div.drop > ul').toggle();}
 			$(self.targetDomElem).find('div.cartDraw > div.clearDiv > ul').toggle();
 			$.fx.off = false;
+		},
+		_hrefNetWork : function(){
+			var self = this;
+			var suiteOfUrl = "?"
+			for (var i=0; i < self.data.length; i++) {
+			  suiteOfUrl += self.data[i].type + "=" + self.data[i].value +"&";
+			};
+			suiteOfUrl = suiteOfUrl.substring(0,suiteOfUrl.length-1)
+			$(self.targetDomElem).find('a.linkToNetwork').attr("href", self.rootUrlForNetwork + suiteOfUrl);
 		}
 	}
 }

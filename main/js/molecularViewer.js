@@ -20,6 +20,11 @@ function GLmolInit (opt) {
     var success = function (){	
     };
 
+   if(!opt.hasOwnProperty('target')){
+	alert("no target div");
+	return;
+    } 
+	
     if (opt.callbackLoadComplete)
 	complete = opt.callbackLoadComplete;
     if (opt.callbackLoadError)
@@ -27,7 +32,10 @@ function GLmolInit (opt) {
     if (opt.callbackLoadSuccess)
 	success = opt.callbackLoadSuccess;
 
+	
+
     return {
+	glmolDivId : opt.forceGlmolId,
 	opt : opt,
 	callbackLoadSuccess : success,
 	callbackLoadComplete : complete,
@@ -35,52 +43,51 @@ function GLmolInit (opt) {
 	width : width,
 	height : height,
 	glmol : null,
-	srcSelector : opt.target + ' #glmolWidget_src',
-	residueSel : [],
+	
+	srcSelector : opt.target +' ' + opt.forceGlmolId + '_src',
+	residueSel : opt.defaultSel || [],
 	pdbnumArray : null,
 	aaSeqArray : null,
 	sseArray : null,
 	chainidArray : null,
 	draw : function () {
-	    $(this.opt.target).css({"max-width" : width, overflow : "hidden"});
-	    
+	    var shortUniqGlmolId = this.glmolDivId;
+	    shortUniqGlmolId = shortUniqGlmolId.substring(1,shortUniqGlmolId.length);
 	    var scaffold = '<div class="glmolHeader"></div>'
-		+ '<div id="glmolWidget" style="width: ' + width + '; height: ' + height  + 
-		'; background-color: none;"></div>'
-		+ '<textarea id="glmolWidget_src" style="display: none;"></textarea>'
+		+ '<div id="' + shortUniqGlmolId + '" style="width: ' + width + '; height: ' + height  + 
+		'; background-color: black;"></div>'
+		+ '<textarea id="' + shortUniqGlmolId + '_src" style="display: none;"></textarea>'
 		+ '<div class="glmolFooter"></div>';
-	    
-	    $(this.opt.target).append(scaffold);    
-	    this.glmol = new GLmol(this.opt.target + ' #glmolWidget', true); // no#
-	    
-	   
 
-	    this.glmol.defineRepresentation = function() {
-		var all = this.getAllAtoms();
-		var hetatm = this.removeSolvents(this.getHetatms(all));
-		this.colorByAtom(all, {});
-		this.colorByChain(all);
-		var asu = new THREE.Object3D();
-		
-		this.drawBondsAsStick(asu, hetatm, this.cylinderRadius, this.cylinderRadius);
-		this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['A'])), [58, 87]), this.cylinderRadius, this.cylinderRadius);
-		this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['B'])), [63, 92]), this.cylinderRadius, this.cylinderRadius);
-		this.drawCartoon(asu, all, this.curveWidth, this.thickness);
-		
-		this.drawSymmetryMates2(this.modelGroup, asu, this.protein.biomtMatrices);
-		this.modelGroup.add(asu);
-	    };
+	    $(this.opt.target).append(scaffold);    
 	    
+	    this.glmol = new GLmol( shortUniqGlmolId, true); // no#
+	    
+	    this.glmol.defineRepresentation = function() {
+			var all = this.getAllAtoms();
+			var hetatm = this.removeSolvents(this.getHetatms(all));
+			this.colorByAtom(all, {});
+			this.colorByChain(all);
+			var asu = new THREE.Object3D();
+			this.drawBondsAsStick(asu, hetatm, this.cylinderRadius, this.cylinderRadius);
+			this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['A'])), [58, 87]), this.cylinderRadius, this.cylinderRadius);
+			this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['B'])), [63, 92]), this.cylinderRadius, this.cylinderRadius);
+			this.drawCartoon(asu, all, this.curveWidth, this.thickness);
+			this.drawSymmetryMates2(this.modelGroup, asu, this.protein.biomtMatrices);
+			this.modelGroup.add(asu);
+	    };
 	    if (this.opt.draggable) {			    
 		if(this.opt.draggable === "true")
 		    $('#' + opt.target).drags({handle : ".glmolHeader"});
 	    } else {
 		$(opt.target + ' .glmolHeader').remove();
 	    }
+	   	
 	},
 	load : function (pdbName) {
 	    var self = this;
-	    
+	    console.dir("bug")
+	    console.dir(pdbName)
 	    var JSONText = JSON.stringify({pdbName : pdbName});
   
 	    //  console.log("trying to load " + pdbName);
@@ -99,17 +106,21 @@ function GLmolInit (opt) {
 			   self.callbackLoadError();
 		       }, 
 		       success : function (data, textStatus, jqXHR){	
-			   
+			   console.dir(data);
 			   if (!data.atomRecord) {
 			       self.callbackLoadError();
 			   }
-			   console.log(data.atomRecord);
-			   $(self.srcSelector).val(data.atomRecord);
+			   
+			   //console.dir( self.srcSelector )
+			   $(self.srcSelector).val(data.atomRecord)
+			   //console.dir($(self.srcSelector).val())
+			   
 			   self.glmol.loadMolecule();
 		 	   self.storeSequences(data);
 			   self.drawFooter();
 			   self.callbackLoadSuccess();			   
 		       }
+		       
 		   });
 		       /*
 			* get("../data/" + pdbName, function(ret) {
@@ -129,7 +140,7 @@ function GLmolInit (opt) {
 	    this.sseArray = data.sseArray;
 	    this.chainidArray = data.chainidArray;
 	},
-	cycleTest : function () {
+	/*cycleTest : function () {
 	    var i = 10;
 	    setInterval (function(){
 			     this.id = this.id ? this.id + 10 : i;
@@ -146,17 +157,17 @@ function GLmolInit (opt) {
 				 this.colorByChain(all);
 				 this.colorAtoms(list, 204);
 				 var asu = new THREE.Object3D();				 
-				 /* this.drawBondsAsStick(asu, hetatm, this.cylinderRadius, this.cylinderRadius);
+				 this.drawBondsAsStick(asu, hetatm, this.cylinderRadius, this.cylinderRadius);
 				  this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['A'])), [58, 87]), this.cylinderRadius, this.cylinderRadius);
-				  this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['B'])), [63, 92]), this.cylinderRadius, this.cylinderRadius);*/
+				  this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['B'])), [63, 92]), this.cylinderRadius, this.cylinderRadius);
 				 this.drawCartoon(asu, all, this.curveWidth, this.thickness);				 
-				 /*this.drawSymmetryMates2(this.modelGroup, asu, this.protein.biomtMatrices);*/
+				 /*this.drawSymmetryMates2(this.modelGroup, asu, this.protein.biomtMatrices);
 				 this.modelGroup.add(asu);				 
 			     };
 			     self.glmol.rebuildScene();
 			     self.glmol.show();
 			 }, 500000);  
-	},
+	},*/
 	erase : function () {
 	    $(this.opt.target + " .glmolFooter div.Xsequence")
 		.each (function (){
@@ -166,21 +177,22 @@ function GLmolInit (opt) {
 	},
 	drawFooter : function () { /*Append sequence descriptor to widget --> IMPLEMENT FOR n CHAINID */
 	    var self = this;	    
-	    
+	    console.dir(this.opt.target)
 	    var colorCode = this.glmol.getChainColor();
 	    self.colorChainCode = {};
 	    for (var i = 0; i < colorCode.length; i++) {
 		self.colorChainCode[colorCode[i].chain] = colorCode[i].color;
 	    }
 	    var HTML = '<div class="molecularSerie"></div>' // future svg sse descriptions
-		+      '<div class="molecularSequence"></div>'; 
+		+       '<div class="molecularSequence"></div>'; 
 	    
 
-	    var dropHtml = '<div id="segid-toggle" class="btn-group dropup">'
-		+ '<a class="btn dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">'
+	    var dropHtml = '<div id="segid-toggle" class="btn-group dropdown">'
+	    + '<a class = "btn titleChain" style = "color : ' + self.colorChainCode[self.chainidArray[0]] + '"><span class = "chain">' + self.chainidArray[0] + '</span><span class="caret"></span></a>'
+		//+ '<a class="btn dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown"  >'
 //		+ 'Chain' 
-		+ '<span class="caret"></span>'
-		+ '</a>'
+		//+ '<span class="caret"></span>' 
+		//+ '</a>'
 		+ '<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">'
 		+ '</ul>'
 		+ '</div>';
@@ -190,30 +202,42 @@ function GLmolInit (opt) {
 		.each (function (){
 			   $(this).dataTable().fnDestroy();
 		       });
-	    	 
-	    $(this.opt.target + " .glmolFooter").empty().append(dropHtml);
-	    $(this.opt.target + " .glmolFooter .dropdown-menu")
-		.each(function(){
-			  for (var i = 0; i < self.chainidArray.length; i++) {
-			      var segid = self.chainidArray[i];
-			      var color = self.colorChainCode[segid];
-			      $(this).append('<li style="color:' +  color
-					     + ';">' + segid + '</li>');			      
-			  } 
-		      });
-	    $(this.opt.target + " .glmolFooter .dropdown-menu li")
-		.on('click', function () {			
-			var iShow = $(this).index();
-			$(self.opt.target + ' .molecularSequence > div')
-			    .each(function (index, elem){
-				      if (index === iShow) {					 				     
-					  $(this).show();
-				      } else {
-					  $(this).hide();
-				      } 					
-				  });
-		    });
-	    
+	     
+	    	$(this.opt.target + " .glmolFooter").empty();
+	    	$(this.opt.target + " #segid-toggle").remove()
+	    	$(this.opt.target + " .pdbBanner").append(dropHtml)
+		    $(this.opt.target + " .pdbBanner .dropdown-menu")
+			.each(function(){
+			
+				  for (var i = 0; i < self.chainidArray.length; i++) {
+				      var segid = self.chainidArray[i];
+				      var color = self.colorChainCode[segid];
+				      $(this).append('<li  style="color:' +  color
+						     + ';">' + segid + '</li>');			      
+				  }
+				  
+			      });
+			$(this.opt.target + " .pdbBanner #segid-toggle").click(function(){
+				$(this).find('ul').toggle();
+			});
+		    $(this.opt.target + " .pdbBanner .dropdown-menu li")
+			.on('click', function () {
+							
+				var iShow = $(this).index();
+				$(self.opt.target + " .pdbBanner #segid-toggle .titleChain").css("color",self.colorChainCode[self.chainidArray[iShow]]);
+				$(self.opt.target + " .pdbBanner #segid-toggle .titleChain span.chain").text(self.chainidArray[iShow] );
+				$(self.opt.target + ' .molecularSequence > div')
+			    	.each(function (index, elem){
+				    	  if (index === iShow) {					 				     
+						  $(this).show();
+				    	  } else {
+						  $(this).hide();
+					      } 					
+					  });
+			    });
+		
+		
+	  
 	    $(this.opt.target + " .glmolFooter").append(HTML);
 	 
 	    for (var j = 0; j < self.chainidArray.length; j++) {	
@@ -232,12 +256,27 @@ function GLmolInit (opt) {
 		}
 	    }
 	    var cnt = 0;
-	    $('.Xsequence').dataTable( {   "sDom": "tS",
+	    $(this.opt.target + ' .Xsequence').dataTable( {   "sDom": "tS",
 					   "bSort": false,
 					   "sScrollX": "100%",
 					   "sScrollXInner": "110%",
 					   "bScrollCollapse": true,
-					   "fnInitComplete" : function (oSettings) {
+					   "fnDrawCallback" : function (oSettings) {
+					    //   $(self.opt.target + ' div.dataTables_scrollBody').css("height", null).each(function(){console.log("houhohu");});
+					   },
+					   "fnInitComplete" : function (oSettings) {					      
+					       var tdArray =  this.$('tr.sequence').find('td').css("width","15px")
+					       var tdArray =  this.$('tr.sequence').find('td');
+					       for (var i = 0; i < self.residueSel.length; i++) {
+						   if (cnt != self.residueSel[i].chainNumber) {continue;}
+						   $(tdArray[self.residueSel[i].absNum]).toggleClass('pushed');
+						   self.addResidueSelection({
+										absNum : self.residueSel[i].absNum, //$(tdElem).index(), 
+								    		chainNumber: self.residueSel[i].chainNumber
+								    	    });								 	
+					       }
+					       self.colorSelResidue();	
+					       
 					       this.$('tr.sequence').find('td')
 						   .each(function(){							 
 							     var tdElem = this;
@@ -266,21 +305,23 @@ function GLmolInit (opt) {
 					       cnt++;					       
 					   }
 				       });
-	    $('.molecularSequence > div').each(function (index, elem){
+	    $(this.opt.target +' .molecularSequence > div').each(function (index, elem){
 				     if (index > 0) {					 				     
 					 $(this).hide();
 				     }
 				 });
+		if (self.chainidArray.length == 1 ){ 
+	  		$(this.opt.target + " .pdbBanner #segid-toggle").hide()
+	  		}
+		
 	    
 	}, 
 	addResidueSelection : function (data) {
-	    if (data.hasOwnProperty('absNum')) {				
-		console.dir(data);
-		console.log(this.chainidArray[data.chainNumber]);
-		var selector = {
-		    pdbnum : parseInt(this.pdbnumArray[data.chainNumber][data.absNum]),
-		    chain : this.chainidArray[data.chainNumber],
-		    atomIndex : []
+	    if (data.hasOwnProperty('absNum')) {
+			var selector = {
+			    pdbnum : parseInt(this.pdbnumArray[data.chainNumber][data.absNum]),
+			    chain : this.chainidArray[data.chainNumber],
+			    atomIndex : []
 		};
 		if (! isASCII(selector.pdbnum)) {
 		    alert("not an ascii");
@@ -299,6 +340,7 @@ function GLmolInit (opt) {
 		    }		
 		}
 		this.residueSel.push(selector);
+		console.dir(this.residueSel);
 	    }
 	},				       
 	delResidueSelection : function (data) {
@@ -307,38 +349,45 @@ function GLmolInit (opt) {
 		    pdbnum : parseInt(this.pdbnumArray[data.chainNumber][data.absNum]),
 		    chain : this.chainidArray[data.chainNumber],
 		    atomIndex : []
-		};		
-		for (var i = 0; i < this.residueSel; i++) {
+		};
+		for (var i = 1; i < this.glmol.atoms.length;i++) {
+		    if(this.glmol.atoms[i] == undefined) continue;
+		    if(this.glmol.atoms[i].resi === selector.pdbnum && this.glmol.atoms[i].chain === selector.chain){			    
+				selector.atomIndex.push(i);
+		    }
+		}			
+		for (var i = 0; i < this.residueSel.length; i++) {
 		    if (this.residueSel[i].pdbnum === selector.pdbnum && this.residueSel[i].chain === selector.chain) {
 			this.residueSel.splice(i, 1);
 			return;
 		    }			
 		}
+		this.colorSelResidue();
 	    }
 	},				       
 	colorSelResidue : function () {
 	    var self = this;
 	    
 	    var list = [];
-	    console.log(self.residueSel);
 	    for (var i = 0; i < self.residueSel.length;i++) {
 		list.push.apply(list, self.residueSel[i].atomIndex);
 	    }
 	    console.log(list);
 	    self.glmol.defineRepresentation = function() { 
-		var all = this.getAllAtoms();
-		var hetatm = this.removeSolvents(this.getHetatms(all));
-		this.colorByAtom(all, {});
-		this.colorByChain(all);
-		this.colorAtoms(list, 13369344);
-		var asu = new THREE.Object3D();				 
-	/*	this.drawBondsAsStick(asu, hetatm, this.cylinderRadius, this.cylinderRadius);
-		this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['A'])), [58, 87]), this.cylinderRadius, this.cylinderRadius);
-		this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['B'])), [63, 92]), this.cylinderRadius, this.cylinderRadius);
-	*/
-		this.drawCartoon(asu, all, this.curveWidth, this.thickness);				 
+			var all = this.getAllAtoms();
+			var hetatm = this.removeSolvents(this.getHetatms(all));
+			this.colorByAtom(all, {});
+			this.colorByChain(all);
+			this.colorAtoms(list, 13369344);
+			var asu = new THREE.Object3D();	
+		//uncomment 3 below			 
+			this.drawBondsAsStick(asu, hetatm, this.cylinderRadius, this.cylinderRadius);
+			this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['A'])), [58, 87]), this.cylinderRadius, this.cylinderRadius);
+			this.drawBondsAsStick(asu, this.getResiduesById(this.getSidechains(this.getChain(all, ['B'])), [63, 92]), this.cylinderRadius, this.cylinderRadius);
+	// OR uncomment 1 line below
+			this.drawCartoon(asu, all, this.curveWidth, this.thickness);				 
 		/*this.drawSymmetryMates2(this.modelGroup, asu, this.protein.biomtMatrices);*/
-		this.modelGroup.add(asu);				 
+			this.modelGroup.add(asu);				 
 	    };
 	    self.glmol.rebuildScene();
 	    self.glmol.show();
@@ -353,6 +402,7 @@ function GLmolInit (opt) {
 	    var hetatm = this.removeSolvents(allHet);
 	    console.log("selection " + (+new Date() - time)); time = new Date();
 	    this.colorByAtom(all, {});
+	    
 	    
 	    var colorMode = $(idHeader + 'color').val();
 	    if (colorMode == 'ss') {

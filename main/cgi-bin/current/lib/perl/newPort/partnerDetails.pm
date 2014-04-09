@@ -35,6 +35,7 @@ sub get {
 
   my $template = {
 		  name => undef,
+		  pdb => undef,
 		  biologicalRole => undef,
 		  experimentalRole => undef,
 		  detectionMethod => undef,
@@ -43,7 +44,8 @@ sub get {
 		  stoichiometry => undef,
 		  feature => undef,
 		  expressionLevel => undef,
-		  strainDetails => undef
+		  strainDetails => undef,
+		  commonName => undef
 		 };
 
   my @data = ();
@@ -54,6 +56,7 @@ sub get {
     my %spawn = %{$template};
     my $datum = \%spawn;
     $datum->{ name } = $acePartnerObject->name;
+    $datum->{ commonName } = getCommonName($aceExperimentObject, $acePartnerObject),
     $datum->{ biologicalRole } = getBiologicalRole($acePartnerObject);
     $datum->{ experimentalRole } = getExperimentalRole($acePartnerObject);
     $datum->{ detectionMethod } = getDetectionMethod($acePartnerObject);
@@ -61,12 +64,11 @@ sub get {
     $datum->{ stoichiometry } = getStoichiometry($acePartnerObject);
     $datum->{ expressionLevel } = getExpressionLevel($acePartnerObject);
     $datum->{ strainDetails } = getStrainDetails($acePartnerObject);
-
+    $datum->{ pdb } = getPdb($aceExperimentObject, $acePartnerObject);
     $datum->{ feature } = getFeature($acePartnerObject);
-=pod
     $datum->{ isoform } = getIsoform($acePartnerObject);
-=cut   
-  $logger->info("Pushing partnerDetail of " .  $datum->{ name });
+    
+    $logger->info("Pushing partnerDetail of " .  $datum->{ name });
     push @data, $datum;
   }
 
@@ -74,9 +76,54 @@ sub get {
   return \@data;
 }
 
-sub getIsoform { # Plus compliqué because type construit
+sub getCommonName {
+  my $aceExperimentObj = shift;
   my $aceObject = shift;
+  my @nameAliases = qw / Common_Name FragmentName GAG_Name Cation_Name 
+			 Phospholipid_Name Multimer_Name Inorganic_Name/;
+
+  my @aceBufferList = $aceExperimentObj->follow('biomolecule');
+
+  foreach my $aceBuffer (@aceBufferList) {
+    ($aceBuffer->name ne $aceObject->name) && next;
+    foreach my $alias (@nameAliases) {
+      my $aceNode = $aceBuffer->get($alias, 1);
+      defined ($aceNode) || next;
+      return $aceNode->name;
+    }
+  }
   return undef;
+}
+
+sub getPdb {
+  my $aceExperimentObj = shift;
+  my $aceObject = shift;
+  
+  my @pdbList = ();
+  #  $logger->info("TEST " . $aceObject->name);
+  my @aceBufferList = $aceExperimentObj->follow('biomolecule');
+  foreach my $aceBuffer (@aceBufferList) {
+    ($aceBuffer->name ne $aceObject->name) && next;
+    $aceBuffer = $aceBuffer->at('PDB', 1);
+    while (defined($aceBuffer)) {
+      push @pdbList, $aceBuffer->name;
+      $aceBuffer = $aceBuffer->down();
+    }
+  }
+  
+  @pdbList == 0 && return undef;
+
+  $logger->info(Dumper(@pdbList));
+  return \@pdbList;
+}
+
+
+sub getIsoform {
+  my $aceObject = shift;
+  my $bufferAceObject = $aceObject->at('Isoform', 1);
+  defined($bufferAceObject) || return undef;
+
+  return $bufferAceObject->name;
 }
 
 sub getFeature {
@@ -134,6 +181,8 @@ sub getAuthorMoleculeName {
     push @array, $bufferAceObject->name;
     $bufferAceObject = $bufferAceObject->down();
   }
+
+  @array == 0 && return undef;
   $logger->info(Dumper(@array));
   return \@array;
 }

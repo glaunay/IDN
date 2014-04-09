@@ -78,7 +78,7 @@ sub getAceScalar {
 
 	 my $biomoleculeOne = $nameMutator->mutateToMatrixdb(key => $p->{ biomoleculePair }->[0]);
 	 my $biomoleculeTwo = $nameMutator->mutateToMatrixdb(key => $p->{ biomoleculePair }->[1]);
-	 my $requestArray = [ "query find Association ${biomoleculeOne}_${biomoleculeTwo};", "query find Association ${biomoleculeTwo}_${biomoleculeOne};" ];
+	 my $requestArray = [ "query find Association ${biomoleculeOne}__${biomoleculeTwo};", "query find Association ${biomoleculeTwo}__${biomoleculeOne};" ];
 	 
 	 foreach my $request (@{ $requestArray }) {
 	     my $container = {
@@ -238,7 +238,7 @@ sub fetchAssociation {
 	$CV_SOCKET = $p->{ socketCv } ;	   
     }
     
-#    $logger->info("matrix db association fetching \"$p->{ molA }_$p->{ molB }\"");     
+#    $logger->info("matrix db association fetching \"$p->{ molA }__$p->{ molB }\"");     
     
     my $mapper = getMapper ($p->{ template });
 =pod
@@ -289,10 +289,10 @@ sub getMapper {
 		     $rawQuery = "query find Association $p->{ name }";
                      @answerSet = $p->{ DB }->fetch (-query => $rawQuery);
 		} else {
-		    $rawQuery = "query find Association $p->{ molA }_$p->{ molB }";
+		    $rawQuery = "query find Association $p->{ molA }__$p->{ molB }";
 		     @answerSet = $p->{ DB }->fetch (-query => $rawQuery);
                      if (@answerSet == 0) {
-		         $rawQuery = "query find Association $p->{ molB }_$p->{ molA }";
+		         $rawQuery = "query find Association $p->{ molB }__$p->{ molA }";
 		         @answerSet = $p->{ DB }->fetch (-query => $rawQuery);
 		     }		
 		     if (@answerSet == 0) {
@@ -330,10 +330,10 @@ sub getMapper {
 		     $rawQuery = "query find Association $p->{ name }";
                      @answerSet = $p->{ DB }->fetch (-query => $rawQuery);
 		} else {
-		    $rawQuery = "query find Association $p->{ molA }_$p->{ molB }";
+		    $rawQuery = "query find Association $p->{ molA }__$p->{ molB }";
 		     @answerSet = $p->{ DB }->fetch (-query => $rawQuery);
                      if (@answerSet == 0) {
-		         $rawQuery = "query find Association $p->{ molB }_$p->{ molA }";
+		         $rawQuery = "query find Association $p->{ molB }__$p->{ molA }";
 		         @answerSet = $p->{ DB }->fetch (-query => $rawQuery);
 		     }		
 		     if (@answerSet == 0) {
@@ -362,11 +362,11 @@ sub getMapper {
 		my %hash = %{$nodeTemplate};    
 		my $container = \%hash;
 
-		my $rawQuery = "query find Association ${ molA }_${ molB }";
+		my $rawQuery = "query find Association ${ molA }__${ molB }";
 		$logger->info ("TEST \"$rawQuery\"");
 		my @answerSet = $db->fetch (-query => $rawQuery);
 		if (@answerSet == 0) {
-		    $rawQuery = "query find Association ${ molB }_${ molA }";
+		    $rawQuery = "query find Association ${ molB }__${ molA }";
 		    @answerSet = $db->fetch (-query => $rawQuery);
 		}		
 		if (@answerSet == 0) {
@@ -993,10 +993,10 @@ sub getMapper {
     caracterizing the known association between two molecules
     object specifications
 {
-    "name" : "O15146_P98160", 
+    "name" : "O15146__P98160", 
     "Experiments" : [
         {
-            "name" : "O15146_P98160_18296487_1",
+            "name" : "O15146__P98160_18296487_1",
             "PartnerDetails" : [
                 {
                     "BioMolecule" : "O15146",

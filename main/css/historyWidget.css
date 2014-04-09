@@ -1,0 +1,68 @@
+div.historyWidjet{
+	top:50%;
+	right:0;
+	position:absolute;
+	border-radius: 10px 10px 10px 10px;
+	-webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	-moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	background-color: #fafafa;
+	background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+	background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+	background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+	background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+	border: 1px solid #d4d4d4;
+	padding: 10px 10px 10px 10px;
+	font-weight: 800;
+	color: #777777;
+	text-shadow: 0 1px 0 #ffffff;
+}
+div.historyWidjet.mignified{
+	width:140px;
+	height: 20px;
+	color: #777777;
+	font-size: 0.9em;
+	font-weight: 200;
+	cursor:pointer;
+}
+div.historyWidjet.magnified{
+	width:200px;
+	height: 200px;
+
+}
+div.historyWidjet ul{
+	height: 80%;
+
+	overflow-y: auto;
+	margin: 0 0 0 0;
+}
+div.historyWidjet span.hideDiv{
+	float:right;
+	fcolor: #777777;
+	font-size: 0.9em;
+	cursor: pointer;
+	font-weight: 200;
+	z-index: 1000;
+}
+div.historyWidjet ul li i {
+	margin-right: 10px;
+	z-index: 1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+div.historyWidjet.magnified div.header{
+	text-align: center;
+}
+div.historyWidjet ul li {
+	overflow-x:hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-left: 5px;
+	font-weight: 300;
+}
+div.historyWidjet ul li:nth-child(odd) {
+	background-color: #E2DFDF;
+}

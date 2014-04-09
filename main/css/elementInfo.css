@@ -4,8 +4,8 @@
 
 #elementInfo .upmark{
     padding : 5px 10px 5px 10px;
-    -moz-border-radius: 15px 15px 0px 0px;
-    border-radius: 15px 15px 0px 0px;
+    -moz-border-radius: 15px 0px 0px 0px;
+    border-radius: 15px 0px 0px 0px;
     background : rgba(0, 0, 0, 0.8);
 	
 }
@@ -52,7 +52,6 @@
 }
 
 #elementInfo .category-content {
-    display : none;
     color : rgba(255, 255, 209, 1.0);
 }
 
@@ -118,4 +117,53 @@
 
 #elementInfo .pdbBanner {
     overflow:hidden;
+}
+#elementInfo dt.hReport{
+	font-weight: normal;
+	margin : 0 5px 0 0;
+	float: left;
+}
+#elementInfo div.headerEi img{
+	margin-right : 30px
+}
+#elementInfo div.assoEi div.titleAsso{
+	margin-top: 6px;
+	padding-left: 15px;
+	float : left;
+	max-width: 50px;
+	
+}
+#elementInfo div.assoEi a{
+	width: 40px;
+	float: left;
+}
+#elementInfo div.commonInfo div.compteur{
+	float: left;
+	margin-right: 50px;
+}
+#elementInfo div.commonInfo div.type{
+	float: left;
+}
+#elementInfo div.titleAsso{
+	float: left;
+	text-align: center;
+}
+#elementInfo div.caroussel{
+	margin-bottom: 30px;
+}
+#elementInfo div.commonInfo{
+	margin-bottom: 10px;
+}
+#elementInfo div.contentXp{
+	font-size: 0.8em;
+	height: 200px;
+	overflow: auto;
+	width: 98%;
+}
+
+#elementInfo div.contentXp div.partnerDetail1, #elementInfo div.contentXp div.partnerDetail2{
+	width: 45%;
+	float: left;
+	margin-left: 5px;
+	overflow: hidden;
 }

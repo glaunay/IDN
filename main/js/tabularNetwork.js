@@ -54,18 +54,18 @@ function tabularInit (opt) {
 	draw : function () {
 	    var self = this;
 	    $(this.target).append('<div id="tabularLargeWrapper"></div>'
-				  + '<div id="tabularBookmarkWrapper"><i class="icon-list-alt icon-4x"></i></div>');
+				  + '<div id="tabularBookmarkWrapper"><i class="fa fa-list-alt fa-4x"></i></div>');
 	    var headerHtml = '<div class="tabularNetworkHeader">'
-		+ '<i class="icon-collapse-alt icon-3x pull-left"></i>'
+		+ '<i class="fa fa-minus-square-o fa-3x pull-left"></i>'
 		+ '<div class="btn-group pull-right actionTrigger">'
 		+ '<a class="btn dropdown-toggle operatorToggler" data-toggle="dropdown" href="#">'
-		+ '<span class="icon-caret-down icon-large"></span></a>'
+		+ '<span class="fa fa-caret-down fa-large"></span></a>'
 		+ '<ul class="dropdown-menu" id="operator" role="menu">'
     		+ '<li><h6>Operate on Selection</h6></li>'
 		+ '<li class="divider"></li>'
-		+ '<li class="action"><a href="#"><i class="icon-fixed-width icon-shopping-cart"></i>Add to search</a></li>'
-		+ '<li class="action"><a href="#"><i class="icon-fixed-width icon-eraser"></i>Clear</a></li>'
-		+ '<li class="action"><a href="#"><i class="icon-fixed-width icon-ban-circle"></i> Delete </a></li>'
+		+ '<li class="action"><a href="#"><i class="fa-fixed-width fa fa-shopping-cart"></i>Add to search</a></li>'
+		+ '<li class="action"><a href="#"><i class="fa-fixed-width fa fa-eraser"></i>Clear</a></li>'
+		+ '<li class="action"><a href="#"><i class="fa-fixed-width fa fa-ban-circle"></i> Delete </a></li>'
 		+ '</ul>'
 		+ '</div>'
 		+ '</div>';
@@ -110,11 +110,11 @@ function tabularInit (opt) {
 		+ '<div class="tabularNetworkBodyHead"><ul class="nav nav-pills">'
 		+ '<li class="active" id="nodeTab">Nodes</li>'
 		+ '<li id="linkTab">Links</li>'
-	    //	+ '<li>Action<i class="icon-sort-down icon-large pull-right"></i></li>'
+	    //	+ '<li>Action<i class="fa fa-sort-down fa-large pull-right"></i></li>'
 		+ '</ul></div>'
 		+ '<div class="tabularNetworkBodyContent">'
     		+ '<div class="tabularNetworkBodyNodeTable">'
-		+ '<table  class="table table-stripped"><thead><th id="checkAll"><i class="icon-check icon-large"></i></th><th>Name</th><th>Common name</th><th>Comments</th><th><i class="icon-certificate"></i></th></thead>'    
+		+ '<table  class="table table-stripped"><thead><th id="checkAll"><i class="fa fa-check fa-large"></i></th><th>Name</th><th>Common name</th><th>Comments</th><th><i class="fa fa-certificate"></i></th></thead>'    
 		+ '<tbody></tbody></table>'
 		+ '</div>'
 		+ '<div class="tabularNetworkBodyLinkTable" style="display:none">'
@@ -163,7 +163,7 @@ function tabularInit (opt) {
 
 	    $(this.target + ' #tabularBookmarkWrapper')
 		.on('click', function () {self.magnify();});
-	    $(this.target + ' .tabularNetworkHeader i.icon-collapse-alt')
+	    $(this.target + ' .tabularNetworkHeader i.fa.fa-minus-square-o')
 		.on('click', function () {self.minify();});	    
 	    
 	    $(this.target + ' #nodeTab').on('click', function () {
@@ -178,17 +178,17 @@ function tabularInit (opt) {
 	    $(nodeTable).find('th#checkAll').first()
 		.on('click', function(){					
 			
-			var setState = $(this).find('i').first().hasClass('icon-check') ? 'check' : 'uncheck';
+			var setState = $(this).find('i').first().hasClass('fa fa-check') ? 'check' : 'uncheck';
 			$(nodeTable).find('tr').each(function () {
 							 self._tickToggle(this, {setTo : setState});
 						     });			    
-			$(this).find('i').toggleClass('icon-check').toggleClass('icon-check-empty');			
+			$(this).find('i').toggleClass('fa fa-check').toggleClass('fa fa-check-empty');			
 		    })
 		.on('mouseover', function() { 
-			$(this).toggleClass('icon-large').toggleClass('icon-2x');
+			$(this).toggleClass('fa-large').toggleClass('fa-2x');
 		    })
 		.on('mouseout', function() { 
-			$(this).toggleClass('icon-2x').toggleClass('icon-large');
+			$(this).toggleClass('fa-2x').toggleClass('fa-large');
 		    });
 	    
 	    if (this.size === "magnified")
@@ -296,10 +296,10 @@ function tabularInit (opt) {
 	    if (opt) {
 		if(opt.hasOwnProperty('setTo')) {
 		    if (opt['setTo'] === 'check') {			
-			$(iconElement).removeClass().addClass('icon-check').addClass('icon-large');
+			$(iconElement).removeClass().addClass('fa fa-check').addClass('fa-large');
 			return;
 		    } else {
-			$(iconElement).removeClass().addClass('icon-check-empty').addClass('icon-large');
+			$(iconElement).removeClass().addClass('fa fa-check-empty').addClass('fa-large');
 			return;			
 		    }
 		    alert("missing setTo property");
@@ -307,7 +307,7 @@ function tabularInit (opt) {
 	    }
 	    
 	    // classic toggling
-	    $(iconElement).toggleClass('icon-check-empty').toggleClass('icon-check');
+	    $(iconElement).toggleClass('fa fa-check-empty').toggleClass('fa fa-check');
 	    
 	    return;
 	},
@@ -315,7 +315,7 @@ function tabularInit (opt) {
 	    var self = this;
 	    var tArray = [];
 
-	    $(self.maxiSel + ' .tabularNetworkBodyContent td i.icon-check')
+	    $(self.maxiSel + ' .tabularNetworkBodyContent td i.fa.fa-check')
 		.each(function () {
 			  $(this).parents('tr')
 			      .each(function(){
@@ -440,7 +440,7 @@ function tabularInit (opt) {
 		var biofunc = nodeData[i].biofunc ? function() { 
 		    return '<span href="#" rel="tooltip" title="' + nodeData[i].biofunc +   '" data-placement="left" data-container="body">' + nodeData[i].biofunc + '</span>'; }() : " ";
 		var centrality = '<a href="cgi-bin/report?name=' + nodeData[i].name  + '" target="_blank">' + nodeData[i].betweenness + '</a>';	
-		self.nodeTableData.push(['<i class="icon-check-empty icon-large">', name, common, biofunc, centrality]);			
+		self.nodeTableData.push(['<i class="fa fa-check-empty fa-large">', name, common, biofunc, centrality]);			
 	    }	  	   	   
         },
 	unFocus : function () {	 
@@ -534,7 +534,7 @@ function tabularInit (opt) {
 	    $(this.target + ' .tabularNetworkBodyContent table td:nth-child(1) i')
 		.on('click', function (){
 			self._tickToggle(this);
-			if($(this).hasClass('icon-check-empty') ) {
+			if($(this).hasClass('fa fa-check-empty') ) {
 			    var mainIcon = $(self.target + ' .tabularNetworkBodyNodeTable th i')[0];
 			    self._tickToggle(mainIcon, { setTo : 'check'});
 			}
@@ -602,14 +602,14 @@ function tabularInit (opt) {
 		    if (data.details.Experiments[i].knowledgeSupport === "actual") gen++;
 		    else inf++;
 		}
-		var icon = "icon-smile";
-		if (gen == 0) icon = 'icon-frown';
+		var icon = "fa fa-smile-o";
+		if (gen == 0) icon = 'fa fa-frown-o';
 	    }
 	    
 	    return '<span href="#" data-container="body'
 		+ '" data-html="true" rel="tooltip" title="<h6>Knowledge support</h6><ul>' 
 		+ '<li>' + gen + ' actual evidences</li><li>' + inf + ' inferred evidences</li>'
-		+ '</ul>"><i class="' + icon  + ' icon-large"></i><span>';
+		+ '</ul>"><i class="' + icon  + ' fa-large"></i><span>';
 	    
 	},
 
@@ -667,9 +667,9 @@ function tabularInit (opt) {
 	    if (! getPropByKey(linkDatum, 'details')) {
 		console.log("Error abnormal link object at");
 		console.dir(linkDatum);
-		linkTableDataElem = ['<i clas ="icon-exclamation"></i>',sNode.name, tNode.name,0];
+		linkTableDataElem = ['<i clas ="fa fa-exclamation"></i>',sNode.name, tNode.name,0];
 	    } else if (linkDatum.details.Experiments.length == 0) {
-		linkTableDataElem = ['<i class="icon-spinner icon-spin icon-large"></i>',
+		linkTableDataElem = ['<i class="fa fa-spinner fa-spin fa-large"></i>',
 							sNode.name, tNode.name,0];	
 	    } else {
 		var tdProofTypeHtml = this._createProofTypeCellHtml(linkDatum);

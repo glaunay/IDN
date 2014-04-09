@@ -29,6 +29,10 @@ function coreInit (opt) {
 	nodeToLinks : {}, /*key are node name, they reference a list of links reference where the node is source // target*/
 	linkToSvg : {},
 	gNodes : [], // A list to eventually store glowy node for computation speed needs
+	expressionTag : {},	
+	expresionTagLess : [],
+	detectionMethod : {},
+	detectionMethodLess : [],	
 	draw : function () {
 	    
 	    this.width = $(window).width() * 0.95,
@@ -96,10 +100,14 @@ function coreInit (opt) {
 	},
 
 	activateLink : function (d) {
+	    var self = this;
 	    var name = d.source.name + "--" + d.target.name;
 	    var link = this.linkToSvg[name];
-	    d3.select(link).style('stroke', "yellow")
-		.style('stroke-width','3px');
+	    d3.select(link) //.style('stroke', "yellow")
+		.style("stroke-dasharray", null)
+		.style('stroke-width','3px').each(function(d){
+						      self._storeNodeStyle(this); // IMPORTANT
+						  });
 	},
 	bubbleNodeClear : function () {
 	    this.bubblingNodes = [];
@@ -175,8 +183,8 @@ function coreInit (opt) {
 	    } else {
 		
 		self.hotNodes.forEach(function(node) {
-					  console.log("stopping node");
-					  console.dir(node);
+					//  console.log("stopping node");
+					//  console.dir(node);
 					  var nodeName;
 					  d3.select(node).each(function(d){nodeName = d.name;});
 					  self.bubbleNode ({name : nodeName}, "stop");
@@ -242,20 +250,178 @@ function coreInit (opt) {
 	},
 	registerCom : function (data) { /* register the component to communicate with as jquery selector DOM ELEMENT*/
 	    if ('tabular' in data)
-		this.targetCom['tabular'] = data.tabular;	    	    	    
+		this.targetCom['tabular'] = data.tabular;
+	    if ('filter' in data)
+		this.targetCom['filter'] = data.filter;	   
+	},
+	_getFilterCom : function (){
+	    return this.targetCom['filter']  ? this.targetCom['filter']  : null;
 	},
 	resize : function () {
 	    /*Maybe not needed*/
 	},
+	unfreeze : function () {
+	    console.log("Unfreezing all nodes");
+	    var nodes = this.force.nodes();
+	    this.svg.selectAll(".node").each (function (d){d.fixed = false;});
+	    
+	},
+	_setExpressionTag : function () {
+	    this.expressionTag = {};
+	    this.expressionTagLess = [];
+	    
+	    var nodes = this.force.nodes();
+	    for (var iNode = 0; iNode < nodes.length; iNode++) {
+		var node = nodes[iNode];
+		var eData = getPropByKey(node, "location.expressionLevels.data");
+		if(!eData) {
+		    this.expressionTagLess.push(node);
+		    continue;
+		}
+		for (var key in eData.data) {
+		    for (var iTag = 0; iTag < eData.data[key].length; iTag++) {
+			var cTag = eData.data[key][iTag][2];
+			var value = eData.data[key][iTag][0] /eData.data[key][iTag][1] * 1000000;
+			if(this.expressionTag[cTag]) {
+			    this.expressionTag[cTag].push({ node : node, value : value });
+			} else {
+			    this.expressionTag[cTag] = [{ node : node, value : value }];
+			}
+		    }
+		}
+	    }
+	},
+	dispatchLinkData : function () {
+	    this._setLinkData();
+	    
+	    var filterComponent = this._getFilterCom();
+	    if(!filterComponent) {
+		console.log("No filter component registred for com");
+		return;
+	    }
+	    var data = {};	    
+	    for (var tag in this.detectionMethod) {
+		data[tag] = this.detectionMethod[tag].length;
+	    }
+	    console.dir(data);
+	    
+	    filterComponent.update({type : "detectionMethod", data : data, action : "init"});		    
+	},
+	_setLinkData : function (){
+	    this.detectionMethod = {};
+	    this.detectionMethodLess = [];
+	    var self = this;
+	    d3.selectAll('.link').each(
+		function(d){
+		    var link = this;
+		    if (getPropByKey(d, 'details.Experiments')) {
+			d.details.Experiments.forEach(
+			    function(experiment) {
+				if(!experiment.hasOwnProperty('Interaction_Detection_Method')){
+				    this.detectionMethodLess.push(d);
+				    return;
+				};
+				var method = experiment.Interaction_Detection_Method;
+				if (self.detectionMethod[method]) {
+				    self.detectionMethod[method].push(d);
+				} else {
+				    self.detectionMethod[method] = [d];
+				}
+			    });
+		    }
+		});
+	},
+	_comExpressionTagDistribution : function () {
+	    //   if (isEmpty(this.expressionTag)) {
+	    
+	    this._setExpressionTag();
+	    //   }
+	    var filterComponent = this._getFilterCom();
+
+	    if(!filterComponent) {
+		console.log("No filter component registred for com");
+		return;
+	    }
+	    var data = {};	    
+	    for (var tag in this.expressionTag) {
+		data[tag] = this.expressionTag[tag].length;
+	    }
+	    console.dir(data);
+ 	    filterComponent.update({type : "expressionLevels", data : data, action : "init"});	    
+	},
+	_storeNodeStyle : function (node) {
+	    var styleAttr = ['stroke', 'stroke-width', 'fill', 'r'];
+	    d3.select(node).each(
+		function(d) {
+		    d.previousStyleZ = {};
+		    styleAttr.forEach(function(attr){
+					  d.previousStyleZ[attr] = d3.select(node).style(attr);
+				      });
+		});
+	},
+	_storeLinkStyle : function (node) {
+	    var styleAttr = ['stroke', 'stroke-width', 'fill'];
+	    d3.select(node).each(
+		function(d) {
+		    d.previousStyleZ = {};
+		    styleAttr.forEach(function(attr){
+					  d.previousStyleZ[attr] = d3.select(node).style(attr);
+				      });
+		});
+	},
+	cancelFilter : function () {
+	    d3.selectAll('.node').each(function(d) {
+					   d3.select(this).style(d.previousStyleZ); 
+					   d.nearVanish = null;
+				       });
+	    d3.selectAll('.link').each(function(d) {
+					   d3.select(this).style(d.previousStyleZ); 
+					   d.nearVanish = null;
+				       });
+	},	
+	applyFilter : function () {
+	    d3.selectAll('.node')
+		.style('visibility', function(d) {					    
+			   return d.nearVanish === "yes" ? "hidden" : "visible";
+		       })
+		.style(function(d){ return d.previousStyleZ; });
+
+	    d3.selectAll('.link')
+		.style('visibility', function(d) {					    
+			   if (d.source.nearVanish === "yes" || 
+			       d.target.nearVanish === "yes" || d.nearVanish === "yes") {
+			       return "hidden";
+			   }
+			   return "visible";
+		       })
+		.style(function(d){ return d.previousStyleZ; });
+	    
+	
+	},
 	add : function (datum, options) { /* add node(s) to a empty/not-empty graph 
 					    options for later development needs
 					   */
+// var nodeFilterRobot = this.targetCom.hasOwnProperty('filter') ? this.targetCom['filter'].getActive('node') 
+// : null;
+	    
+//	    nodeFilterRobot.filter();
 	    var nodes = this.force.nodes(),
 	    links = this.force.links();
 	/*freeze all previous*/
 	    this.svg.selectAll(".node").each (function (d){d.fixed = true;});
-	    nodes.push.apply(nodes, datum.nodeData);    	    
-	    
+//	    if(!nodeFilterRobot.hasFilter) {
+		// map 'vizible' /yes/no/shady to each node
+		nodes.push.apply(nodes, datum.nodeData);   
+//	    } else {
+//		for (var iNode = 0; iNode < datum.nodeData.length; iNode++) {
+		   /* var eDatum = datum.nodeData[iNode].location.hasOwnProperty("expressionLevels") 
+			? datum.nodeData[iNode].location.expressionLevels.data
+			: null;*/
+//		    var isVizible = nodeFilterRobot.applyFilter(datum.nodeData[iNode]);
+		    
+//		}
+//	    }
+	    	    
 	    /*
 	     *  Overall source/target node reference process must be speeded up using updated hashTable referncing nodes
 	     * 
@@ -270,7 +436,8 @@ function coreInit (opt) {
 		var singleLink = {
 		    source :  datum.linksData[iLink].source,
 		    target :  datum.linksData[iLink].target,		    
-		    details : datum.linksData[iLink].details		    
+		    details : datum.linksData[iLink].details,
+		    type : datum.linksData[iLink].type
 		};
 		links.push(singleLink);					  
 	    }
@@ -278,6 +445,8 @@ function coreInit (opt) {
 	    
 	    if (this.targetCom.hasOwnProperty('tabular'))
 		$(this.targetCom['tabular']).trigger('add', newNetworkElem);	    
+	
+	    this._comExpressionTagDistribution();
 	},
 
 	/*
@@ -341,8 +510,8 @@ function coreInit (opt) {
 		d.x += d3.event.dx;
 		d.y += d3.event.dy; 
 
-		console.dir(d3.event);
-		console.dir(d);
+		/*console.dir(d3.event);
+		console.dir(d);*/
 
 		self.svg.selectAll(".node").each(function(d){
 						     if (!d.glow)
@@ -380,6 +549,8 @@ function coreInit (opt) {
 			self.shapeCreator[d.type](this, "regular");
 			newNodes.push(d);
 			var node = this;
+			d.pView = 'normal';
+			d.cView = 'normal';		
 			d['previousStyle'] = { r : '8', 
 					       stroke : function(){ return d3.select(node).style('stroke');}(),
 					       'stroke-width' : function(){ return d3.select(node).style('stroke-width');}()
@@ -390,9 +561,9 @@ function coreInit (opt) {
 			self.nodeToLinks[d.name] = [];
 			if (! d.hasOwnProperty('central')) {
 			    d.central = false;			    
-			} 			
-			//console.log("trying to access to svg reference"); // self.nodeToSvg[d.id] = $( .node...);
-			//console.dir(this);						
+			} 		
+
+			self._storeNodeStyle(this); // IMPORTANT
 		    }
 		).each(function (d) {
 			 
@@ -472,6 +643,7 @@ function coreInit (opt) {
 		.style("stroke-width", function(d) {
 			   /*console.log (Math.sqrt(d.value));*/
 			   return "2px"; })
+		.style("stroke-dasharray", "5,5")
 		.style("fill","none")
     		.on('mousedown', function() { d3.event.stopPropagation(); })
 		.style("stroke", "grey")
@@ -493,6 +665,19 @@ function coreInit (opt) {
 		      self.linkToSvg[d.source.name + "--" + d.target.name] = this;
 		      
 		      $(self.target).trigger('linkDataToFetch',d);
+		      
+		  })
+		  .each(function(d){
+		  	 $(this).hoverIntent( {
+						    over : function () {
+							if ('tabular' in self.targetCom) {
+							//    $(self.targetCom.tabular).trigger('nodeScroll', [d3.select(node).datum()]);
+							}						
+							$(self.target).trigger('mouseOverElement', d);
+						    },
+						    timeout : 500,
+						    out : function (){}
+						});	
 		  });
 	    //.attr('display', 'none');				      
 	    link.exit().remove();				     
@@ -524,7 +709,7 @@ function coreInit (opt) {
 		    .attr("y2", function(d) { return d.target.y; });
  */
 			
-		node.attr("transform", function(d) { 	console.log(d.name + " " + d.x + " " + d.y);return "translate(" + d.x + "," + d.y + ")"; });
+		node.attr("transform", function(d) {/*console.log(d.name + " " + d.x + " " + d.y);*/return "translate(" + d.x + "," + d.y + ")"; });
 	     };
 	    
 
@@ -750,6 +935,116 @@ function coreInit (opt) {
 				 var node = self.nodeToSvg[name];
 				 d3.select(node).each(function(d){ d.central = true; });
 			     });
+	},
+	/*Dynamic filtering of the network elements -> preview tobe-deleted elements as shady nodes
+	 data = { 
+	 *         type : "expressionTag" OR "detectionMethod", 
+	 *         criterions : { 
+	 *                        "monTissu" : value, ... }
+	 * } */
+	_setNodeBasedPreviewFilter : function (filterData, strict) {
+	    var nodes = this.force.nodes();
+	    if (isEmpty(filterData.expressionLevel)) {
+		nodes.forEach(function(node) {node.nearVanish = "no";});
+		d3.selectAll('.node').style({ "visibility" : "visible" });
+		d3.selectAll('.link').style({ "visibility" : "visible" });
+		return;
+	    } 		    		
+		
+	    nodes.forEach(function(node) {node.nearVanish = "yes";node.fCount = 0;});
+	    if (strict)
+		this.expressionTagLess.forEach(function(node) {node.nearVanish = "unk";});
+	    var eTagTot = 0;
+	    for (var eTag in filterData.expressionLevel) {
+		eTagTot++;
+		//		    console.dir(filterData.expressionLevel);
+		var treshold = filterData.expressionLevel[eTag];		    
+		if (!this.expressionTag[eTag]) {
+		    console.log(eTag + "<----NOT FOUND IN CORE EXPRESSION TAGS");
+		}
+		this.expressionTag[eTag].forEach(
+		    function(nodeLitt){
+			//			    console.dir(nodeLitt);
+			if (nodeLitt.value < treshold) return;
+			nodeLitt.node.fCount++;
+		    });		    
+	    }
+	    nodes.forEach(function(node) {
+			      if(node.nearVanish === "unk") return;
+			      console.log(node.fCount + " " + eTagTot);
+			      node.nearVanish = node.fCount === eTagTot
+				  ? "no" : "yes";
+			  });
+	    
+	},
+	_setLinkBasedPreviewFilter : function (filterData, strict) {
+	    var links = this.force.links();
+	    if (isEmpty(filterData.detectionMethod)) {
+		links.forEach(function(link) {link.nearVanish = "no";});
+		d3.selectAll('.link').style({ "visibility" : "visible" });
+		return;
+	    }
+	    links.forEach(function(link) {link.nearVanish = "yes";link.fCount = 0;});
+	    if (strict)
+		this.detectionMethodLess.forEach(function(link) {link.nearVanish = "unk";});
+	    var dTagTot = 0;
+	    for (var dTag in filterData.detectionMethod) {
+		dTagTot++;
+		if (!this.detectionMethod[dTag]) {
+		    console.log(dTag + "<----NOT FOUND IN CORE DETECTION METHODS");
+		}
+		this.detectionMethod[dTag].forEach(
+		    function(linkLitt){
+			linkLitt.fCount++;
+		    });	
+	    }
+	    links.forEach(function(link) {
+			      if(link.nearVanish === "unk") return;
+			     
+			      link.nearVanish = link.fCount >= dTagTot
+				  ? "no" : "yes";
+			      
+			      console.log(link.fCount + " " 
+					  + dTagTot + " --> " + link.nearVanish);
+			  });
+	},
+	previewFilter : function (filterData, strict) {
+	        var self = this;
+	    
+	    if (filterData.hasOwnProperty('expressionLevel')) 
+		this._setNodeBasedPreviewFilter(filterData, strict);
+	    if (filterData.hasOwnProperty('detectionMethod')) 
+		this._setLinkBasedPreviewFilter(filterData, strict);
+	    
+	    d3.selectAll('.node')
+		.style('fill', function(d) { 			 
+			   if (d.nearVanish === "yes") return "grey";
+			   if (d.nearVanish === "no") return "green";
+			   return "red";
+		       })
+		.style('visibility', function(d){
+			   if(d.nearVanish === "no") return "visible";
+			   var cViz = d3.select(this).style("visibility");
+			   return cViz;
+		       });
+
+	    d3.selectAll('.link').style("stroke", function (d){
+					    if (d.nearVanish === "unk") return "orange";
+					    if (d.nearVanish === "yes") return "black";
+					    if (d.nearVanish === "no") return "green";
+					    
+					    //		    console.dir(d);
+					    
+//					    var d3.select(self.linkToSvg[d.source+'--'+d.target]);
+/*					    console.log(d3.select(d.source).style("visibility"));
+					    console.log(d3.select(d.target).style("visibility"));*/
+				/*	    if (d3.select(d.source).style("visibility") === "hidden")
+						return "hidden";
+					    if (d3.select(d.target).style("visibility") === "hidden")
+						return "hidden";
+					    return "visible";*/
+					});    
+	    
 	},
 	colorGlowyNodes : function (hexCode) {
 	    var gNodes;

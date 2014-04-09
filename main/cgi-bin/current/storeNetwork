@@ -34,6 +34,12 @@ if ($mainContainer->{ type } eq "write") {
 						 nodes => $mainContainer->{ nodes }});
     print $query->header('application/json');      # create the HTTP header
     print '{"uid" : "' . $tag . '"}';
+
+  #  my $string = encode_json( $mainContainer );
+  #  open DBG, ">/tmp/seedTestNetwork_P98160.json";
+  #  print DBG "$string\n";
+  #  close DBG;
+
     exit;
 } elsif($mainContainer->{ type } eq "read") {
     my $networkContainer = cacheReader (key => $mainContainer->{ userKey });
@@ -78,7 +84,7 @@ sub cacheReader {
     
 # populate object
      my $container = {
-	 node => $dataContainer->{ nodes },
+	 nodes => $dataContainer->{ nodes },
 	 links => $dataContainer->{ links }
      };
      $logger->trace("CACHING OUT:\n" . Dumper($container));

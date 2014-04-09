@@ -52,7 +52,7 @@ function initCartCtrl (opt) {
 	    var scaffold = '<div id="cartLargeWrapper"><div class="cartHeader"></div>'
 		+ '<div class="cartBody"></div>'
 		+ '<div class="cartFooter"></div></div>'
-		+ '<div id="cartBookmarkWrapper"><i class="icon-shopping-cart icon-4x"></i><div class="plusNotification" style="display:none"><i class="icon-plus"></i></div></div>';
+		+ '<div id="cartBookmarkWrapper"><i class="fa fa-shopping-cart fa-4x"></i><div class="plusNotification" style="display:none"><i class="fa fa-plus"></i></div></div>';
 	    
 	    $(this.target).append(scaffold);
 	    $(this.target + ' #cartLargeWrapper').css({'min-width' : this.width, 'max-width' : this.width});	
@@ -89,25 +89,25 @@ function initCartCtrl (opt) {
 	 			  
 	    
 	    // set Header
-	    var headerContent = '<i class="icon-collapse-alt icon-2x pull-left"></i>'
+	    var headerContent = '<i class="fa fa-minus-square-o fa-2x pull-left"></i>'
  		+ '<div class="btn-group" data-toggle="buttons-checkbox">'
-		+ '<button class="btn btn-success setExp"><i class="icon-beaker icon-large"></i></button>'
-		+ '<button class="btn btn-danger setPrd"><i class="icon-laptop icon-large"></i></button></div>'
-		+ '<i class="icon-question-sign icon-2x pull-right"></i>';
+		+ '<button class="btn btn-success setExp"><i class="fa fa-flask fa-large"></i></button>'
+		+ '<button class="btn btn-danger setPrd"><i class="fa fa-laptop fa-large"></i></button></div>'
+		+ '<i class="fa fa-question-sign fa-2x pull-right"></i>';
 		
 	    $(this.target + ' .cartHeader').append(headerContent);
 
-	    $(this.target + ' .cartHeader .icon-question-sign')
+	    $(this.target + ' .cartHeader .fa fa-question-sign')
 		.tooltip(
 		    {
 			title : function () { 
 			    var html = '<div class="helpTooltip"><h6>Interaction database query settings</h6>'
-				+ '<div><i class="icon-beaker pull-left"></i><span> Query experimental databases</span></div>'
-			      	+ '<div><i class="icon-desktop pull-left"></i><span> Query prediction-based databases</span></div>'
+				+ '<div><i class="fa fa-flask pull-left"></i><span> Query experimental databases</span></div>'
+			      	+ '<div><i class="fa fa-desktop pull-left"></i><span> Query prediction-based databases</span></div>'
 				+ '<h6>Available search criterions</h6>'
-				+ '<div><i class="icon-spinner pull-left"></i><span>Biomolecule</span></div>' 	
-			  	+ '<div><i class="icon-book pull-left"></i><span>Scientific publication</span></div>'
-			        + '<div><i class="icon-font pull-left"></i><span>Functional keyword</span></div>'		 
+				+ '<div><i class="fa fa-spinner pull-left"></i><span>Biomolecule</span></div>' 	
+			  	+ '<div><i class="fa fa-book pull-left"></i><span>Scientific publication</span></div>'
+			        + '<div><i class="fa fa-font pull-left"></i><span>Functional keyword</span></div>'		 
 				+ '</div>';
 			    return html;
 			},
@@ -121,13 +121,13 @@ function initCartCtrl (opt) {
 	    
 	    // set Footer
 	    var footerContent = '<button class="btn btn-primary goBut">'
-		+ '<i class="icon-search"></i><span>Interactor Search</span></button>';
+		+ '<i class="fa fa-search"></i><span>Interactor Search</span></button>';
 	    
 	    $(this.target + ' .cartFooter').append(footerContent);
 	    $(this.target + ' .cartFooter').addClass('pagination-centered');
 	    
 	  
-	    $(this.target + ' .cartHeader .icon-collapse-alt')
+	    $(this.target + ' .cartHeader .fa-minus-square-o')
 		.on('click', function () {
 			self._togglePanel();
 		    });
@@ -199,29 +199,35 @@ function initCartCtrl (opt) {
 	    console.log(data);*/
 	    var symbolTable = {
 		biomolecule : {
-		    icon : '<i class="icon-li icon-spinner"></i>',
+		    icon : '<i class="fa fa-li fa-spinner"></i>',
 		    comment : function (opt) {
 			return 'This is the uniprot entry <a href="www.uniprot.org/' + opt + '.xml"</a>';
 		    }
 		},
 		keyword : { 
-		    icon : '<i class="icon-li icon-file-text-alt"></i>',
+		    icon : '<i class="fa-li fa fa-file-text-alt"></i>',
 		    comment : function (opt) {
 			return 'This is a <a href="http://www.uniprot.org/keywords/">uniprot keyword</a>';
 		    }
 		},
 		publication : { 
-		    icon : '<i class="icon-li icon-book"></i>',
+		    icon : '<i class="fa-li fa fa-book"></i>',
 		    comment : function (opt) {
 			return '';
 		    }
 		},
 		freeTextSearch : { 
-		    icon : '<i class="icon-li icon-pencil"></i>',
+		    icon : '<i class="fa-li fa fa-pencil"></i>',
 		    comment : function (opt) {
 			return '';
 		    }
-		}	    
+		},
+		subCellularLocation : {
+		    icon : '<i class="fa-li fa fa-fullscreen"></i>',
+		    comment : function (opt) {
+			return '';
+		    }
+		}
 	    };
 	    
 	    var array;
@@ -254,7 +260,7 @@ function initCartCtrl (opt) {
 		$(this.miniSel).css({'webkitAnimationName': 'glowing','animation-name': 'glowing'});			
 	    }
 	    if (this.criterionList.length == 0) {
-		$(this.target + ' .cartBody').empty().append('<ul class="icons-ul"></ul>');
+		$(this.target + ' .cartBody').empty().append('<ul class="fa-ul"></ul>');
 		if (this.size === "magnified")
 		    if (!this.jsScrollApi) this._startJsScroll();
 	    }
@@ -262,7 +268,7 @@ function initCartCtrl (opt) {
 	    var string = data.name.replace("Free text search on ", "");
 	    var scaffold = '<li class="cartCriterion" id="testSearch_' + string + '">' + symbolTable[data.type].icon 
 		+ '<div class="row-fluid"><div class="span10 litteral">' + string + '</div>'
-		+ '<div class="span2"><i class="icon-remove-circle"></i>' + '</div></div></li>';
+		+ '<div class="span2"><i class="fa fa-remove-circle"></i>' + '</div></div></li>';
 	    this.criterionList.push(data);
 	    
 	    $(this.target + ' .cartBody ul').append(scaffold);	
@@ -271,15 +277,15 @@ function initCartCtrl (opt) {
 	    $(this.target + ' .cartBody ul li:last')
 		.on('mouseover',
 		    function () { 
-			$(this).find('i.icon-remove-circle')
-			    .addClass('icon-large')
+			$(this).find('i.fa fa-remove-circle')
+			    .addClass('fa-large')
 			    .css({color : 'rgba(204,51,0,1)'});
 		    } 
 		   )
 		.on('mouseout',
 		    function () { 
 			$(this).find('i')
-			    .removeClass('icon-large')
+			    .removeClass('fa-large')
 			    .css({'background-color': '',color : 'rgba(0,0,0,1)'});				   
 		    } 
 		   );

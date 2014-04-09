@@ -14,22 +14,17 @@ function runReportMaestro (options) {
 	}
 	
 	options.addCartCallback = function(item){
-		console.dir(item);
 		cart.addItem(item);
 	}
 	options.delCartCallback = function(item){
 		cart.delItem(item);
 	}
-	var report = initMyReport (options);
+	report = initMyReport (options);
 	report.start();
 	
 	if(options.cart){
-
-		
 		var optionsCart = {targetDiv :  '#testCart'};
 		cart = initCart(optionsCart);
 		cart.draw();
 	}
-
-		
 }

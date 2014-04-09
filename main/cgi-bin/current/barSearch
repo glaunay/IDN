@@ -1,0 +1,356 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+use lib qw(lib/perl);
+
+use CGI;
+use Ace 1.51;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+use CHI;
+=pod GL - 2014 02 14
+  'CGI script that performs the users search in matrixdb'
+  'all searches are cached in using searched string as key and a stringified json representation of the result as value'
+=cut
+
+
+our $MAX_HITS = 200;
+
+
+
+
+our $CACHE_ADDRESS = "/tmp/barSearchCache";
+Log::Log4perl->init("./conf/barSearch.conf");
+my $logger = get_logger();
+
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || AceError ("Couldn't open database");
+
+my $query = CGI->new();
+#$logger->info(Dumper $query ));
+my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/;
+$logger->info("search key is \"$string\"\n");
+
+my $dataContainer = cacheReader($string); # trying to cache out string
+
+if (defined ($dataContainer)) {
+  $logger->trace("Results object read from cache :\n" .
+		Dumper($dataContainer) );
+  print $query->header('application/json');      # create the HTTP header
+  print $dataContainer;
+  $logger->trace("Exiting");
+  exit;
+} else {
+  $logger->info("No results object found in cache, performing query...");
+  $DB->raw_query("grep " . $string);
+  $DB->raw_query("kstore allMatch");
+  $dataContainer = {
+		    searchString => $string,
+		    results => {
+				biomolecule => getBiomolecule($string),
+				author => getAuthor($string),
+				publication =>getPublication($string),
+				'IMEX-ID' => getIMExPublication($string),				
+				GO => getGoTerm($string),
+				keywrd => getKeywrd($string),
+				gene => getGene($string)
+			       }
+		   };
+  $logger->trace(Dumper($dataContainer));
+}
+
+#cacheWriter($string, $dataContainer);
+my $jsonString = encode_json($dataContainer);
+cacheWriter($string, $jsonString);
+
+#open JSOUT, ">/tmp/searchDevl.json";
+#print JSOUT "callback($jsonString);";
+#close JSOUT;
+
+print $query->header('application/json');      # create the HTTP header
+print $jsonString;
+
+sub cacheReader {
+  my $key = shift;
+  $logger->info("Read cache key is " . $key);
+  my $cache = CHI->new(
+		       serializer => 'Data::Dumper',
+		       driver     => 'File',
+		       root_dir   => $CACHE_ADDRESS,
+		       cache_size => '500m'
+		      );
+  my $dataContainer = $cache->get($key);
+  if (!defined ($dataContainer)){
+    my $cacheContent = $cache->dump_as_hash( );
+    $logger->trace("No key named \"$key\" in current cache content\n" . Dumper($cacheContent));
+    return;
+  }
+  $logger->info("Successfull Caching out of " . $key);
+  $logger->trace("CACHING OUT:\n" . Dumper($dataContainer));
+  return $dataContainer;
+}
+
+sub cacheWriter {
+  my $key = shift;
+  my $data = shift;
+  $logger->trace("cache writer : " . $key . Dumper ($data));
+  my $cache = CHI->new(
+	serializer => 'Data::Dumper',
+	driver     => 'File',
+	root_dir   => $CACHE_ADDRESS,
+	cache_size => '500m' 
+	);
+    $logger->trace("Data to store:\n" . Dumper($data));
+    $cache->set($key, $data, "1 month");
+    $logger->trace("cache writing results  '" 
+		  . $key . "' at " . $CACHE_ADDRESS
+ 	);
+    my $report = $cache->dump_as_hash( );
+    $logger->trace("CHI content:\n" . Dumper($report));
+
+    return $key;
+}
+
+sub getGene { # WARNING GETBIOMOLECULE NEED TO BE PREVIOUSLY CALLED FOR THE SELECTION BIOMOLECULEMATCH IS TO BE USED
+  $DB->raw_query("kget BiomoleculeMatch");
+  my $cHit = 0;
+  my @array;
+  my $r = $DB->raw_query("show -t Gene");
+  my $hash = {};
+  #$logger->info($r);
+  my ($biomolecule, $currName, $currSyn);
+  foreach my $line (split /\n/, $r) {
+    if ($line =~ /^BioMolecule ([\S]+)/) {
+      $biomolecule = $1;
+      $cHit++;
+      ($cHit > $MAX_HITS) && last;
+    } elsif ($line =~ /GeneName[\s]+([\S]+)/) {
+           $currName = $1;
+           defined($hash->{ $currName }) && next;
+           $hash->{ $currName } = { biomolecule => [], name => $currName, synonym => undef };
+    } elsif ($line =~ /Synonym[\s]+([\S]+)/) {
+           $hash->{ $currName }->{ synonym } = $1;
+    } elsif($line =~ /^[\s]*$/) {
+	     if (defined($biomolecule)) {
+	       push @{$hash->{ $currName }->{ biomolecule }}, $biomolecule;
+	       undef $biomolecule;
+	     }
+	   }  
+     }	  
+    $logger->trace(Dumper($hash));
+  foreach my $id (keys(%{$hash})) {
+    my $count = 0;
+    foreach my $biomolecule (@{ $hash->{ $id }->{ biomolecule } }) {
+      $DB->raw_query("find biomolecule $biomolecule");
+      $r = $DB->raw_query("follow Association");
+      if ($r =~ /Found ([\d]+) object/) {
+	$count += $1;
+      }
+    }
+    push @array, { id => $hash->{ $id }->{ name }, synonym => $hash->{ $id }->{ synonym }, 
+		   biomolecule =>  $hash->{ $id }->{ biomolecule }, count => $count };
+  }
+
+  $logger->trace(Dumper(@array));
+  return \@array;
+}
+  
+sub getBiomolecule {
+  my $string = shift;
+  my $cHit = 0;
+  $DB->raw_query("find biomolecule");
+  $DB->raw_query("spush");
+  $DB->raw_query("kget allMatch");
+  $DB->raw_query("sand");
+  $DB->raw_query("spop");
+  $DB->raw_query("kstore BiomoleculeMatch");   # STORING BIOMOLECULE FOR FURTHER USE IN GETGENE
+  my @array;
+  my $r = $DB->raw_query("list");
+  foreach my $line (split /\n/, $r) {
+    if ($line =~ /^ ([\S]+)/) {
+      push @array, { id => $1, name => undef, specie => undef, count => undef };
+      $cHit++;
+      ($cHit == $MAX_HITS) && last;
+    }
+  }
+  foreach my $biomol (@array) {
+    $DB->raw_query("find biomolecule $biomol->{ id }");
+    $r =  $DB->raw_query("show In_Species");
+    # $logger->info("--->" . $r);
+    if ($r =~ /In_Species[\s]+([\d]+)/) {
+	 $biomol->{ specie } = $1;
+    }
+
+    foreach my $tagName (qw /Common_Name EntryName More_Info Other_Fragment_Name FragmentName 
+                             GAG_Name Phospholipid_Name Cation_Name Glycolipid_Name 
+                             Multimer_Name Inorganic_Name /) {
+
+       $r =  $DB->raw_query("show $tagName");
+       if ($r =~ /$tagName[\s]+([\S]+.+[\S]+)/) {
+       $biomol->{ name } = $1;
+       last;
+     }
+   }
+   $r =  $DB->raw_query("follow Association");
+   if ($r =~ /Found ([\d]+) object/) {
+     $biomol->{ count } = $1;
+   }
+  }
+  return \@array;
+}
+  
+  sub getGoTerm { 
+   my $string = shift;
+   my $cHit = 0;
+   $DB->raw_query("find GO");
+   $DB->raw_query("spush");
+   $DB->raw_query("kget allMatch");
+   $DB->raw_query("sand");
+   $DB->raw_query("spop");
+   
+   my @array;
+   foreach my $key(qw/Term/) {
+     my $r = $DB->raw_query("show $key");
+     #$logger->info($r);
+     my $i = -1;
+     foreach my $line (split /\n/, $r) {
+       if ($line =~ /^GO ([\S]+)/){
+	 $cHit++;
+	 ($cHit > $MAX_HITS) && last;
+	 $i++;	 
+	 push @array, { id => $1, Term => undef };
+       }
+       elsif ($line =~ /$key[\s]+([\S]+.+[\S]+)/){
+	 $array[$i]->{ $key } = $1;	 
+       }
+     }
+   }
+   return \@array;
+   
+}
+
+
+sub getAuthor {
+   my $string = shift;
+   my $cHit = 0;
+   $DB->raw_query("find Author");
+   $DB->raw_query("spush");
+   $DB->raw_query("kget allMatch");
+   $DB->raw_query("sand");
+   $DB->raw_query("spop");
+   
+   my @array;
+   my $r = $DB->raw_query("show");
+   #$logger->info($r);
+   foreach my $line (split /\n/, $r) {
+     if ($line =~ /^Author ([\S]+.+[\S]+)/) {
+       $cHit++;
+       ($cHit > $MAX_HITS) && last;     
+       push @array, { id => $1, Published => [], count => 0 };
+     }
+     elsif ($line =~ /^[\s]+Published[\s]+([\d]+)/){
+       push @{ $array[$#array]->{ Published } }, $1;
+     }
+     elsif ($line =~ /^[\s]+([\d]+)/) {
+         push @{ $array[$#array]->{ Published } }, $1;
+	  }
+   }
+   foreach my $author (@array) {
+     my $req = "find Author \"" . $author->{ id } . "\"";
+     $r = $DB->raw_query($req);
+     $r = $DB->raw_query("follow Published");
+     $r = $DB->raw_query("follow Association");
+     if ($r =~ /([\d]+) Active Objects/) {
+        $author->{ count } = $1;
+      }
+     $logger->trace($author->{ id } . " ==> " . $author->{ count });
+   }
+
+   return \@array;
+}
+
+sub getKeywrd {
+   my $string = shift;
+   my $cHit = 0;
+   $DB->raw_query("find Keywrd");
+   $DB->raw_query("spush");
+   $DB->raw_query("kget allMatch");
+   $DB->raw_query("sand");
+   $DB->raw_query("spop");
+   
+   my @array;
+   my $r = $DB->raw_query("show");
+   foreach my $line (split /\n/, $r) {
+     if ($line =~ /^Keywrd ([\S]+)/) {
+       $cHit++;
+       ($cHit > $MAX_HITS) && last;
+       my $tmpHash = {id => $1, name => undef, count => 0};
+      # $DB->raw_query("query find Biomolecule where Keywrd = $tmpHash->{ id }");
+      # my $rSub = $DB->raw_query("follow Association");
+      # if ($rSub =~ /Found ([\d]+) objects/) {
+      #	 $tmpHash->{ count } = $1;
+      # }
+       push @array, $tmpHash;
+     }
+     elsif ($line =~ /^[\s]+Identifier[\s]+([\S]+.+[\S]+)/){
+       $array[$#array]->{ name } = $1;
+     }
+   }
+   $logger->trace(Dumper(@array));
+   return \@array;
+}
+
+sub getPublication {
+  my $string = shift;
+  my $cHit = 0;
+  $DB->raw_query("query find Publication where NOT IMEx_ID");
+  $DB->raw_query("spush");
+  $DB->raw_query("kget allMatch");
+  $DB->raw_query("sand");
+  $DB->raw_query("spop");
+   
+  my @array;
+  my $r = $DB->raw_query("show");
+  foreach my $line (split /\n/, $r) {
+    if ($line =~ /^Publication ([\d]+)/) {
+      $cHit++;
+      ($cHit > $MAX_HITS) && last;
+      push @array, { id => $1, Title => undef };
+    }
+    elsif ($line =~ /^[\s]+Title[\s]+([\S]+.+[\S]+)/){
+      $array[$#array]->{ Title } = $1;
+    }
+  }
+  
+  return \@array;
+}
+
+sub getIMExPublication {
+  my $string = shift;
+  my $cHit = 0;
+  $DB->raw_query("query find Publication where IMEx_ID");
+   $DB->raw_query("spush");
+   $DB->raw_query("kget allMatch");
+   $DB->raw_query("sand");
+   $DB->raw_query("spop");
+   
+  my @array;
+  my $r = $DB->raw_query("show");
+  foreach my $line (split /\n/, $r) {
+    if ($line =~ /^Publication ([\d]+)/) {
+      $cHit++;
+      ($cHit > $MAX_HITS) && last;
+      push @array, { id => undef, Title => undef, pmid => $1 };
+    }
+    elsif ($line =~ /^[\s]+Title[\s]+([\S]+.+[\S]+)/){
+      $array[$#array]->{ Title } = $1;
+    }
+    elsif ($line =~ /^[\s]+IMEx_ID[\s]+([\S]+)/){
+      $array[$#array]->{ id } = $1;
+    }
+  }
+
+  return \@array;
+}
+   

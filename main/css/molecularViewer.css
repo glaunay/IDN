@@ -4,41 +4,68 @@
 }
 
 .glmolFooter {
-    padding : 5px;    
+	padding-top : 5px;    
 }
 
 
-#segid-toggle.btn-group a.btn.dropdown-toggle {
-    padding : 5px 5px 15px 5px;
-    font-size : 10px; 
-}
 
-#segid-toggle.btn-group .dropdown-menu {
+
+#segid-toggle.btn-group {
     width : 2em;
     min-width : 2em;
     text-align : center;
     cursor : pointer;
+    margin-left: 5px;
+    height: 22px;
+    
+    
 }
-
-#segid-toggle.btn-group {
-    position:absolute;
-    left : 3px;
+#segid-toggle.btn-group a span.caret{
+	margin-left: 5px;
 }
-
-.glmolFooter div.molecularSequence table tr:nth-child(1) {    
-    font-family : 'courrier';
-    font-size : 0.7em;
-    color : rgba(51, 204, 255, 1);
-    text-align:center;
+#segid-toggle.btn-group a{
+	padding : 0 20px 0 5px;
+	width : 5px;
+	border-radius:4px;
+	margin-top : -0.25em;
+	}
+.glmolFooter div.molecularSequence{
+	
+}
+.glmolFooter div.molecularSequence table tr:nth-child(1)  {    
+    font-family : 'courrier'  ;
+    font-size : 0.85em  ;
+    color : black  ;
+    text-align:center  ;
 } 
 
 .glmolFooter div.molecularSequence table tr:nth-child(2) td {
+
     min-width : 1em;
     max-width : 1em;
+    padding : 0 0 0 0;
     cursor : crosshair;
     text-align:center;
 }
 
 .glmolFooter div.molecularSequence table tr:nth-child(2) td.pushed{
-    background-color : rgba(205, 205, 193, 1);
+    background-color : rgba(0, 0, 0, 0.5)  ;
+    
+}
+.glmolFooter div.molecularSequence .dataTables_wrapper tbody tr{
+	background-color: rgba(255, 255, 255, 0.4);
+	height: 20px !important;
+	
+}
+.pdbBanner .dropdown-menu{
+	min-width: 30px;
+	top:auto;
+	left: auto;
+	
+}
+.glmolFooter th {
+	border : none !important;
+}
+.pdbBanner{
+	min-height: 20px
 }
