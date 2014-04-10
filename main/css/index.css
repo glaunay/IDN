@@ -9,22 +9,43 @@ body {
 }
 
 /* Wrapper for page content to push down footer */
-.wrap {
-    min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    /* Negative indent footer by it's height */
-    margin: 0 auto -70px;
+html, body {height: 100%;}
+
+.wrap {min-height: 100%;}
+
+#main {overflow:auto;
+	padding-bottom: 130px;}  /* must be same height as the footer */
+
+.footer {position: relative;
+	margin-top: -130px; /* negative value of footer height */
+	height: 130px;
+	clear:both;
+} 
+body:before {/* thanks to Maleika (Kohoutec)*/
+	content:"";
+	height:100%;
+	float:left;
+	width:0;
+	margin-top:-32767px;/* thank you Erik J - negate effect of float*/
 }
+clearfix:after {content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.clearfix {display: inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix { height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
 
 /* Set the fixed height of the footer here */
 
 .push{
-	height:70px;
+	height:50px;
 }
-.footer {
-	height:70px;
-}
+
 
 /* Lastly, apply responsive CSS fixes as necessary */
 @media (max-width: 767px) {

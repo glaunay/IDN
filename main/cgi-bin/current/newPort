@@ -49,7 +49,7 @@ open LOG, ">/tmp/reportLatest.json";
 print LOG "$jsonString\n";
 close LOG;
 
-my $urlRoot = $DEV_STATUS eq "TEST" ? "http://matrixdb.ibcp.fr:9999" : "http://matrixdb-new.ibcp.fr/";
+my $urlRoot = $DEV_STATUS eq "TEST" ? "http://matrixdb.ibcp.fr:9999" : "http://matrixdb-new.ibcp.fr";
 
 my $customJSlib = {
 		   experiment => "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/GLMOL/Three49custom.js\"></script>" .
