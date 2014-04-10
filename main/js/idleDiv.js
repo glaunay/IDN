@@ -49,8 +49,8 @@ function startIdle (opt) {
 	    }	
 
 	    if(data.opt === 'blocker') {
-		$(this.target).append('<div id="blocker"></div>');
-		$('div#blocker').css({height : h, width : w,top : oT});
+			$(this.target).append('<div id="blocker"></div>');
+			$('div#blocker').css({height : h, width : w,top : oT});
 	    }
 	},
 	erase : function () {

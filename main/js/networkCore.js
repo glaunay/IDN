@@ -971,7 +971,7 @@ function coreInit (opt) {
 	    }
 	    nodes.forEach(function(node) {
 			      if(node.nearVanish === "unk") return;
-			      console.log(node.fCount + " " + eTagTot);
+			 //     console.log(node.fCount + " " + eTagTot);
 			      node.nearVanish = node.fCount === eTagTot
 				  ? "no" : "yes";
 			  });
@@ -1004,8 +1004,8 @@ function coreInit (opt) {
 			      link.nearVanish = link.fCount >= dTagTot
 				  ? "no" : "yes";
 			      
-			      console.log(link.fCount + " " 
-					  + dTagTot + " --> " + link.nearVanish);
+			   //   console.log(link.fCount + " " 
+			//		  + dTagTot + " --> " + link.nearVanish);
 			  });
 	},
 	previewFilter : function (filterData, strict) {

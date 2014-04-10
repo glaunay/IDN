@@ -23,7 +23,7 @@ function initBarSearch (options){
 	var clickOnListElement = function () {}; // default callback on list element click override it using listElementClick contructor arguments
 	
 	var specifyHref = function(){};
-	if(options.hasOwnProperty('staticHref')){
+	if(options.hasOwnProperty('staticHref')){/* here on a la generation du lien vers les report*/
 	    specifyHref = function (elem) {   // this is the whole component
 		elem.attr('href', options.staticHref + '?type=' + elem.attr('data-type') + '&value=' + elem.attr('data-value'))
 		    .attr('target',"_blank");
@@ -45,7 +45,7 @@ function initBarSearch (options){
 	mappers : mapperCollection, //arrangement des sorties
 	indexNav : -1, // nombre de recherche
 	clickOnListElement : clickOnListElement, //callback sur un click d'un élément de la liste
-	stopTime : undefined,
+	stopTime : undefined,//utile pour la latence entre frappe et recherche
 	nameColumn : {
 		"IMEX-ID" : "Imex curation",
 		"biomolecule" : "Biomolecule",
@@ -62,7 +62,7 @@ function initBarSearch (options){
 		self._stopSpin();
     		return;
     	    }
-    	self._startSpin()
+    	self._startSpin()  // debut de la rotation
   	    
 	    $(self.targetDomElem).find('div.afficheResult').remove();//détruit la recherche précédente
 	    var data = self._getHistory (string); // get JSON datastructure in history 
@@ -127,7 +127,7 @@ function initBarSearch (options){
 	    
 	},
 	loadFromServer : function (string) {
-	    // downlaod json table conten
+	    // downlaod json table content
 			var self = this;
 	    var jqxhr = $.ajax({
         			   type: 'GET',
@@ -140,7 +140,7 @@ function initBarSearch (options){
     			      var currentString = $(self.targetDomElem).find('input').val();
     			      if (currentString === data.searchString) {// si l'input n'a pas changé
     				  var resData = self._getHistory(data.searchString);
-    				  self.indexNav += 1;
+    				  self.indexNav ++;
     				  console.dir(data);
     				  if(self.iNavContext){self._drawNavResult(resData);}
     				  else{self._drawResult(resData);}
@@ -150,11 +150,13 @@ function initBarSearch (options){
 			   var err = eval("(" + xhr.responseText + ")");
 			   alert(err.Message);
 			});
-   	},
+   	},/*gestion ajax*/
 	waitingString : {},
 	addWaiter : function (string) { this.waitingString[string] = "AJAX_CALLED";},
 	delWaiter : function (string) { delete this.waitingString[string];},  // inutile pour l'instant
 	testWaiter : function (string) { return this.waitingString.hasOwnProperty(string) ?  true : false;},
+	
+	/*----------------barre de recherche-------------------*/
 	draw : function(){// barre de recherche on load
 	    var self = this;
 	    
@@ -188,6 +190,8 @@ function initBarSearch (options){
 							});  	
 			
 	},
+/*--------------------------------------------------------------------------
+ partie navigateur*/
 	_drawNavResult : function (data){
 		var self = this;
 		$(self.targetDomElem).find('div.afficheResult').remove();
@@ -303,6 +307,10 @@ function initBarSearch (options){
 		returnString += "</table>"
 		return returnString;
 	},
+/*fin navigateur
+ -----------------------------------------------------------------------------------------------------------
+	debut index 
+ */
 	_drawResult : function(data){// affichage des résultats
 	    var self = this;
 	    self._stopSpin();

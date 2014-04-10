@@ -300,13 +300,23 @@ function initNetworkFilter (opt) {
   					"bLengthChange": false,
   					"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
 					"fnInitComplete": function(oSettings, json) {
+						var oTable = this;
+						console.dir(oTable);
   						$('tr').each(function(){
  		  					$(this).attr("pStatue", "uncheck");
  	 					})
  		  					
-     					$("th:nth-child(1)").click(function(){
- 	  						self._toggleAll(this, table, "expressionLevel")
- 				 		});
+     					$(".tableExpressionData th:first-child").click(function(){
+     						console.log("toggle all ExpressionData click");
+ 	  						self._toggleAll(this, oTable, "expressionLevel");     					
+     					});
+     					/*
+     					                                          each(function(){
+     					alert('toto');
+     					})*/
+     					
+     					//
+ 				 		//});
  					 		
 				 	}
  	  			});
@@ -342,12 +352,14 @@ function initNetworkFilter (opt) {
   					"bLengthChange": false,
   					"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
 					"fnInitComplete": function(oSettings, json) {
+						var oTable = this;
   						$('tr').each(function(){
  		  					$(this).attr("pStatue", "uncheck");
  	 					})
  		  					
-     					$("th:nth-child(1)").click(function(){
- 	  						self._toggleAll(this, self.table.detect, "detectionMethod")
+     					$("table.tableDetectionMethod th:nth-child(1)").click(function(){
+     						console.log("toggle all tableDetectionMethod click");
+ 	  						self._toggleAll(this, oTable, "detectionMethod")
  				 		});
  					 		
 				 	}
@@ -400,10 +412,12 @@ function initNetworkFilter (opt) {
 		},
 		_toggleAll : function(cible,table,typeOfTable){
 			var self = this;
+			console.dir("click")
 			
 			if($(cible).find('i').hasClass('fa-square-o')){
-				$(cible).find('i').removeClass("fa-square-o");
-				$(cible).find('i').addClass("fa-check-square-o");
+				console.dir("vide")
+				$(cible).find('i').attr("class", "fa fa-check-square-o");
+				console.dir(table)
 				table.$('td:nth-child(2)').each(function(){
 					if(typeOfTable == 'expressionLevel'){
 	    				self.nodeOrLinkFilter.expressionLevel[$(this).find("span").attr('data-original-title')] = self.tpm;
@@ -416,8 +430,8 @@ function initNetworkFilter (opt) {
 	    			$(this).attr("class","fa fa-check-square-o");
 		    	});
 			}else{
-				$(cible).find('i').removeClass("fa-check-square-o");
-				$(cible).find('i').addClass("fa-square-o");
+				console.dir("plein")
+				$(cible).find('i').attr("class", "fa fa-square-o");
 				if(typeOfTable == 'expressionLevel'){
 	    				self.nodeOrLinkFilter.expressionLevel = {};
 	    			}

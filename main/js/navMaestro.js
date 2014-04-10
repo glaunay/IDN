@@ -111,26 +111,26 @@ function networkTest_alpha (opt) {
     vizObject.networkFilter.draw();
     // Start historicHover widget
     vizObject.historicHover = initHistoricHover({
-    	target : 'body',
-    	callbackInfo : function (data){
-    		vizObject.elementInfo.draw(data);
-   		},
-   		callbackBubbleStart : function (data){
-   			if(data.type != "association"){
-   				vizObject.core.bubbleNode(data, 'start');
-   			}else{
-   				console.log("css change on link")
-   			}
-   			
-   		},
-   		callbackBubbleStop : function (data){
-   			if(data.type != "association"){
-   				vizObject.core.bubbleNode(data, 'stop');
-   			}else{
-   				console.log("stop css change on link")
-   			}
-   		}
-   	});
+    						    target : 'body',
+    						    callbackInfo : function (data){
+    							vizObject.elementInfo.draw(data);
+   						    },
+   						    callbackBubbleStart : function (data){
+   							if(data.type != "association"){
+   							    vizObject.core.bubbleNode(data, 'start');
+   							}else{
+   							    console.log("css change on link")
+   							}
+   							
+   						    },
+   						    callbackBubbleStop : function (data){
+   							if(data.type != "association"){
+   							    vizObject.core.bubbleNode(data, 'stop');
+   							}else{
+   							    console.log("stop css change on link")
+   							}
+   						    }
+   						});
     vizObject.historicHover.draw();
 
     /*
@@ -155,17 +155,56 @@ function networkTest_alpha (opt) {
     vizObject.paintCtrl.draw();
 	
     
+    vizObject.getContext = function() {
+	var context = {
+	    rootUrl : null,
+	    from : null
+	};
+	var location = document.URL;
+	var cgiPattern = new RegExp("iNavigatorGateWay");
+	var htmlPattern = new RegExp("iNavigator.html");
+	
+	if (cgiPattern.test(location)) {
+	    context.from = 'CGI';
+	} else if (htmlPattern.test(location)) {
+	    context.from = 'HTML';	    
+	}
+	
+	var subString = location.match(/([^\/]+)/g);
+	console.dir(subString);
+	if (subString[1] === 'http:')
+	    context.rootUrl = subString[1] + '//' + subString[2];
+	else
+	    context.rootUrl = subString[1];
+
+	return context;
+    };
     
-    
-   vizObject.elementInfo = initElementInfo({width : '350px', height : '600px', target : 'div.historyWidjet',callback : {
-   	computeCss : function(){
-   		return {main : { width : "251px", 'height' : "300px", position : "absolute", top : "0", right: "-1px","font-weight":"normal","text-shadow":"none","background-color":"black"} ,
-		upmark :  {width: "231px",overflow : "visible",  position : "absolute","font-weight":"normal",top : "-50px",right:"-1px","text-shadow":"none","background-color":"black"}};
-   	},
-   	onClose : function(data){
-   		vizObject.core.bubbleNode(data, 'stop');
-   	}
-   }});
+    var context = vizObject.getContext();
+    vizObject.elementInfo = initElementInfo({
+						target : 'div.historyWidjet',
+						width : '350px', height : '600px',
+						context : context.from,
+						rootUrl : context.rootUrl,
+						callback : {
+   						    computeCss : function(){
+   							return {
+							    main : { 
+								width : "251px", 'height' : "300px", 
+								position : "absolute", top : "0", right: "-1px","font-weight":"normal",
+								"text-shadow":"none","background-color":"black"
+							    },
+							    upmark :  {
+								width: "231px",overflow : "visible",  position : "absolute","font-weight":
+								"normal",top : "-50px",right:"-1px","text-shadow":"none","background-color":"black"
+							    }
+							};
+   						    },
+   						    onClose : function(data){
+   							vizObject.core.bubbleNode(data, 'stop');
+   						    }
+						}
+					    });
     
     vizObject.idleDiv = startIdle({target : 'body', parent : vizObject.networkWindow});
     

@@ -20,22 +20,24 @@ function ei_test() {
     };    
     
     var widget = initElementInfo({
+				     context : local,
+				     rootUrl : 'http://matrixdb.ibcp.fr:9999',
 				     width : '350px', height : '600px',
 				     target : 'div#molView',
 				     callback : {
-				     	computeCss : function(jqueryNode){
-				     		var top = $(jqueryNode).position().top ;
-							var left = $(jqueryNode).position().left ;
-							
-							return {main : {top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
-									upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px', display : 'none',width : "100%",}
-							};
-				     	}
+				     	 computeCss : function(jqueryNode){
+				     	     var top = $(jqueryNode).position().top ;
+					     var left = $(jqueryNode).position().left ;
+					     
+					     return {main : {top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
+						     upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px', display : 'none',width : "100%",}
+						    };
+				     	 }
 				     }				  
 				 });
-
+    
     widget.draw(nodeTest);
-
+    
     return widget;
 }
 
@@ -66,10 +68,13 @@ function initElementInfo(opt) {
 		upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px', width : this.width}};
     };    
     if (opt.callback.computeCss){
-		computeCss = opt.callback.computeCss;
-	}
+	computeCss = opt.callback.computeCss;
+    }
+    
+    
     
     return {
+	rootUrl : opt.rootUrl ? opt.rootUrl :'http://matrixdb.ibcp.fr:9999',
 	targetSuffix : opt.hasOwnProperty('targetSuffix') ? opt.targetSuffix : null,
 	molViewIndex : null,
 	target : opt.hasOwnProperty('targetSuffix') ? opt.target + opt.targetSuffix : opt.target,
@@ -79,13 +84,17 @@ function initElementInfo(opt) {
 	selector : opt.hasOwnProperty('targetSuffix') ? opt.target + opt.targetSuffix + ' div#elementInfo' + opt.targetSuffix : opt.target + ' div#elementInfo',
 	data : null,
 	compteur : 1,
-	
+	context : opt.context ? 'opt.context' : 'HTML',
 	defaultSel : [],
 	height : height,
 	width : width,
+	setUrl : function () {
+	    this.urlReport.association = this.rootUrl + '/cgi-bin/current/newPort?type=association&value=';
+	    this.urlReport.biomolecule = this.rootUrl + '/cgi-bin/current/newPort?type=biomolecule&value=';
+	},
 	urlReport : {
-		"association" : "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=association&value=",
-		"biomolecule" : "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value=",
+	    "association" : null,
+	    "biomolecule" : null
 	},
 	baseUrl : {
 	    uniprotKeyWord : "http://www.uniprot.org/keywords/",
@@ -94,6 +103,7 @@ function initElementInfo(opt) {
 	    taxon : "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id="
 	},
 	draw : function (data) {
+	    this.setUrl();
 	    console.log("lets draw " + this.targetSuffix);
 	    this.data = data;
 	    console.dir(data);
@@ -207,16 +217,20 @@ function initElementInfo(opt) {
 	    }
 	},	
 	generateLinkContent : function (){
-		$(this.selector + ' .upmark').append('<div class= "headerEi">'+
-											'<a target = "_blank" href = "' + this.urlReport.association + this.data.details.name + '">'+
-											'<img src="img/matrixdb_logo_medium.png" alt="Smiley face" height="40px" width="40px"></a>'+
-											'<div class="btn-group center"><a class="btn btn-success btn-mini" ><i class="fa-shopping-cart fa-2x"></i></a><a class="btn btn-default btn-mini">Add to cart</a></div>'+
-											'<i class ="fa-double-angle-right fa-3x pull-right"></i></div>'
-										);
-		generateLinkContent();
+	    var imgPath = this.context === 'HTML' ? 'img' : '../../img';
+	    imgPath += '/matrixdb_logo_medium.png';
+	    $(this.selector + ' .upmark').append('<div class= "headerEi">'+
+						 '<a target = "_blank" href = "' + this.urlReport.association + this.data.details.name + '">' +
+						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a>' +
+						 '<div class="btn-group center"><a class="btn btn-success btn-mini" ><i class="fa-shopping-cart fa-2x"></i></a>' +
+						 '<a class="btn btn-default btn-mini">Add to cart</a></div>' +
+						 '<i class ="fa-double-angle-right fa-3x pull-right"></i></div>'
+						);
+	    generateLinkContent();
 	},
 	generateNodeContent : function () {	    
 	    //console.log("generating node content");
+	 
 	    var self = this;
 		self.bodyVisitCardGenerate()
 	   	   
@@ -252,22 +266,24 @@ function initElementInfo(opt) {
 	    /* Prot*/
 	},
 	generateLinkContent : function(){
-		var self = this;
-		var name = self._assocName(self.data.details.name);
-		var listeDiv = [];
-		self.compteur = 1;
-		
-		$(self.selector + ' .upmark').append('<div class= "headerEi assoEi">'+
-											'<a  target = "_blank" href = "' + self.urlReport.association + self.data.details.name + '" style = "float:left;">'+
-											'<img src="img/matrixdb_logo_medium.png" alt="Smiley face" height="40px" width="40px"></a>'+
-											'<div style = "float:left;margin-left:40px;color: rgba(255, 255, 209, 1.0);">Interaction</div>'+
-											'<i class ="fa fa-angle-double-right fa-3x pull-right"></i></div>'
+	    var imgPath = this.context === 'HTML' ? 'img' : '../../img';
+	    imgPath += '/matrixdb_logo_medium.png';
+	    
+	    var self = this;
+	    var name = self._assocName(self.data.details.name);
+	    var listeDiv = [];
+	    self.compteur = 1;
+	    $(self.selector + ' .upmark').append('<div class= "headerEi assoEi">'+
+						 '<a  target = "_blank" href = "' + self.urlReport.association + self.data.details.name + '" style = "float:left;">'+
+						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a>'+
+						 '<div style = "float:left;margin-left:40px;color: rgba(255, 255, 209, 1.0);">Interaction</div>'+
+						 '<i class ="fa fa-angle-double-right fa-3x pull-right"></i></div>'
 										);
-		var commonInfo = "<div class = 'commonInfo' ><div class = 'compteur'></div><div class = 'type'>" + self.data.details.knowledge + "</div></div>";
-		if(self.data.details.Experiments.length > 1){
-			var header = "<div class = 'caroussel'><i class='fa fa-chevron-left pull-left fa-2x'></i><div class='titleAsso' style = 'width: 160px;'>" + name + "</div><i class='fa fa-chevron-right pull-right fa-2x'></i>"+
-			"</div>";
-			
+	    var commonInfo = "<div class = 'commonInfo' ><div class = 'compteur'></div><div class = 'type'>" + self.data.details.knowledge + "</div></div>";
+	    if(self.data.details.Experiments.length > 1){
+		var header = "<div class = 'caroussel'><i class='fa fa-chevron-left pull-left fa-2x'></i><div class='titleAsso' style = 'width: 160px;'>" + name + "</div><i class='fa fa-chevron-right pull-right fa-2x'></i>"+
+		    "</div>";
+		
 			for (var i=0; i < self.data.details.Experiments.length; i++) {
 				listeDiv.push(self._divXpGenerator(self.data.details.Experiments[i],i));
 			};
@@ -362,20 +378,22 @@ function initElementInfo(opt) {
 		
 	},
 	bodyVisitCardGenerate : function () {	   
-		if(!this.data.x){return;}
-		$(this.selector + ' .upmark').append('<div class= "headerEi">'+
-											'<a target = "_blank" href = "' + this.urlReport.biomolecule + this.data.name + '" style = "float:left;">'+
-											'<img src="img/matrixdb_logo_medium.png" alt="Smiley face" height="40px" width="40px"></a>'+
-											'<div style = "float:left;margin-left:10px;color: rgba(255, 255, 209, 1.0);">Biomolecule</div>'+
-											'<i class ="fa fa-angle-double-right fa-3x pull-right"></i></div>'
-										);
-		if(this.data.common){
-			
-		}else{
-			$(this.selector + ' .ei-header').hide();
-		}
-		var name = '<div style = "text-align:center;">' + this.data.common.anyNames[0] + "</div>"
-		$(this.selector + ' .ei-body').append(name);
+	    if(!this.data.x){return;}
+	    var imgPath = this.context === 'HTML' ? 'img' : '../../img';
+	    imgPath += '/matrixdb_logo_medium.png';
+	    $(this.selector + ' .upmark').append('<div class= "headerEi">'+
+						 '<a target = "_blank" href = "' + this.urlReport.biomolecule + this.data.name + '" style = "float:left;">'+
+						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a>'+
+						 '<div style = "float:left;margin-left:10px;color: rgba(255, 255, 209, 1.0);">Biomolecule</div>'+
+						 '<i class ="fa fa-angle-double-right fa-3x pull-right"></i></div>'
+						);
+	    if(this.data.common){
+		
+	    }else{
+		$(this.selector + ' .ei-header').hide();
+	    }
+	    var name = '<div style = "text-align:center;">' + this.data.common.anyNames[0] + "</div>";
+	    $(this.selector + ' .ei-body').append(name);
 	    var cv = '<div class="summary"></div>';
 	    $(this.selector + ' .ei-body').append(cv);
 	    var tags = ["Type", "Specie", "Molecular weight", "Length", "Current interactors", "Registred interactors"]; 
