@@ -7,10 +7,38 @@ function networkTest_alpha (opt) {
 	tabular : null,
 	getProviderList : function () {
 	    return ["matrixdb"];
+	},
+	getContext : function() {
+	    var context = {
+		rootUrl : null,
+		from : null
+	    };
+	    var location = document.URL;
+	    var cgiPattern = new RegExp("iNavigatorGateWay");
+	    var htmlPattern = new RegExp("iNavigator.html");
+	    
+	    if (cgiPattern.test(location)) {
+		context.from = 'CGI';
+	    } else if (htmlPattern.test(location)) {
+		context.from = 'HTML';	    
+	    }
+	    
+	    var subString = location.match(/([^\/]+)/g);
+	    console.dir(subString);
+	    if (subString[1] === 'http:')
+		context.rootUrl = subString[1] + '//' + subString[2];
+	    else
+		context.rootUrl = subString[1];
+	    
+	    return context;
 	}
     };   
+    
     bindExportActions();
     
+    var context = vizObject.getContext();
+    console.log("CONTEXT");
+    console.dir(context);
     // polluting namespance with #networkWindow should be sent as opt.target to core Init
     // later ...
     vizObject.core = coreInit(opt);          
@@ -154,33 +182,6 @@ function networkTest_alpha (opt) {
     );
     vizObject.paintCtrl.draw();
 	
-    
-    vizObject.getContext = function() {
-	var context = {
-	    rootUrl : null,
-	    from : null
-	};
-	var location = document.URL;
-	var cgiPattern = new RegExp("iNavigatorGateWay");
-	var htmlPattern = new RegExp("iNavigator.html");
-	
-	if (cgiPattern.test(location)) {
-	    context.from = 'CGI';
-	} else if (htmlPattern.test(location)) {
-	    context.from = 'HTML';	    
-	}
-	
-	var subString = location.match(/([^\/]+)/g);
-	console.dir(subString);
-	if (subString[1] === 'http:')
-	    context.rootUrl = subString[1] + '//' + subString[2];
-	else
-	    context.rootUrl = subString[1];
-
-	return context;
-    };
-    
-    var context = vizObject.getContext();
     vizObject.elementInfo = initElementInfo({
 						target : 'div.historyWidjet',
 						width : '350px', height : '600px',

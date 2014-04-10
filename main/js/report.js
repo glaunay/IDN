@@ -1034,6 +1034,7 @@ function initMyReport (options){
   			if(!self.jsonData.interactions[0]){return;}
   			var data = self._interactionGenerateTableData();
   			var nbXp = 0
+  			console.dir(data)
   			for (var i=0; i < data.aaData.length; i++) {
 				nbXp += data.aaData[i][1];
 				 data.aaData[i][1] =''+ data.aaData[i][1] + ' <i class="fa fa-info-circle"></i>'
@@ -1114,16 +1115,15 @@ function initMyReport (options){
 						if(xp.name == partner){
 							for (var j=0; j < xp.experiments.length; j++) {	//ligne du dessous param
 								if(j%2==0){returnString +="<div class = 'row-fluid' >" }
-							 	returnString += '<div class = "span6 inlineTable" ><a href="' + this.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=' + xp.experiments[j].name 
+							 	returnString += '<div class = "span6 inlineTable" ><a href="' + self.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=' + xp.experiments[j].name 
 								              + '" target = "_blank">' + xp.experiments[j].name + '</a>'; 
 							 	if(xp.experiments[j].pmid){
-							 		returnString += '</br> Pubmed&nbsp;&nbsp; <a target = "_blank" href = "' + this.rootUrl + '/cgi-bin/current/newPort?type=publication&value= ' 
-									             + xp.experiments[j].pmid + '">' + xp.experiments[j].pmid + '</a> <a target = "_blank" href = "http://www.ncbi.nlm.nih.gov/pubmed/' + xp.experiments[j].pmid 
-									             + '" style ="font-size : 0.7em; text-decoration : underline;">link</a>';
+							 		returnString += '</br> Pubmed&nbsp;&nbsp; <a target = "_blank" href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
+									             + xp.experiments[j].pmid + '">' + xp.experiments[j].pmid + '</a>';
 							 		if(xp.experiments[j].imexid){
-							 			returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = "_blank" href = "' + this.rootUrl +
+							 			returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = "_blank" href = "' + self.rootUrl
 										+ '/cgi-bin/current/newPort?type=publication&value=' + xp.experiments[j].pmid + '">' + xp.experiments[j].imexid 
-										+ '</a> <a target = "_blank" href = "http://www.ebi.ac.uk/intact/imex/main.xhtml?query=' + xp.experiments[j].pmid + '" style ="font-size : 0.7em; text-decoration : underline;">link</a>';  
+										+ '</a>';  
 							 		}	
 							 	}
 							 	if(j%2==1){returnString +="</div>" }
@@ -1157,6 +1157,7 @@ function initMyReport (options){
 						var common = info.common.anyNames[0];
 						xpObject.name = info.id;
 						commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + id + '"><a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
+						console.dir(commonName)
 					}
 					if(name == "kind"){		
 						if(info == "genuine"){
@@ -1677,15 +1678,10 @@ function initMyReport (options){
 				
 			}
 		},
-		_toggleArrow : function(iCible){
+		_popThisTd : function(tdCible){
 			var self = this;
-			if(iCible.hasClass("fa-sort-asc")){
-				iCible.removeClass("fa-sort-asc")
-				iCible.addClass("fa-sort-desc")
-			}else{
-				iCible.removeClass("fa-sort-desc")
-				iCible.addClass("fa-sort-asc")
-			}
+			var position = $(tdCible).position()
+			console.dir(position)
 		},
 /*fin événement sur la page
  *---------------------------------------------------------------------------------------------------------------

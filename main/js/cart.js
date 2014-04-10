@@ -34,7 +34,8 @@ function initCart (options){
 		wrapperSel : '.mycart',	
 		data : defaultEaten.data,//data générer depuis le cookie
 		tick : undefined,//clock
-		rootUrlForNetwork : "http://matrixdb.ibcp.fr:9999/cgi-bin/current/iNavigatorGateWay",
+		
+		rootUrlForNetwork : options.rootUrl + "/cgi-bin/current/iNavigatorGateWay",
 		registerItem : {
 			'biomolecule' : '<i class="fa fa-spinner"></i>',
 			'publication' : '<i class="fa fa-book"></i>',
