@@ -49,7 +49,7 @@ open LOG, ">/tmp/reportLatest.json";
 print LOG "$jsonString\n";
 close LOG;
 
-my $urlRoot = $DEV_STATUS eq "TEST" ? "http://matrixdb.ibcp.fr:9999" : "matrixdb-new.ibcp.fr/";
+my $urlRoot = $DEV_STATUS eq "TEST" ? "http://matrixdb.ibcp.fr:9999" : "http://matrixdb-new.ibcp.fr/";
 
 my $customJSlib = {
 		   experiment => "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/GLMOL/Three49custom.js\"></script>" .
@@ -91,7 +91,7 @@ my $htmlContent =
 "<script type=\"text/javascript\" src=\"$urlRoot/js/reportMaestro.js\"></script>" .
 "<script type=\"text/javascript\" src=\"$urlRoot/js/report.js\"></script>" .
 "<script type=\"text/javascript\" src=\"$urlRoot/js/cart.js\"></script>";
-my $htmlTrailer = "<script type=\"text/javascript\">" .  '$(function(){'  . "runReportMaestro({cart : true, reportDiv : \"#reportDiv\", jsonData : " . $jsonString . "})})</script>" .
+my $htmlTrailer = "<script type=\"text/javascript\">" .  '$(function(){'  . "runReportMaestro({rootUrl:\"$urlRoot\", cart : true, reportDiv : \"#reportDiv\", jsonData : " . $jsonString . "})})</script>" .
   "<title>MatrixDB report</title></head><body><div id = \"reportDiv\"></div></body><div id=\'bodyFooter\'></div></html>\n";
 
 $htmlContent .= defined ($customJSlib->{ $query->{ type }->[0] }) 

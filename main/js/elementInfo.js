@@ -20,7 +20,7 @@ function ei_test() {
     };    
     
     var widget = initElementInfo({
-				     context : local,
+				     context : 'HTML',
 				     rootUrl : 'http://matrixdb.ibcp.fr:9999',
 				     width : '350px', height : '600px',
 				     target : 'div#molView',

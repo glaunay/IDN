@@ -37,12 +37,15 @@ function initMyReport (options){
 		$(this.targetDomElem).find('ul.pdb').hide();
 		widget.loadWithPdbId($(i).attr("id"));
 	}
+    
+    
 /*fin intialisation
  * -----------------------------------------------------------------
  */
 	return {
-		targetDomElem : elem, //permet de selectionner la targetdiv
-		barClass : 'reportDiv', // la class de la div cible
+	    rootUrl : options.rootUrl ? options.rootUrl : 'http://matrixdb.ibcp.fr:9999', 
+	    targetDomElem : elem, //permet de selectionner la targetdiv
+	    barClass : 'reportDiv', // la class de la div cible
 		barSel : '.reportDiv', // le selecteur
 		callbackPdbView : options.callbackPdbView || defaultCallbackPdbView,
 		url : options.url ? options.url : false,
@@ -427,7 +430,7 @@ function initMyReport (options){
   		},
   		_multmer : function(){
   			var self = this;
-  			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+  			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			if(!self.jsonData.relationship.In_multimer[0]){return "";}
   			var line = "<dt class ='hReport'>In multimer:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.In_multimer.length; i++) {
@@ -440,7 +443,7 @@ function initMyReport (options){
   		_component : function(){
   			var self = this;
   			if(!self.jsonData.relationship.Component[0]){return "";}
-  			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+  			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			var line = "<dt class ='hReport'>Subunit ref:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.Component.length; i++) {
 			 	line += "<a target ='_blank' href = '" + rootUrl +self.jsonData.relationship.Component[i] + "'>" + self.jsonData.relationship.Component[i] + "</a>, ";
@@ -471,7 +474,7 @@ function initMyReport (options){
   			var self = this;
   			if(!self.jsonData.relationship){return "";}
   			if(!self.jsonData.relationship.ContainsFragment[0]){return "";}
-  			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+  			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			var line = "<dt class ='hReport'>Cleaved in:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.ContainsFragment.length; i++) {
 			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.ContainsFragment[i] + "'>" + self.jsonData.relationship.ContainsFragment[i] + "</a>, ";
@@ -485,7 +488,7 @@ function initMyReport (options){
   			var self = this;
   			if(!self.jsonData.relationship){return "";}
   			if(!self.jsonData.relationship.Belongs_to[0]){return "";}
-  			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+  			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			var line = "<dt class ='hReport'>Precurssor of:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.Belongs_to.length; i++) {
 			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.Belongs_to[i] + "'>" + self.jsonData.relationship.Belongs_to[i] + "</a>, ";
@@ -498,7 +501,7 @@ function initMyReport (options){
   			var self = this;
   			if(!self.jsonData.relationship){return "";}
   			if(!self.jsonData.relationship.Bound_Coval_to[0]){return "";}
-  			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+  			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			var line = "<dt class ='hReport'>Can be found bound covalently to:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.Bound_Coval_to.length; i++) {
 			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.Bound_Coval_to[i] + "'>" + self.jsonData.relationship.Bound_Coval_to[i] + "</a>, ";
@@ -625,7 +628,7 @@ function initMyReport (options){
 			if(!self.jsonData.association){return }
 			var assoc = self.jsonData.association.split('__')
 			var lineString = '<dt class ="hReport">Interaction between:</dt><dd> '
-			var RootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+			var RootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
 			for (var i=0; i < assoc.length; i++) {
 			  lineString += "<a target = '_blank' href = '" + RootUrl + assoc[i] +"'>" + assoc[i] +"</a>&nbsp;&nbsp;and&nbsp;&nbsp;" 
 			};
@@ -663,7 +666,7 @@ function initMyReport (options){
 			if(!self.jsonData.association){return}
 			var returnString = '<dt class ="hReport">Support following association:</dt>';
 			for (var i=0; i < self.jsonData.association.length; i++) {
-			 returnString+= ' <a target = "_blank" href ="http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=association&value=' + self.jsonData.association[i] + '">' + self.jsonData.association[i] + "</a></dd>";
+			 returnString+= ' <a target = "_blank" href ="' + this.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + self.jsonData.association[i] + '">' + self.jsonData.association[i] + "</a></dd>";
 			};
 			return returnString;
 		},
@@ -719,7 +722,7 @@ function initMyReport (options){
 		},
 		_publication : function(){
 			var self = this;
-			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=publication&value="
+			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=publication&value="
 			if(!self.jsonData.publication){return}
 			if (self.jsonData.publication instanceof Array) {
 				var returnString = '<dt >Pubmed reference:</dt>';
@@ -822,7 +825,7 @@ function initMyReport (options){
 		_namePartner : function(index){
 			var self = this;
 			if(!self.jsonData.partnerDetails[index].name){return '';}
-			var RootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+			var RootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
 			var lineString = '<div class="divTitre" >';
 			if(self.jsonData.partnerDetails[index].commonName){
 				lineString += self.jsonData.partnerDetails[index].commonName + " (";
@@ -1111,11 +1114,16 @@ function initMyReport (options){
 						if(xp.name == partner){
 							for (var j=0; j < xp.experiments.length; j++) {	//ligne du dessous param
 								if(j%2==0){returnString +="<div class = 'row-fluid' >" }
-							 	returnString += "<div class = 'span6 inlineTable' ><a href='http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=experiment&value=" + xp.experiments[j].name + "' target = '_blank'>" + xp.experiments[j].name + "</a>" 
+							 	returnString += '<div class = "span6 inlineTable" ><a href="' + this.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=' + xp.experiments[j].name 
+								              + '" target = "_blank">' + xp.experiments[j].name + '</a>'; 
 							 	if(xp.experiments[j].pmid){
-							 		returnString += "</br> Pubmed&nbsp;&nbsp; <a target = '_blank' href = 'http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=publication&value="+ xp.experiments[j].pmid + "'>" + xp.experiments[j].pmid + "</a> <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/pubmed/" + xp.experiments[j].pmid + "' style ='font-size : 0.7em; text-decoration : underline;'>link</a>"
+							 		returnString += '</br> Pubmed&nbsp;&nbsp; <a target = "_blank" href = "' + this.rootUrl + '/cgi-bin/current/newPort?type=publication&value= ' 
+									             + xp.experiments[j].pmid + '">' + xp.experiments[j].pmid + '</a> <a target = "_blank" href = "http://www.ncbi.nlm.nih.gov/pubmed/' + xp.experiments[j].pmid 
+									             + '" style ="font-size : 0.7em; text-decoration : underline;">link</a>';
 							 		if(xp.experiments[j].imexid){
-							 			returnString += "</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = '_blank' href = 'http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=publication&value="+ xp.experiments[j].pmid + "'>" + xp.experiments[j].imexid + "</a> <a target = '_blank' href = 'http://www.ebi.ac.uk/intact/imex/main.xhtml?query=" + xp.experiments[j].pmid +"' style ='font-size : 0.7em; text-decoration : underline;'>link</a>"  
+							 			returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = "_blank" href = "' + this.rootUrl +
+										+ '/cgi-bin/current/newPort?type=publication&value=' + xp.experiments[j].pmid + '">' + xp.experiments[j].imexid 
+										+ '</a> <a target = "_blank" href = "http://www.ebi.ac.uk/intact/imex/main.xhtml?query=' + xp.experiments[j].pmid + '" style ="font-size : 0.7em; text-decoration : underline;">link</a>';  
 							 		}	
 							 	}
 							 	if(j%2==1){returnString +="</div>" }
@@ -1132,7 +1140,7 @@ function initMyReport (options){
   			var self = this;
   			var dataForTable = []
   			var xpData = []
-  			var rootLink ="http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+  			var rootLink = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			for (var i = 0; i < self.jsonData.interactions.length; i++) {
   				var lineTable = [];
 				var statue = '';
@@ -1293,7 +1301,7 @@ function initMyReport (options){
 			var self = this;
 			if(!self.jsonData.directExperiments[0]){return;}
 			var returnString = '<dt > Direct experiment:</dt>'
-			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=experiment&value="
+			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=experiment&value="
 			for (var i=0; i < self.jsonData.directExperiments.length; i++) {
 				returnString +="<dd><a target ='_blank' href = '" + rootUrl + self.jsonData.directExperiments[i] + "'>" + self.jsonData.directExperiments[i] +"</a></dd>"
 			};
@@ -1304,14 +1312,14 @@ function initMyReport (options){
 			if(!self.jsonData.sourceDatabases[0]){return;}
 			var returnString = '<dt > Database Source:</dt>'
 			for (var i=0; i < self.jsonData.sourceDatabases.length; i++) {
-				returnString +="<dd>" + self.jsonData.sourceDatabases[i] + "</dd>"
+				returnString +="<dd>" + self.jsonData.sourceDatabases[i] + "</dd>";
 			};
 			return returnString;
 		},
 		_assocPartner
 		: function (){
 			var self = this;
-			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=biomolecule&value="
+			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value=";
 			if(!self.jsonData.partnerNames[0]){return;}
 			var returnString = '<dt > Biomolecule:</dt>'
 			for (var i=0; i < self.jsonData.partnerNames.length; i++) {
@@ -1333,7 +1341,7 @@ function initMyReport (options){
 		},
 		_supportByAssoc : function(string){
 			var self = this;
-			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=association&value="
+			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=association&value="
 			if(string){var returnString = string + '<dt > Support by association:</dt>'}
 			else{var returnString = '<div class ="divTitre"> Supported association</div><div class = "postitContent"><dl><dt class = "hReport"> Support by association:</dt>'}
 			for (var i=0; i < self.jsonData.supportByAssociation.length; i++) {
@@ -1519,7 +1527,7 @@ function initMyReport (options){
 		_assocGenerateTableData : function (){
   			var self = this;
   			var aaData = [];
-  			var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=association&value=";
+  			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=association&value=";
   			for (var i = 0; i < self.jsonData.association.length; i++) {
   				var name = self.jsonData.association[i];
   				name = name.split("__")
