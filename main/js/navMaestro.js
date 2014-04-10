@@ -23,12 +23,8 @@ function networkTest_alpha (opt) {
 		context.from = 'HTML';	    
 	    }
 	    
-	    var subString = location.match(/([^\/]+)/g);
-	    console.dir(subString);
-	    if (subString[1] === 'http:')
-		context.rootUrl = subString[1] + '//' + subString[2];
-	    else
-		context.rootUrl = subString[1];
+	    var publicPattern = /matrixdb-new.ibcp.fr/;
+	    context.rootUrl = publicPattern.test(location) ? 'http://matrixdb-new.ibcp.fr' : 'http://matrixdb.ibcp.fr:9999/'; 
 	    
 	    return context;
 	}
@@ -220,7 +216,7 @@ function networkTest_alpha (opt) {
 						     };
 						     var JSONText = JSON.stringify(requestObject);
 						     return {
-							 url: 'cgi-bin/current/dataFetcher', //http://matrixdb.ibcp.fr:9999/
+							 url: context.rootUrl + '/cgi-bin/current/dataFetcher',
 							 data : JSONText,
 							 type: 'POST',
 							 contentType: 'application/json',
