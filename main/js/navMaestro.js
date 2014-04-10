@@ -220,7 +220,7 @@ function networkTest_alpha (opt) {
 						     };
 						     var JSONText = JSON.stringify(requestObject);
 						     return {
-							 url: 'http://matrixdb.ibcp.fr:9999/cgi-bin/current/dataFetcher',
+							 url: 'cgi-bin/current/dataFetcher', //http://matrixdb.ibcp.fr:9999/
 							 data : JSONText,
 							 type: 'POST',
 							 contentType: 'application/json',
