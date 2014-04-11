@@ -8,6 +8,14 @@
   ---------------------------------------------------------------------------------------
   initialisation
  */
+var tmp = $.fn.popover.Constructor.prototype.show;
+$.fn.popover.Constructor.prototype.show = function () {
+  tmp.call(this);
+  if (this.options.callback) {
+    this.options.callback();
+  }
+}
+
 function initMyReport (options){
 	
 	if (! options.hasOwnProperty('reportDiv')) {
@@ -150,6 +158,7 @@ function initMyReport (options){
 			$('html').click(function() {
 				$(self.targetDomElem).find('ul.pdb').hide()
 				});
+			
 			$(self.targetDomElem).find('i.pdbView').click(function(event){self.callbackPdbView(this)});
 			$(self.targetDomElem).find("span.addCart.biom").click(function(){self.addCartCallback({type : "biomolecule" , value : $( this ).attr("name")})});
 			$(self.targetDomElem).find("span.addCart.publi").click(function(){self.addCartCallback({type : "publication" , value : $( this ).attr("name")})});
@@ -1037,10 +1046,12 @@ function initMyReport (options){
   			console.dir(data)
   			for (var i=0; i < data.aaData.length; i++) {
 				nbXp += data.aaData[i][1];
-				 data.aaData[i][1] =''+ data.aaData[i][1] + ' <i class="fa fa-info-circle"></i>'
+				data.aaData[i][1] ='<span index = "' + i + '">'+ data.aaData[i][1] + '</span> <i class="fa fa-info-circle"></i>';
 			  };
   			var plural =  data.aaData.length > 1 ? 's' : ''; 
-  			var titre = "<div class='divTitre'> This molecule has <span class = 'niceRed'>" + data.aaData.length + "</span> partner" + plural + " described in <span style = 'color : green; font-weight : bold'>" + nbXp + "</span> evidences </div>";
+  			var titre = "<div class='divTitre'> This molecule has <span class = 'niceRed'>" 
+  						+ data.aaData.length + "</span> partner" + plural + " described in <span style = 'color : green; font-weight : bold'>" 
+  						+ nbXp + "</span> evidences </div>";
   			var tableForm = "<table class='interact'><thead></thead><tbody></tbody></table>";
   			var interactDiv = $(self.targetDomElem).find("div.tableInteract");
   			interactDiv.append(titre)
@@ -1080,66 +1091,46 @@ function initMyReport (options){
  		  		 	self.addCartCallback(data); 					
    				 });
    				 table.$("td:nth-child(2)").css("cursor","pointer");
+   				  table.$("td:nth-child(2)").each(function() {
+   				  		var popTriggerer = this;
+   				  		var index = $(this).find("span").attr('index');	
+   				  		var position = $(this).offset()		  		
+   				  		$(this).popover({
+   				  				 title:"List of supporting experiments <i style = 'color:red;cursor:pointer;' class = 'fa fa-times-circle pull-right'></i>",
+   				  				 html : true, 
+   				  				 callback : function () {
+   				  				 		$(".fa-times-circle").click(function() {
+   				  				 				$(popTriggerer).popover("hide");
+   				  				 		});
+   				  				 },
+   				  				 content:self._popThisTd(data.supportingXpData[index]), 
+   				  				 placement : 'bottom', container : 'body'});
+   				  });
+   				 
    				 table.$("td:nth-child(2)").click(function(){
-   				 	
-   				 	var nTr = this.parentNode;
-  					var i = $.inArray( nTr, anOpen );
-  					if ( i === -1 ) {  						
-  						var toto = function () {
-  								
-  							$('td.supportingXp').parent().prev().each(function(){
-  								table.fnClose( this );
-  							})		
-							table.fnOpen( nTr, fnFormatDetails(table, nTr), 'supportingXp' ); 
-  						}();
-  						
-  						anOpen = [nTr] ;
-  					}else{
-  						
-  						table.fnClose( nTr );
-     					anOpen = [];
-  					}
+   				 	var self = this;
+   				 	table.$("td:nth-child(2)").each(function() {
+   				  			if(self !=this){
+   				  				$(this).popover("hide");
+   				  			}
+   					});
    				});
-   				table.$('td>span').tooltip();		
-   				function fnFormatDetails( table, nTr ){
-   					
-   					var partner = table.fnGetData( nTr );	
-   									
-   					var link=partner[0];
-   					
-   					partner = $(link).attr("title");
-   					console.dir(partner);
-   					var returnString = ''
-   					for (var i = 0; i < data.supportingXpData.length; i++) {
-						var xp = data.supportingXpData[i]
-						if(xp.name == partner){
-							for (var j=0; j < xp.experiments.length; j++) {	//ligne du dessous param
-								if(j%2==0){returnString +="<div class = 'row-fluid' >" }
-							 	returnString += '<div class = "span6 inlineTable" ><a href="' + self.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=' + xp.experiments[j].name 
-								              + '" target = "_blank">' + xp.experiments[j].name + '</a>'; 
-							 	if(xp.experiments[j].pmid){
-							 		returnString += '</br> Pubmed&nbsp;&nbsp; <a target = "_blank" href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
-									             + xp.experiments[j].pmid + '">' + xp.experiments[j].pmid + '</a>';
-							 		if(xp.experiments[j].imexid){
-							 			returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = "_blank" href = "' + self.rootUrl
-										+ '/cgi-bin/current/newPort?type=publication&value=' + xp.experiments[j].pmid + '">' + xp.experiments[j].imexid 
-										+ '</a>';  
-							 		}	
-							 	}
-							 	if(j%2==1){returnString +="</div>" }
-							 	returnString += "</div>";
-							};
-						}
-					   };
-   					return returnString;
-   				}
-			} );
+   				 $('.pagination').on('click', function () {
+   					table.$("td:nth-child(2)").each(function() {
+   				  		$(this).popover("hide");
+   				 	})
+   				});
+   				table.$('td:first-child>span').tooltip();		
+   				
+   				
+			});
 			
   		},
   		_interactionGenerateTableData : function(){
   			var self = this;
-  			var dataForTable = []
-  			var xpData = []
+  			var dataForTable = [];
+  			var xpData = [];
+  			var cnt = -1;
   			var rootLink = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			for (var i = 0; i < self.jsonData.interactions.length; i++) {
   				var lineTable = [];
@@ -1149,15 +1140,16 @@ function initMyReport (options){
 				var xpObject = {};
 				jQuery.each(self.jsonData.interactions[i],function(name,info){
 					if(name == "supportingExperiments"){
-						nb =  info.length ;
+						nb =   info.length ;
 						xpObject.experiments = info;
 					}
 					if(name == "partner"){
+						
 						var id = info.id;
 						var common = info.common.anyNames[0];
 						xpObject.name = info.id;
 						commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + id + '"><a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
-						console.dir(commonName)
+						
 					}
 					if(name == "kind"){		
 						if(info == "genuine"){
@@ -1678,11 +1670,32 @@ function initMyReport (options){
 				
 			}
 		},
-		_popThisTd : function(tdCible){
+		_popThisTd : function(xpData){
 			var self = this;
-			var position = $(tdCible).position()
-			console.dir(position)
+			
+			var returnString = "";
+			for (var j=0; j < xpData.experiments.length; j++) {	//ligne du dessous param
+				
+				returnString += '<div class = "popoverContent"><a href="' + self.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=' + xpData.experiments[j].name 
+				             + '" target = "_blank">' + xpData.experiments[j].name + '</a>'; 
+				if(xpData.experiments[j].pmid){
+				 	returnString += '</br> Pubmed&nbsp;&nbsp; <a target = "_blank" href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
+					             + xpData.experiments[j].pmid + '">' + xpData.experiments[j].pmid + '</a>';
+					if(xpData.experiments[j].imexid){
+						returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = "_blank" href = "' + self.rootUrl
+					 					+ '/cgi-bin/current/newPort?type=publication&value=' + xpData.experiments[j].pmid + '">' + xpData.experiments[j].imexid 
+										+ '</a>';  
+					}	
+				}
+				returnString += '</div>';
+				
+			
+			};
+		return returnString 
 		},
+		_test : function(){
+			alert('toto')
+		}
 /*fin événement sur la page
  *---------------------------------------------------------------------------------------------------------------
 */	

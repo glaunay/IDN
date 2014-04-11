@@ -24,7 +24,7 @@ function networkTest_alpha (opt) {
 	    }
 	    
 	    var publicPattern = /matrixdb-new.ibcp.fr/;
-	    context.rootUrl = publicPattern.test(location) ? 'http://matrixdb-new.ibcp.fr' : 'http://matrixdb.ibcp.fr:9999/'; 
+	    context.rootUrl = publicPattern.test(location) ? 'http://matrixdb-new.ibcp.fr' : 'http://matrixdb.ibcp.fr:9999'; 
 	    
 	    return context;
 	}
@@ -205,6 +205,8 @@ function networkTest_alpha (opt) {
     
     vizObject.idleDiv = startIdle({target : 'body', parent : vizObject.networkWindow});
     
+    console.log("OUHOUOHO" + context.rootUrl);
+
     vizObject.scheduler = schedulerInit ({   chunkSize : 10,
 					     period : 5000,
 					     nThread : 5,

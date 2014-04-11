@@ -82,9 +82,9 @@
       });
 
       $('#toggleEight').on('click',function(){
-      $('.mainContent:not(#contentEight)').hide();
-      $('.mainContent#contentEight').show();
-      $(this).toggleClass('accordion-base');
+      $('.mainContent:not(#contentEight)').hide();      
+      $('.mainContent#contentEight').show()
+      <!--$(this).toggleClass('accordion-base');-->
       
       <!--$('#toggleEight').removeClass('accordion-base');-->
       });
@@ -209,6 +209,8 @@
                 <div class="accordion-body collapse accordion-base" id="collapseEight">
                   <div class="accordion-inner">
                     <ul class="accordionSubList">
+		      <li>How to contact us</li>
+		      <li>Reference</li>
                     </ul>
                   </div>
                 </div>
@@ -489,18 +491,18 @@
                    	 <table bgcolor="white" class="table table-bordered" style="width: 450px; height: 193px;">
                       	<thead>
                         	<tr>
-                        	  <th>Molecular interaction</th>
+                        	  <th>Molecular interaction Data</th>
                         	  <th>Number</th>
                         	</tr>
                       	</thead>
                       	<tbody>
                         		<tr>
                         		  <td>Total number of interactions</td>
-                        		  <td>821</td>
+                        		  <td>8244 (821)</td>
                         		</tr>
                         		<tr>
                          		 <td>Protein-protein interactions</td>
-                         		 <td>XXX</td>
+                         		 <td>8018</td>
                        	 		</tr> 
                        			<tr>
                           		 <td>Protein-polysaccharide interactions</td>
@@ -508,16 +510,12 @@
                         		</tr>
                        			<tr>
                         		 <td>Experiments</td>
-                         		 <td>1065</td>
+                         		 <td>14755 (1065)</td>
                        			</tr>
                         		<tr>
                         		  <td>Number of publications</td>
-                        		  <td>XXXX</td>
-                       			</tr>
-                       			<tr>
-                        		  <td>Interactions available via PSCIQUIC</td>
-                        		  <td>XXXX</td>
-                        		</tr>
+                        		  <td>2528</td>
+                       			</tr>                       		
                       		</tbody>
                     	</table>
                   	</ul>
@@ -530,13 +528,15 @@
             <!-- content seven -->
             <div class="mainContent" id="contentSeven">
               <h4>Watch the tutorial</h4>
-              <div> <object width="560" height="315" type="application/x-shockwave-flash"
+<!--              <div> <object width="560" height="315" type="application/x-shockwave-flash"
                   data="http://www.youtube.com/v/ZYU8AVCA_yI"> <param name="movie"
                     value="http://www.youtube.com/v/ZYU8AVCA_yI" /> <param name="wmode"
                     value="transparent" /> </object> <br />
               </div>
               <br />
+-->
               <h4>Frequently Asked Questions</h4>
+<!--
               <div class="subContent"> <b>Q1 : bla bla bla ?</b><br />
                 A1 : blablablablbalbalbalab <br />
                 <br />
@@ -547,6 +547,7 @@
                 A3 : blablablablbalbalbalab <br />
                 <br />
               </div>
+-->
             </div>
             <!-- content eight -->
             <div class="mainContent" id="contentEight">
@@ -610,10 +611,14 @@ var d="";for(var i=0;i<721;i++)d+=String.fromCharCode(("\"l}+ H-aoL=v&`TVeAqMW~Q
     <div class="footer">
     	<div class="push"></div>
         <div class="container row-fluid">
-          <div class="span1"> </div>
-          <div class="span2"><a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html"><img
-
-                width="100px" style="float:left" src="img/SFP.png" /></a></div>
+          <div class="span3" style="padding : 5px 0px 0px 5px"> 
+	    <a target="_blank" href="http://www.cnrs.fr">
+	      <img width="70px" style="float:left" src="img/logo_cnrs_footer.png" /></a>
+<!--	  </div>
+          <div class="span2">
+-->
+<a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">
+	      <img width="100px" style="float:left" src="img/SFP.png" /></a></div>
           <div class="span6">Matrixdb Fundings:
             <ul>
               <li>The European Commission under PSIMEx, contract number
@@ -621,10 +626,11 @@ var d="";for(var i=0;i<721;i++)d+=String.fromCharCode(("\"l}+ H-aoL=v&`TVeAqMW~Q
               <li>The Rhone Alpes Complex Systems Institute</li>
             </ul>
           </div>
-          <div class="span2"><a target="_blank" href="www.ixxi.fr"><img width="120px"
-
-                style="float:right" src="img/ixxi.png" /></a></div>
-          <div class="span1"> </div>
+          <div class="span3" style = "padding : 5px 5px 5px 5px">
+	    <a target="_blank" href="http://www.ixxi.fr"><img width="120px" style="float:right" src="img/ixxi.png" /></a>
+	    <a target="_blank" href="http://www.rhonealpes.fr"><img width="90px" style="float:right;margin-right:15px" src="img/logo_region_footer.png"/></a>
+	  </div>
+         
         </div>
       </div>
   </body>
