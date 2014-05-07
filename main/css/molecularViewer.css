@@ -67,5 +67,14 @@
 	border : none !important;
 }
 .pdbBanner{
-	min-height: 20px
+	min-height: 35px
+}
+.molLoader{
+	text-align:center;
+}
+.molLoader i {
+	
+	color: white;
+	font-size: 4em;
+	z-index: 9999999;
 }

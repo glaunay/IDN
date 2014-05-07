@@ -69,6 +69,7 @@ function networkTest_alpha (opt) {
 					callback : {
 					    ajaxSearch : function (data) {
 						networkExpand(data, function (networkData, request) {
+								  console.log("network Expand callback");
 								  vizObject.networkID = networkData.id;
 								  vizObject.core.add(networkData);
 								  vizObject.core.addCenter(networkData.newCenters);								  
@@ -76,6 +77,7 @@ function networkTest_alpha (opt) {
 					    },
 					    jobExhaustion : function () {
 						var tabularDomElemSelector = vizObject.tabular.getSelector("maxi");
+						console.log("dataFetchDone STAGE <<<<");
 						$(tabularDomElemSelector).trigger('dataFetchDone');						
 					    },
 					    getGlowyAsCriterionList : function () {
@@ -99,6 +101,7 @@ function networkTest_alpha (opt) {
      */
     vizObject.barSearch = initBarSearch({
 					      targetDiv : "#searchBarNav",
+					      rootUrl : context.rootUrl,
 					      iNavContext : true,
 					      addCartNavCallback : function(critObj){
 						  vizObject.cartCtrl.addCriterion(critObj);
@@ -274,6 +277,12 @@ function networkTest_alpha (opt) {
 			        filter : vizObject.networkFilter 
 				? vizObject.networkFilter
 				: null });
+
+    $(vizObject.tabular.target).on('nodeLabelToggle', function (event,d){
+				       vizObject.core.toggleNodeLabel(d); 
+				       event.stopPropagation();
+				   });
+
     /*    $(vizObject.core.target).on('networkChangeStart', function(event,d) {
      vizObject.networkFilter.blockAll();
      });
@@ -331,6 +340,12 @@ function networkTest_alpha (opt) {
 	    })
 	.on('nodeRowMouseOut',function(event, data) {
 		vizObject.core.bubbleNode(data, 'stop'); 
+	    })
+	.on('neighbourhoodCellMouseOver',function(event, data) {
+		vizObject.core.bubbleNodeNeighbourhood(data, 'start'); 
+	    })
+	.on('neighbourhoodCellMouseOut',function(event, data) {
+		vizObject.core.bubbleNodeNeighbourhood(data, 'stop'); 
 	    });    
 
 
@@ -354,6 +369,9 @@ function networkTest_alpha (opt) {
 
 // Start network with a set of request
 function litteralLoader (searchCrit) {
+
+    vizObject.idleDiv.draw({type : 'databaseQuery', opt : 'blocker'});
+
     var searchTypeList = ["biomolecule", "publication", "keyword", "goTerm"];
     var data = [];
     for (var i = 0; i < searchTypeList.length; i++) {
@@ -395,9 +413,10 @@ function jsonLoader (jsonLocation) {
     if (vizObject.core) {	    
 	vizObject.core.add (networkData, coreOptions);
     }
-    if (vizObject.tabular)
+  /*
+   *   if (vizObject.tabular)
 	vizObject.tabular.add (networkData);
-	
+   */
     console.log("data added");
 
 }
@@ -460,9 +479,9 @@ function bindExportActions () {
 			     // var networkData = [this.graphFeatures.upKeywordTree];
 			      var networkState = {
 				  linksData : links,
-				  nodeData : nodes/*,networkData : networkData*/
+				  nodeData : vizObject.core.exportNodes()/*,networkData : networkData*/
 			      };
 			      console.dir(networkState);
-			      cystoscapeExporter({networkState: networkState});
+			      cytoscapeExporter({networkState: networkState});
 			  });
 }

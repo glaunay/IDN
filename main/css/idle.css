@@ -2,22 +2,20 @@
     -webkit-border-radius: 0px 0px 10px 10px;
     -moz-border-radius: 0px 0px 10px 10px;
     border-radius: 0px 0px 10px 10px;
-    padding-top: 5px;
     text-align:center;
     font-size : 1.5em;
+    padding: 25% 0 0 0;
 }
 
 div#blocker {
     background : rgba(0,0,0,0.1);
-    z-index : 1000;
+    z-index : 9000;
     position : absolute;
-    top : 0px;
-    left : 0px;
-    width : 3000px;
-    height : 3000px;
     margin-top : -5px;
 }
-
+div.message{
+	text-align:center;
+}
 .idleDiv.rendererMsg {
     background: #e4efc0; /* Old browsers */
     background: -moz-linear-gradient(top, #e4efc0 0%, #abbd73 100%); /* FF3.6+ */
@@ -33,7 +31,8 @@ div#blocker {
 
 .idleDiv.queryMsg {
     background : rgba(0,0,0, 0.7);
-    color : white;    
+    color : white; 
+    z-index: 9000;   
 }
 
 

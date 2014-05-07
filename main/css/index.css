@@ -222,3 +222,6 @@ h3{
 textarea{
 	width : 60%;
 }
+div.downloadContent  ul{
+	margin: 0 30px 10px 25px;
+} 

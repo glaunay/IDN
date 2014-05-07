@@ -52,8 +52,10 @@ GLmol.prototype.create = function(id, suppressAutoload) {
 
    this.id = id;
    this.aaScale = 1; // or 2
-
+    
    this.container = $('#' + this.id);
+    
+    console.dir(this.container);
    this.WIDTH = this.container.width() * this.aaScale, this.HEIGHT = this.container.height() * this.aaScale;
    this.ASPECT = this.WIDTH / this.HEIGHT;
    this.NEAR = 1, FAR = 800;
@@ -1553,7 +1555,7 @@ GLmol.prototype.rebuildScene = function() {
 };
 
 GLmol.prototype.loadMolecule = function(repressZoom) {
- /*   console.log('#' + this.id + '_src');
+/*    console.log('#' + this.id + '_src');
     console.log("toto");
     console.log($('#' + this.id + '_src').val());*/
     this.loadMoleculeStr(repressZoom, $('#' + this.id + '_src').val());
@@ -1604,7 +1606,9 @@ GLmol.prototype.setSlabAndFog = function() {
 
 GLmol.prototype.enableMouse = function() {
    var me = this, glDOM = $(this.renderer.domElement); 
-
+    
+    console.dir(glDOM);
+    
    // TODO: Better touch panel support. 
    // Contribution is needed as I don't own any iOS or Android device with WebGL support.
    glDOM.bind('mousedown touchstart', function(ev) {
@@ -1648,7 +1652,7 @@ GLmol.prototype.enableMouse = function() {
       ev.preventDefault();
       if (!me.scene) return;
       if (!me.isDragging) return;
-      var mode = 0;
+      var mode = 0;	
       var modeRadio = $('input[name=' + me.id + '_mouseMode]:checked');
       if (modeRadio.length > 0) mode = parseInt(modeRadio.val());
 

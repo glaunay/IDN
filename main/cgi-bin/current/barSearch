@@ -32,6 +32,9 @@ my $query = CGI->new();
 my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/;
 $logger->info("search key is \"$string\"\n");
 
+
+my $specieRef = indexingSpecies($DB);
+$logger->info(Dumper($specieRef));
 my $dataContainer = cacheReader($string); # trying to cache out string
 
 if (defined ($dataContainer)) {
@@ -48,13 +51,13 @@ if (defined ($dataContainer)) {
   $dataContainer = {
 		    searchString => $string,
 		    results => {
-				biomolecule => getBiomolecule($string),
+				biomolecule => getBiomolecule($string, $specieRef),
 				author => getAuthor($string),
 				publication =>getPublication($string),
-				'IMEX-ID' => getIMExPublication($string),				
-				GO => getGoTerm($string),
-				keywrd => getKeywrd($string),
-				gene => getGene($string)
+				#'IMEX-ID' => getIMExPublication($string),				
+				#GO => getGoTerm($string),
+				keywrd => getKeywrd($string)#,
+				#gene => getGene($string)
 			       }
 		   };
   $logger->trace(Dumper($dataContainer));
@@ -158,6 +161,7 @@ sub getGene { # WARNING GETBIOMOLECULE NEED TO BE PREVIOUSLY CALLED FOR THE SELE
   
 sub getBiomolecule {
   my $string = shift;
+  my $specieIndex = shift;
   my $cHit = 0;
   $DB->raw_query("find biomolecule");
   $DB->raw_query("spush");
@@ -179,17 +183,33 @@ sub getBiomolecule {
     $r =  $DB->raw_query("show In_Species");
     # $logger->info("--->" . $r);
     if ($r =~ /In_Species[\s]+([\d]+)/) {
-	 $biomol->{ specie } = $1;
+	 $biomol->{ specie } = { taxon => $1, name => $specieIndex->{ $1 }};
     }
-
+#
     foreach my $tagName (qw /Common_Name EntryName More_Info Other_Fragment_Name FragmentName 
                              GAG_Name Phospholipid_Name Cation_Name Glycolipid_Name 
                              Multimer_Name Inorganic_Name /) {
-
        $r =  $DB->raw_query("show $tagName");
        if ($r =~ /$tagName[\s]+([\S]+.+[\S]+)/) {
-       $biomol->{ name } = $1;
-       last;
+           $biomol->{ name } = $1;
+           last;
+       }
+    }
+    $r =  $DB->raw_query("show Gene");
+    $logger->info("-->$r");
+    $biomol->{ geneName } = [];
+    my $bSyn = 0;
+    foreach my $line (split /\n/, $r) {
+      if ($line =~ /GeneName[\s]+([\S]+.*)/){
+	 $biomol->{ geneName } = [$1];
+     } elsif ($line =~ /Synonym[\s]+([\S].+)$/) {
+       push @{ $biomol->{ geneName }}, $1;
+       $bSyn = 1;
+     } elsif($bSyn) {
+       $logger->warn("yeah");
+       if ($line =~ /^[\s]+([\S].+)/) {
+          push @{ $biomol->{ geneName } }, $1;
+       }
      }
    }
    $r =  $DB->raw_query("follow Association");
@@ -304,25 +324,71 @@ sub getKeywrd {
 sub getPublication {
   my $string = shift;
   my $cHit = 0;
+  
+  my @array;
+
+  $DB->raw_query("query find Publication where IMEx_ID");
+  $DB->raw_query("spush");
+  $DB->raw_query("kget allMatch");
+  $DB->raw_query("sand");
+  $DB->raw_query("spop");
+  my $r = $DB->raw_query("show");
+  my $tBool = 0; # Title content is mutli--line....
+  foreach my $line (split /\n/, $r) {
+    my @test = ($line =~ /^([\s]+)/);
+    my $ident = length($test[0]);
+
+    if($ident == 2) { $tBool = 0;}
+    if ($line =~ /^Publication ([\d]+)/) {
+      $cHit++;
+      ($cHit > $MAX_HITS) && last;
+      push @array, { id => $1, Title => undef, imexID => undef, count => 0};
+    }
+      elsif ($line =~ /^[\s]+Title[\s]+([\S]+.+[\S]+)/){
+      $tBool = 1;
+      $array[$#array]->{ Title } = $1;
+    } 
+     elsif ($line =~ /^[\s]+IMEx_ID[\s]+([\S]+)/) {
+       $array[$#array]->{ imexID } = $1;
+     } elsif($line =~ /^[\s]{11}([\s]*[\S]+.+[\S]+)/) {
+       if ($tBool){
+	$array[$#array]->{ Title } .= $1;
+       }
+     }	   
+  }
+  
+  $tBool = 0;
   $DB->raw_query("query find Publication where NOT IMEx_ID");
   $DB->raw_query("spush");
   $DB->raw_query("kget allMatch");
   $DB->raw_query("sand");
   $DB->raw_query("spop");
-   
-  my @array;
-  my $r = $DB->raw_query("show");
+  $r = $DB->raw_query("show");
   foreach my $line (split /\n/, $r) {
+    my @test2 = ($line =~ /^([\s]+)/);
+    my $ident = length($test2[0]);
+   
+    if($ident == 2) { $tBool = 0;} 
     if ($line =~ /^Publication ([\d]+)/) {
       $cHit++;
       ($cHit > $MAX_HITS) && last;
-      push @array, { id => $1, Title => undef };
+      push @array, { id => $1, Title => undef, imexID => undef, count => 0 };
     }
     elsif ($line =~ /^[\s]+Title[\s]+([\S]+.+[\S]+)/){
+      $tBool = 1;
       $array[$#array]->{ Title } = $1;
+    } elsif ($line =~ /^[\s]{11}([\s]*[\S]+.+[\S]+)/) {
+       if ($tBool){
+	$array[$#array]->{ Title } .= $1;
+       }
     }
   }
-  
+  foreach my $publication (@array) {
+    $r = $DB->raw_query("query find Association where PMID = $publication->{ id }");
+    if ($r =~ /Found[\s]+([\d]+)[\s]+object/) {
+      $publication->{ count } = $1;
+    }
+  }
   return \@array;
 }
 
@@ -353,4 +419,18 @@ sub getIMExPublication {
 
   return \@array;
 }
-   
+
+  sub indexingSpecies {
+    my $DB = shift;
+    $logger->info('Indexing Species');
+    my @species = $DB->fetch(Species => '*');
+    my $specieHash = {};
+    foreach my $specie (@species){
+      
+      my $eName = $specie->at('English_name');
+      if(defined $eName) { $eName = $eName->right();}
+      $specieHash->{ $specie->name } = defined ($eName) ? $eName->name : $specie->name;
+    }
+    return $specieHash;
+  }
+  

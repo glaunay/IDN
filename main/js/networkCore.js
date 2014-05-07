@@ -10,6 +10,7 @@ function coreInit (opt) {
     
 
     return {
+	linkAs : "line",
 	hotNodes : [],
 	bubblingNodes : [],
 	delElements : {
@@ -19,6 +20,7 @@ function coreInit (opt) {
 	    },
 	    links : []
 	},
+	tooltipForced : false,
 	target : opt.target,
 	targetCom : {},
 	width : null,
@@ -117,7 +119,11 @@ function coreInit (opt) {
 	    var nodeName;
 	    var d = d3.select(node).data()[0];
 	    //console.log("it is a bubble cycle step of " + nodeName);
-	    
+	    if (!d) {
+		console.log("Error: failed load d3datum from");
+		console.dir(node);
+		return;
+	    }
 	    var specLow = this.shapeCreator[d.type](node, "regular", "getShapeSpecs");
 	    var specBig = this.shapeCreator[d.type](node, "glowy", "getShapeSpecs");
 
@@ -139,7 +145,11 @@ function coreInit (opt) {
 	    d3.select(node).each(function(d){nodeName = d.name;});
 	    var d = d3.select(node).data()[0];
 	    //console.log("attempting to stop bubble cycle of " + nodeName);
-	    
+	    if (!d) {
+		console.log("Error: failed load d3datum from");
+		console.dir(node);
+		return;
+	    }
 	    for (var i = 0; i < this.bubblingNodes.length; i++) {
 		if (this.bubblingNodes[i].name === nodeName) {
 		    clearInterval(this.bubblingNodes[i].stamp);		   
@@ -194,9 +204,33 @@ function coreInit (opt) {
 	
 	    
 	},
+	_getNeighbourhood : function (nodeName) {
+	    var list = [];
+	    console.log('-->' + nodeName);
+	    this.nodeToLinks[nodeName].forEach(function(elem){
+						   var link = elem.linkRef;
+						   var item = elem.role === "source" 
+						       ? link.target.name
+						       : link.source.name;
+						   list.push(item);
+					       });
+	    return list;
+	},
+	bubbleNodeNeighbourhood : function (data, type) {
+	    var self = this;
+	    console.log("this is bubbleNodes " + type);
+	    console.dir(data);
+	    if (!data.hasOwnProperty('name')) return;
+	    var list = this._getNeighbourhood(data.name);
+	    console.dir(list);
+	    list.forEach(function(nodeName){
+			     self.bubbleNode({name : nodeName}, type);     
+			 });
+	},
 	bubbleNode : function (data, type) {	  
 	    var self = this;
 	    var node;
+	    //console.dir(data);
 	    if (data.hasOwnProperty('name'))
 		node = this.nodeToSvg[data.name];
 //	    console.log("node to bubble " + type + "  is");
@@ -405,13 +439,18 @@ function coreInit (opt) {
 // : null;
 	    
 //	    nodeFilterRobot.filter();
+
+	    console.log("Network Data Add routine !!!!!!!!!!!");
+	    
 	    var nodes = this.force.nodes(),
 	    links = this.force.links();
 	/*freeze all previous*/
 	    this.svg.selectAll(".node").each (function (d){d.fixed = true;});
-//	    if(!nodeFilterRobot.hasFilter) {
-		// map 'vizible' /yes/no/shady to each node
-		nodes.push.apply(nodes, datum.nodeData);   
+	    //	    if(!nodeFilterRobot.hasFilter) {
+	    // map 'vizible' /yes/no/shady to each node
+	    
+	    console.dir(datum);
+	    nodes.push.apply(nodes, datum.nodeData);   
 //	    } else {
 //		for (var iNode = 0; iNode < datum.nodeData.length; iNode++) {
 		   /* var eDatum = datum.nodeData[iNode].location.hasOwnProperty("expressionLevels") 
@@ -426,7 +465,7 @@ function coreInit (opt) {
 	     *  Overall source/target node reference process must be speeded up using updated hashTable referncing nodes
 	     * 
 	     */
-	    console.log("-->" + datum.linksData.length);
+	    //console.log("-->" + datum.linksData.length);
 	    for (var iLink = 0; iLink < datum.linksData.length; iLink++) {
 		if (!datum.linksData[iLink].details) {
 		    console.log("Attempting to enter an invalid link element in core selection");
@@ -531,9 +570,7 @@ function coreInit (opt) {
 		self.force.resume();
 	    }
 	    
-	   
-	 
-	    var node =  this.svg.selectAll(".node").data(nodes, function(d) {return d.name;});  
+	    var node = this.svg.selectAll(".node").data(nodes, function(d) {return d.name;});  
 	    node.enter().append('path')	    
 		.attr("class", function(d) {return "node node_" + d.name;})
 	    	.call(node_drag)
@@ -559,6 +596,7 @@ function coreInit (opt) {
 			d['glow'] = false; 
 			self.nodeToSvg[d.name] = this;			
 			self.nodeToLinks[d.name] = [];
+			d.linkStore = self.nodeToLinks[d.name];
 			if (! d.hasOwnProperty('central')) {
 			    d.central = false;			    
 			} 		
@@ -574,17 +612,26 @@ function coreInit (opt) {
 						   return text;
 					       },							 
 					       animation: true,
-					       container: 'body'
+					       container: 'body',
+					       trigger : 'manual'
 					   });
 			   $(this).hoverIntent( {
 						    over : function () {
 							if ('tabular' in self.targetCom) {
 							    $(self.targetCom.tabular).trigger('nodeScroll', [d3.select(node).datum()]);
-							}						
+							}
+							if (!self.tooltipForced) {
+							    $(node).tooltip('show');
+							}
 							$(self.target).trigger('mouseOverElement', d);
 						    },
 						    timeout : 500,
-						    out : function (){}
+						    out : function (){
+							if (!self.tooltipForced) {
+							    $(node).tooltip('hide');
+							}
+//							$(node).tooltip('show');
+						    }
 						});			   
 		       });
 	    node.exit().remove();   
@@ -593,6 +640,7 @@ function coreInit (opt) {
 		    })
 		.on('mouseout', function (d) {/*setUnFocusNode(this);*/})
 		.on('mousedown', function() {
+			$(this).tooltip('hide');
 			d3.event.stopPropagation();
 		    })
 		.on('dblclick', function(d) {					
@@ -602,7 +650,14 @@ function coreInit (opt) {
 		    })
 		.on('click',function (d) {
 			d3.event.stopPropagation();		
-		    });
+		    })
+		.on ('mouseup', function(d){
+			 if (self.tooltipForced) {
+			     console.log("i should redisplay node");
+			     $(this).tooltip('show');
+			 }
+		//	 d3.event.stopPropagation();		
+		     });
 	    
 	    /* Send them to the layout */
 	    this.force.nodes(nodes);	    
@@ -656,29 +711,30 @@ function coreInit (opt) {
 					   +d.source.name + ' ' + d.target.name);
 			      return;
 			  }
-		      self.nodeToLinks[d.source.name].push ({linkRef : d, role : 'source', crossRef : null});
-		      self.nodeToLinks[d.target.name].push ({linkRef : d, role : 'target', crossRef : null});
-		      var iTarget = self.nodeToLinks[d.target.name].length - 1;
-		      var iSource = self.nodeToLinks[d.source.name].length - 1;
-		      self.nodeToLinks[d.source.name][iSource].crossRef = self.nodeToLinks[d.target.name][iTarget];
-		      self.nodeToLinks[d.target.name][iTarget].crossRef = self.nodeToLinks[d.source.name][iSource];
+		      self.nodeToLinks[d.source.name].push ({linkRef : d, role : 'source'/*, crossRef : null*/});
+		      self.nodeToLinks[d.target.name].push ({linkRef : d, role : 'target'/*, crossRef : null*/});
+		      //var iTarget = self.nodeToLinks[d.target.name].length - 1;
+		      //var iSource = self.nodeToLinks[d.source.name].length - 1;
+		     // self.nodeToLinks[d.source.name][iSource].crossRef = self.nodeToLinks[d.target.name][iTarget];
+		     // self.nodeToLinks[d.target.name][iTarget].crossRef = self.nodeToLinks[d.source.name][iSource];
 		      self.linkToSvg[d.source.name + "--" + d.target.name] = this;
 		      
 		      $(self.target).trigger('linkDataToFetch',d);
 		      
 		  })
 		  .each(function(d){
-		  	 $(this).hoverIntent( {
-						    over : function () {
-							if ('tabular' in self.targetCom) {
-							//    $(self.targetCom.tabular).trigger('nodeScroll', [d3.select(node).datum()]);
-							}						
-							$(self.target).trigger('mouseOverElement', d);
-						    },
-						    timeout : 500,
-						    out : function (){}
-						});	
-		  });
+		  	    $(this).hoverIntent(
+				{
+				    over : function () {
+					if ('tabular' in self.targetCom) {
+					    //    $(self.targetCom.tabular).trigger('nodeScroll', [d3.select(node).datum()]);
+					}						
+					$(self.target).trigger('mouseOverElement', d);
+				    },
+				    timeout : 500,
+				    out : function (){}
+				});	
+			});
 	    //.attr('display', 'none');				      
 	    link.exit().remove();				     
 	    
@@ -914,12 +970,18 @@ function coreInit (opt) {
 	getDeletedNodeList : function () {
 	    return this.delElements.nodes.obj;	    
 	},
-	getCentralNodeList : function () {
+	getCentralNodeList : function (opt) {
 	    var array = [];
+	    var type = "long";
+	    if (opt) {
+		type = opt.size ? opt.size : type;		
+	    }
 	    d3.selectAll('.node').each(function(d){
 				//	console.dir(d);
-					if (d.central)
-					    array.push(d);
+					   if (d.central) {					    					
+					       var value = type === "short" ? { name : d.name, central : d.central } : d;
+					       array.push(value);					       
+					   }
 				    });
 //	    console.dir(array);
 	    return array;	    
@@ -1108,7 +1170,7 @@ function coreInit (opt) {
 	    
 	},
 	_drawLink : function (d) {
-	     var x1 = d.source.x,
+	    var x1 = d.source.x,
 	    y1 = d.source.y,
 	    x2 = d.target.x,
 	    y2 = d.target.y,
@@ -1116,13 +1178,20 @@ function coreInit (opt) {
 	    dy = y2 - y1,
 	    dr = Math.sqrt(dx * dx + dy * dy),
 	    
+
+	   
 	    // Defaults for normal edge.
 	    drx = dr,
 	    dry = dr,
 	    xRotation = 0, // degrees
 	    largeArc = 0, // 1 or 0
 	    sweep = 1; // 1 or 0
-	    
+
+	    if (this.linkAs === "line") {			    
+		if (d.target.name != d.source.name) {
+		    return "M" + x1 + "," + y1 + "L" + x2 + "," + y2;
+		}
+	    }
 	    // Self edge.
 	    if ( x1 === x2 && y1 === y2 ) {
 		// Fiddle with this angle to get loop oriented.
@@ -1145,7 +1214,7 @@ function coreInit (opt) {
 		y2 = y2 + 1;
 	    } 
 	    return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " 
-		+ xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;	    
+		+ xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;    
 	},
 	shapeCreator : {
 	    protein : function (node,level,opt) {	
@@ -1289,36 +1358,43 @@ function coreInit (opt) {
 	    var inner = 0,
 	    self = this;
 	    
-	    d3.selectAll( "div#legend tbody td svg" ).each(function (){							       
-							       var symbol = list[inner];
-							       var specs = self.shapeCreator[symbol](null, "regular", "getShapeSpecs");
-							       d3.select(this).append("path").attr("transform", function(d) { return "translate(10, 10)"; })
-								   .attr("d", d3.svg.symbol().size(specs.size).type(specs.shape))
-								   .style("fill", specs.fill)
-								   .style("stroke", specs.stroke);
-							       inner++;								       
-							   });
+	    d3.selectAll( "div#legend tbody td svg" ).each(
+		function (){
+		    var symbol = list[inner];
+		    var specs = self.shapeCreator[symbol](null, "regular", "getShapeSpecs");
+		    d3.select(this)
+			.append("path")
+			.attr("transform", 
+			      function(d) { 
+				  return "translate(10, 10)"; })
+			.attr("d", 
+			      d3.svg.symbol().size(specs.size).type(specs.shape))
+			.style("fill", specs.fill)
+			.style("stroke", specs.stroke);
+		    inner++;
+		});
 	    inner = 0;
-	    d3.selectAll( "#legend td div.legendText" ).each(function() {
-								 var symbol = list[inner];
-								 d3.select(this).text(symbol); 
-								 inner++;									 
-							     });	    
+	    d3.selectAll( "#legend td div.legendText" ).each(
+		function() {
+		    var symbol = list[inner];
+		    d3.select(this).text(symbol); 
+		    inner++;
+		});	    
 	    $('#legend').append('<div class="legendFooter"><span class="legendSwitch">Hide</span></div>');
-	    $('.legendFooter span').on('click',function (){
-					   $('#legend table').toggle();
-
-					   if( $('#legend table').css("display") == "none" ){
-					       $('#legend').removeClass("full");
-					       $('#legend').addClass("label");					      
-					       $('div.legendFooter span').text("Show legend");
-					   }
-					   else {
-					       $('#legend').removeClass("label");
-					       $('#legend').addClass("full");					       
-					       $('div.legendFooter span').text("Hide");
-					   }
-				       });
+	    $('.legendFooter span')
+		.on('click',function (){
+			$('#legend table').toggle();
+			if( $('#legend table').css("display") == "none" ){
+			    $('#legend').removeClass("full");
+			    $('#legend').addClass("label");
+			    $('div.legendFooter span').text("Show legend");
+			}
+			else {
+			    $('#legend').removeClass("label");
+			    $('#legend').addClass("full");
+			    $('div.legendFooter span').text("Hide");
+			}
+		    });
 	},
 	serialize : function (opt) {
 	    var data = {
@@ -1340,7 +1416,40 @@ function coreInit (opt) {
 	    }  	    
 	    
 	    return data;
+	},
+	toggleNodeLabel : function (data) {
+	   // var nodes = this.force.nodes();
+	    //console.dir(nodes);
+	    if (data === "show") {
+		this.tooltipForced = true;
+		console.log("setting node label to " + data );
+		d3.selectAll('.node').each(function(d){ 
+					       $(this).tooltip('show');
+						   //.tooltip('disable');
+					   });
+	    }
+	    else if (data === "hide") {
+		this.tooltipForced = false;
+		console.log("setting node label to " + data );		
+		d3.selectAll('.node').each(function(d){
+					       $(this).tooltip('hide');
+					      // $(this).tooltip('enable');
+					   });		
+	    } else {
+		console.log("Error unknown toggle label status \"" + data + "\"");
+	    }
+	},
+	exportNodes : function () {
+	    var nodes = {};
+	    d3.selectAll('.node').each(function(d){
+					   nodes[d.name] = {
+					       common : d.common.anyNames[0],
+					       type : d.type
+					   };				       
+				       });
+	    return nodes;
 	}
+	
     };
     
 }

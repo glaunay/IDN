@@ -62,7 +62,7 @@
     color : rgba(255, 255, 209, 1.0);
 }
 
-#elementInfo .pdbChange i {
+.pdbChange i {
     cursor : pointer;
     font-size: 2.5em;
 }
@@ -87,15 +87,7 @@
     top: 145px;
 }
 
-#elementInfo .pdbDiv div.molLoader {
-    z-index: 9999999;
-    //position : absolute;   
-    color : white;
-    text-align : center;
-    font-size: 3em;   
-    //top : 50px;
-    //background : rgba(0, 0, 0, 1.0);
-}
+
 
 #elementInfo div.summary {
     padding-top : 0px;
@@ -116,7 +108,6 @@
 }
 
 #elementInfo .pdbBanner {
-    overflow:hidden;
 }
 #elementInfo dt.hReport{
 	font-weight: normal;

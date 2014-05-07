@@ -18,17 +18,27 @@
 	width: 80%;
 }
 #searchBar .afficheResult{
-
-	width : 1000px;
+	padding : 10px;
+	width : 700px;
 	height:auto;
 	border : inset #5B92F3;
 	position : absolute;
 	background:white;
+	z-index: 10;
+}
+#searchBar .afficheResult h4.nomListe{
+	margin-top: 10px;
+}
+#searchBar .afficheBiom{
+	float : left ;
+	width : 98% ;
+	height : auto;
+	margin:5px;
 }
 #searchBar .afficheElem{
 	float : left ;
-	width : 30% ;
-	height : 200px;
+	width : 48% ;
+	height : 150px;
 	margin:5px;
 }
 #searchBar .nomListe{
@@ -40,15 +50,16 @@
 
 #searchBar li.historySearch{
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 #searchBar .closer{
 	position:relative;
 	display:inline-block;
 	vertical-align:rigth;
-	margin-right: 10px;
-	margin-bottom: 15px;
 	clear: both;
+
 }
 #searchBar button{
 	float :right;
@@ -60,12 +71,22 @@
 }
 #searchBar ul.dropdown-menu{
 	float:left;
+	z-index: 11;
 }
 #searchBar ul.resultMore{
 	float : left;
+	width: 85%;
+	list-style-type: none;
 }
 #searchBar .tooltip-inner{
-	white-space:pre-wrap;
+		white-space: initial;
+		max-width :400px;
+}
+#searchBar .tooltipContent{
+	max-width :87%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	float : left;
 }
 #searchBarNav{
 	margin-top : 5px;
@@ -141,6 +162,7 @@ text-shadow: 0 1px 0 #ffffff;
 }
 #searchBarNav ul.resultMore{
 	float : left;
+
 }
 #searchBarNav .tooltip-inner{
 	white-space:pre-wrap;
@@ -161,10 +183,37 @@ text-shadow: 0 1px 0 #ffffff;
 
 
 }
+#searchBar .afficheElem[name=publication] ul{
+	margin-left: 5px;
+}
+#searchBar .afficheElem ul li i{
+	
+	display: none;
+}
+#searchBar .afficheElem[name=publication] ul li i{
+	margin-right: 5px;
+	display: inline;
+}
+#searchBar .afficheResult[prov=true] ul{
+	margin-left: 5px;
+	margin-right: 15px;
+}
+#searchBar .afficheResult[prov=true] ul li i{
+	margin-right: 5px;
+	display: inline;
+}
+#searchBar .afficheResult[prov=true] ul li i.fa-circle{
+	font-size: 0.5em;
+	vertical-align: middle;
+}
 #searchBarNav table.inTab a{
 	cursor: pointer;
 }
-
+#searchBarNav div.navCloser{
+	float: right;
+	font-size: 1.5em;
+	cursor: pointer;
+}
 
 
 .search i {
@@ -191,4 +240,38 @@ text-shadow: 0 1px 0 #ffffff;
 @-webkit-keyframes homeCycle{ 
 	0% {background-color:#FFF;} 
 	75% {background-color:#FF000A;} 
+}
+#searchBar div.ulContain {
+	float: left;
+	width: 50%;
+}
+#searchBar div.humanOnly{
+	float: left;
+	font-size: 0.6em;
+	font-weight: normal;
+	cursor: pointer;
+}
+div.inTooltip {
+	
+}
+
+#searchBar div.geneName{
+	font-size: 0.7em;
+	line-height: 12px;
+	padding-left: 20px;
+	clear : both
+}
+#searchBar span.noRes{
+	margin-left: 40%;
+
+}
+#searchBar div.bulletSpecie{
+	float: left;
+	margin-right: 5px;
+	margin-top: 3px;
+	
+}
+#searchBar div.postitSearchContent div.postitTitle{
+	white-space: nowrap;
+	font-size: 1.2em;
 }

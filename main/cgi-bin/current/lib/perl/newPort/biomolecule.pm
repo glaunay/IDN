@@ -8,11 +8,12 @@ use newPort::bindingSite;
 
 use Log::Log4perl qw(get_logger);
 our $logger = get_logger ("newPort::biomolecule");
+=pod
 
+=cut
 
 sub get {
   my $p = shift;
-  
   my $aceObject;
   if (defined ($p->{ name })) {
     $aceObject = $p->{ DB }->fetch(BioMolecule => $p->{ name });
@@ -20,22 +21,55 @@ sub get {
       $logger->error("$p->{ name } returned no ace Object");
       return {};
     }
+  } elsif (defined ($p->{ aceObject })) {
+    if (($p->{ aceObject }->class() ne "BioMolecule") ) {
+      $logger->error("You provided an unexpected ace object");
+      return {};
+    }
+    $aceObject = $p->{ aceObject }; # could follow here for safety
   } else {
-    $logger->error("You provided no name");
+    $logger->error("You provided no name nor ace biomolecule object");
     return {};
   }
 
+
+
   my $size = defined($p->{ size }) ? $p->{ size } : 'long';
- 
-  $logger->warn("SZSZSZ $size");
+  if ($size eq "veryShort") {
+    return {
+	    name => defined $p->{ name } ? $p->{ name } : $aceObject->name,
+	    common => getCommonName($aceObject),
+	    specie => getSpecie($aceObject),
+	    moreInfo => undef,
+	    stoichiometry => undef,
+	    molecularWeight => undef,
+	    biofunc => undef,
+	    pfam => undef,
+	    interpro => undef,
+	    pdb => undef,
+	    gene => undef,
+	    type => undef,
+	    relationship => undef,
+	    location => undef,
+	    bindingSite => undef,
+	    interactions => undef,
+	    comments => undef,
+	    xref => undef,
+	    aaNumber => undef,
+	    uniprotKW => undef,
+	    go => undef,
+	    subType => undef
+	   };
+  }
+
+
   my $interactionTree = $size eq 'long' ? getInteractions($aceObject) : undef;
   my $bindingSiteTree = $size eq 'long' ? getBindingSite ($aceObject) : undef;
 
   my $keywordSet = $size eq 'long' ? getUniprotKW($aceObject) : undef;
   my $goSet = $size eq 'long' ? getGO($aceObject) : undef;
   return {
-#	  uniprotFragID => getUniprotFragmentID(),
-	  name => $p->{ name },
+	  name => defined $p->{ name } ? $p->{ name } : $aceObject->name,
 	  common => getCommonName($aceObject),
 	  moreInfo => getMoreInfo($aceObject),
 	  stoichiometry => getStochiometry($aceObject),
@@ -55,9 +89,30 @@ sub get {
 	  xref => getXref($aceObject),
 	  aaNumber => getAaNumber($aceObject),
 	  uniprotKW => $keywordSet,
-	  go => $goSet
+	  go => $goSet,
+	  subType => getSubType($aceObject)
 	 };
 }
+
+sub getSubType {
+  my $aceObject = shift;
+  my $subType = $aceObject->right(2);
+  
+  my @kTypes = ({ type => "Prot", value => "protein" },
+		{ type => "Protein_Fragment", value => "protein fragment" },
+		{ type => "Glycosaminoglycan", value => "glycosaminoglycan" },
+		{ type => "Cation", value => "cation" },
+		{ type => "Lipid", value => "lipid" },
+		{ type => "Multimer", value => "multimeric complex" },
+		{ type => "Inorganic", value => "inorganic compound" });
+		
+  foreach my $type (@kTypes) {
+    ($subType->name eq $type->{ type }) && return $type->{ value };
+  }
+  
+  return undef;
+}
+
 =pod # Deprecated use Xref instead
 sub getUniprotFragmentID {
   my $aceObject = shift;
@@ -112,7 +167,7 @@ sub getXref{
 sub getComments {
   my $aceObject = shift;
   
-  my @tags = qw / GAG_Structure Other_informations Zone Category More /;
+  my @tags = qw / GAG_Structure Other_informations Zone Category More Definition /;
   
   my @data;
   foreach my $tag (@tags) {
@@ -193,6 +248,7 @@ sub getBioFunc {
   if (@value == 0) {
     return undef;
   }
+
   my $string = "";
   foreach my $val (@value) {
     $string .= $val->name;
@@ -258,7 +314,9 @@ sub getGO {
     $term = defined ($term) ? $term->name : undef;
     my $def = $val->Definition;
     $def = defined ($def) ? $def->name : undef;
-    push @array, {term => $term, id => $val->name, definition => $def};
+    my $ontology =  $val->Ontology;
+    $ontology = defined ($ontology) ? $ontology->name : undef;
+    push @array, {term => $term, id => $val->name, definition => $def, ontology => $ontology};
   }
   
   @array  == 0 && return undef;
@@ -294,7 +352,7 @@ sub getGene {
 
 sub getSpecie {
   my $aceObject = shift;
-  
+
   my @specie = $aceObject->follow('In_Species');
   @specie == 0 && return undef;
 
@@ -489,15 +547,21 @@ sub getInteractions {
   my $biomAceObject = shift;
   my @array;
   my @assocAceObjList = $biomAceObject->follow("Association");
+
   foreach my $assocAceObj (@assocAceObjList) {
+    $logger->info( $assocAceObj->name );
     my $tmp = { 
+	       id => $assocAceObj->name,
 	       kind => undef,
 	       supportingExperiments => [],
-	       partner =>  { id => $biomAceObject->name,
-			     common => getCommonName($biomAceObject)
+	       inferrenceExperiments => [],
+	       partner =>  { 
+			    id => $biomAceObject->name,
+			    common => getCommonName($biomAceObject)
 			   }
 	      };
-    
+    my @bufferInferred;
+    my @bufferGenuine;
     my @topPartners = $assocAceObj->follow("biomolecule");
     if (@topPartners == 1) {
       push @topPartners, $topPartners[0];
@@ -508,43 +572,57 @@ sub getInteractions {
 	$tmp->{ partner }->{ common } = getCommonName($mol);
       }
     }
-    my @values = $assocAceObj->get('InferredFrom');
-
-    my @expAceObjList;
-    if (@values == 0) {
-      $tmp->{ kind } = "genuine";
-      @expAceObjList = $assocAceObj->follow('Experiment');
-    } else {
-      $tmp->{ kind } = "inferred";
-      my @tmp = $assocAceObj->follow('InferredFrom');
-      foreach my $realAssocAceObj (@tmp) {
-	my @realExpAceObj = $realAssocAceObj->follow('Experiment');
-	foreach my $exp (@realExpAceObj) {
-	  push @expAceObjList, $exp;
+    # Store Genuine experiment
+    my @aceTypes = $assocAceObj->at('Kind');
+    foreach my $aceType (@aceTypes) {
+      if ($aceType->name eq "Genuine") {
+	my @expAceObjList = $aceType->get('Experiment');
+	foreach my $expAceObj(@expAceObjList) {
+	  my $data = fillExperimentRef($expAceObj);
+	  push @{$tmp->{ supportingExperiments }}, $data;
 	}
-      }      
+      } elsif ($aceType->name eq "Inferred") {
+	my @assocTest = $aceType->get('InferredFrom');
+	foreach my $assocRef (@assocTest) {
+	  my $test = $assocRef->follow();
+	  my @expAceObjList = $test->follow('Experiment');
+	  foreach my $expAceObj(@expAceObjList) {
+	    my $data = fillExperimentRef($expAceObj);
+	    push @{$tmp->{ inferrenceExperiments }}, $data;
+	  }
+	}
+      }
     }
-    
-    foreach my $expAceObject (@expAceObjList) {
-      my @partner = ($expAceObject->get('biomolecule'));
-      if(@partner == 1) {push @partner, $partner[0];}
-      my $pmid = $expAceObject->get('PMID', 1);
-      $pmid = defined($pmid) ? $pmid->name : undef;
-      my $imexid = $expAceObject->get('IMEx_ID_Experiment', 1);
-      $imexid = defined($imexid) ? $imexid->name : undef;
-      
-      push @{$tmp->{ supportingExperiments }}, {
-						name => $expAceObject->name,
-						partner => [$partner[0]->name,
-							    $partner[1]->name],
-						pmid => $pmid,
-						imexid => $imexid
-					       };
-      }   
+    $tmp->{ kind } = @{ $tmp->{ supportingExperiments } } > 0 ? 'genuine' : 'inferred';
     push @array, $tmp;
   }
-  
   return \@array;
+}
+
+sub fillExperimentRef {
+  my $expAceObject = $_[0]->fetch();
+
+  $logger->info(Dumper($expAceObject));
+  
+
+  my @partner = ($expAceObject->get('biomolecule'));
+
+  $logger->info(Dumper(@partner));
+  
+
+  if (@partner == 1 ) {push @partner, $partner[0];}
+  my $pmid = $expAceObject->get('PMID', 1);
+  $pmid = defined($pmid) ? $pmid->name : undef;
+  my $imexid = $expAceObject->get('IMEx_ID_Experiment', 1);
+  $imexid = defined($imexid) ? $imexid->name : undef;
+  return
+    {
+      name => $expAceObject->name,
+      partner => [$partner[0]->name,
+		  $partner[1]->name],
+      pmid => $pmid,
+      imexid => $imexid
+     };
 }
 
 1;

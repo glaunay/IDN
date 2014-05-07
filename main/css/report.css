@@ -21,7 +21,7 @@ div#reportDiv .navigueBar{
 
 div#reportDiv .content{
 
-	min-height:  700px;
+	min-height:  600px;
 	padding: 10px 30px 10px 30px;
 	overflow: auto;
 	/*background: #AFEBDA;*/
@@ -108,39 +108,64 @@ div#reportDiv p.cursorChange{
 	cursor: pointer;
 }
 div#reportDiv div div.bindingSite div.divTitre{
-	background: rgba(250, 245, 191, 1);
+	background: rgba(119, 136, 255, 1);
 }
 div#reportDiv div.bindingSite {
-	background: rgba(250, 245, 191, 0.75);
+	background: rgba(119, 136, 255, 0.7);
 	height: 100%;
-
+	margin-bottom: 20px;
+	margin-top: 20px;
+	border-radius: 5px;
 }
 div#reportDiv div div.xpModif div.divTitre{
 	background:#D2D5CC;
 }
+div#reportDiv div.barreColor{
+	width: 10px;
+	margin-left: -10px;
+	float: left;
+}
 div#reportDiv div.xpModif{
 	background:rgba(210, 213, 204, 0.63);
 	height: 100%;
+	margin-bottom: 20px;
+	
 
+}
+div#reportDiv dl.downFeature{
+	padding: 0 10px 0 10px;
 }
 div#reportDiv div.partner1 p, div#reportDiv div.partner2 p {
 	margin-left : 10px;
 }
-div#reportDiv div.partner1 div.divTitre{
-	background: rgba(197, 252, 208, 1) ;
-}
 div#reportDiv div.partner1  {
-	background: rgba(197, 252, 208, 0.7) ;
+	background: rgba(168, 175, 246, 0.7);
+	border-radius: 5px;
+	padding: 10px;
+}
+div#reportDiv div.partner1.muta ,div#reportDiv div.partner2.muta {
+	background: none;
 	border-radius: 5px;
 }
-div#reportDiv div.partner2 div.divTitre{
-	background: #FFB3B6;
-} 
-div#reportDiv div.partner2 {
-	background: rgba(255, 179, 182, 0.77);
-	border-radius: 5px;
 
-} 
+div#reportDiv div.partner2  {
+	background: rgba(142, 182, 233, 0.7) ;
+	border-radius: 5px;
+	padding: 10px;
+}
+div#reportDiv div.partner1 div.divTitre.feature {
+	background: rgba(168, 175, 246, 1) ;
+	margin: -10px -10px 10px -10px;
+}
+div#reportDiv div.partner2 div.divTitre.feature {
+	background: rgba(142, 182, 233, 1) ;
+	margin: -10px -10px 10px -10px;
+}
+div#reportDiv div.partnerDetail  {
+	background: rgba(197, 252, 208, 0.7) ;
+	
+}
+
 div#reportDiv span.addCart{
 	float:right;
 }
@@ -155,12 +180,25 @@ div#reportDiv div.xpDetail{
 	background: #DCE2E2;
 	border-radius: 5px;
 }
-div#reportDiv div.kinetic div.divTitre{
-	background: #DBD0D0;
+div#reportDiv div.bulletSpecie{
+	display: inline;
+	margin-left: -10px;
+	margin-right: 10px;
+}
+div#reportDiv div.pdbMolViewPostit{
+	margin-bottom: 30px;
 }
 div#reportDiv div.kinetic{
-	background: rgba(219, 208, 208, 0.5);
 	border-radius: 5px;
+	float: right;
+	width: 245px;
+	top: 0;
+	border: 1px solid;
+	margin-top: 10px;
+	margin-right: 5px;
+}
+div#reportDiv div.kinetic dl.featureContent{
+	padding-left: 5px;
 }
 div#reportDiv div.commentDetail div.divTitre{
 	background: #E8E0FF;
@@ -185,6 +223,12 @@ div#reportDiv div.interactionDetail{
 }
 div#reportDiv  div.featureContent{
 	padding: 0 10px 0 10px;
+
+}
+div#reportDiv div.xpDetail div.featureContent{
+	padding: 0 10px 0 10px;
+	float: left;
+	width: 470px;
 }
 div#reportDiv  div.span4{
 	min-height: 150px;
@@ -218,10 +262,7 @@ div#reportDiv div.postitContent{
 	padding-right: 10px;
 	
 }
-div#reportDiv div.divTitre i{
-	float: right;
-	margin-top:-10px; 
-}
+
 div#reportDiv div.inPostit div.odd div.divTitre{
 	background: #DBD0D0;
 }
@@ -239,6 +280,13 @@ div#reportDiv div.general div.divTitre{
 }
 div#reportDiv div.general{
 	background: rgba(195, 205, 243, 0.67);
+	margin-bottom: 20px
+}
+div#reportDiv div.domainAnnot div.divTitre{
+	background: rgba(159, 188, 226, 1);
+}
+div#reportDiv div.domainAnnot{
+	background: rgba(159, 188, 226, 0.67);
 	margin-bottom: 20px
 }
 div#reportDiv div.inPostit,div.span8{
@@ -378,7 +426,7 @@ div#reportDiv div.assocTable div.topHead{
 div#reportDiv div.center{
 	margin-left: auto;
 	margin-right: auto;
-	width: 450px;
+	width: 480px;
 }
 div#reportDiv div.associationContent{
 	margin-top: 30px;
@@ -394,7 +442,7 @@ div#reportDiv div.Go div.dataTables_wrapper{
 	margin-right: auto;
 }
 div#reportDiv div.assocTable div.dataTables_wrapper{
-	width: 510px;
+	width: 500px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -402,7 +450,7 @@ div#reportDiv div.structurePdb{
 	min-height: 400px;
 }
 div#reportDiv div.centralXp{
-	width: 700px;
+	width: 750px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -410,13 +458,17 @@ div#reportDiv div.centralXp{
 div#reportDiv dd{
 	text-align: justify;
 }
+div#reportDiv div.associationContent dd{
+	text-align: justify;
+	line-height: 25px;
+}
 .popover {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1010;
   display: none;
-  width: 400px;
+  width: auto;
   padding: 1px;
   text-align: left;
   white-space: normal;
@@ -432,4 +484,121 @@ div#reportDiv dd{
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box;
+}
+div.noMatch{
+	margin-top:60px;
+	text-align: center;
+}
+.popover-content{
+	padding: 0;
+	overflow-y: auto;
+	max-height: 350px;
+}
+div.popoverContent:nth-child(even){
+	background: rgb(212, 210, 216);
+}
+div.popoverContent{
+	padding: 5px;
+}
+div#reportDiv div.author{
+	margin-top: 40px;
+}
+div#reportDiv i.startMolView{
+	font-size: 4em;
+	margin-left: 40%;
+	cursor: pointer;
+	margin-top: 35%;
+}
+div#reportDiv div.keywrdDef{
+	width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: rgba(154, 178, 231, 0.7);
+	margin-bottom: 50px;
+	border-radius:10px;
+}
+div#reportDiv div.keywrdDef div.divTitre{
+	background-color: rgb(154, 178, 231 );
+}
+div#reportDiv div.partcipants{
+	background-color: rgba(200, 215, 243, 0.64);
+	padding: 10px;
+	border-radius: 5px;
+}
+div#reportDiv div.partcipants>div.divTitre{
+	background-color: rgba(200, 215, 243, 1);
+	margin: -10px -10px 10px -10px;
+}
+div#reportDiv span.reportType{
+	font-size:1.2em;
+	float: left;
+	height: 20px;
+	background-color: rgba(158, 168, 173, 0.76);
+	padding: 8px;
+	position: absolute;
+	border: 1px rgb(158, 168, 173) solid;
+	border-radius: 5px 0;
+
+}
+div#reportDiv div.keywrdDef div.feature{
+	padding: 10px;
+}
+div#reportDiv div.biomUni div.dataTables_wrapper{
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div#reportDiv table.mutationTable td{
+	text-align: center;
+}
+.fa-rotate-45 {
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+div#reportDiv div.authorTable div.dataTables_wrapper{
+	width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+}
+html, body {height: 100%;}
+
+.wrap {min-height: 100%;}
+
+#reportDiv {overflow:auto;
+	padding-bottom: 130px;}  /* must be same height as the footer */
+
+.footer {position: relative;
+	margin-top: -135px; /* negative value of footer height */
+	height: 135px;
+	clear:both;
+} 
+body:before {/* thanks to Maleika (Kohoutec)*/
+	content:"";
+	height:100%;
+	float:left;
+	width:0;
+	margin-top:-32767px;/* thank you Erik J - negate effect of float*/
+}
+clearfix:after {content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.clearfix {display: inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix { height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
+
+/* Set the fixed height of the footer here */
+
+.push{
+	height:50px;
+}
+div.footer div.container{
+	background-color: rgb(230, 230, 230);
 }

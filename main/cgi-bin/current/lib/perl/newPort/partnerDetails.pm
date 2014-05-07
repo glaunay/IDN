@@ -35,6 +35,7 @@ sub get {
 
   my $template = {
 		  name => undef,
+		  specie => undef,
 		  pdb => undef,
 		  biologicalRole => undef,
 		  experimentalRole => undef,
@@ -65,6 +66,7 @@ sub get {
     $datum->{ expressionLevel } = getExpressionLevel($acePartnerObject);
     $datum->{ strainDetails } = getStrainDetails($acePartnerObject);
     $datum->{ pdb } = getPdb($aceExperimentObject, $acePartnerObject);
+    $datum->{ specie } = getSpecie($aceExperimentObject, $acePartnerObject);
     $datum->{ feature } = getFeature($acePartnerObject);
     $datum->{ isoform } = getIsoform($acePartnerObject);
     
@@ -94,6 +96,19 @@ sub getCommonName {
   }
   return undef;
 }
+
+sub getSpecie {
+   my $aceExperimentObj = shift;
+   my $aceObject = shift;
+  
+   my @aceBufferList = $aceExperimentObj->follow('biomolecule');
+   foreach my $aceBuffer (@aceBufferList) {
+     ($aceBuffer->name ne $aceObject->name) && next;
+     $aceBuffer = $aceBuffer->at('In_Species', 1);
+     return defined ($aceBuffer) ? $aceBuffer->name : undef;
+   }
+   return undef;
+ }
 
 sub getPdb {
   my $aceExperimentObj = shift;

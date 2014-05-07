@@ -53,15 +53,13 @@ my $queryData = decode_json($params{'POSTDATA'});
 $logger->info("query content:\n" . Dumper($queryData));
 $logger->info("interactom expansion start");
 
-
 my $dataContainer = getKnownData($queryData);
-
 
 $dataContainer->{ association }->{'addCenter'} = createCritBiomoleculeList($queryData,'addCenter'); 
 
 closeAllNetwork($dataContainer);
 
-$logger->trace("main data container:\n" . Dumper($dataContainer));
+$logger->info("main data container:\n" . Dumper($dataContainer));
 # All new center nodes will have to carry center:true.
 
 my $networkObject = networkMapperAce->new (	

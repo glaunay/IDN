@@ -10,11 +10,16 @@
     <link rel="stylesheet" href="css/index.css" />
     <link href="img/favicon.ico" type="image/x-icon" rel="shortcut icon" />
     <link href="../css/barSearch.css" rel="stylesheet"/>
+    
 	
     <!--<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>-->
     <script type="text/javascript" src="../../dependencies/js/jquery-1.7.2.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    
+    <script type="text/javascript" src="js/utils.js"></script>
     <script type="text/javascript" src="js/barSearch.js"></script>
     <script type="text/javascript" src="js/mapper.js"></script>
+    <script type="text/javascript" src="js/statView.js"></script>
     <script type="text/javascript" src="js/formContact.js"></script>
     <script type="text/javascript" src="dependencies/js/bootstrap.js"></script>
   
@@ -28,8 +33,11 @@
 					}
         		barSearch = initBarSearch(options); 
         		barSearch.draw();
-        		
-        		
+        		var statOption = {
+        			statDiv : 'body'
+        		};
+        		stat = initStatView(statOption);
+        		stat.start();
         			}
         	);
 
@@ -42,6 +50,8 @@
       $('#toggleOne').on('click',function(){
           $('.mainContent:not(#contentOne)').hide();
           $('.mainContent#contentOne').show();
+      var target = $(this).attr('href');
+      if ($(target).hasClass('in')) { alert ("Already");} 
       $('#toggleEight').addClass('accordion-base');
       });
       
@@ -99,7 +109,7 @@
     	<div id="mainHeader" class="row-fluid">
     		
         	<div class="topHead"><img class="logo" src="img/matrixdb_logo_medium.png" /></div>
-        	<div class="topHead"><h3 > The Extracellular Matrix interactions DataBase</h3></div>
+        	<div class="topHead"><h3 > The Extracellular Matrix interaction DataBase</h3></div>
         	<div class="topHead" ><img class="logo" style="float: right" src="img/network_link.png" /></div>
         	<div id='searchBar'></div>
       </div>
@@ -474,21 +484,11 @@
             <div class="mainContent" id="contentSix">
               <div class="subContent">
                 <div>
-                  <div class="downloadContent">
-                 	 <h4>Downloads</h4>
-                 	 <ul>
-                   		 <li>MatrixDB data MITAB (Feb 2013) <a href="http://matrixdb.ibcp.fr/current/MatrixDB_20120113.tab"
-                   	     target="_blank"><i class="icon-download-alt"></i></a></li>
-                  	 	 <li>MatrixDB PSI-MI XML 2.5 (Feb 2013) <a href="http://matrixdb.ibcp.fr/current/MatrixDB_20100826.xml.zip"
-                         target="_blank"><i class="icon-download-alt"></i></a></li>
-                  	</ul>
-                  	<div>Permanent download link: <a href="http://matrixdb.ibcp.fr/current"
-                    	  target="_blank">http://matrixdb.ibcp.fr/current</a> </div>
-                  </div>
+                  
                   <div class="downloadContent">
                  	<h4>Statistics</h4>
                   	<ul>
-                   	 <table bgcolor="white" class="table table-bordered" style="width: 450px; height: 193px;">
+                   	 <table bgcolor="white" class="table table-bordered" style=" height: 193px;">
                       	<thead>
                         	<tr>
                         	  <th>Molecular interaction Data</th>
@@ -520,6 +520,27 @@
                     	</table>
                   	</ul>
                   </div>
+                  <div class="downloadContent">
+                 	 <h4>Downloads</h4>
+                 	 <ul>
+                   		 <li>MatrixDB data MITAB (Feb 2013) <a href="http://matrixdb.ibcp.fr/download//MatrixDB_latest.tab.gz"
+                   	     target="_blank"><i class="fa fa-download"></i></a></li>
+                   	 </ul>
+                   	 <ul>    
+                   	<p class="small"><b>Lists</b> of human <b>extracellular matrix</b>, <b>secreted</b> and <b>membrane</b> proteins stored in MatrixDB. 
+                   		These lists are built based on <a href="http://web.mit.edu/hyneslab/matrisome/">the Matrisome Project</a>, as well as relevant 
+                   		<a href="http://www.uniprot.org">UniProt</a> keywords and <a href="http://www.geneontology.org">Gene Ontology</a> terms. 
+                   		<br> (<i>Release 2014-03-20</i>)</p>
+					
+						<li>Extracellular matrix proteins <a href="http://matrixdb.ibcp.fr/download//proteins_ECM_20140320.csv"
+                   	     target="_blank"><i class="fa fa-download"></i></a></li>
+						<li>Secreted proteins <a href="http://matrixdb.ibcp.fr/download//proteins_Secreted_20140320.csv"
+                   	     target="_blank"><i class="fa fa-download"></i></a></li>
+						<li>Membrane proteins <a href="http://matrixdb.ibcp.fr/download//proteins_Membrane_20140320.csv"
+                   	     target="_blank"><i class="fa fa-download"></i></a></li>
+                  	</ul>
+                  	<div>Permanent download link: <a href="http://matrixdb.ibcp.fr/download/" target="_blank">matrixdb.ibcp.fr/download </a> </div>
+                  </div>
                 </div>
                 <div> <br />
                 </div>
@@ -528,6 +549,7 @@
             <!-- content seven -->
             <div class="mainContent" id="contentSeven">
               <h4>Watch the tutorial</h4>
+              Comming soon
 <!--              <div> <object width="560" height="315" type="application/x-shockwave-flash"
                   data="http://www.youtube.com/v/ZYU8AVCA_yI"> <param name="movie"
                     value="http://www.youtube.com/v/ZYU8AVCA_yI" /> <param name="wmode"
@@ -536,6 +558,7 @@
               <br />
 -->
               <h4>Frequently Asked Questions</h4>
+              Comming soon
 <!--
               <div class="subContent"> <b>Q1 : bla bla bla ?</b><br />
                 A1 : blablablablbalbalbalab <br />
@@ -566,7 +589,7 @@ var d="";for(var i=0;i<721;i++)d+=String.fromCharCode(("\"l}+ H-aoL=v&`TVeAqMW~Q
 //]]>
 </script>
 
-<form class="form-horizontal" action="javascript:envoi()" name="formu" method="post">
+<!-- <form class="form-horizontal" action="javascript:envoi()" name="formu" method="post">
   <div class="form-group">
     <label for="inputEmail3" class="col-sm-2 ">Email </label>
     <div class="col-sm-10">
@@ -576,14 +599,19 @@ var d="";for(var i=0;i<721;i++)d+=String.fromCharCode(("\"l}+ H-aoL=v&`TVeAqMW~Q
   <label class="form-control">Votre question</label>
   <textarea class="form-control" id="question" rows="5"></textarea>
   </br>
-  <!-- mise en place de la balise recaptcha --> 
+  <!-- mise en place de la balise recaptcha  
   <INPUT TYPE="reset" class="form-control"  VALUE="Effacer">  
   <INPUT TYPE="submit" style="float: right;margin-right: 38%;" class="form-control" VALUE="Envoyer" >
-</form>
+</form>-->
   
 		</div> <br />
               <h4>Citations</h4>
               <ul>
+              	  <li>
+                    	The MIntAct project--IntAct as a common curation platform for 11 molecular interaction databases. Orchard S et 
+                    	al. Nucleic Acids Res  2014. <a href="http://www.ncbi.nlm.nih.gov/pubmed/24234451"
+                    target="_blank" class="pubmedLink">PubMed</a> 
+                    	</li>
                 <li>Protein interaction data curation: the International
                   Molecular Exchange (IMEx) consortium. Orchard S et al. Nat
                   Methods. 2012. <a href="http://www.ncbi.nlm.nih.gov/pubmed/22453911"
@@ -599,6 +627,7 @@ var d="";for(var i=0;i<721;i++)d+=String.fromCharCode(("\"l}+ H-aoL=v&`TVeAqMW~Q
                   protein-protein and protein-carbohydrate interactions.
                   Chautard E et al. Bioinformatics. 2009. <a href="http://www.ncbi.nlm.nih.gov/pubmed/19147664"
                     target="_blank" class="pubmedLink">PubMed</a></li>
+                  
               </ul>
             </div>
           	 

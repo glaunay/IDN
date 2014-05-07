@@ -79,7 +79,9 @@ sub get {
   }
   (@data == 0) && return undef;
   $logger->trace("Returning Mutation Data " . Dumper(@data));
+  $logger->trace("referer class " . $class);
 
+  
   return {
 	  type => 'pointMutationData',
 	  supportingExperiment => $class eq "Experiment" ? $p->{ aceObject }->name : undef,

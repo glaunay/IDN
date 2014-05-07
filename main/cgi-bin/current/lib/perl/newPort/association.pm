@@ -2,6 +2,8 @@ package newPort::association;
 use strict;
 use Data::Dumper;
 
+use newPort::publication;
+
 use common;
 use Log::Log4perl qw(get_logger);
 our $logger = get_logger ("newPort::association");
@@ -81,10 +83,13 @@ sub getPublication {
 
   my @data;
   foreach my $aceBuffer ($aceObject->follow('PMID')) {
-    push @data, $aceBuffer->name;
+    my $datum = newPort::publication::get({aceObject => $aceBuffer, size => 'short'});
+    push @data, $datum;
   }
   (@data == 0) && return undef;
   
+  $logger->trace(Dumper(@data));
+
   return \@data;
 }
 

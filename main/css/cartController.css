@@ -153,20 +153,12 @@
     font-weight: 200;
     color: #777777;
     text-shadow: 0 1px 0 #ffffff;
+    min-height : 1.5em;
 }
-
- .cartHeader .icon-question-sign {
-    vertical-align:center;
-    padding-top : 0px;
-}
-
- .cartHeader  {
-    text-align:center;
-}
-
- i:hover {
-    cursor:pointer;
-}
+ 
+ #cartLargeWrapper i:hover {
+     cursor:pointer;
+ }
 
  .setExp {
     padding : 8px 15px 8px 20px;
@@ -221,14 +213,14 @@
     -moz-box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
     box-shadow: 10px 0px 4px rgba(0, 0, 0, 0.065);
 }
-
+ 
  .cartBody div.defaultCriterion {
-    padding-top: 50px;
-    text-align:center;
-    font-size : 1.2em;
-}
-
-@-webkit-keyframes opacity {
+     padding-top: 50px;
+     text-align:center;
+     font-size : 1.2em;
+ }
+ 
+ @-webkit-keyframes opacity {
 	0% { opacity: 1; }
 	100% { opacity: 0; }
 }

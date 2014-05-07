@@ -175,7 +175,8 @@ sub getXref {
   my @data;
   foreach my $xrefTag (@xrefTags) {
     my $aceBuffer = $aceObject->at($xrefTag, 1);
-    defined($aceBuffer) || return undef;
+    defined($aceBuffer) || next;  
+    
     while (defined($aceBuffer)) {
       push @data, { provider => $xrefTag, value =>  $aceBuffer->name };
       $aceBuffer = $aceBuffer->down();
@@ -199,7 +200,17 @@ sub getKinetics {
   my $aceObject = shift;
   
   my $aceBuffer = $aceObject->at('AffinityKinetics', 1);
-  my $dataContainer = {};
+  my $dataContainer = {
+		       KD1_nM => undef,
+		       KD2_nM => undef,
+		       Range_nM => undef,
+		       AssociationRate1 => undef,
+		       AssociationRate2 => undef,
+		       DissociationRate1 => undef,
+		       DissociationRate2 => undef,
+		       Kinetics_Comments => undef,
+		       Interaction_Model => undef
+		      };
   my $bool = 0;
   while (defined($aceBuffer)) {
     my $key = $aceBuffer->name;

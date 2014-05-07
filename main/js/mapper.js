@@ -9,162 +9,147 @@
 
 function initBarSearchMapper (){
 	return {
+		
 		_grasInput : function(data){  // { stringSearch : options.string, longText : data[i].Term, type : "GO", id : data[i].id, count : 0 }			
 
 			var count = data.hasOwnProperty('count') ? data.count : 0;
-			var charMax = 40 ;
+
 			var newString = "";
-			if(count>0){charMax -= 4; newString = "(" + count + ")";}
-			if(count>100){charMax -= 2;}
+			if(count>0){ newString = "(" + count + ")";}
 			var dataAttr = 'data-type="' + data.type + '" data-value="' + data.id + '"';
 			
 			if(!data.longText){return "error bug"}
-			if(charMax > data.longText.length - 6 ){
-				newString = '<a ' + dataAttr + '>' + data.longText + newString + '</a>';
-				
-				return newString;
-			}
-			else{
 
-				newString = data.longText.substring(0,charMax-6) + '...';
-				newString= '<a data-toggle="tooltip" ' + dataAttr + ' data-delay=\'{"show":"1000", "hide":"1000"}\' title="' + data.longText + '">' + newString + '</a>';
-				return newString;
-				
-			}
-				
+			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + data.longText + '" >'+
+			'<i class="fa fa-circle"></i><a ' + dataAttr + '>' + data.longText +'</a></div><span style = "float:right;">' + newString + "</span>";
+			return newString;			
 			 
-			return;
 		},
-		"GO" : function(data, options) {
+		_grasInputAuthor : function(data){  // { stringSearch : options.string, longText : data[i].Term, type : "GO", id : data[i].id, count : 0 }			
 
-			var self = this;
-			var tableData = [];
-			var sizeLimit =  options.size || data.length ;
-			if (options.strict){
-				regExp= new RegExp(options.string,"g")
-				for( i=0 ; i<data.length ; i++ ){
-					
-					if (data[i].Term.match(regExp)){
-						tableData.push(self._grasInput({ stringSearch : options.string, longText : data[i].Term, type : "GO", id : data[i].id}));
-						
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}				
-					}
-				}
-			}else{
-				for( i=0 ; i<data.length ; i++ ){
-						tableData.push(self._grasInput({ stringSearch : options.string, longText : data[i].Term, type : "GO", id : data[i].id}));
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}						
-				}
-			}
-			return tableData;
+			var count = data.hasOwnProperty('count') ? data.count : 0;
+
+			var newString = "";
+			if(count>0){ newString = count;}
+			var dataAttr = 'data-type="author" data-value="' + data.id + '"';
+			
+			if(!data.id){return "error bug"}
+
+			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + data.id + '" >'+
+			'<i class="fa fa-circle"></i><a ' + dataAttr + '>' + data.id +'</a></div><span style = "float:right;">' + newString + "</span>";
+			return newString;			
+			 
 		},
-		"IMEX-ID" : function(data, options) {
-			if (options.key!=="IMEX-ID"){return;}
+		_grasInputBiom : function(data,humanOnly){  			
 			var self = this;
-			var tableData=[];
-			var sizeLimit =  options.size || data.length ;
-			if (options.strict){
-				regExp= new RegExp(options.string,"g")
-				for( i=0 ; i<data.length ; i++ ){
-					if (data[i].Title.match(regExp)){
-					//	tableData.push(self._grasInput(options.string,data[i].Title,data[i].count));
-					
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "publication", id : data[i].pmid, count : data[i].count}));
-						if (tableData.length===sizeLimit){
-							return tableData;
-						}							
-					}
+			var count = data.count
+			var specie  = '';
+			var logoBullet = '<div class = "bulletSpecie"><i class="fa fa-ban"></i></div>';
+			if(data.specie){
+				specie = data.specie.name;
+				logoBullet = '<div class = "bulletSpecie"><img ' + speciUrl(data.specie.taxon) + ' width = "15px"></img></div>';
+			}
+			var newString = "";
+			if(count>0){ newString =  count;}
+			var dataAttr = 'data-type="biomolecule" data-value="' + data.id + '"';
+			var tooltip = '<div  class =inTooltip>Id : ' + data.id + '</div><div class =inTooltip>Name : ' + data.name + '</div>';
+			if(data.specie){
+				tooltip += '<div class =inTooltip>Specie : ' + specie + '</div>';
+			}
+			var geneName = '';
+			
+			geneName = geneName.substring(0,geneName.length-2)
+			newString = '<div specie ="' + specie + '" class = "tooltipContent" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '" >'+
+					   logoBullet +
+					   '<a ' + dataAttr + '>' + data.name +'</a></div><span style = "float:right;">' + newString + "</span>";
+			if(data.geneName.length > 0){
+				geneName = 'Gene :';
+				data.geneName.forEach(function(gene){
+					geneName += gene + ', ';
+				});
+				newString += '<div class = "geneName">' + geneName + '</div>'
+
+			}
+			if(humanOnly){
+				if( !data.specie){
+					return newString;
+				}
+				if(data.specie.name ==='Human'){
+					return newString;
+				}else{
+					return false;
 				}
 			}else{
-				for( i=0 ; i<data.length ; i++ ){
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "publication", id : data[i].pmid, count : data[i].count}));
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}						
-				}
+				return newString;	
+			}		
+			 
+		},
+		_grasInputPubli: function(data){  			
+			var count = data.count
+			var newString = "";
+			if(count>0){ newString = count;}
+			var dataAttr = 'data-type="publication" data-value="' + data.id + '"';
+			var tooltip = '<div class = inTooltip>' + data.Title + '</div><div  class =inTooltip>Pubmed Id : ' + data.id + '</div>';
+			var icone = '<i class="fa fa-star-o"></i>';
+			if(data.imexID){
+				tooltip += '<div class =inTooltip>Imex-ID : ' + data.imexID + '</div>';
+				icone = '<i class="fa fa-star" style = "color:yellow;"></i>';
 			}
-			return tableData;
+			newString = '<div class = "tooltipContent tooltipPubli" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
+						'data-title = "' + tooltip + '" >'+
+					    icone +'<a ' + dataAttr + '>' + data.Title +'</a></div><span style = "float:right;">' + newString + "</span>";
+
+			return newString;			
 		},
 		"biomolecule" : function(data, options) {
 			if (options.key !== "biomolecule"){return;}
 			var self = this;
-			var tableData=[];
 			var sizeLimit =  options.size || data.length ;
-			if (options.strict){
-				regExp= new RegExp(options.string,"g")
-				for( i = 0 ; i < data.length ; i++ ){
-					if (data[i].name.match(regExp)){
-					//	tableData.push(self._grasInput(options.string,data[i].id+' '+data[i].name,data[i].count));
-					tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].name, type : "biomolecule", id : data[i].id, count : data[i].count}));
-						if(tableData.length === sizeLimit){
-							return tableData;
-							}				
-					}
-				}
-			}else{
-				for( i = 0 ; i < data.length ; i++ ){
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].name, type : "biomolecule", id : data[i].id, count : data[i].count}));
-						if(tableData.length === sizeLimit){
-							return tableData;
-							}					
-				}
-			}
-			return tableData;
-		},
-		"keywrd" : function(data, options) {
-			if (options.key!=="keywrd"){return;}
-						var self = this;
-			var tableData=[];
-			var sizeLimit =  options.size || data.length ;
-			if (options.strict){
-				regExp= new RegExp(options.string,"g")
-				for( i=0 ; i<data.length ; i++ ){
-					if (data[i].name.match(regExp)){
-						//tableData.push(self._grasInput(options.string,data[i].Identifier,data[i].count));
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].name, type : "keywrd", id : data[i].id, count : data[i].count}));
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}							
-					}
-				}
-			}else{
-				for( i=0 ; i<data.length ; i++ ){
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].name, type : "keywrd", id : data[i].id, count : data[i].count}));
-						if(tableData.length === sizeLimit){
-							return tableData;
-							}					
-				}
-			}
+			
+			var tableData = self._ordArray(data,"Biom");
 			return tableData;
 		},
 		"publication" : function(data, options) {
 			if (options.key!=="publication"){return;}
 			var self = this;
+
+			var ImexId=[];
+			var Pmid=[];
+			var tableDataSolo=[];
+			var sizeLimit =  options.size || data.length ;
+			
+			for( i=0 ; i<data.length ; i++ ){
+				if (data[i].imexID){
+					ImexId.push(data[i]);
+				}else if(data[i].count > 0){
+					Pmid.push(data[i]);
+				}else{
+					tableDataSolo.push(self._grasInputPubli(data[i]));
+				}
+					
+			}
+			
+			var tableDataImex = self._ordArray(ImexId,"publi");
+			var tableDataPmid = self._ordArray(Pmid,"publi");
+			var returnTable = $.merge(tableDataImex,tableDataPmid);
+			if(returnTable.length == 0){
+				returnTable = tableDataSolo;
+			}
+			return returnTable;
+		},
+		"keywrd" : function(data, options) {
+			if (options.key!=="keywrd"){return;}
+			var self = this;
 			var sizeLimit =  options.size || data.length ;
 			var tableData=[];
-			if (options.strict){
-				regExp= new RegExp(options.string,"g")
-				for( i = 0 ; i < data.length ; i++ ){
-					if (data[i].Title.match(regExp)){
-						//tableData.push(self._grasInput(options.string,data[i].Title,data[i].count));
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "publication", id : data[i].id, count : data[i].count}));	
-						if(tableData.length===sizeLimit){
-							return tableData;
-							}				
-					}
-				}
-			}else{
-				for( i=0 ; i < data.length ; i++ ){
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].Title, type : "publication", id : data[i].id, count : data[i].count}));	
-						if(tableData.length === sizeLimit){
-							return tableData;
-						}						
-				}
+			
+			for( i=0 ; i < data.length ; i++ ){
+				tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].name, type : "keywrd", id : data[i].id, count : data[i].count}));	
+				if(tableData.length === sizeLimit){
+					return tableData;
+				}						
 			}
+		
 			return tableData;	
 		},
 		"author" : function(data, options) {
@@ -172,51 +157,61 @@ function initBarSearchMapper (){
 			var self = this;
 			var sizeLimit =  options.size || data.length ;
 			var tableData=[];
-			if (options.strict){
-				regExp= new RegExp(options.string,"g")
-				for( i = 0 ; i < data.length ; i++ ){
-					if (data[i].id.match(regExp)){
-						//tableData.push(self._grasInput(options.string,data[i].id,data[i].count));
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].id, type : "author", id : data[i].id, count : data[i].count}));		
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}						
-					}
-				}
-			}else{
-				for( i = 0 ; i < data.length ; i++ ){
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].id, type : "author", id : data[i].id, count : data[i].count}));		
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}						
-				}
-			}
+			
+			var tableData = self._ordArray(data,"author");
 			return tableData;
 		},
-		"gene" : function(data, options) {
+		_ordArray : function(data,type){
 			var self = this;
-			var sizeLimit =  options.size || data.length ;
-			var tableData=[];
-			if (options.strict){
-				regExp= new RegExp(options.string,"g")
-				for( i=0 ; i<data.length ; i++ ){
-					if (data[i].id.match(regExp)){
-						//tableData.push(self._grasInput(options.string,data[i].id,data[i].count));
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].id, type : "biomolecule", id : data[i].id, count : data[i].count}));		
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}						
-					}
+			 if(type === "Biom"){var tableHuman = [];}
+			var maxCount = 0;
+	    	data.forEach(function (elem){
+	   			var count = parseInt(elem.count);
+	    		if (count <= maxCount) return;
+	    		maxCount = count;
+	    	});
+	    	var tmpTableData = [];
+	    	var tmpTableHuman = [];
+	    	for (var i = 0; i <= maxCount; i++) {
+	    		tmpTableData.push([]);
+	    		tmpTableHuman.push([]);
+	    	}
+	    	for( i = 0 ; i < data.length ; i++ ){
+				var count = parseInt(data[i].count);
+				if(type === "publi"){
+					var string = self._grasInputPubli( data[i]);
+				}else if(type === "Biom"){
+					var string = self._grasInputBiom( data[i]);
+					var humanString = self._grasInputBiom( data[i],true);
+					if (humanString){tmpTableHuman[count].push(humanString);}
+				}else if(type === "author"){
+					var string = self._grasInputAuthor( data[i]);
 				}
-			}else{
-				for( i = 0 ; i < data.length ; i++ ){
-						tableData.push(self._grasInput( {stringSearch : options.string, longText : data[i].id, type : "biomolecule", id : data[i].id, count : data[i].count}));		
-						if(tableData.length===sizeLimit){
-							return tableData;
-						}						
-				}
+				
+				tmpTableData[count].push(string);
 			}
-			return tableData;
+			tmpTableData.reverse();
+			tmpTableHuman.reverse();
+			
+			var tableData=[];
+			var tableHuman = [];
+			tmpTableData.forEach(function(elem){
+				elem.forEach(function(string) {
+					tableData.push(string);		
+				});
+			});
+			if(type === "Biom"){
+				tmpTableHuman.forEach(function(elem){
+				elem.forEach(function(string) {
+					tableHuman.push(string);		
+				});
+			});
+				return [tableData , tableHuman];
+			}else{
+				return tableData;
+			}
+	    	
 		}
+	
 	}	
 }

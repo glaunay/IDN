@@ -432,3 +432,30 @@ function isNumber(n)
 {
    return n == parseFloat(n);
 }
+
+mapperSpecie = [
+							{"name":"Zebrafish","img":"zebrafish_bullet.png","id":"7955"},
+							{"name":"Chicken","img":"chicken_bullet.png","id":"9031"},
+							{"name":"Human","img":"human_bullet.png","id":"9606"},
+							{"name":"Dog","img":"dog_bullet.png","id":"9615"},
+							{"name":"Pig","img":"pig_bullet.png","id":"9823"},
+							{"name":"Bovine","img":"bovine_bullet.png","id":"9913"},
+							{"name":"Sheep","img":"sheep_bullet.png","id":"9940"},
+							{"name":"Rabbit","img":"rabbit_bullet.png","id":"9986"},
+							{"name":"Mouse","img":"mouse_bullet.png","id":"10090"},
+							{"name":"Rat","img":"mouse_bullet.png","id":"10116"},
+							{"name":"Guinea pig","img":"guineaPig_bullet.png","id":"10144"},
+							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11686"},
+							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11696"}
+						];
+speciUrl = function (speci,rootUrl){
+			var self = this;
+			var urlRoot = rootUrl ? rootUrl + "/img/" :"./img/";
+			for (var i=0; i < mapperSpecie.length; i++) {
+				if (mapperSpecie[i].id == speci){
+					return "src ='" + urlRoot + mapperSpecie[i].img + "'";
+				}
+			};
+			return "alt ='.'";
+			
+		}

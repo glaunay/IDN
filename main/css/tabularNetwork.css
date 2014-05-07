@@ -31,8 +31,8 @@
 }
 
 .tabularNetworkHeader {
-    padding : 4px 21px 47px 10px;   
-    background-color : rgba(255, 255, 204, .8);
+    padding : 5px 20px 20px 10px;
+    background-color : rgba(255, 255, 204, 1.0);
     border: 1px solid #d4d4d4;
     -webkit-border-radius: 4px 4px 0px 0px;
     -moz-border-radius:  4px 4px 0px 0px;
@@ -41,35 +41,11 @@
     color: #777777;
     border-bottom : none;
     text-shadow: 0 1px 0 #ffffff;
+    text-align : center;
 }
 
-.tabularNetworkHeader .btn {
-    background-color: #fafafa;
-    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
-    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
-    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
-    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
-    border: 1px solid #d4d4d4;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
-    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);    
-    color: #777777;
-    text-shadow: 0 1px 0 #ffffff;
-
-}
-
-.tabularNetworkHeader a.viewToggler {
-    padding : 3px 10px 3px 10px;    
-}
-
-.tabularNetworkHeader a.operatorToggler {
-    padding : 10px 10px 10px 10px;
+.tabularNetworkHeader button#nodeLabelToggler {
+    margin-top : 10px;
 }
 
 .tabularNetworkHeader i {
@@ -155,32 +131,89 @@
     font-size:0.9em;    
 }
 
-tr.rowFocus {
-    background-color : rgba(158, 202, 237, .7);
-    /*
-      background-color: #fafafa;
-      background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
-      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
-      background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
-      background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
-      background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
-    */
+@-webkit-keyframes rowFocusOdd {
+  from { background-color: #FACC2E; }
+  to { background-color: white; }
+}
+@-moz-keyframes rowFocusOdd {
+  from { background-color: #FACC2E; }
+  to { background-color: white; }
+}
+@-o-keyframes rowFocusOdd {
+  from { background-color: #FACC2E; }
+  to { background-color: white; }
+}
+@keyframes rowFocus {
+  from { background-color: #FACC2E; }
+  to { background-color: white; }
+}
+
+.rowFocusOdd {
+  -webkit-animation: rowFocusOdd 1.66s 3; /* Safari 4+ */
+  -moz-animation:    rowFocusOdd 1.66s 3; /* Fx 5+ */
+  -o-animation:      rowFocusOdd 1.66s 3; /* Opera 12+ */
+  animation:         rowFocusOdd 1.66s 3; /* IE 10+ */
 }
 
 
-
-.tabularNetworkBody div:not(.tabularNetworkBodyHead) {
-    font-size : 0.98em;
+@-webkit-keyframes rowFocusEven {
+  from { background-color: #FACC2E; }
+  to { background-color: #acf; }
+}
+@-moz-keyframes rowFocusEven {
+  from { background-color: #FACC2E; }
+  to { background-color: #acf; }
+}
+@-o-keyframes rowFocusEven {
+  from { background-color: #FACC2E; }
+  to { background-color: #acf; }
+}
+@keyframes rowFocusEven {
+  from { background-color: #FACC2E; }
+  to { background-color: #acf; }
 }
 
-.tabularNetworkBodyContent table tr:not(.rowFocus) td:nth-child(odd){
-    background:white;
+.rowFocusEven {
+  -webkit-animation: rowFocusEven 1.66s 3; /* Safari 4+ */
+  -moz-animation:    rowFocusEven 1.66s 3; /* Fx 5+ */
+  -o-animation:      rowFocusEven 1.66s 3; /* Opera 12+ */
+  animation:         rowFocusEven 1.66s 3; /* IE 10+ */
 }
 
 .tabularNetworkBodyContent thead th {
     text-align : center;
 }
 
+/* Node table row specific format */
+.tabularNetworkBody div:not(.tabularNetworkBodyHead) {
+    font-size : 0.98em;
+}
+
+.tabularNetworkBodyContent table tbody tr.even {
+    background-color: #acf;
+    border : none !important;
+}
+
+.tabularNetworkBodyContent table tbody tr td {
+    border : none !important;
+}
+
+.tabularNetworkBodyContent table tbody tr.even td.sorting_1 {
+    background-color: #acf;
+    border : none !important;
+}
+
+.tabularNetworkBodyContent table tbody tr.odd {
+    background-color: white;
+    border : none !important;
+}
+
+.tabularNetworkBodyContent table tbody tr.odd td.sorting_1{
+    background-color: white;
+    border : none !important;
+}
+
+/* Node table column specific format*/
 .tabularNetworkBodyContent table td:nth-child(1){
     max-width : 50px;
     overflow:hidden;
@@ -217,6 +250,13 @@ tr.rowFocus {
     text-align : center;
 }
 
+.tabularNetworkBodyContent .tabularNetworkBodyLinkTable table tbody td span.genuine{
+    color:yellow;
+}
+.tabularNetworkBodyContent .tabularNetworkBodyLinkTable table tbody td span.inferred{
+    color:white;
+}
+
 
 .tabularNetworkBodyContent table td {
     height:28px;
@@ -225,8 +265,60 @@ tr.rowFocus {
 }
 
 .tabularNetworkFooter {
-    
+    padding-top : 10px;
+    padding-bottom : 15px;
+    padding-left: 15%;
 
+}
+
+.tabularNetworkFooter div.operateLabel {
+    float: left;
+    display: block;
+    height: 25px;
+    margin-left: 5px;
+    padding-right: 8px;
+    padding-left: 8px;
+    /* background-color: whitesmoke; */
+    /* background-color: #fff; */
+    /* border: 1px solid #ddd; */
+    -webkit-border-radius: 4px 0px 0px 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px 0px 0px 4px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #9da0a4;
+    padding-top: 3px;
+}
+.tabularNetworkFooter .btn-group>.btn:first-child.btn-info {
+    -webkit-border-bottom-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    -webkit-border-top-left-radius: 0px;
+    border-top-left-radius: 0px;
+
+}
+
+.tabularNetworkFooter .btn-group>.btn {
+    min-width : 75px;
+    max-width : 75px;
+}
+
+.tabularNetworkFooter .btn-group>.btn i.fa.fa-lg{
+    line-height : 1.15em;
+}
+
+.tabularNetworkFooter .btn-group>.btnCart{
+    //background-color:green;
+    -webkit-border-radius: 0px 0px 0px 0px;
+    -moz-border-radius: 0px 0px 0px 0px;
+    border-radius: 0px 0px 0px 0px;
+}
+.tabularNetworkFooter .btn-group>.btnDel{
+    //background-color:green;
+}
+.tabularNetworkFooter .btn-group>.btnHide{
+    //background-color:green;
 }
 
 .jspTrack {

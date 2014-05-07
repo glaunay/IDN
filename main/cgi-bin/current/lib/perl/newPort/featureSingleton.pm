@@ -27,12 +27,12 @@ sub get {
   }
   my $dataContainer = {
 		       rangeData => [],
-		       Name => undef,
+		       name => undef,
 		       otherData => undef,
 		       detectionMethod => undef,
 		      };
-  my $aceBuffer = $aceObject->at('Name', 1);
-  $dataContainer->{ Name } = defined($aceBuffer) ? $aceBuffer->name : undef;
+  my $aceBuffer = $aceObject->at('name', 1);
+  $dataContainer->{ name } = defined($aceBuffer) ? $aceBuffer->name : undef;
   $aceBuffer = $aceObject->at('Other_data', 1);
   $dataContainer->{ otherData } = defined($aceBuffer) ? $aceBuffer->name : undef;
   $aceBuffer = $aceObject->at('Detection_Method', 1);
@@ -58,7 +58,7 @@ sub get {
   }
 
   (@{$dataContainer->{ rangeData }} == 0 
-   && !common::slid($dataContainer->{ Name }, $dataContainer->{ otherData }, $dataContainer->{ detectionMethod })
+   && !common::slid($dataContainer->{ name }, $dataContainer->{ otherData }, $dataContainer->{ detectionMethod })
   ) && return undef;
   
   return $dataContainer;

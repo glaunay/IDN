@@ -21,37 +21,142 @@ use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
 #custom
 use common;
-Log::Log4perl->init("./conf/getStatistic.conf");
+Log::Log4perl->init("./conf/statistic.conf");
 my $logger = get_logger();
 
 my $query = CGI->new();
 #$logger->info(Dumper $query ));
+my $timeStamp = time();
 
-my $fLastStat = 'data/statisticsLatest';
-if (-e 'data/statisticsLatest') {
-  open LAST, "data/statisticsLatest"
+my $fLastStat = '/tmp/statisticsLatest';
+my $maxDelay = 604800; #weektime : 604800
+
+
+my $dataContainer;
+if (-e $fLastStat) {
+  my $jsonString = common::readFileNameToString($fLastStat);
+  $dataContainer = decode_json($jsonString);
+  my $delay =  $timeStamp -  $dataContainer->{ timeStamp };
+  $logger->info("Time stamp check\n\tcurrent:" . $timeStamp . 
+		"\n\tlatest statistic:" . $dataContainer->{ timeStamp }. 
+	        "\n\tdelay is " . $delay ."sc");
+  if ($delay < $maxDelay) {
+    $logger->info("Returning previous statistic data");
+    print $query->header('application/json');      # create the HTTP header
+    print $jsonString;
+    exit;
+  }
+  $logger->info("Statistic found too old, computing...");
+} else {
+  $logger->info("No statistic data found, computing...");
 }
 
-my $dataContainer = {
-		     interactors => {
-				     protein => 0,
-				     fragment => 0,
-				     multimer => 0,
-				     gag => 0
-				    },
-		     associations => {
-				      proteinProtein => 0,
-				      proteinFragment => 0,
-				      proteinMultimer => 0,
-				      proteinGag => 0,
-				      fragmentMultimer => 0,
-				      fragmentFragment => 0
-				      fragmentGag => 0,
-				      multimerProtein => 0,
-				      multimerMultimer => 0,
-				      multimerGag => 0
-				     }
-		    };
-};
+$dataContainer = {
+		  timeStamp => time(),
+		  interactors => {
+				  total => [],
+				  protein => [],
+				  fragment => [],
+				  multimer => [],
+				  glycosaminoglycan => [],
+				  cation => [],
+				  lipid => [],
+				  inorganic => []
+				 },
+		  associations => {
+				   total => [0,0]
+				  },
+		  publications => { total => 0, imex => 0 }
+		 };
+
+
+
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || 
+  $logger->error ("Couldn't open database");
+
+my @aceAssociations = $DB->fetch(Association => '*');
+$dataContainer->{ associations }->{ total }->[0] = scalar(@aceAssociations);
+
+my $labelMaker = {};
+
+my $hTags = { 
+	     Prot => 'protein',
+	     Cation => 'cation',
+	     Glycosaminoglycan => 'glycosaminoglycan',
+	     Multimer => 'multimer',
+	     Protein_Fragment => 'fragment',
+	     Lipid => 'lipid',
+	     Inorganic => 'inorganic'
+	    };
+foreach my $iKey ( keys(%{ $hTags }) ) {
+  $labelMaker->{ $iKey } = {};
+  foreach my $jKey ( keys(%{ $hTags }) ) {
+    my $iValue = $hTags->{ $iKey };
+    my $jValue = $hTags->{ $jKey };
+    if ($iValue gt $jValue) {
+      $iValue = $hTags->{ $jKey };
+      $jValue = $hTags->{ $iKey };
+    }
+    if ($jValue =~ /^(.)(.+)/) {
+      $jValue = uc($1) . $2;
+    }
+    my $value =  $iValue . $jValue;
+    $labelMaker->{ $iKey }->{ $jKey } = $value;
+  
+    if (!defined($dataContainer->{ associations }->{ $value })) {
+      $dataContainer->{ associations }->{ $value } = [0, 0];
+    }
+  }
+}
+#$logger->trace(Dumper($labelMaker));
+#$logger->trace(Dumper($dataContainer));
+#exit;
+
+
+#my $cnt = 0;
+foreach my $aceAssociation (@aceAssociations) {
+  #$cnt++;
+  my @biomolecules = $aceAssociation->follow('Biomolecule');
+  my @experiments = $aceAssociation->follow('Experiment');
+  if (@biomolecules == 1) { push @biomolecules, $biomolecules[0]; }
+  my @types;
+  foreach my $biomolecule (@biomolecules) {
+    my $type = $biomolecule->right(2)->name;
+    push @types, $type;
+    push @{ $dataContainer->{ interactors }->{ $hTags->{ $type } } }, $biomolecule->name;
+    push @{ $dataContainer->{ interactors }->{ total } }, $biomolecule->name;
+  }
+  $dataContainer->{ associations }->{ $labelMaker->{ $types[0] }->{ $types[1] } }->[0] += 1;
+  $dataContainer->{ associations }->{ $labelMaker->{ $types[0] }->{ $types[1] } }->[1] += scalar(@experiments);
+  $dataContainer->{ associations }->{ total }->[1] += scalar(@experiments);
+  #$logger->info("$cnt / " . $dataContainer->{ associations }->{ total }->[0] );
+  #$cnt == 200 && last;
+}
+
+foreach my $tag (keys (%{ $dataContainer->{ interactors } })) {
+  my $tmpList = common::uniqList($dataContainer->{ interactors }->{ $tag });
+  $dataContainer->{ interactors }->{ $tag } = scalar(@{ $tmpList });
+}
+
+
+$DB->raw_query('find Association');
+my $r = $DB->raw_query('follow PMID');
+if ($r =~ /Found ([\d]+) object/) {
+  $dataContainer->{ publications }->{ total } = $1;
+}
+$r = $DB->raw_query('query find Publication where IMEx_ID');
+if ($r =~ /Found ([\d]+) object/) {
+  $dataContainer->{ publications }->{ imex } = $1;
+}
+
+$logger->trace(Dumper($dataContainer));
+
+my $jsonString = encode_json($dataContainer);
+open JS_OUT, ">$fLastStat" or $logger->logdie($!);
+print JS_OUT $jsonString;
+close JS_OUT;
+print $query->header('application/json');      # create the HTTP header
+print $jsonString;
+
 
 

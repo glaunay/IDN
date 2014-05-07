@@ -16,24 +16,26 @@ function startIdle (opt) {
 	    var oL = offset.left + w / 3;
 	    //console.log(oT + ' ' + oL);
 	    if (data.type === "networkRenderer") {			    	    
-		$(this.target).append('<div class="idleDiv rendererMsg">'
-				      + 'Rendering network please wait<span>.</span><span>.</span><span>.</span></div>');
+		$(this.target).append('<div class="idleDiv queryMsg">'
+				      + '<div class = "message">Rendering network <i class="fa fa-cog fa-spin"></i></div></div>');
 		//<img src="../img/psicquic_loading.gif" ></img>
 		$(this.target + ' .idleDiv')
 		    .css({
-			     position : 'absolute', 
+				 position : 'absolute', 
 			     top : oT + 'px',left : oL + 'px',			  
 			     /*		     'background-position' : '50% 50%', 
 			     'background-repeat' : 'no-repeat',
 			     'background-attachment' : 'fixed',
 			     'background-image' : 'url(../img/psicquic_loading_tsp.gif)',*/
-			     'width'  : '400px',
-			     'height' : '50px'
+			     'width'  : '100%',
+			     'height' : '100%',
+			     'top'    : '0',
+			     'left'   : '0'
 			 });
 	    } 
 	    else if (data.type === "databaseQuery") {			    	    
 		$(this.target).append('<div class="idleDiv queryMsg">'
-				      + 'Querying databases please wait<span>.</span><span>.</span><span>.</span></div>');
+				      + '<div class = "message">Querying databases please wait <i class="fa fa-cog fa-spin"></i></div></div>');
 		//<img src="../img/psicquic_loading.gif" ></img>
 		$(this.target + ' .idleDiv')
 		    .css({
@@ -43,14 +45,16 @@ function startIdle (opt) {
 			     'background-repeat' : 'no-repeat',
 			     'background-attachment' : 'fixed',
 			     'background-image' : 'url(../img/psicquic_loading_tsp.gif)',*/
-			     'width'  : '400px',
-			     'height' : '50px'
+			     'width'  : '100%',
+			     'height' : '100%',
+			     'top'    : '0',
+			     'left'   : '0'
 			 });
 	    }	
 
 	    if(data.opt === 'blocker') {
 			$(this.target).append('<div id="blocker"></div>');
-			$('div#blocker').css({height : h, width : w,top : oT});
+			$('div#blocker').css({height : '100%', width :"100%",top : oT});
 	    }
 	},
 	erase : function () {

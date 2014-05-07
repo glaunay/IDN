@@ -89,11 +89,14 @@ function initCartCtrl (opt) {
 	 			  
 	    
 	    // set Header
-	    var headerContent = '<i class="fa fa-minus-square-o fa-2x pull-left"></i>'
- 		+ '<div class="btn-group" data-toggle="buttons-checkbox">'
-		+ '<button class="btn btn-success setExp"><i class="fa fa-flask fa-large"></i></button>'
-		+ '<button class="btn btn-danger setPrd"><i class="fa fa-laptop fa-large"></i></button></div>'
-		+ '<i class="fa fa-question-sign fa-2x pull-right"></i>';
+	    var headerContent = '<i class="fa fa-minus-square-o fa-2x pull-left"></i>';
+ 	//	+ '<div class="btn-group" data-toggle="buttons-checkbox">'
+	/*
+	 * 	+ '<button class="btn btn-success setExp"><i class="fa fa-flask fa-large"></i></button>'
+		+ '<button class="btn btn-danger setPrd"><i class="fa fa-laptop fa-large"></i></button>
+	 */
+	//	+ '</div>'
+	//	+ '<i class="fa fa-question-sign fa-2x pull-right"></i>';
 		
 	    $(this.target + ' .cartHeader').append(headerContent);
 
@@ -268,7 +271,7 @@ function initCartCtrl (opt) {
 	    var string = data.name.replace("Free text search on ", "");
 	    var scaffold = '<li class="cartCriterion" id="testSearch_' + string + '">' + symbolTable[data.type].icon 
 		+ '<div class="row-fluid"><div class="span10 litteral">' + string + '</div>'
-		+ '<div class="span2"><i class="fa fa-remove-circle"></i>' + '</div></div></li>';
+		+ '<div class="span2"><i class="fa fa-times-circle"></i>' + '</div></div></li>';
 	    this.criterionList.push(data);
 	    
 	    $(this.target + ' .cartBody ul').append(scaffold);	
@@ -277,7 +280,7 @@ function initCartCtrl (opt) {
 	    $(this.target + ' .cartBody ul li:last')
 		.on('mouseover',
 		    function () { 
-			$(this).find('i.fa fa-remove-circle')
+			$(this).find('i.fa fa-times-circle')
 			    .addClass('fa-large')
 			    .css({color : 'rgba(204,51,0,1)'});
 		    } 
@@ -310,11 +313,15 @@ function initCartCtrl (opt) {
 	    $(this.target + ' .cartBody').empty().append(this.defaultCriterionDiv);
 	},
 	_deleteCriterion : function (liElem) {
-
+	    var n = $(liElem).index();
+	    console.log("index is " + n);
+	    this.criterionList.splice(n, 1);
 	    $(liElem).remove();
 	    if (this.criterionList.length == 0) {
 		this._setDefaultCriterion();
 	    }
+	    
+
 	    //var string = name.replace("Free text seach on ","");
 /*	    for (var i = 0;  i < this.criterionList.length ; i++) {
 		if (this.criterionList[i].name === string) {

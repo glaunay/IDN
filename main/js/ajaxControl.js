@@ -29,7 +29,7 @@ function networkExpand (data, callback) {
 	completeAnnotation : "no",
 	providers : vizObject.getProviderList(),
 	data : {            
-	    centralNodes : vizObject.core.getCentralNodeList(), //vizObject.seedNodeList,
+	    centralNodes : vizObject.core.getCentralNodeList({ size : 'short' }), //vizObject.seedNodeList,
 	    delNodes : vizObject.core.getDeletedNodeList(), //vizObject.delElements,	    
 	    searchCrit : data
 	}
@@ -62,10 +62,10 @@ function networkExpand (data, callback) {
 }
 
 
-function cystoscapeExporter (opt) {
-    var idleDiv = '<div class="exporterIdle"><span class="icon-stack">'
-    	+ '<i class="icon icon-folder-open" style="font-size:0.6em"></i>'
-	+ '<i class="icon icon-spinner icon-spin icon-stack-base"></i>'
+function cytoscapeExporter (opt) {
+    var idleDiv = '<div class="exporterIdle"><span class="fa-stack">'
+    	+ '<i class="fa fa-folder-open fa-stack-1x" style="font-size:0.6em"></i>'
+	+ '<i class="fa fa-spinner fa-spin fa-stack-2x"></i>'
 	+ '</span></div>';
     $('body').append(idleDiv);    
 
@@ -104,9 +104,9 @@ function cystoscapeExporter (opt) {
 
 function graphicExporter (){
 
-    var idleDiv ='<div class="exporterIdle"><span class="icon-stack">'
-    	+ '<i class="icon icon-camera" style="font-size:0.7em"></i>'
-	+ '<i class="icon icon-spinner icon-spin icon-stack-base"></i>'
+    var idleDiv ='<div class="exporterIdle"><span class="fa-stack">'
+    	+ '<i class="fa fa-camera fa-stack-1x" style="font-size:0.7em"></i>'
+	+ '<i class="fa fa-spinner fa-spin fa-stack-2x"></i>'
     	+ '</span></div>';
     $('body').append(idleDiv);
  
@@ -161,9 +161,9 @@ function graphicExporter (){
 }
 
 function storeNetwork (data) {
-     var idleDiv = '<div class="exporterIdle"><span class="icon-stack">'
-    	+ '<i class="icon icon-cloud-upload" style="font-size:0.6em"></i>'
-	+ '<i class="icon icon-spinner icon-spin icon-stack-base"></i>'
+     var idleDiv = '<div class="exporterIdle"><span class="fa-stack">'
+    	+ '<i class="fa fa-cloud-upload fa-stack-1x" style="font-size:0.6em"></i>'
+	+ '<i class="fa fa-spinner fa-spin fa-stack-2x"></i>'
 	+ '</span></div>';
     $('body').append(idleDiv);    
     
@@ -185,11 +185,11 @@ function storeNetwork (data) {
 		 console.log("success");
                  console.dir(data);        
          	 $('body').append('<div id="loaderBack"></div>');
-		 $('#loaderBack').append('<div class="cacheInOk"><div class="cacheInOk-header"><i class="icon-cloud-upload"></i><span> Export successfull!</span><i class="icon-remove-circle pull-right"></i></div><div>'
+		 $('#loaderBack').append('<div class="cacheInOk"><div class="cacheInOk-header"><i class="fa fa-cloud-upload"></i><span> Export successfull!</span><i class="fa fa-times-circle pull-right"></i></div><div>'
 					 + ' <input style="width:300px;" type="text" value="' + data.uid  + '" class="input-medium search-query">'
 					 + '<div class="cacheInOk-footer">Please copy and paste above key for further reload </div></div>');
 		 $('.cacheInOk').css({top : $(window).height() *0.25, right : $(window).width()*0.33});
-		 $('.cacheInOk .icon-remove-circle').on('click',function(){
+		 $('.cacheInOk fa .fa-times-circle').on('click',function(){
 							    $('#loaderBack').animate({
 											 opacity: 0.0
 										     }, 500, function() {
@@ -213,7 +213,7 @@ function storeNetwork (data) {
 
 function cacheOutNetwork (opt) {
     $('body').append('<div id="loaderBack"></div>');
-    var html = '<div class="modal-loader"><div class="ml-header"><i class="pull-right icon-remove-circle icon-2x"></i></div>'
+    var html = '<div class="modal-loader"><div class="ml-header"><i class="pull-right fa fa-times-circle fa-2x"></i></div>'
 	+ '<div class="ml-body">'
 	+ ' <input style="width:300px;" type="text" placeholder="Enter a valid network identifier" class="input-medium search-query">'
 	+ ' <button type=submit class="btn">Load</button>'
@@ -221,7 +221,7 @@ function cacheOutNetwork (opt) {
 	+ '<div class="ml-footer"></div>'
 	+ '</div>';
     $('#loaderBack').append(html);
-    $('#loaderBack i.icon-remove-circle').on('click', function (){$('#loaderBack').remove();});
+    $('#loaderBack i.fa-times-circle').on('click', function (){$('#loaderBack').remove();});
     $('#loaderBack button').on('click',function(){
 				   var string = $('#loaderBack input').val();
 				   if (!string) return;
@@ -234,7 +234,7 @@ function loadNetwork (uidString, callback) {
     //28FD36B2-3667-11E3-9ECE-ABFFC0330D27    
    // alert(uidString);
     $('#loaderBack').remove();
-    $('body').append('<div class="exporterIdle"><i class="icon-spin icon-refresh"></i></div>');
+    $('body').append('<div class="exporterIdle"><i class="fa fa-spin fa-refresh"></i></div>');
 //    var string = "28FD36B2-3667-11E3-9ECE-ABFFC0330D27";   
 
     var JSONText = JSON.stringify({type:"read", userKey : uidString});  

@@ -10,6 +10,8 @@ use newPort::biomolecule;
 use newPort::experiment;
 use newPort::association;
 use newPort::publication;
+use newPort::author;
+use newPort::keyword;
 
 
 use Log::Log4perl qw(get_logger);
@@ -47,37 +49,46 @@ sub getData {
 	$dataContainer->{ type } = 'biomolecule'; 
       }
     }
-    
   }
 
  if ($p->{ type } eq "experiment") {
     $dataContainer = newPort::experiment::get({name => $p->{ value }, DB => $p->{ DB }});
     $dataContainer->{ type } = $p->{ type };
   }
-  
+
   if ($p->{ type } eq "association") {
     $dataContainer = newPort::association::get({name => $p->{ value }, DB => $p->{ DB }});
     $dataContainer->{ type } = $p->{ type };
-    bindBiomoleculeName ({associationContainer => $dataContainer, DB => $p->{ DB }});
+    bindBiomoleculeData ({associationContainer => $dataContainer, DB => $p->{ DB }});
   }
-  
+
   if ($p->{ type } eq "publication") {
     $dataContainer = newPort::publication::get({name => $p->{ value }, DB => $p->{ DB }});
     $dataContainer->{ type } = $p->{ type };
   }
-  
+
+  if ($p->{ type } eq "author") {
+    $dataContainer = newPort::author::get({name => $p->{ value }, DB => $p->{ DB }});
+    $dataContainer->{ type } = $p->{ type };
+  }
+
+  if ($p->{ type } eq "keywrd") {
+    $dataContainer = newPort::keyword::get({name => $p->{ value }, DB => $p->{ DB }});
+    $dataContainer->{ type } = $p->{ type };
+  }
 
   $logger->trace("newPort interface returning:\n" . Dumper($dataContainer));  
   return $dataContainer;
 }
 
 
-sub bindBiomoleculeName {
+sub bindBiomoleculeData {
   my $p = shift;
   $p->{ associationContainer }->{ partnerCommon } = {};
   foreach my $biomoleculeName (@{ $p->{ associationContainer }->{ partnerNames } }) {
-    my $biomoleculeContainer =  newPort::biomolecule::get({name => $biomoleculeName, DB => $p->{ DB }});
+    my $biomoleculeContainer =  newPort::biomolecule::get({name => $biomoleculeName, DB => $p->{ DB }, size => 'veryShort'});
     $p->{ associationContainer }->{ partnerCommon }->{ $biomoleculeName } = $biomoleculeContainer->{ common };
+    $p->{ associationContainer }->{ partnerCommon }->{ $biomoleculeName }->{ specie } = $biomoleculeContainer->{ specie };
   }
 }
 

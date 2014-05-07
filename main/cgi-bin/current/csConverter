@@ -31,9 +31,9 @@ my $uuid = $ug->create();
 my $tag = $ug->to_string( $uuid );
 
 
-`mkdir ../html/tmp/cs_$tag`;
+`mkdir ../../html/tmp/cs_$tag`;
 
-#$logger->info($params{'POSTDATA'});
+$logger->info($params{'POSTDATA'});
 my $mainContainer = decode_json($params{'POSTDATA'});
 #$logger->info(Dumper($mainContainer));
 foreach my $key (keys (%{$mainContainer}))  {
@@ -43,34 +43,35 @@ foreach my $key (keys (%{$mainContainer}))  {
 my $naString = "Common_Name (class=java.lang.String)\n";
 my $sifString = '';
 
-#$logger->info(Dumper($mainContainer));
+$logger->info(Dumper($mainContainer));
 
 foreach my $link (@{$mainContainer->{ linksData }}) {
-    my @names;
-    foreach my $nodeType (qw/source target/) {
-#	$logger->info( "titi $nodeType");
-#	$logger->info(Dumper($link));
-	my $index = $link->{ $nodeType };
-#	$logger->info("pointed node:\n" . Dumper($mainContainer->{ nodeData }->[$index]) );
-	push @names, $mainContainer->{ nodeData }->[$index]->{ name };	
-    }
-    $sifString .= join (" pp ", @names) . "\n";
+  my @names;
+  
+  my $sName = $link->{ source };
+  my $sNode = $mainContainer->{ nodeData }->{ $sName };
+  my $tName = $link->{ target };
+  my $tNode = $mainContainer->{ nodeData }->{ $tName };
+  my $a = getCode($sNode->{ type });
+  my $b = getCode($tNode->{ type });
+  $sifString .= $sName . " $a$b " . $tName . "\n";
 }
 
-foreach my $node (@{$mainContainer->{ nodeData }}) {
-    defined($node->{ common }) || next;
-    $naString .= "$node->{ name } = $node->{ common}\n";
+foreach my $nodeName (keys (%{$mainContainer->{ nodeData }}) ) {
+  my $node = $mainContainer->{ nodeData }->{ $nodeName };
+  defined($node->{ common }) || next;
+  $naString .= "$nodeName = $node->{ common }\n";
 }
 
-open SIF, ">../html/tmp/cs_$tag/network.sif" or die $!;
+open SIF, ">../../html/tmp/cs_$tag/network.sif" or die $!;
 print SIF "$sifString";
 close SIF;
 
-open NAF, ">../html/tmp/cs_$tag/network.na" or die $!;
+open NAF, ">../../html/tmp/cs_$tag/network.na" or die $!;
 print NAF "$naString";
 close NAF;
 
-`cd ../html/tmp/;tar -cjf cs_$tag.tar.bz cs_$tag`;
+`cd ../../html/tmp/;tar -cjf cs_$tag.tar.bz cs_$tag`;
 
 
 my $response;
@@ -83,3 +84,17 @@ print $query->header('application/json');      # create the HTTP header
 print encode_json ($response);
 
 
+sub getCode {
+  my $type = shift;
+  
+  my $code = {
+	      "protein" => "p",
+	      "fragment" => "f",
+	      "multimer" => "m",
+	      "glycosaminoglycan" => "g",
+	      "lipid" => "l",
+	      "cation" => "c" 
+	     };
+  
+  return defined ($code->{ $type }) ? $code->{ $type } : "x";
+}
