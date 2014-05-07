@@ -406,6 +406,13 @@ sub readDirContent {
     return \@list;
 }
 
+sub readFileNameToString {
+  my $file = shift;
+  my $list = readListInFile($file);
+  
+  return join ('', @{ $list });
+}
+
 sub readListInFile {
     my $file = shift;
     ($file) || die "readListInFile: no arguments!";
@@ -416,7 +423,6 @@ sub readListInFile {
         push @array, $_;
     }   
     close IN;
-    
     return \@array;
 }
 
