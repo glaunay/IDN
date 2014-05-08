@@ -18,6 +18,8 @@ use CGI;
 use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
 
+our $STATUS = 'TEST'; # or 'PROD'
+
 my $rootUrl = $STATUS eq 'TEST' 
     ? "http://matrixdb.ibcp.fr:9999"
     : "http://matrixdb-new.ibcp.fr";
