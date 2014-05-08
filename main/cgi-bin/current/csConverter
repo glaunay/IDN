@@ -17,6 +17,13 @@ use Log::Log4perl qw(get_logger :levels);
 
 use common;
 
+
+our $STATUS = 'TEST'; # or 'PROD'
+
+my $rootUrl = $STATUS eq 'TEST' 
+    ? "http://matrixdb.ibcp.fr:9999"
+    : "http://matrixdb-new.ibcp.fr";
+
 Log::Log4perl->init("./conf/csConverter.conf");
 my $logger = get_logger(); 
 
@@ -77,7 +84,7 @@ close NAF;
 my $response;
 $response = {
     status => 'OK',
-    fileLocation => "tmp/cs_$tag.tar.bz" # put relative url here
+    fileLocation => "$rootUrl/tmp/cs_$tag.tar.bz" # put relative url here
 };
 
 print $query->header('application/json');      # create the HTTP header
