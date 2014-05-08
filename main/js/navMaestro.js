@@ -41,6 +41,7 @@ function networkTest_alpha (opt) {
     vizObject.core.draw();
     vizObject.networkWindow = $('#networkWindow');
     vizObject.tabular = tabularInit({ target : "#vizContainer",
+				      staticHref : context.rootUrl,
 				      "height" : "500px",
 				      "width" : "580px",
 				      "draggable" : true,
