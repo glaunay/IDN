@@ -73,10 +73,48 @@ function initMyReport (options){
 			"keywrd"	  : '<i class="fa fa-pencil-square-o pull-left icon-white"></i>'			
 			},
 		cartButton: {
-			defaultAdd :'<div class="btn-group"><a class="btn btn-success btn-mini" ><i class="fa fa-pencil"></i></a><a class="btn btn-default btn-mini">Add to cart</a></div>',
-			biomAdd : '<div class="btn-group"><a class="btn btn-success btn-mini" ><i class="fa fa-spinner"></i></a><a class="btn btn-default btn-mini">Add to cart</a></div>',
-			publiAdd : '<div class="btn-group"><a class="btn btn-success btn-mini" ><i class="fa fa-book"></i></a><a class="btn btn-default btn-mini">Add to cart</a></div>',
+			defaultAdd :'<div class="btn-group"><a class="btn btn-success btn-mini" ><i class="fa fa-pencil"></i></a><a class="btn btn-default btn-mini"><i class="fa fa-shopping-cart "></i></a></div>',
+			biomAdd : '<div class="btn-group"><a class="btn btn-success btn-mini" ><i class="fa fa-spinner"></i></a><a class="btn btn-default btn-mini"><i class="fa fa-shopping-cart "></i></a></div>',
+			publiAdd : '<div class="btn-group"><a class="btn btn-success btn-mini" ><i class="fa fa-book"></i></a><a class="btn btn-default btn-mini"><i class="fa fa-shopping-cart "></i></a></div>',
 			},
+		helpLink : {
+			"experiment"  : {
+								title :"Here you can browse all data related to experiment.",
+								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+							 	html  : true,
+							 	placement : "bottom"
+							 },
+			"association" : {
+								title :"Here you can browse all data related to association.",
+								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+							 	html  : true,
+							 	placement : "bottom"
+							 },
+			"publication" : {
+								title :"Here you can browse all data related to publication.",
+								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+							 	html  : true,
+							 	placement : "bottom"
+							 },
+			"biomolecule" : {
+								title :"Here you can browse all data related to biomolecule.",
+								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+							 	html  : true,
+							 	placement : "bottom"
+							 },
+			"author"      : {
+								title :"Here you can browse all data related to author.",
+								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+							 	html  : true,
+							 	placement : "bottom"
+							 },
+			"keywrd"	  : {
+								title :"Here you can browse all data related to UniprotKB keyword.",
+								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+							 	html  : true,
+							 	placement : "bottom"
+							 },
+		},
 /*
  * ---------------------------------------------------------------------------------
  * on load event
@@ -114,18 +152,22 @@ function initMyReport (options){
   			var navBar = '<nav class="navbar header navbar-fixed-top" role="navigation"><div class=" header">'+
   						 '<span id ="topLogo"><a style = "float:left;" href = "' + self.rootUrl + '">'+
   						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a> '+ 
-  						 self.navBarTypeIcons[self.jsonData.type] + '</span></div></nav>';
+  						 self.navBarTypeIcons[self.jsonData.type] + '</span><i class = "fa fa-question-circle helpMe"></i></div></nav>';
   			$(self.targetDomElem).append(navBar);
   			var header = $(self.targetDomElem).find("nav.header>div");
   			header.append('<div id="testCart" class = "cart"></div>');
   			if(!self.jsonData.type){
-  				$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry this type is wrong</h4><a href  ='" + self.rootUrl + "'> Click here to go to index </a></div>");
+  				$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry this type is wrong</h4><a href  ='" +
+  											  self.rootUrl + "'> Click here to go to index </a></div>");
   				return;
   			}
   			if(!self.jsonData.name){
-  				$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry no result with this " + self.jsonData.type + " in Matrix DB</h4><a href  ='" + self.rootUrl + "'> Click here to go to index </a></div>");
+  				$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry no result with this " + 
+  											 self.jsonData.type + " in Matrix DB</h4><a href  ='" + self.rootUrl +
+  											 "'> Click here to go to index </a></div>");
   				return;
   			}
+  			$(self.targetDomElem).find('i.helpMe').popover(self.helpLink[self.jsonData.type]);
   			if (self.jsonData.type == 'biomolecule'){
   				self._infoOrganisatorBiomol();
   				self._barchartOrganisator();
@@ -155,7 +197,18 @@ function initMyReport (options){
 				 	});
 					$(self.targetDomElem).find("i.startMolView").click(function(){
 						$(this).remove();
-						widget.draw(nodeTest);
+						try {
+							widget.draw(nodeTest);
+							$("#elementInfo").addClass("reportEi");
+							$("#elementInfo").children('*').addClass("reportEi");
+
+
+					            }
+						catch (err) {
+							self._errMessPdb();
+							console.dir("error num = " + err)
+						}
+
 					});
     				
 				}
@@ -186,6 +239,7 @@ function initMyReport (options){
 			
 			$(self.targetDomElem).find('i.pdbView').click(function(event){self.callbackPdbView(this)});
 			$(self.targetDomElem).find("span.addCart.biom").click(function(){self.addCartCallback({type : "biomolecule" , value : $( this ).attr("name")})});
+			$(self.targetDomElem).find("span.addCart.kewrd").click(function(){self.addCartCallback({type : "keyword" , value : $( this ).attr("name")})});
 			$(self.targetDomElem).find("span.addCart.publi").click(function(){self.addCartCallback({type : "publication" , value : $( this ).attr("name")})});
 			//$(self.targetDomElem).find("div.featureDrop").click(function(){self._showFeature(this)});
   			$(self.targetDomElem).find("nav div.navigueBar a").click(function() {
@@ -804,7 +858,7 @@ function initMyReport (options){
 			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=publication&value="
 			if(!self.jsonData.publication){return}
 			if (self.jsonData.publication instanceof Array) {
-				var returnString = '<dt >Pubmed reference:</dt>';
+				var returnString = '<dt >PubMed reference:</dt>';
 				var star = '<i class="fa fa-star-o"></i>'
 				for (var i=0; i < self.jsonData.publication.length; i++) {
 					if(self.jsonData.publication[i].imexId){
@@ -818,7 +872,7 @@ function initMyReport (options){
 				return returnString;
 			}
 			else{
-				return 'Pubmed reference: <a target = "_blank" href ="' + rootUrl + self.jsonData.publication + '">' + self.jsonData.publication + "</a>, ";
+				return 'PubMed reference: <a target = "_blank" href ="' + rootUrl + self.jsonData.publication + '">' + self.jsonData.publication + "</a>, ";
 			}
 		},
 		_table : function(){
@@ -1243,7 +1297,7 @@ function initMyReport (options){
    		  	 		"aoColumns": [
    		  	 	   		{ "sTitle": "Partner name", "sClass": "center","sWidth": "350px"},
        			   		{ "sTitle": "Number of experiment", "sClass": "center" },
-       			   		{ "sTitle": "Status", "sClass": "center","sWidth": "auto" },
+       			   		{ "sTitle": "Specie", "sClass": "center","sWidth": "auto" },
        			   		{ "sTitle": "", "sClass": "center"},],
     				"oLanguage": {
     				 	"sSearch": "Filter:"
@@ -1309,13 +1363,13 @@ function initMyReport (options){
   			var rootLink = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			for (var i = 0; i < self.jsonData.interactions.length; i++) {
   				var lineTable = [];
-				var statue = '';
+				var speci = '';
 				var nb = 0;
 				var commonName = '';
 				var xpObject = {};
 				xpObject.experiments = [];
 				jQuery.each(self.jsonData.interactions[i],function(name,info){
-					if(name == "supportingExperiments" || name =="inferrenceExperiments"){
+					if(name == "supportingExperiments"){
 						nb +=   info.length ;
 						$.merge(xpObject.experiments,info);
 						
@@ -1327,6 +1381,13 @@ function initMyReport (options){
 						xpObject.name = info.id;
 						commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + id + '">'+
 									 '<a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
+						console.dir(info.specie)
+						if(!info.specie){
+							speci = '<i class="fa fa-ban"></i>';
+						}else{
+							speci = "<img " + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img>";
+						}
+						
 						
 					}
 					if(name == "id"){
@@ -1334,19 +1395,18 @@ function initMyReport (options){
 									  "href = '" + self.rootUrl + "/cgi-bin/current/newPort?type=association&value=" + info +"'>" + 
 									  info +"</a>";
 					}
-					if(name == "kind"){		
-						if(info == "genuine"){
-							statue = '<img src="' + self.rootUrl + '/img/genuine_bullet.png" alt="Genuine">';
-						}else{
-							statue = '<img src="' + self.rootUrl + '/img/inferred_bullet.png" alt="Inferred">';
-						}
-					}
+					
+								
+						
+					
 				});
-				lineTable = [commonName, nb, statue];
-				xpData.push(xpObject);
-				dataForTable.push(lineTable);
+				lineTable = [commonName, nb, speci];
+				if(nb>0){
+					xpData.push(xpObject);
+					dataForTable.push(lineTable);
+				}
+				
 			  };
-			  console.dir(xpData)
 			 return {aaData :dataForTable, supportingXpData : xpData};
   		},
 /*fin de bandeau interactions
@@ -1552,8 +1612,10 @@ bandeau keywrd
 */	
 		_uniProtWord : function(){
 			var self = this;
+			var cart = '<span class = "addCart kewrd pull-right" name ="' + self.jsonData.name + '">' + 
+									self.cartButton.defaultAdd + '</span>';
 			$(self.targetDomElem).append("<div class ='author Content contentXp content'><div class = 'keywrdDef'>"+
-										"<span class = 'reportType'>UniProtKB</span><div class = 'divTitre'> " + self.jsonData.identifier + "</div>"+
+										"<span class = 'reportType'>UniProtKB</span><div class = 'divTitre'> " + self.jsonData.identifier + "</div>"+ cart +
 										"<div class = 'feature'>" + self.jsonData.definition + "</div></div><div class=' biomUni ' ></div></div>");
   			var publiDiv =$(self.targetDomElem).find("div.biomUni");
   			var tableForm = "<table class='biomUniTable'><thead></thead><tbody></tbody></table>";
@@ -1582,11 +1644,11 @@ bandeau keywrd
         		   { 'bSortable': false,  'aTargets': [ 2 ]}
       			 ]
  		  		}); 
-   				/*table.$('td:last-child div.btn-group').click( function () {
+   				table.$('td:last-child div.btn-group').click( function () {
  		  		 	var item = $( this ).parent().parent().find('td:first-child a').attr("name");
- 		  		 	var data ={type : "publication", value : item};
+ 		  		 	var data ={type : "biomolecule", value : item};
  		  		 	self.addCartCallback(data);
-   				 })*/
+   				 })
 	},
 	_unitBioKwrdGenerateTableData : function (){
   			var self = this;
@@ -1689,7 +1751,7 @@ bandeau keywrd
 		},
 		_ref : function(){
 			var self = this;
-			return '<dt class ="hReport">Link to pubmed :</dt><dd> <a target = "_blank" href = "http://www.ncbi.nlm.nih.gov/pubmed/'  + self.jsonData.name + '">' + self.jsonData.name + " <i class='fa fa-external-link'></i></a></dd>";
+			return '<dt class ="hReport">Link to PubMed :</dt><dd> <a target = "_blank" href = "http://www.ncbi.nlm.nih.gov/pubmed/'  + self.jsonData.name + '">' + self.jsonData.name + " <i class='fa fa-external-link'></i></a></dd>";
 		},
 		_journal : function(){
 			var self = this;
@@ -1770,9 +1832,7 @@ bandeau keywrd
   				 "sDom": '<"topHead"i><"topBody"f>rt<"bottom"p><"clear">',
   				 "sPaginationType": "bootstrap",
   				 "bLengthChange": false,
-  				 "aoColumnDefs": [
-        		   { 'bSortable': false,  'aTargets': [ 2 ]}
-      			 ]
+  				 
  		  		}); 
  		  		table.$('td span.addCart').click( function () {
  		  		 	var item = $( this ).attr('name');
@@ -1827,7 +1887,7 @@ bandeau keywrd
   						   self.jsonData.association[i].association + '">' + self.jsonData.association[i].association + "</a>";
   				
   				var partner1 = "<a target = '_blank' href='" + rootUrl + name[0] + "'>" + 
-  				               self.jsonData.biomolecule[name[0]].common.anyNames[0] + "</a>"+
+  				               self.jsonData.biomolecule[name[0]].common.anyNames[0] + "</a></br>"+
   				               "<span class ='biom addCart' name ='" + name[0] +"'>" + 
   				               self.cartButton.biomAdd + "</span>";
   				var partner2 = "<a target = '_blank' href='" + rootUrl + name[1] + "'>" + 
@@ -2081,7 +2141,7 @@ bandeau keywrd
 				returnString += '<div class = "popoverContent"><a href="' + self.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=' + name 
 				             + '" target = "_blank">' + name + '</a>'; 
 				if(xpData.experiments[j].pmid){
-				 	returnString += '</br> Pubmed&nbsp;&nbsp; <a target = "_blank" href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
+				 	returnString += '</br> PubMed&nbsp;&nbsp; <a target = "_blank" href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
 					             + xpData.experiments[j].pmid + '">' + xpData.experiments[j].pmid + '</a>';
 					if(xpData.experiments[j].imexid){
 						returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = "_blank" href = "' + self.rootUrl
@@ -2103,6 +2163,12 @@ bandeau keywrd
 			}else{
 				return string;
 			}
+		},
+		_errMessPdb : function(){
+			var self = this;
+			$(self.targetDomElem).find("div.pdb.postitContent").remove();
+			$(self.targetDomElem).find("div.pdbMolViewPostit").append("<div class = 'postitContent'>Sorry your configuration "+
+									  "does not support graphic rendering.</div>");
 		}
 /*fin événement sur la page
  *---------------------------------------------------------------------------------------------------------------

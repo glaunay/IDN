@@ -27,12 +27,13 @@ sub getData {
   my $context = defined ($p->{ context }) ? $p->{ context } : 'contentReport';
 
   if ($p->{ type } eq "biomolecule") {
-    my $size = $context eq "networkNode" ? 'short' : 'long';
+    my $size = $context eq "networkNode" ? 'veryShort' 
+      : $context eq "networkNodeEnrichment" ? 'short ': 'long';
     $dataContainer = newPort::biomolecule::get({name => $p->{ value }, 
 						DB => $p->{ DB }, size => $size});
     
     $dataContainer->{ type } = $p->{ type };
-    if ($context eq 'networkNode') {
+    if ($context eq 'networkNode' || $context eq 'networkNodeEnrichment') {
       if ($dataContainer->{ name } =~ /^MULT/) {
 	$dataContainer->{ type } = 'multimer'; 
       } elsif ($dataContainer->{ name } =~ /^CAT/) {
@@ -91,9 +92,6 @@ sub bindBiomoleculeData {
     $p->{ associationContainer }->{ partnerCommon }->{ $biomoleculeName }->{ specie } = $biomoleculeContainer->{ specie };
   }
 }
-
-
-
 
 sub getInteractomTemplate {
   return {

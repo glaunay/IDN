@@ -1,17 +1,11 @@
 #!/usr/bin/perl
-
-=pod Profiling statements
-#!/usr/bin/perl -d:NYTProf
-$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
-=cut
-
 use strict;
 use vars qw/$DB $URL %EQUIV/;
 
 use warnings;
 use diagnostics;
 
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 
 #from CPAN
 use CGI;
@@ -24,13 +18,9 @@ use Log::Log4perl qw(get_logger :levels);
 use common;
 use newPort;
 
-
-
 our $CACHE_ADDRESS = "/tmp/newPortCache";
-our $DEV_STATUS = 'TEST';
 
-
-Log::Log4perl->init("./conf/newPort.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/newPort.conf");
 my $logger = get_logger();
 $logger->info("*** CGI activation at " . common::getTime());
 my $query = CGI->new();
@@ -58,52 +48,51 @@ if (defined($dataCached)) {
 #print LOG "$jsonString\n";
 #close LOG;
 
-my $urlRoot = $DEV_STATUS eq "TEST" ? "http://matrixdb.ibcp.fr:9999" : "http://matrixdb-new.ibcp.fr";
 
 my $customJSlib = {
-		   experiment => "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/GLMOL/Three49custom.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/GLMOL/GLmol.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/jquery.hoverIntent.minified.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/js/molecularViewer.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/js/utils.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/js/elementInfo.js\"></script>",
-		   biomolecule => "<script type=\"text/javascript\" src=\"$urlRoot/js/barChart.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/js/elementInfo.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/js/molecularViewer.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/GLMOL/Three49custom.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/GLMOL/GLmol.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/jquery.hoverIntent.minified.js\"></script>" .
-		   "<script type=\"text/javascript\" src=\"$urlRoot/js/utils.js\"></script>"
+		   experiment => "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/GLMOL/Three49custom.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/GLMOL/GLmol.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/jquery.hoverIntent.minified.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/molecularViewer.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/utils.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/elementInfo.js\"></script>",
+		   biomolecule => "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/barChart.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/elementInfo.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/molecularViewer.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/GLMOL/Three49custom.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/GLMOL/GLmol.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/jquery.hoverIntent.minified.js\"></script>" .
+		   "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/utils.js\"></script>"
 };
 
-my $customCSSlib = { biomolecule =>  "<link rel=\"stylesheet\" href=\"$urlRoot/css/molecularViewer.css\"/>" .
-		     "<link rel=\"stylesheet\" href=\"$urlRoot/css/elementInfo.css\"/>",
-		     experiment =>  "<link rel=\"stylesheet\" href=\"$urlRoot/css/molecularViewer.css\"/>" .
-		     "<link rel=\"stylesheet\" href=\"$urlRoot/css/elementInfo.css\"/>"
+my $customCSSlib = { biomolecule =>  "<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/molecularViewer.css\"/>" .
+		     "<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/elementInfo.css\"/>",
+		     experiment =>  "<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/molecularViewer.css\"/>" .
+		     "<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/elementInfo.css\"/>"
 		   };
 
 my $htmlContent = 
 "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" .
 "<html lang=\"en-US\" xml:lang=\"en-US\" xmlns=\"http://www.w3.org/1999/xhtml\">".
 "<head><meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=windows-1252\"/>" .
-"<link rel=\"stylesheet\" href=\"$urlRoot/dependencies/css/bootstrap.min.css\"/>" .
+"<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/dependencies/css/bootstrap.min.css\"/>" .
 "<link href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\" rel=\"stylesheet\">" .
-"<link rel=\"stylesheet\" href=\"$urlRoot/css/report.css\"/>" .
-"<link rel=\"stylesheet\" href=\"$urlRoot/css/cart.css\"/>" .
+"<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/report.css\"/>" .
+"<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/cart.css\"/>" .
 "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css\">" .
 "<script src=\"http://code.jquery.com/jquery-1.10.1.min.js\"></script>" .
 "<script src=\"http://d3js.org/d3.v3.min.js\"></script>" .
 "<script type=\"text/javascript\" charset=\"utf8\" src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js\"></script>" .
-"<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/bootstrap.js\"></script>" .
-"<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/bootstrapExtDatatable.js\"></script>" .
-"<script type=\"text/javascript\" src=\"$urlRoot/dependencies/js/jquery.cookie.js\"></script>" .
-"<script type=\"text/javascript\" src=\"$urlRoot/js/utils.js\"></script>" .
-"<script type=\"text/javascript\" src=\"$urlRoot/js/reportMaestro.js\"></script>" .
-"<script type=\"text/javascript\" src=\"$urlRoot/js/report.js\"></script>" .
-"<script type=\"text/javascript\" src=\"$urlRoot/js/cart.js\"></script>";
-my $htmlTrailer = "<script type=\"text/javascript\">" .  '$(function(){'  . "runReportMaestro({rootUrl:\"$urlRoot\", cart : true, reportDiv : \"#reportDiv\", jsonData : " . $jsonString . "})})</script>" .
+"<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/bootstrap.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/bootstrapExtDatatable.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/jquery.cookie.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/utils.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/reportMaestro.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/report.js\"></script>" .
+"<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/cart.js\"></script>";
+my $htmlTrailer = "<script type=\"text/javascript\">" .  '$(function(){'  . "runReportMaestro({rootUrl:\"$ENV{ IDN_URL }\", cart : true, reportDiv : \"#reportDiv\", jsonData : " . $jsonString . "})})</script>" .
   "<title>MatrixDB report</title></head><body><div class=\"wrap\"><div id = \"reportDiv\"></div></div>" .
-  "<div class=\"footer\"><div class=\"push\"></div><div class=\"container row-fluid\"><div class=\"span3\" style=\"padding : 5px 0px 0px 5px\"><a target=\"_blank\" href=\"http://www.cnrs.fr\"><img width=\"70px\" style=\"float:left\" src=\"$urlRoot/img/logo_cnrs_footer.png\" /></a><a target=\"_blank\" href=\"http://cordis.europa.eu/fp7/home_en.html\"><img width=\"100px\" style=\"float:left\" src=\"$urlRoot/img/SFP.png\" /></a></div><div class=\"span6\">Matrixdb Fundings: <ul><li>The European Commission under PSIMEx, contract number FP7-HEALTH-2007-223411</li><li>The Rhone Alpes Complex Systems Institute</li></ul></div><div class=\"span3\" style = \"padding : 5px 5px 5px 5px\"><a target=\"_blank\" href=\"http://www.ixxi.fr\"><img width=\"120px\" style=\"float:right\" src=\"$urlRoot/img/ixxi.png\" /></a><a target=\"_blank\" href=\"http://www.rhonealpes.fr\"><img width=\"90px\" style=\"float:right;margin-right:15px\" src=\"$urlRoot/img/logo_region_footer.png\"/></a></div></div>" .
+  "<div class=\"footer\"><div class=\"push\"></div><div class=\"container row-fluid\"><div class=\"span3\" style=\"padding : 5px 0px 0px 5px\"><a target=\"_blank\" href=\"http://www.cnrs.fr\"><img width=\"70px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/logo_cnrs_footer.png\" /></a><a target=\"_blank\" href=\"http://cordis.europa.eu/fp7/home_en.html\"><img width=\"100px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/SFP.png\" /></a></div><div class=\"span6\">Matrixdb Fundings: <ul><li>The European Commission under PSIMEx, contract number FP7-HEALTH-2007-223411</li><li>The Rhone Alpes Complex Systems Institute</li></ul></div><div class=\"span3\" style = \"padding : 5px 5px 5px 5px\"><a target=\"_blank\" href=\"http://www.ixxi.fr\"><img width=\"120px\" style=\"float:right\" src=\"$ENV{ IDN_URL }/img/ixxi.png\" /></a><a target=\"_blank\" href=\"http://www.rhonealpes.fr\"><img width=\"90px\" style=\"float:right;margin-right:15px\" src=\"$ENV{ IDN_URL }/img/logo_region_footer.png\"/></a></div></div>" .
 "</div></body></html>\n";
 
 $htmlContent .= defined ($customJSlib->{ $query->{ type }->[0] }) 

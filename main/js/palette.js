@@ -42,7 +42,8 @@ function initPalette (opt) {
 	    
 	    var miniHTML = '<div id="paletteMiniWrapper" class="bookmarkWrapper"><i class="fa fa-tint fa-4x"></i></div>';	    
 	    var maxiHTML = '<div id="paletteMaxiWrapper" class="cp-default">'
-		+ '<div class="picker-header"><i class="closeBut fa fa-minus-square-o fa-2x pull-left"></i></div>'
+		+ '<div class="picker-header"><i class="closeBut fa fa-minus-square-o fa-2x pull-left"></i>'
+		+'<i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>'
 		+            '<div class="picker-wrapper">'
 		+            '<div id="picker" class="picker"></div>'
 		+            '<div id="picker-indicator" class="picker-indicator"></div>'
@@ -56,6 +57,29 @@ function initPalette (opt) {
 	    
 	    $(this.target).append(miniHTML);
 	    $(this.target).append(maxiHTML);
+	    $(this.target + ' i.helpMe').popover({ 
+	    	   html : true,
+	    	   placement : 'right', 
+			   title : 'For advanced usage see our <a target = "_blank" href = "http://youtube.com" >help</a>', 
+			   container : 'body',
+			   trigger : "manual"
+			   })
+			   .on("mouseenter", function () {
+			   	if(!window.showHelp){return;}
+		        var _this = this;
+		        $(_this).popover('show');
+		        $(".popover").on("mouseleave", function () {
+		            $(_this).popover('hide');
+		        });
+		    }).on("mouseleave", function () {
+		    	if(!window.showHelp){return;}
+		        var _this = this;
+		        setTimeout(function () {
+		            if (!$(".popover:hover").length) {
+		                $(_this).popover("hide")
+		            }
+		        }, 100);
+	    });
 	    this.miniSel = opt.target + ' div#paletteMiniWrapper';
 	    this.maxiSel = opt.target + ' div#paletteMaxiWrapper';
 	 //   $(this.maxiSel).css({width : this.width, height : this.height});

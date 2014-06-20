@@ -1,17 +1,11 @@
 #!/usr/bin/perl
-
-=pod Profiling statements
-#!/usr/bin/perl -d:NYTProf
-$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
-=cut
-
 use strict;
 use vars qw/$DB $URL %EQUIV/;
 
 use warnings;
 use diagnostics;
 
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 
 #from CPAN
 use CGI;
@@ -21,7 +15,7 @@ use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
 #custom
 use common;
-Log::Log4perl->init("./conf/statistic.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/statistic.conf");
 my $logger = get_logger();
 
 my $query = CGI->new();
@@ -29,8 +23,7 @@ my $query = CGI->new();
 my $timeStamp = time();
 
 my $fLastStat = '/tmp/statisticsLatest';
-my $maxDelay = 604800; #weektime : 604800
-
+my $maxDelay = 604800; #weektime : 604800, set to 0 for reset
 
 my $dataContainer;
 if (-e $fLastStat) {
@@ -51,7 +44,10 @@ if (-e $fLastStat) {
   $logger->info("No statistic data found, computing...");
 }
 
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+                                                localtime(time);
 $dataContainer = {
+		  localDate => [1900 + $year, 1 + $mon, $mday, $hour,$min],
 		  timeStamp => time(),
 		  interactors => {
 				  total => [],
@@ -64,7 +60,9 @@ $dataContainer = {
 				  inorganic => []
 				 },
 		  associations => {
-				   total => [0,0]
+				   total => [0,0],
+				   matrixdb => [0,0],
+				   psicquic => [0,0]
 				  },
 		  publications => { total => 0, imex => 0 }
 		 };
@@ -75,7 +73,14 @@ our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||
   $logger->error ("Couldn't open database");
 
 my @aceAssociations = $DB->fetch(Association => '*');
-$dataContainer->{ associations }->{ total }->[0] = scalar(@aceAssociations);
+
+foreach my $aceAssoc (@aceAssociations) {
+  foreach my $source ($aceAssoc->at('Source')) {
+    my $sKey = $source->name eq "MatrixDB" ? "matrixdb" : "psicquic";
+    $dataContainer->{ associations }->{ $sKey }->[0] += 1;
+    $dataContainer->{ associations }->{ total }->[0] += 1;
+  }
+}
 
 my $labelMaker = {};
 
@@ -128,9 +133,12 @@ foreach my $aceAssociation (@aceAssociations) {
   }
   $dataContainer->{ associations }->{ $labelMaker->{ $types[0] }->{ $types[1] } }->[0] += 1;
   $dataContainer->{ associations }->{ $labelMaker->{ $types[0] }->{ $types[1] } }->[1] += scalar(@experiments);
-  $dataContainer->{ associations }->{ total }->[1] += scalar(@experiments);
-  #$logger->info("$cnt / " . $dataContainer->{ associations }->{ total }->[0] );
-  #$cnt == 200 && last;
+
+  foreach my $aceExp (@experiments) {
+    my $sKey = $aceExp->name =~ /MatrixDB/ ? "matrixdb" : "psicquic";
+    $dataContainer->{ associations }->{ $sKey }->[1] += 1;
+    $dataContainer->{ associations }->{ total }->[1] += 1;
+  }
 }
 
 foreach my $tag (keys (%{ $dataContainer->{ interactors } })) {

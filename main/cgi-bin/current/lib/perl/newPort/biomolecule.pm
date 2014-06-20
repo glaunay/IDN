@@ -62,11 +62,15 @@ sub get {
 	   };
   }
 
-
+  
   my $interactionTree = $size eq 'long' ? getInteractions($aceObject) : undef;
   my $bindingSiteTree = $size eq 'long' ? getBindingSite ($aceObject) : undef;
 
-  my $keywordSet = $size eq 'long' ? getUniprotKW($aceObject) : undef;
+  #my $keywordSet = $size eq 'long' ? getUniprotKW($aceObject) : undef;
+
+  my $keywordSet = $size eq 'long' ? getUniprotKW($aceObject) 
+    : getSlimUniprotKW($aceObject);
+
   my $goSet = $size eq 'long' ? getGO($aceObject) : undef;
   return {
 	  name => defined $p->{ name } ? $p->{ name } : $aceObject->name,
@@ -167,7 +171,9 @@ sub getXref{
 sub getComments {
   my $aceObject = shift;
   
-  my @tags = qw / GAG_Structure Other_informations Zone Category More Definition /;
+  my @tags = qw / GAG_Structure Other_informations Zone 
+		  Category More Definition Spep_Comments 
+		  More_Info /; # just added more info
   
   my @data;
   foreach my $tag (@tags) {
@@ -201,7 +207,8 @@ sub getCommonName {
   foreach my $tag (qw( 
 		       Common_Name Other_Name FragmentName Other_Fragment_Name 
 		       GAG_Name Other_GAG_Name Glycolipid_Name Phospholipid_Name Multimer_Name 
-		       Other_Multimer_Name Inorganic_Name Other_Inorganic_Name Cation_Name)
+		       Other_Multimer_Name Inorganic_Name Other_Inorganic_Name Cation_Name 
+		       Spep_Name Spep_ShortName )
 		  ) {
     my @values = $aceObject->get($tag);
 
@@ -255,6 +262,18 @@ sub getBioFunc {
   }
   return $string;
 }
+
+sub getSlimUniprotKW {
+  my $aceObject = shift;
+  
+  my @keywordObjList = $aceObject->follow("Keywrd");
+  my @data = map { $_->name } @keywordObjList;
+
+  scalar(@data) == 0 && return undef;
+
+  return \@data;
+}
+
 
 sub getUniprotKW {
   my $aceObject = shift;
@@ -550,6 +569,9 @@ sub getInteractions {
 
   foreach my $assocAceObj (@assocAceObjList) {
     $logger->info( $assocAceObj->name );
+    
+    my $taxon =  $biomAceObject->at("In_Species", 1);
+    
     my $tmp = { 
 	       id => $assocAceObj->name,
 	       kind => undef,
@@ -557,7 +579,8 @@ sub getInteractions {
 	       inferrenceExperiments => [],
 	       partner =>  { 
 			    id => $biomAceObject->name,
-			    common => getCommonName($biomAceObject)
+			    common => getCommonName($biomAceObject),
+			    specie => getSpecie($biomAceObject)
 			   }
 	      };
     my @bufferInferred;
@@ -570,6 +593,7 @@ sub getInteractions {
       if ($biomAceObject->name ne $mol->name) {
 	$tmp->{ partner }->{ id } = $mol->name;
 	$tmp->{ partner }->{ common } = getCommonName($mol);
+	$tmp->{ partner }->{ specie } = getSpecie($mol);
       }
     }
     # Store Genuine experiment

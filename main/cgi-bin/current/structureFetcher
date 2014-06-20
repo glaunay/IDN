@@ -1,17 +1,11 @@
 #!/usr/bin/perl
-
-=pod Profiling statements
-#!/usr/bin/perl -d:NYTProf
-$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
-=cut
-
 use strict;
 use vars qw/$DB $URL %EQUIV/;
 
 use warnings;
 use diagnostics;
 
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 
 #from CPAN
 use CGI;
@@ -22,7 +16,7 @@ use Log::Log4perl qw(get_logger :levels);
 use common;
 use pdbMetaContainer;
 
-Log::Log4perl->init("./conf/structureFetcher.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/structureFetcher.conf");
 my $logger = get_logger();
 
 
@@ -40,8 +34,10 @@ my $queryData = decode_json($params{'POSTDATA'});
 $logger->info("query content:\n" . Dumper($queryData));
 
 my $configuration =  {
-    pdbRawRepo => "../../data/molecularData/pdb",
-    pdbMetaRepo => "../../data/molecularData/pdd"
+#    pdbRawRepo => "../../data/molecularData/pdb",
+#    pdbMetaRepo => "../../data/molecularData/pdd"
+   pdbRawRepo => "$ENV{ IDN_DATA }/molecularData/pdb",
+    pdbMetaRepo => "$ENV{ IDN_DATA }/molecularData/pdd"
 };
 
 my $container = {

@@ -16,4 +16,13 @@ svg  .plus-minus{
     fill:  #fff;
     pointer-events: none;
   }
-  
+svg g#autofocus:hover{
+    stroke-width:  1.5;
+    stroke:black;
+   
+}
+
+svg g#autofocus text{
+    stroke-width:  0 !important;
+
+}

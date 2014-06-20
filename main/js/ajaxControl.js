@@ -51,7 +51,19 @@ function networkExpand (data, callback) {
 	    },
 	    error: function (request, type, errorThrown){  //timeout", "error", "abort", and "parsererror".
 		ajaxErrorDecode(request, type, errorThrown);
-		$('body').trigger('networkExpandError');
+		$(".idleDiv .message").empty()
+		    .append('An error occured during the processing of your request '
+			    + '<i class="fa fa-large fa-exclamation-triangle"></i>');
+		
+		setTimeout(function(){
+			       $(".idleDiv")
+				   .animate({
+						opacity: 0.0
+					    }, 500, function() {					  
+						$('.idleDiv,#blocker').remove();
+					    }); 
+
+			   }, 2000);
 	    }, 
 	    success : function (data, textStatus, jqXHR){
 		vizObject.networkID = data.id;
@@ -99,6 +111,41 @@ function cytoscapeExporter (opt) {
     return;       
 }
 
+function excelExporter (opt) {
+    var idleDiv = '<div class="exporterIdle"><span class="fa-stack">'
+    	+ '<i class="fa fa-folder-open fa-stack-1x" style="font-size:0.6em"></i>'
+	+ '<i class="fa fa-spinner fa-spin fa-stack-2x"></i>'
+	+ '</span></div>';
+    $('body').append(idleDiv);    
+
+    var JSONText = JSON.stringify(opt.networkState);  
+    $.ajax({ type : "POST",
+	     url : CGI_PREFIX + "tsvConverter",
+             data : JSONText,
+             contentType: 'application/json',
+             dataType : "json",
+             id: "networkState",
+             cache : false,
+             error : function (jqXHR, textStatus, errorThrown ) {
+                 console.log("error");
+                 console.log(textStatus);
+                 console.log(errorThrown);
+                 console.dir(jqXHR);                     
+             },
+             success : function (data) {
+                 console.dir(data);
+                 generateDownloadModal (data.fileLocation);             
+             },
+             complete : function (resp){
+		 $(".exporterIdle").remove();
+                 console.log ("complete") ;
+                 console.log(resp.getAllResponseHeaders()); 
+             }
+             
+           }    
+          );
+    return;       
+}
 
 
 
@@ -167,6 +214,8 @@ function storeNetwork (data) {
 	+ '</span></div>';
     $('body').append(idleDiv);    
     
+    console.dir(data);    
+
     data.type = "write";    
     var JSONText = JSON.stringify(data);  
     $.ajax({ type : "POST",
@@ -185,19 +234,41 @@ function storeNetwork (data) {
 		 console.log("success");
                  console.dir(data);        
          	 $('body').append('<div id="loaderBack"></div>');
-		 $('#loaderBack').append('<div class="cacheInOk"><div class="cacheInOk-header"><i class="fa fa-cloud-upload"></i><span> Export successfull!</span><i class="fa fa-times-circle pull-right"></i></div><div>'
-					 + ' <input style="width:300px;" type="text" value="' + data.uid  + '" class="input-medium search-query">'
-					 + '<div class="cacheInOk-footer">Please copy and paste above key for further reload </div></div>');
-		 $('.cacheInOk').css({top : $(window).height() *0.25, right : $(window).width()*0.33});
-		 $('.cacheInOk fa .fa-times-circle').on('click',function(){
-							    $('#loaderBack').animate({
-											 opacity: 0.0
-										     }, 500, function() {
-											 // Animation complete.
-											 $('#loaderBack').remove();
-										     });
-							});
+		 $('#loaderBack').append(function (){
+					     console.log(data);
+					     if (data.hasOwnProperty("exception")) {
+						 return '<div class="cacheInError"><div class="cacheInError-header"><i class="fa fa-exclamation-triangle"></i>'
+						     + '<span> Export error</span><i class="fa fa-times-circle pull-right"></i></div>'
+						     + '<div class="cacheInError-body">' + data.exception + '</div><div>';						 
+					     } else {
+						 return '<div class="cacheInOk"><div class="cacheInOk-header"><i class="fa fa-cloud-upload"></i>'
+						     + '<span> Export successfull!</span><i class="fa fa-times-circle pull-right"></i></div>'
+						     + ' <input style="width:300px;" type="text" value="' + data.uid  + '" class="input-medium search-query">'
+						     + '<div class="cacheInOk-footer">Please copy and paste above key for further reload </div><div>';
+					     }
 
+					 });
+		 $('.cacheInOk,.cacheInError').css({top : $(window).height() *0.25, right : $(window).width()*0.33});
+		 $('.cacheInOk .fa.fa-times-circle')
+		     .on('click',function(){
+			     $('#loaderBack').animate({
+							  opacity: 0.0
+						      }, 500, function() {
+							  // Animation complete.
+							  $('#loaderBack').remove();
+						      });
+			 });	
+		 $('.cacheInError .fa.fa-times-circle')
+		     .on('click',function(){
+			     $('#loaderBack').animate({
+							  opacity: 0.0
+						      }, 500, function() {
+							  // Animation complete.
+							  $('#loaderBack').remove();
+						      });
+			 });	
+
+	 
              },
              complete : function (resp){
 		 $(".exporterIdle").remove();
@@ -252,18 +323,40 @@ function loadNetwork (uidString, callback) {
              },
              success : function (data) {
 		 console.log("success");
-                 console.dir(data);                 
-		 callback({nodeData : data.nodes, linksData : data.links});		 
-             },
+                 console.dir(data); 
+                 if (data.hasOwnProperty("errorStatus")) {
+		     return;   
+		 }
+		 callback({nodeData : data.nodes, linksData : data.links});
+	     },
              complete : function (resp){
+		 console.log ("complete") ;
+                 console.dir(resp); // resp.getAllResponseHeaders() 
+		 var msgContent;
+		 var timeOut = 250;
+		 if (!resp.hasOwnProperty("responseJSON")) {
+		     timeOut = 3000;
+		     msgContent = "A network error appended";
+		 } else if(resp.responseJSON.hasOwnProperty("errorStatus")) {
+		     timeOut = 3000;
+		     msgContent = "<div>The key you entered is not valid</div>";
+		 } else {
+		     
+		 }
+		 if (timeOut !== 250) {		     		 
+		     $(".exporterIdle").empty()
+			 .append('<div style="font-size:0.3em; margin-bottom:35px">' +
+				 msgContent
+				 + '</div><i class="fa fa-large fa-exclamation-triangle"></i>');
+		 }
+		 
+		 
 		 $(".exporterIdle").animate({
 						opacity: 0.0
-					    }, 500, function() {
+					    }, timeOut, function() {
 						// Animation complete.
 						$('.exporterIdle').remove();
-					    });
-                 console.log ("complete") ;
-                 console.log(resp.getAllResponseHeaders()); 
+					    }); 
              }
              
            }    

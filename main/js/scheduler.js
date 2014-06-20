@@ -59,7 +59,7 @@ function schedulerInit (opt) {
 		return;
 	    }
 	    if (status.mode === "waiting") {
-		console.log("thread " + nThread + " is waiting for last ajax request");
+	//	console.log("thread " + nThread + " is waiting for last ajax request");
 		return;
 	    }
 //	    console.log("thread " + nThread + " pumping on " + this.inputList.length + " elements");	    
@@ -72,12 +72,17 @@ function schedulerInit (opt) {
 		if (cnt === self.chunkSize) 
 		    break;
 		var elem = self.inputList[0];		
-		var name;
+		var name, type;
 		
-		if (elem.hasOwnProperty('details')) 
-		    if (elem.details)
+		if (elem.hasOwnProperty('details')) {
+		    if (elem.details) {					    
 			name = elem.details.name;		    
-		
+			type = "association";
+		    }
+		} else if (elem.hasOwnProperty('name')) {
+		    name = elem.name;		    
+		    type = "node";
+		}
 		
 		if (!name) {
 		    console.log("error following object does not allow for job sumission");
@@ -86,7 +91,7 @@ function schedulerInit (opt) {
 		    continue;
 		}
 		
-		array.push({type : "association", name : name});
+		array.push({type : type, name : name});
 		referer.push(elem);		    		
 		cnt++;
 		self.inputList.shift();

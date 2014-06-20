@@ -1,12 +1,37 @@
 #elementInfo {    
-    color : white;
+border-radius: 10px 0px 0px 10px;
+-webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+-moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+background-color: #fafafa;
+background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+background-repeat: repeat-x;
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+border: 1px solid #d4d4d4;
+padding: 10px 10px 10px 10px;
+font-weight: 200;
+color: #777777;
+text-shadow: 0 1px 0 #ffffff;
 }
 
 #elementInfo .upmark{
     padding : 5px 10px 5px 10px;
     -moz-border-radius: 15px 0px 0px 0px;
     border-radius: 15px 0px 0px 0px;
-    background : rgba(0, 0, 0, 0.8);
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	-moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	background-color: #fafafa;
+
+	border: 1px solid #d4d4d4;
+	padding: 10px 10px 10px 10px;
+	font-weight: 200;
+	color: #777777;
+	text-shadow: 0 1px 0 #ffffff;
 	
 }
 
@@ -14,11 +39,20 @@
     overflow : auto;  
     -moz-border-radius: 0px 0px 0px 15px;
     border-radius: 0px 0px 0px 15px;
-    background : rgba(0, 0, 0, 0.8);        
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	-moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+	background-color: #fafafa;
+	border: 1px solid #d4d4d4;
+	padding: 10px 10px 10px 10px;
+	border-top:0;
+	font-weight: 200;
+	color: #777777;
+	text-shadow: 0 1px 0 #ffffff;
 }
 
 #elementInfo .ei-header{
-    padding : 15px 10px 10px 10px;
+    //padding : 15px 10px 10px 10px;
 }
 
 #elementInfo .ei-header i {
@@ -27,11 +61,17 @@
     margin-right : 0pxx;
     cursor : pointer;
 }
-
+#elementInfo div.titreInfoElem{
+	float:left;
+	margin-top:8px;
+	color: rgba(46, 50, 82, 1);
+	font-size: 1.4em;
+}
 
 #elementInfo .ei-body{
-    overflow:auto;   
+    overflow-y:auto;   
     padding : 5px;
+    width : 100%
 }
 #elementInfo .pdbDiv {
     margin: 0 auto;    
@@ -41,7 +81,9 @@
     padding : 5px;
 }
 
-
+#elementInfo i.closerElemInfo{
+	cursor: pointer;
+}
 #elementInfo .category-header {
     font-size : 1.15em;
 }
@@ -52,7 +94,7 @@
 }
 
 #elementInfo .category-content {
-    color : rgba(255, 255, 209, 1.0);
+    color:rgba(136, 136, 136, 1);
 }
 
 #elementInfo #glmolWidget {
@@ -68,7 +110,7 @@
 }
 
 #elementInfo i:hover {
-    color : rgb(135,206,250);
+   
 }
 
 #elementInfo .pdbChange i.icon-chevron-left {
@@ -100,11 +142,10 @@
 
 #elementInfo .summary tbody dl,dt,dd {
     margin : 1px;
-    font-size : 0.9em
+    font-size :1em;
 }
 
 #elementInfo .summary tbody dd {
-    color : rgba(255, 255, 209, 1.0);
 }
 
 #elementInfo .pdbBanner {
@@ -115,7 +156,7 @@
 	float: left;
 }
 #elementInfo div.headerEi img{
-	margin-right : 30px
+	margin-right : 40px;
 }
 #elementInfo div.assoEi div.titleAsso{
 	margin-top: 6px;
@@ -127,6 +168,7 @@
 #elementInfo div.assoEi a{
 	width: 40px;
 	float: left;
+	margin-right: 30px;
 }
 #elementInfo div.commonInfo div.compteur{
 	float: left;
@@ -151,10 +193,20 @@
 	overflow: auto;
 	width: 98%;
 }
-
-#elementInfo div.contentXp div.partnerDetail1, #elementInfo div.contentXp div.partnerDetail2{
-	width: 45%;
-	float: left;
-	margin-left: 5px;
-	overflow: hidden;
+#elementInfo i.fa-search{
+	margin-right: 40px;
+}
+.reportEi{
+	border-radius: 10px 0px 0px 10px;
+	box-shadow: none !important;
+	background-color: transparent !important;
+	background-image: none !important;
+	background-repeat: none;
+	filter: 0 !important;
+	border: 0 !important;
+	padding: 10px 10px 10px 10px;
+	font-weight: 100 !important;
+	color: black !important;
+	text-shadow: none !important;
+	font-family: normal !important;
 }

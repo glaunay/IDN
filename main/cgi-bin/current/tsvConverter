@@ -1,0 +1,72 @@
+#!/usr/bin/perl
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+use warnings;
+use diagnostics;
+
+use lib ("$ENV{ IDN_LIB }/perl");
+
+#from CPAN
+use CGI;
+use Data::UUID;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+use Ace 1.51;
+#custom
+use mitabDumper;
+use common;
+
+Log::Log4perl->init("$ENV{ IDN_CONF }/tsvConverter.conf");
+my $logger = get_logger();
+
+$logger->info("*** CGI activation at " . common::getTime());
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||
+  $logger->logdie ("Couldn't open database");
+
+my $mitabDumper = mitabDumper->new({ DB => $DB });
+$mitabDumper->readMapper({ file => "$ENV{ IDN_DATA }/CV_ID_Term.txt" });
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+
+my $ug  = new Data::UUID;
+my $uuid = $ug->create();
+my $tag = $ug->to_string( $uuid );
+
+$logger->info($params{'POSTDATA'});
+my $mainContainer = decode_json($params{'POSTDATA'});
+#$logger->info(Dumper($mainContainer));
+foreach my $key (keys (%{$mainContainer}))  {
+    $logger->info("$key\n");
+}
+
+$logger->info(Dumper($mainContainer));
+
+open TSV, ">$ENV{ IDN_TMP }/network_$tag.tsv" or $logger->logdie($!);
+print TSV "#" . $mitabDumper->getHeader("\t") . "\n";
+foreach my $link (@{$mainContainer->{ linksData }}) {
+  foreach my $experiment (@{ $link->{ associationData }->{ Experiments } }) {
+    my $aceObject = $DB->get(Experiment => $experiment->{ name }, 1);
+    if (!defined $aceObject) {
+      $logger->error('Failed to retrieve object"'
+		     . $experiment->name . '" from database');
+      next;
+    }
+    my $data = $mitabDumper->aceExperimentDump($aceObject);
+    !defined($data) && next;
+    print TSV join("\t", @{ $data }) . "\n";
+  }
+}
+close TSV;
+`cd $ENV{ IDN_TMP };tar -cjf network_$tag.tar.bz network_$tag.tsv`;
+
+my $response;
+$response = {
+    status => 'OK',
+    fileLocation => "$ENV{ IDN_URL }/tmp/network_$tag.tar.bz" # put relative url here
+};
+
+print $query->header('application/json');      # create the HTTP header
+print encode_json ($response);

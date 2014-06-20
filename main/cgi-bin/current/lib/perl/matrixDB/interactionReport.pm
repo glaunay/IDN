@@ -12,26 +12,22 @@ use customNetwork;
 
 our $logger = get_logger("matrixDB::interactionReport");
 
-=pod
-    return all association ace object linked to a particular biomolecule
-    
-    returns : [
-           {
-	    name => $biomolecule,
-	    associations => []
-           },
-            ...
-    ]
-=cut
+
+#    return all association ace object linked to a particular biomolecule
+#     returns : [
+#           {
+#	    name => $biomolecule,
+#	    associations => []
+#           },
+#            ...
+#    ]
 
 
 our $CV_SOCKET;
 
 
-=pod
-    given a aceperl get query returns the value of a scalar or in case of an 
-    attached object, the name of the object
-=cut
+#    given a aceperl get query returns the value of a scalar or in case of an 
+#    attached object, the name of the object
 sub getAceScalar {
     my $p = common::arg_parser (@_);
     common::slid($p->{ aceObject }, $p->{ key }) || die "unproper arguments";
@@ -71,11 +67,8 @@ sub getAceScalar {
      
      my $associationsData = [];    
 
-=pod late addition pairwise interaction check
-    
-=cut
+#late addition pairwise interaction check
      if (defined ($p->{ biomoleculePair })) {
-
 	 my $biomoleculeOne = $nameMutator->mutateToMatrixdb(key => $p->{ biomoleculePair }->[0]);
 	 my $biomoleculeTwo = $nameMutator->mutateToMatrixdb(key => $p->{ biomoleculePair }->[1]);
 	 my $requestArray = [ "query find Association ${biomoleculeOne}__${biomoleculeTwo};", "query find Association ${biomoleculeTwo}__${biomoleculeOne};" ];
@@ -102,9 +95,8 @@ sub getAceScalar {
 	     push @{$associationsData}, $container;
 	 }
 	 return $associationsData;
-=pod
-    Bypass classical biomolecule based research
-=cut
+
+#    Bypass classical biomolecule based research
      } elsif (defined ($p->{ customNetworkInput })) {
 	 if (@{$p->{ customNetworkInput }} > 0) {
 	     my $customInput = $p->{ customNetworkInput }->[0];
@@ -149,17 +141,12 @@ sub getAceScalar {
 			 push @{$associationsData}, $container;
 	     }
 	     
-=pod
-	      
-=cut	 
 	     $logger->trace("association report from custom\n:" . Dumper($associationsData));
 	 
 	 return $associationsData;
      }} 
 
-=pod
-    Classic biomolecule based search
-=cut
+#    Classic biomolecule based search
      foreach my $biomolecule (@{$p->{ biomoleculeArray }}) {
 	 $biomolecule = $nameMutator->mutateToMatrixdb(key => $biomolecule);
 	 my $request = "query find biomolecule $biomolecule;follow Association;";
@@ -188,12 +175,11 @@ sub getAceScalar {
      return $associationsData;
 }
 
-=pod UNUSED
-    provided a set of lists of molecule names
-    extract from a getAssociation interaction report the set of molecule not in lists
-    (from => $associationData, notFoundIn => [ $wholeBiomoleculeList, $activeBiomoleculeList]);
-return a list of names
-=cut
+#UNUSED
+#    provided a set of lists of molecule names
+#    extract from a getAssociation interaction report the set of molecule not in lists
+#    (from => $associationData, notFoundIn => [ $wholeBiomoleculeList, $activeBiomoleculeList]);
+#return a list of names
 sub extractNewPartner {
     my $p = common::arg_parser (@_);
     #flatten the partner list;
@@ -217,14 +203,12 @@ sub extractNewPartner {
     return $newMoleculeList;    
 }
 
-=pod fetchAssociation
-    returns a linkObject which is specified by the template parameters
-    
-    eg: rich_link_1.0 where:
-    any "dummy" key value in template assumes a straight mapping between 
-    the key and matrixDB tag
-    any dummyCV expects ask for a MI identifier (that we fetch from local server)
-=cut
+# fetchAssociation
+#    returns a linkObject which is specified by the template parameters
+#    eg: rich_link_1.0 where:
+#    any "dummy" key value in template assumes a straight mapping between 
+#    the key and matrixDB tag
+#    any dummyCV expects ask for a MI identifier (that we fetch from local server)
 sub fetchAssociation {   
     my $p = common::arg_parser (@_);
     
@@ -233,19 +217,19 @@ sub fetchAssociation {
     )|| die "unable to guess molecule name from supplied arguments";
 
     if (! defined($p->{ socketCv } )){
-	$logger->info("Undefined socket provided as argument");
+	$logger->error("Undefined socket provided as argument");
     } else {
 	$CV_SOCKET = $p->{ socketCv } ;	   
     }
     
-#    $logger->info("matrix db association fetching \"$p->{ molA }__$p->{ molB }\"");     
+    $logger->trace("matrix db association fetching \"$p->{ molA }__$p->{ molB }\"");     
     
     my $mapper = getMapper ($p->{ template });
-=pod
-    my $container = $mapper->{ associationDescriptor } ($mapper, 
-							$p->{ template }, $p->{ DB }
-							, $p->{ molA }, $p->{ molB });     
-=cut
+
+#    my $container = $mapper->{ associationDescriptor } ($mapper, 
+#							$p->{ template }, $p->{ DB }
+#							, $p->{ molA }, $p->{ molB });     
+
     my $container;
     if (defined ($p->{ name }) ){
 	$container = $mapper->{ associationDescriptor } (
@@ -257,16 +241,14 @@ sub fetchAssociation {
 	    molA => $p->{ molA }, molB => $p->{ molB });
     }
    
-    #$logger->trace("matrixdb fetch association data content:\n" . Dumper($container));
+    $logger->trace("matrixdb fetch association data content:\n" . Dumper($container));
     
     return $container;
 }
 
-=pod
-    MATRIXDB interaction mapper
-    template version returns a collection of subroutines handling the 
-    data field filling
-=cut
+#    MATRIXDB interaction mapper
+#    template version returns a collection of subroutines handling the 
+#    data field filling
 sub getMapper {
     my $template = shift;
     (defined ($template->{ version })) || die "No version found in mapper template";
@@ -314,7 +296,7 @@ sub getMapper {
     if ($template->{ version } eq "richLink_1.0") {
 	return {
 	    associationDescriptor => sub {	
-
+$logger->trace("ANONY_PASS");
 		my $p = common::arg_parser(@_);
 		$logger->trace(Dumper($p));
 		
@@ -345,40 +327,6 @@ sub getMapper {
 		     }
 		}
 		my $aceObject = shift (@answerSet);
-=pod		
-
-	
-		my $mapper = shift;
-		my $template = shift;
-		my $db = shift;
-		my $molA = shift;
-		my $molB = shift;
-		
-
-
-		# move to template level
-		my $nodeTemplate = $template->{ associationDescriptor };
-		# spawn a copy of the datastructure to be filled
-		my %hash = %{$nodeTemplate};    
-		my $container = \%hash;
-
-		my $rawQuery = "query find Association ${ molA }__${ molB }";
-		$logger->info ("TEST \"$rawQuery\"");
-		my @answerSet = $db->fetch (-query => $rawQuery);
-		if (@answerSet == 0) {
-		    $rawQuery = "query find Association ${ molB }__${ molA }";
-		    @answerSet = $db->fetch (-query => $rawQuery);
-		}		
-		if (@answerSet == 0) {
-		    $logger->error("Empty matrixdb association Set for ${ molB } -- ${ molA }");
-		    return;
-		}		
-		if (@answerSet > 1) {
-		    $logger->warn ("more than one association found for following couple -> ${ molB } -- ${ molA }");
-		}
-		
-		my $aceObject = shift (@answerSet);
-=cut		
 		$container->{ name } = $aceObject->name;
 		$logger->trace("Association sub node filling with " . Dumper($nodeTemplate));
 		foreach my $key (keys (%{$nodeTemplate})) {
@@ -453,6 +401,7 @@ sub getMapper {
 		return $container;		
 	    },
 	    experimentDescriptor => sub {
+$logger->trace("ANONY_PASS");
 		my $mapper = shift;
 		my $template = shift;
 		my $db = shift;
@@ -469,10 +418,12 @@ sub getMapper {
 		$container->{ sourceDatabase } = "matrixdb";
 		$container->{ type } = "experiment";
 		$container->{ knowledgeSupport } = $knowledgeSupport;
+                $container->{ Interaction_Detection_Method } = "someDetectionMethodXXX";
 		foreach my $key (keys (%{$nodeTemplate})) {
 		    ($key eq "name" || $key eq "sourceDatabase" || $key eq "knowledgeSupport") && next;
+                    #|| $key eq "Interaction_Detection_Method") && next;
 		    my $pos = 1;
-		    
+		           $logger->trace("CURR_KEY IS  " . $key);
 		    if ($nodeTemplate->{ $key } =~ /^dummy/) {
 			my $val;
 			if ($nodeTemplate->{ $key } =~ /([\d]+)$/) {
@@ -482,13 +433,19 @@ sub getMapper {
 			    $val = getAceScalar(aceObject => $eAceObject, key => $key, pos => $pos);
 			}
 			elsif ($nodeTemplate->{ $key } =~ /dummyCV/) {
-			    ($val) = $eAceObject->get ($key, $pos);
-			    if (defined ($val)) {
-				my $cvTerm = localSocket::runCvRequest (with => $CV_SOCKET, from => 'matrixDB',
+	 		       $logger->trace("WESHH " . $key);
+                               ($val) = $eAceObject->get ($key, $pos);
+			      #undef $val; ##DBG purpose
+                               if (defined ($val)) {
+                                $logger->trace("Attempting to run CV request for $key");
+                                my $cvTerm = localSocket::runCvRequest (with => $CV_SOCKET, from => 'matrixDB',
 							   askFor => 'id', selectors => { name => $val }
-				    );				
-				$val .= "[$cvTerm]";
-			    }			    
+				    );		
+		                $logger->trace("Attempting to run CV request OK ");
+				$val = $val->name . "[$cvTerm]";
+			    } else {
+                                $logger->trace("$key search within $eAceObject returned undefine");
+                            }			    
 			}
 			elsif ($nodeTemplate->{ $key } eq "dummyList") {
 			    my @row = $eAceObject->row ($key);
@@ -512,12 +469,16 @@ sub getMapper {
 			$logger->trace("experimentMapper, following $dataType list");
 			$container->{ $key } = [];
 			if ($dataType eq "publicationDescriptor") {
-			   
+$logger->info("publicationDescriptor in");
 			    my @pubAceObject = $eAceObject->follow('PMID');
+                            $logger->info(Dumper(@pubAceObject));
 			    $container->{ $key } = $mapper->{ publicationDescriptor }($mapper, $template, $db,
 										      $pubAceObject[0]);
-			} elsif ($dataType eq "partnerDescriptor") {			    
-			    my $nAceObject = $eAceObject->at('Partner.BioMolecule');
+$logger->info("publicationDescriptor out");
+			} elsif ($dataType eq "partnerDescriptor") {
+$logger->info("partnerDescriptor in");
+			    $logger->info(Dumper($eAceObject));
+                            my $nAceObject = $eAceObject->at('Partner.BioMolecule');
 			    my @partnerTags = $nAceObject->tags();
 			    $logger->trace("calling partner mapper for " . Dumper(@partnerTags));
 			    foreach my $partnerName (@partnerTags) {
@@ -536,7 +497,8 @@ sub getMapper {
 				}
 				push @{$container->{ $key }}, $subContainer;
 			    }			   
-			}
+			$logger->info("partnerDescriptor out");
+                        }
 			## other list of constructed type to insert here
 		    }
 		}
@@ -545,6 +507,7 @@ sub getMapper {
 		return $container;
 	    },
 	    kineticsDescriptor => sub {
+$logger->trace("ANONY_PASS KINE");
 		my $mapper = shift;
 		my $template = shift;
 		my $db = shift;
@@ -557,20 +520,20 @@ sub getMapper {
 		    	my $val = getAceScalar(aceObject => $eAceObject, key => $key, pos => 1);
 			$container->{ $key } = defined($val) ? $val : 'N/A';
 		}
-		$logger->info("kinetic descriptor content:\n".Dumper($container));
+		$logger->trace("kinetic descriptor content:\n".Dumper($container));
 		return $container;
 	    },
 	    publicationDescriptor => sub {
+$logger->trace("ANONY_PASS PUBLI");
 		my $mapper = shift;
 		my $template = shift;
 		my $db = shift;
 		my $pubAceObject = shift;
-		
 		# spawn a copy of the datastructure to be filled
 		my $nodeTemplate = $template->{ publicationDescriptor };
 		my %hash = %{$nodeTemplate};    
 		my $container = \%hash;
-#		$logger->info("supposed PMID ace object content\n". $pubAceObject->asAce);
+		$logger->trace("supposed PMID ace object content\n". $pubAceObject->asAce);
 		foreach my $key (keys (%{$nodeTemplate})) {
 		    if ($key eq "pmid") {
 			$container->{ $key } = $pubAceObject->name;
@@ -581,11 +544,12 @@ sub getMapper {
 			$container->{ $key } = defined($val) ? $val : 'N/A';
 		    }
 		}
-		#$logger->info("publication Data container " . Dumper($container));
+		$logger->trace("publication Data container " . Dumper($container));
 		
 		return [$container];
 	    },
 	    partnerDescriptor => sub {
+$logger->trace("ANONY_PASS");
 		my $mapper = shift;
 		my $template = shift;
 		my $db = shift;
@@ -641,6 +605,7 @@ sub getMapper {
 	    },
 	    # returns a reference list of such elements
 	    knownExperimentalFeatureDescriptor => sub {
+$logger->trace("ANONY_PASS");
 		my $mapper = shift;
 		my $template = shift;
 		my $pAceObject = shift;
@@ -674,14 +639,17 @@ sub getMapper {
 			    foreach my $key (keys (%{$nodeTemplate})) {
 				if ($nodeTemplate->{ $key } =~ /^dummy/) {
 				    my $val = getAceScalar(aceObject => $pAceObject, key => $key, pos => 1);
+			            undef $val; ##DBG purpose
 				    if (!defined $val) {
 				#	warn "no \"$key\" in " . $pAceObject->name;
 					$val = "N/A"; 
 				    } else {
 					if ($nodeTemplate->{ $key }  =~ /^dummyCV/) {
+$logger->trace("Attempting to run CV request -->$val");
 					    my $cvTerm = localSocket::runCvRequest (with => $CV_SOCKET, from => 'matrixDB',
 								       askFor => 'id', selectors => { name => $val }
 						);
+$logger->trace("Attempting to run CV request OK ");
 					    $val .= "[$cvTerm]";
 					}					 
 				#	warn $pAceObject->name . " $key ok --> $val";
@@ -709,6 +677,7 @@ sub getMapper {
 	    },
 	    # returns a list of such datatype
 	    rangeData => sub {
+$logger->trace("ANONY_PASS");
 		my $mapper = shift;
 		my $template = shift;
 		my $aceObject = shift;		
@@ -777,7 +746,7 @@ sub getMapper {
 	    },
 	    # returns a reference list of such elements
 	    bindingSiteDataDescriptor => sub {
-		
+		$logger->trace("ANONY_PASS");
 		my $mapper = shift;
 		my $template = shift;
 		my $pAceObject = shift;
@@ -812,14 +781,17 @@ sub getMapper {
 			    foreach my $key (keys (%{$nodeTemplate})) {
 				if ($nodeTemplate->{ $key } =~ /^dummy/) {
 				    my $val = getAceScalar(aceObject => $pAceObject, key => $key, pos => 1);
+			      undef $val; ##DBG purpose
 				    if (!defined $val) {
 #					warn "no \"$key\" in " . $pAceObject->name;
 					$val = "N/A"; 
 				    } else {
 					if ($nodeTemplate->{ $key }  =~ /^dummyCV/) {
+$logger->trace("Attempting to run CV request");
 					    my $cvTerm = localSocket::runCvRequest (with => $CV_SOCKET, from => 'matrixDB',
 								       askFor => 'id', selectors => { name => $val }
 						);
+$logger->trace("Attempting to run CV request OK");
 					    $val .= "[$cvTerm]";
 					}					 
 	#				warn $pAceObject->name . " $key ok --> $val";
@@ -846,6 +818,7 @@ sub getMapper {
 		return \@containerList;
 	    },
 	    ptmDescriptor => sub {
+$logger->trace("ANONY_PASS");
 		my $mapper = shift;
 		my $template = shift;
 		my $pAceObject = shift;
@@ -875,14 +848,17 @@ sub getMapper {
 			    foreach my $key (keys (%{$nodeTemplate})) {
 				if ($nodeTemplate->{ $key } =~ /^dummy/) {
 				    my $val = getAceScalar(aceObject => $pAceObject, key => $key, pos => 1);
+			      undef $val; ##DBG purpose
 				    if (!defined $val) {
 				#	warn "no \"$key\" in " . $pAceObject->name;
 					$val = "N/A"; 
 				    } else {
 					if ($nodeTemplate->{ $key }  =~ /^dummyCV/) {
+$logger->trace("Attempting to run CV request");
 					    my $cvTerm = localSocket::runCvRequest (with => $CV_SOCKET, from => 'matrixDB',
 								       askFor => 'id', selectors => { name => $val }
 						);
+$logger->trace("Attempting to run CV request OK");
 					    $val .= "[$cvTerm]";
 					}					 
 				#	warn $pAceObject->name . " $key ok --> $val";
@@ -909,6 +885,7 @@ sub getMapper {
 		return \@containerList;	
 	    },
 	    pointMutationDescriptor => sub {
+$logger->trace("ANONY_PASS");
 		my $mapper = shift;
 		my $template = shift;
 		my $pAceObject = shift;
@@ -941,14 +918,17 @@ sub getMapper {
 			    foreach my $key (keys (%{$nodeTemplate})) {
 				if ($nodeTemplate->{ $key } =~ /^dummy/) {
 				    my $val = getAceScalar(aceObject => $pAceObject, key => $key, pos => 1);
+			      undef $val; ##DBG purpose
 				    if (!defined $val) {
 #					warn "no \"$key\" in " . $pAceObject->name;
 					$val = "N/A"; 
 				    } else {
 					if ($nodeTemplate->{ $key }  =~ /^dummyCV/) {
+$logger->trace("Attempting to run CV request");
 					    my $cvTerm = localSocket::runCvRequest (with => $CV_SOCKET, from => 'matrixDB',
 								       askFor => 'id', selectors => { name => $val }
 						);
+$logger->trace("Attempting to run CV request OK");
 					    $val .= "[$cvTerm]";
 					}					 
 #					warn $pAceObject->name . " $key ok --> $val";
@@ -981,98 +961,10 @@ sub getMapper {
 
 	};      
     }
-    die "Summoning mapper of unknown format \"$template->{ version }\"";
+    $logger->logdie("Summoning mapper of unknown format \"$template->{ version }\"");
 }
 
 1;
 
 
 
-=pod
-    returns an association object if any found in database
-    caracterizing the known association between two molecules
-    object specifications
-{
-    "name" : "O15146__P98160", 
-    "Experiments" : [
-        {
-            "name" : "O15146__P98160_18296487_1",
-            "PartnerDetails" : [
-                {
-                    "BioMolecule" : "O15146",
-                    "BioRole" : "unspecified_role",
-                    "ExpRole" : "prey",
-                    "Detect_Meth" : "tag_visualisation",
-                    "Species" : "7955",
-                    "Accession_Number" : "A4JYH2",
-                    "Features" : [
-                        {
-                            "Known_Experimental_Feature_Data" : {
-                                "Name" : "beta lactamase",
-                                "Range" : "1",
-                                "Status_start" : "undetermined_sequence_position",
-                                "Status_end" : "undetermined_sequence_position",
-                                "isLinked" : true
-                            },
-                            "Known_Experimental_Feature_Type" : "enzyme_tag"
-                        },
-                        {
-                            "Binding_Site_Data" : {
-                                "Name" : "region",
-                                "Range" : "1",
-                                "Position_start" : "1",
-                                "Status_start" : "certain_sequence_position",
-                                "Position_end" : "300",
-                                "Status_end" : "certain_sequence_position"
-                            },
-                            "Binding_Site_Type" : "sufficient_binding_site"
-                        }
-                    ]
-                },
-                {
-                    "BioMolecule" : "P98160",
-                    "BioRole" : "unspecified_role",
-                    "ExpRole" : "bait",
-                    "Detect_Meth" : "tag_visualisation",
-                    "Species" : "7955",
-                    "Accession_Number" : "A4JYL6",
-                    "Features" : [
-                        {
-                            "Known_Experimental_Feature_Data" : {
-                                "Name" : "region",
-                                "Range" : "1",
-                                "Status_start" : "undetermined_sequence_position",
-                                "Status_end" : "undetermined_sequence_position",
-                                "isLinked" : true
-                            },
-                            "Known_Experimental_Feature_Type" : "biotin_tag"
-                        },
-                        {
-                            "Binding_Site_Data" : {
-                                "Name" : "region",
-                                "Range" : "1",
-                                "Position_start" : "1",
-                                "Status_start" : "certain_sequence_position",
-                                "Position_end" : "381",
-                                "Status_end" : "certain_sequence_position"
-                            },
-                            "Binding_Site_Type" : "sufficient_binding_site"
-                        }
-                    ]
-                }
-            ],
-            "Interaction_Detection_Method" : "solid_phase_assay",
-            "Experiment_modification" : "AVEXIS a novel solid phase assay (MI:0892) to detect surface interactions was used.Ectodomains bound to rat CD4 domains 3+4 were expressed in HeLa-293E cells as a monomeric biotinylated bait, which could be captured on streptavidin-coated microtitre plates, and a pentamerised prey tagged with beta-lactamase to allow detection.",
-            "PMID" : "18296487",
-            "Host_System" : "-1",
-            "Interaction_Type" : "physical_association",
-            "Figure" : "Table S2"
-        },
-	{
-	    .... FOLLOWING EXPERIMENT ....
-	}        
-    ]
-}
-
-
-=cut

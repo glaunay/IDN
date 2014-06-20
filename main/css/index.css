@@ -20,6 +20,15 @@ html, body {height: 100%;}
 #main {overflow:auto;
 	padding-bottom: 130px;}  /* must be same height as the footer */
 
+div.span12.mainAlias {
+    font-size : 3em;
+    font-family : Verdana;
+    min-height: 75px;
+}
+div.span6.topHead {
+    padding-top : 20px;
+}
+
 .footer {position: relative;
 	margin-top: -130px; /* negative value of footer height */
 	height: 130px;
@@ -38,6 +47,7 @@ clearfix:after {content: ".";
 	clear: both;
 	visibility: hidden;
 }
+
 .clearfix {display: inline-block;}
 /* Hides from IE-mac \*/
 * html .clearfix { height: 1%;}
@@ -147,11 +157,6 @@ dl.societies img {
     -moz-border-radius: 15px 15px 0px 0px;
     border-radius: 15px 15px 0px 0px;
 }
-.accordion-base {
-    -webkit-border-radius: 0px 0px 15px 15px;
-    -moz-border-radius: 0px 0px 15px 15px;
-    border-radius: 0px 0px 15px 15px;
-}
 
 #bottom-accordion {
     -webkit-border-radius: 15px 15px 0px 0px;
@@ -188,9 +193,15 @@ ul.accordionSubList {
     padding : 25px 25px 25px 45px;
 }
 
+#contentFour div.listBiomol li {
+    margin : 5px 0px 5px 0px;
+    font-size : 1.25em;
+}
+
 #contentFive li {
     margin : 5px 0px 5px 0px;
 }
+
 #mainHeader a:hover {text-decoration:none;}
 
 #contentTwo dt {
@@ -206,15 +217,19 @@ li .icon-download {
 div.topHead{
 	float:left;
 	width:32%;
-	margin: 5px 5px 15px 5px;
+	margin: 5px 5px 0px 5px;
 }
-.logo{
-	width : 180px;
+.logoRight {
+	width : 275px;
+	margin-right : -20px;
+}
+.logoLeft {
+    width: 275px;
+    margin-left: -22px;
+}
 
-}
-.downloadContent{
-	float : left;
-	width : 50%;
+.firstPart,.secondPart{
+	margin-bottom: 20px;
 }
 h3{
 	text-align : center;
@@ -225,3 +240,71 @@ textarea{
 div.downloadContent  ul{
 	margin: 0 30px 10px 25px;
 } 
+
+
+.bottomAccordeon {
+    -webkit-border-radius: 0px 0px 0px 0px;
+    -moz-border-radius: 0px 0px 0px 0px;
+    border-radius: 0px 0px 0px 0px;
+}
+
+.accordion-base {
+    -webkit-border-radius: 0px 0px 15px 15px;
+    -moz-border-radius: 0px 0px 15px 15px;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.accordion-separator {
+    background-color: whitesmoke;
+    padding: 14px 14px 14px 14px;
+    text-align: center;
+    margin-top: 15px;
+    -webkit-border-radius: 10px 10px 0px 0px;
+    -moz-border-radius: 10px 10px 0px 0px;
+    border-radius: 10px 10px 0px 0px;
+    margin-bottom : 2px;
+}
+
+#toggleEight {
+    -webkit-border-radius: 10px 10px 0px 0px;
+    -moz-border-radius: 10px 10px 0px 0px;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.blockOneAccordeonBottom{
+    -webkit-border-radius: 0px 0px 15px 0px;
+    -moz-border-radius: 0px 0px 15px 0px;
+    border-radius: 0px 0px 15px 0px;
+}
+.blockTwoAccordeonBottom{
+    -webkit-border-radius: 0px 0px 0px 10px;
+    -moz-border-radius: 0px 0px 0px 10px;
+    border-radius: 0px 0px 0px 10px;
+}
+
+
+
+}
+.blockThreeAccordeonBottom{
+}
+
+.blockTwoAccordeonHead {
+    margin-top: 15px;
+}
+
+.fa-ul li {
+    margin-left : -10px;
+}
+
+#contentSeven dt {
+    padding-top : 20px;
+}
+#contentSeven dt img {
+    margin-right : 20px;
+}
+
+div.mainAlias img {
+    margin-top: -30px;
+    margin-bottom: 20px;
+}
+

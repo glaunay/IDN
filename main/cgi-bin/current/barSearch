@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use lib qw(lib/perl);
+use lib qw("$ENV{ IDN_LIB }/perl");
 
 use CGI;
 use Ace 1.51;
@@ -15,23 +15,16 @@ use CHI;
   'all searches are cached in using searched string as key and a stringified json representation of the result as value'
 =cut
 
-
 our $MAX_HITS = 200;
 
-
-
-
 our $CACHE_ADDRESS = "/tmp/barSearchCache";
-Log::Log4perl->init("./conf/barSearch.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/barSearch.conf");
 my $logger = get_logger();
-
 our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || AceError ("Couldn't open database");
 
 my $query = CGI->new();
-#$logger->info(Dumper $query ));
 my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/;
 $logger->info("search key is \"$string\"\n");
-
 
 my $specieRef = indexingSpecies($DB);
 $logger->info(Dumper($specieRef));
@@ -43,6 +36,7 @@ if (defined ($dataContainer)) {
   print $query->header('application/json');      # create the HTTP header
   print $dataContainer;
   $logger->trace("Exiting");
+  $DB->close();
   exit;
 } else {
   $logger->info("No results object found in cache, performing query...");
@@ -53,11 +47,8 @@ if (defined ($dataContainer)) {
 		    results => {
 				biomolecule => getBiomolecule($string, $specieRef),
 				author => getAuthor($string),
-				publication =>getPublication($string),
-				#'IMEX-ID' => getIMExPublication($string),				
-				#GO => getGoTerm($string),
-				keywrd => getKeywrd($string)#,
-				#gene => getGene($string)
+				publication => getPublication($string),
+				keywrd => getKeywrd($string)
 			       }
 		   };
   $logger->trace(Dumper($dataContainer));
@@ -65,7 +56,7 @@ if (defined ($dataContainer)) {
 
 #cacheWriter($string, $dataContainer);
 my $jsonString = encode_json($dataContainer);
-cacheWriter($string, $jsonString);
+
 
 #open JSOUT, ">/tmp/searchDevl.json";
 #print JSOUT "callback($jsonString);";
@@ -73,6 +64,11 @@ cacheWriter($string, $jsonString);
 
 print $query->header('application/json');      # create the HTTP header
 print $jsonString;
+
+cacheWriter($string, $jsonString);
+$DB->close();
+exit;
+
 
 sub cacheReader {
   my $key = shift;
@@ -115,145 +111,64 @@ sub cacheWriter {
     return $key;
 }
 
-sub getGene { # WARNING GETBIOMOLECULE NEED TO BE PREVIOUSLY CALLED FOR THE SELECTION BIOMOLECULEMATCH IS TO BE USED
-  $DB->raw_query("kget BiomoleculeMatch");
-  my $cHit = 0;
-  my @array;
-  my $r = $DB->raw_query("show -t Gene");
-  my $hash = {};
-  #$logger->info($r);
-  my ($biomolecule, $currName, $currSyn);
-  foreach my $line (split /\n/, $r) {
-    if ($line =~ /^BioMolecule ([\S]+)/) {
-      $biomolecule = $1;
-      $cHit++;
-      ($cHit > $MAX_HITS) && last;
-    } elsif ($line =~ /GeneName[\s]+([\S]+)/) {
-           $currName = $1;
-           defined($hash->{ $currName }) && next;
-           $hash->{ $currName } = { biomolecule => [], name => $currName, synonym => undef };
-    } elsif ($line =~ /Synonym[\s]+([\S]+)/) {
-           $hash->{ $currName }->{ synonym } = $1;
-    } elsif($line =~ /^[\s]*$/) {
-	     if (defined($biomolecule)) {
-	       push @{$hash->{ $currName }->{ biomolecule }}, $biomolecule;
-	       undef $biomolecule;
-	     }
-	   }  
-     }	  
-    $logger->trace(Dumper($hash));
-  foreach my $id (keys(%{$hash})) {
-    my $count = 0;
-    foreach my $biomolecule (@{ $hash->{ $id }->{ biomolecule } }) {
-      $DB->raw_query("find biomolecule $biomolecule");
-      $r = $DB->raw_query("follow Association");
-      if ($r =~ /Found ([\d]+) object/) {
-	$count += $1;
-      }
-    }
-    push @array, { id => $hash->{ $id }->{ name }, synonym => $hash->{ $id }->{ synonym }, 
-		   biomolecule =>  $hash->{ $id }->{ biomolecule }, count => $count };
-  }
-
-  $logger->trace(Dumper(@array));
-  return \@array;
-}
-  
 sub getBiomolecule {
   my $string = shift;
   my $specieIndex = shift;
-  my $cHit = 0;
-  $DB->raw_query("find biomolecule");
-  $DB->raw_query("spush");
-  $DB->raw_query("kget allMatch");
-  $DB->raw_query("sand");
-  $DB->raw_query("spop");
-  $DB->raw_query("kstore BiomoleculeMatch");   # STORING BIOMOLECULE FOR FURTHER USE IN GETGENE
+
   my @array;
-  my $r = $DB->raw_query("list");
-  foreach my $line (split /\n/, $r) {
-    if ($line =~ /^ ([\S]+)/) {
-      push @array, { id => $1, name => undef, specie => undef, count => undef };
-      $cHit++;
-      ($cHit == $MAX_HITS) && last;
-    }
+  $DB->raw_query("kget allMatch");
+  $DB->raw_query("query CLASS biomolecule");
+  my $cHit = $DB->count(-query=> '*');
+  
+  $logger->error("Current newt count " . $cHit);
+  if ($cHit > $MAX_HITS) { # If total biomoecule exceeds limit, only keep 
+    # those featuring at least one association
+    $DB->raw_query("query Association");
   }
-  foreach my $biomol (@array) {
-    $DB->raw_query("find biomolecule $biomol->{ id }");
-    $r =  $DB->raw_query("show In_Species");
-    # $logger->info("--->" . $r);
-    if ($r =~ /In_Species[\s]+([\d]+)/) {
-	 $biomol->{ specie } = { taxon => $1, name => $specieIndex->{ $1 }};
+  my $biomoleculeAceObjIt = $DB->fetch_many(-query=> '*');
+  my $cnt  = 0;
+  while (my $biomoleculeObj = $biomoleculeAceObjIt->next ) {
+    $cnt++;
+    ($cnt > $MAX_HITS) && last;
+    my @buffer = $biomoleculeObj->Association;
+    my $datum = { id => $biomoleculeObj->name,
+		  name => undef,
+		  specie => { taxon =>  undef,
+			      name => undef
+			    },
+		  geneName => [],
+		  count => scalar(@buffer)
+		};
+    if (defined($biomoleculeObj->In_Species)) {
+      $datum->{ specie }->{ taxon } = $biomoleculeObj->In_Species->name;
+      $datum->{ specie }->{ name } = $specieIndex->{ $biomoleculeObj->In_Species->name };
     }
-#
-    foreach my $tagName (qw /Common_Name EntryName More_Info Other_Fragment_Name FragmentName 
-                             GAG_Name Phospholipid_Name Cation_Name Glycolipid_Name 
-                             Multimer_Name Inorganic_Name /) {
-       $r =  $DB->raw_query("show $tagName");
-       if ($r =~ /$tagName[\s]+([\S]+.+[\S]+)/) {
-           $biomol->{ name } = $1;
-           last;
-       }
+    foreach my $tagName (qw /Common_Name
+			      GAG_Name Phospholipid_Name Cation_Name Glycolipid_Name 
+			      Multimer_Name Inorganic_Name FragmentName EntryName
+			      More_Info Other_Fragment_Name SpepName Spep_ShortName/) {
+      my $tag = $biomoleculeObj->$tagName;
+      if (defined ($tag)) {
+	$datum->{ name } = $tag->name;
+	last;
+      }
     }
-    $r =  $DB->raw_query("show Gene");
-    $logger->info("-->$r");
-    $biomol->{ geneName } = [];
-    my $bSyn = 0;
-    foreach my $line (split /\n/, $r) {
-      if ($line =~ /GeneName[\s]+([\S]+.*)/){
-	 $biomol->{ geneName } = [$1];
-     } elsif ($line =~ /Synonym[\s]+([\S].+)$/) {
-       push @{ $biomol->{ geneName }}, $1;
-       $bSyn = 1;
-     } elsif($bSyn) {
-       $logger->warn("yeah");
-       if ($line =~ /^[\s]+([\S].+)/) {
-          push @{ $biomol->{ geneName } }, $1;
-       }
-     }
-   }
-   $r =  $DB->raw_query("follow Association");
-   if ($r =~ /Found ([\d]+) object/) {
-     $biomol->{ count } = $1;
-   }
+    if (defined($biomoleculeObj->GeneName)){
+      $datum->{ geneName } = [$biomoleculeObj->GeneName->name];
+      my @addSyn = $biomoleculeObj->Synonym;
+      push @{ $datum->{ geneName } }, map { $_->name } @addSyn;
+    }
+    push @array, $datum;
   }
+  $logger->error(Dumper(\@array));
+  
   return \@array;
 }
-  
-  sub getGoTerm { 
-   my $string = shift;
-   my $cHit = 0;
-   $DB->raw_query("find GO");
-   $DB->raw_query("spush");
-   $DB->raw_query("kget allMatch");
-   $DB->raw_query("sand");
-   $DB->raw_query("spop");
-   
-   my @array;
-   foreach my $key(qw/Term/) {
-     my $r = $DB->raw_query("show $key");
-     #$logger->info($r);
-     my $i = -1;
-     foreach my $line (split /\n/, $r) {
-       if ($line =~ /^GO ([\S]+)/){
-	 $cHit++;
-	 ($cHit > $MAX_HITS) && last;
-	 $i++;	 
-	 push @array, { id => $1, Term => undef };
-       }
-       elsif ($line =~ /$key[\s]+([\S]+.+[\S]+)/){
-	 $array[$i]->{ $key } = $1;	 
-       }
-     }
-   }
-   return \@array;
-   
-}
-
 
 sub getAuthor {
    my $string = shift;
    my $cHit = 0;
+   
    $DB->raw_query("find Author");
    $DB->raw_query("spush");
    $DB->raw_query("kget allMatch");
@@ -266,10 +181,10 @@ sub getAuthor {
    foreach my $line (split /\n/, $r) {
      if ($line =~ /^Author ([\S]+.+[\S]+)/) {
        $cHit++;
-       ($cHit > $MAX_HITS) && last;     
+       ($cHit > $MAX_HITS) && last;
        push @array, { id => $1, Published => [], count => 0 };
      }
-     elsif ($line =~ /^[\s]+Published[\s]+([\d]+)/){
+     elsif ($line =~ /^\s+Published\s+(\d+)/){
        push @{ $array[$#array]->{ Published } }, $1;
      }
      elsif ($line =~ /^[\s]+([\d]+)/) {
@@ -293,12 +208,9 @@ sub getAuthor {
 sub getKeywrd {
    my $string = shift;
    my $cHit = 0;
-   $DB->raw_query("find Keywrd");
-   $DB->raw_query("spush");
    $DB->raw_query("kget allMatch");
-   $DB->raw_query("sand");
-   $DB->raw_query("spop");
-   
+   $DB->raw_query("query CLASS Keywrd");
+
    my @array;
    my $r = $DB->raw_query("show");
    foreach my $line (split /\n/, $r) {
@@ -324,97 +236,21 @@ sub getKeywrd {
 sub getPublication {
   my $string = shift;
   my $cHit = 0;
-  
   my @array;
 
-  $DB->raw_query("query find Publication where IMEx_ID");
-  $DB->raw_query("spush");
   $DB->raw_query("kget allMatch");
-  $DB->raw_query("sand");
-  $DB->raw_query("spop");
-  my $r = $DB->raw_query("show");
-  my $tBool = 0; # Title content is mutli--line....
-  foreach my $line (split /\n/, $r) {
-    my @test = ($line =~ /^([\s]+)/);
-    my $ident = length($test[0]);
-
-    if($ident == 2) { $tBool = 0;}
-    if ($line =~ /^Publication ([\d]+)/) {
-      $cHit++;
-      ($cHit > $MAX_HITS) && last;
-      push @array, { id => $1, Title => undef, imexID => undef, count => 0};
-    }
-      elsif ($line =~ /^[\s]+Title[\s]+([\S]+.+[\S]+)/){
-      $tBool = 1;
-      $array[$#array]->{ Title } = $1;
-    } 
-     elsif ($line =~ /^[\s]+IMEx_ID[\s]+([\S]+)/) {
-       $array[$#array]->{ imexID } = $1;
-     } elsif($line =~ /^[\s]{11}([\s]*[\S]+.+[\S]+)/) {
-       if ($tBool){
-	$array[$#array]->{ Title } .= $1;
-       }
-     }	   
-  }
-  
-  $tBool = 0;
-  $DB->raw_query("query find Publication where NOT IMEx_ID");
-  $DB->raw_query("spush");
-  $DB->raw_query("kget allMatch");
-  $DB->raw_query("sand");
-  $DB->raw_query("spop");
-  $r = $DB->raw_query("show");
-  foreach my $line (split /\n/, $r) {
-    my @test2 = ($line =~ /^([\s]+)/);
-    my $ident = length($test2[0]);
-   
-    if($ident == 2) { $tBool = 0;} 
-    if ($line =~ /^Publication ([\d]+)/) {
-      $cHit++;
-      ($cHit > $MAX_HITS) && last;
-      push @array, { id => $1, Title => undef, imexID => undef, count => 0 };
-    }
-    elsif ($line =~ /^[\s]+Title[\s]+([\S]+.+[\S]+)/){
-      $tBool = 1;
-      $array[$#array]->{ Title } = $1;
-    } elsif ($line =~ /^[\s]{11}([\s]*[\S]+.+[\S]+)/) {
-       if ($tBool){
-	$array[$#array]->{ Title } .= $1;
-       }
-    }
-  }
-  foreach my $publication (@array) {
-    $r = $DB->raw_query("query find Association where PMID = $publication->{ id }");
-    if ($r =~ /Found[\s]+([\d]+)[\s]+object/) {
-      $publication->{ count } = $1;
-    }
-  }
-  return \@array;
-}
-
-sub getIMExPublication {
-  my $string = shift;
-  my $cHit = 0;
-  $DB->raw_query("query find Publication where IMEx_ID");
-   $DB->raw_query("spush");
-   $DB->raw_query("kget allMatch");
-   $DB->raw_query("sand");
-   $DB->raw_query("spop");
-   
-  my @array;
-  my $r = $DB->raw_query("show");
-  foreach my $line (split /\n/, $r) {
-    if ($line =~ /^Publication ([\d]+)/) {
-      $cHit++;
-      ($cHit > $MAX_HITS) && last;
-      push @array, { id => undef, Title => undef, pmid => $1 };
-    }
-    elsif ($line =~ /^[\s]+Title[\s]+([\S]+.+[\S]+)/){
-      $array[$#array]->{ Title } = $1;
-    }
-    elsif ($line =~ /^[\s]+IMEx_ID[\s]+([\S]+)/){
-      $array[$#array]->{ id } = $1;
-    }
+  $DB->raw_query("query CLASS publication");
+  $DB->raw_query("query association"); # limit the publications to those carrying an Association tag
+  my $pmidAceObjIt = $DB->fetch_many(-query=> '*');
+  while (my $pmidObj = $pmidAceObjIt->next ) {
+    $cHit++;
+    ($cHit > $MAX_HITS) && last;
+    my @buffer = $pmidObj->Association;
+    push @array, { id => $pmidObj->name, 
+		   Title => defined ($pmidObj->Title) ? $pmidObj->Title->name : undef,
+		   imexID => defined ($pmidObj->IMEx_ID) ? $pmidObj->IMEx_ID->name : undef,
+		   count => scalar(@buffer)
+		 };
   }
 
   return \@array;

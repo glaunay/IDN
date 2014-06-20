@@ -1,0 +1,62 @@
+/* Monitor widget css */
+
+
+.divMon{
+	position : absolute;
+	z-index : 1;
+	top : 55px;
+	left: 203px;
+	display: none;
+	border-radius: 0px 0px 10px 10px;
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    background-color : #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;
+    padding : 10px 10px 10px 10px;
+    font-weight: 800;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;    
+}
+.divMon div.message{
+	font-weight: 200;
+	color: #777;
+	text-shadow: 0 1px 0 #fff;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 1.5em;
+}
+.divMon svg text {
+	font-weight: 200;
+	color: #777;
+	text-shadow: 0 1px 0 #fff;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.complete { 
+	animation-name: Complete; 
+	animation-duration:1s; 
+	animation-direction:alternate; 
+	animation-iteration-count:infinite; 
+
+	-webkit-animation-name: Complete; 
+	-webkit-animation-duration:1s; 
+	-webkit-animation-direction:alternate; 
+	-webkit-animation-iteration-count:infinite; }	
+
+@keyframes Complete{
+	0% {color:#FFF;} 
+	50% {color:#C1BDC4;} 
+ 
+} 
+
+@-webkit-keyframes Complete{ 
+	0% {color:#FFF;} 
+	50% {color:#C1BDC4;} 
+}

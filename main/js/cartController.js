@@ -49,12 +49,35 @@ function initCartCtrl (opt) {
 	draw : function () {
 	    var self = this;
 	    
-	    var scaffold = '<div id="cartLargeWrapper"><div class="cartHeader"></div>'
+	    var scaffold = '<div id="cartLargeWrapper"><div class="cartHeader"><i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>'
 		+ '<div class="cartBody"></div>'
 		+ '<div class="cartFooter"></div></div>'
 		+ '<div id="cartBookmarkWrapper"><i class="fa fa-shopping-cart fa-4x"></i><div class="plusNotification" style="display:none"><i class="fa fa-plus"></i></div></div>';
 	    
 	    $(this.target).append(scaffold);
+	    $(this.target + ' i.helpMe').popover({ 
+	    	   html : true,
+	    	   placement : 'right', 
+			   title : 'For advanced usage see our <a target = "_blank" href = "http://youtube.com" >help</a>', 
+			   container : 'body',
+			   trigger : "manual"
+			   })
+			   .on("mouseenter", function () {
+			   	if(!window.showHelp){return;}
+		        var _this = this;
+		        $(_this).popover('show');
+		        $(".popover").on("mouseleave", function () {
+		            $(_this).popover('hide');
+		        });
+		    }).on("mouseleave", function () {
+		    	if(!window.showHelp){return;}
+		        var _this = this;
+		        setTimeout(function () {
+		            if (!$(".popover:hover").length) {
+		                $(_this).popover("hide")
+		            }
+		        }, 100);
+	    });
 	    $(this.target + ' #cartLargeWrapper').css({'min-width' : this.width, 'max-width' : this.width});	
 	    
 	    this.miniSel = this.target + ' div#cartBookmarkWrapper';
@@ -123,8 +146,9 @@ function initCartCtrl (opt) {
 	    $(this.target + ' .cartBody').append(self.defaultCriterionDiv);
 	    
 	    // set Footer
-	    var footerContent = '<button class="btn btn-primary goBut">'
-		+ '<i class="fa fa-search"></i><span>Interactor Search</span></button>';
+	    var footerContent = '<div class="btn-group"><button class="btn btn-primary goBut">'
+		+ '<i class="fa fa-empire"></i><span> Get Interactom</span></button>'
+		+'<button class ="btn btn-danger flush"><i class="fa fa-times-circle"></i><span> Clear</span></button></div>';
 	    
 	    $(this.target + ' .cartFooter').append(footerContent);
 	    $(this.target + ' .cartFooter').addClass('pagination-centered');
@@ -134,7 +158,10 @@ function initCartCtrl (opt) {
 		.on('click', function () {
 			self._togglePanel();
 		    });
-	    $(this.target + ' .cartFooter button').on('click',function(){self.searchTrigger();});	    
+	    $(this.target + ' .cartFooter button.goBut').on('click',function(){self.searchTrigger();});
+	    $(this.target + ' .cartFooter button.flush').on('click',function(){
+	    	self._setDefaultCriterion();
+	    });	    
 	    
 	},
 	notify : function (data) { // glow modification shortcut to add to selection
@@ -187,10 +214,10 @@ function initCartCtrl (opt) {
 		$(this.maxiSel).css({ left : '150px'});
 		
 		this.size = "magnified";
-	//	this._startJsScroll();
+	/*	this._startJsScroll();
 		if (!this.jsScrollApi) this._startJsScroll();
 		else
-		    this.jsScrollApi.reinitialise();					
+		    this.jsScrollApi.reinitialise();*/					
 	    } else {
 		$(this.maxiSel).hide();		
 		$(this.miniSel).show();		
@@ -264,8 +291,8 @@ function initCartCtrl (opt) {
 	    }
 	    if (this.criterionList.length == 0) {
 		$(this.target + ' .cartBody').empty().append('<ul class="fa-ul"></ul>');
-		if (this.size === "magnified")
-		    if (!this.jsScrollApi) this._startJsScroll();
+		/*if (this.size === "magnified")
+		    //if (!this.jsScrollApi) this._startJsScroll();*/
 	    }
 
 	    var string = data.name.replace("Free text search on ", "");
@@ -298,18 +325,19 @@ function initCartCtrl (opt) {
 			var li = $(this).closest("li").each(
 			    function() {
 				self._deleteCriterion(this);
-				self.jsScrollApi.reinitialise();					
+				//self.jsScrollApi.reinitialise();					
 			    }
 			);				
 		    });
-	    if (this.jsScrollApi)
-		this.jsScrollApi.reinitialise();	
+	    //if (this.jsScrollApi)
+		//this.jsScrollApi.reinitialise();	
 	    
 	},
 	close : function () { // hide and set back to default position
 	    
 	},
 	_setDefaultCriterion : function () {
+		this.criterionList = [];
 	    $(this.target + ' .cartBody').empty().append(this.defaultCriterionDiv);
 	},
 	_deleteCriterion : function (liElem) {

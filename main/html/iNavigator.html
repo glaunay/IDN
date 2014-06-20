@@ -4,9 +4,11 @@
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
   <head>
+  	<meta http-equiv="content-type"
+        content="application/xhtml+xml; charset=utf-8"/>
     <link href="dependencies/css/bootstrap.min.css" rel="stylesheet"/>   
     <link href="css/panZoomControler.css" rel="stylesheet"/>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">   
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">   
     <link rel="stylesheet" href="css/tabularNetwork.css"></link>
     <link rel="stylesheet" href="css/navigator.css"></link>
     <link rel="stylesheet" href="css/networkCore.css"></link>
@@ -20,6 +22,8 @@
     <link href="css/barSearch.css" rel="stylesheet"/>
     <link href="css/historyWidget.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css"> 
+      <link href="css/statisticWiget.css" rel="stylesheet"/>
+      <link href="css/monitor.css" rel="stylesheet"/>
 
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
@@ -46,6 +50,8 @@
     <script type="text/javascript" src="js/scheduler.js"></script>
     <script type="text/javascript" src="js/elementInfo.js"></script>  
     <script type="text/javascript" src="js/molecularViewer.js"></script> 
+    <script type="text/javascript" src="js/statisticWiget.js"></script> 
+    <script type="text/javascript" src="js/monitor.js"></script> 
 
     <script type="text/javascript" src="js/barSearch.js"></script> 
     <script type="text/javascript" src="js/navMaestro.js"></script>
@@ -82,7 +88,7 @@
 		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 		  <li><a tabindex="-1" id="snapshot"><i class="fa fa-fw fa-camera"></i>  Take a snapshot</a></li>
 		  <li><a tabindex="-1" href="#" id="cytoscapeOut"><i class="fa fa-fw fa-folder-open"></i>  Export to cytoscape</a></li>
-		  <li><a tabindex="-1" href="#" id="excelOut"><i class="fa fa-fw fa-th-list"></i>  Export as excel</a></li>
+		  <li><a tabindex="-1" href="#" id="excelOut"><i class="fa fa-fw fa-th-list"></i>  Export as tabular</a></li>
 		  <li class="divider"></li>
 		  <li><a tabindex="-1" href="#" id="serializeOut"><i class="fa fa-fw fa-cloud-upload"></i>  Save network</a></li>		
 		  <li><a tabindex="-1" href="#" id="serializeIn"><i class="fa fa-fw fa-rotate-right"></i>  Reload network</a></li>		

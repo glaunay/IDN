@@ -58,6 +58,8 @@ function initNetworkFilter (opt) {
 		
 		draw : function () {
 		    var self = this;	    
+		    var buttonStrict = '<div class = "mdeCheck"><span class = "clickBox">Include MDE <i class="fa checkStrict fa-check-square-o"></i></span>'+
+		    				   '<i class="fa fa-question-circle pull-right fa-2x"></i></div>';
 		    var checkAll = '';
 		    var test = '<ul class="nav nav-tabs">'
 			+'<li class="active"><a href="#expTableDiv" data-toggle="tab">Expression Filter</a></li>'
@@ -66,30 +68,34 @@ function initNetworkFilter (opt) {
   			+'<li><a href="#settings" data-toggle="tab">Settings</a></li>'*/
 			+'</ul>'
 			+'<div class="tab-content">'
-  			+'<div class="tab-pane active" id="expTableDiv"><div class = "dataTableDiv"><div class = "tableExp tableFilter"></div>'
-  			+'<div class = "footerFilter">Tpm filter<input type="text" class="tpm" placeHolder = "number">'
-	    		+'<div class="btn-group">'
-  			+'<button type="button" class="btn btn-success"><i class="fa fa-unlock"></i></button>'
-  			+'<button type="button" class="btn btn-danger openPersDanger"><i class="fa fa-lock"></i></button>'
-			+'</div>'
-	    		+'<button class ="btn btn-primary apply pull-right">Apply</button></div></div></div>'
-  			+'<div class="tab-pane" id="detectionTableDiv"><div class = "dataTableDiv"><div class = "tableDetect tableFilter"></div>'
-  			+'<div class = "footerFilter">'
-	    		+'<div class="btn-group">'
-  			+'<button type="button" class="btn btn-success"><i class="fa fa-unlock"></i></button>'
-  			+'<button type="button" class="btn btn-danger openPersDanger"><i class="fa fa-lock"></i></button>'
-			+'</div>'
-	    		+'<button class ="btn btn-primary apply pull-right">Apply</button></div></div></div>'
+  			+'<div class="tab-pane active" id="expTableDiv">'
+  			
+  			+'<div class = "dataTableDiv"><div class = "tableExp tableFilter">'
+  			+'<div class = "expressionTempMess"> Waiting for data </div><div class = "expressionTempMess">'
+  			+'<i class="fa fa-spinner fa-spin fa-3x"></i></div></div>'
+  			+'<div class = "footerFilter"><div class = "mdePart">'
+  			+ buttonStrict
+  			+'<div class = "tpmLog">Treshold '
+  			+'<input type="text" class="tpm" placeHolder = "0.0"><div class = "jolieDiv operateLabel"> TPM</div></div>'
+	    	+'</div><button class ="btn btn-primary apply pull-right"><i class="fa fa-power-off"></i> Apply</button></div></div></div>'
+  			+'<div class="tab-pane" id="detectionTableDiv">'
+  			
+  			+'<div class = "dataTableDiv"><div class = "tableDetect tableFilter">'
+  			+'<div class = "detectionTempMess"> Waiting for data</div><div class = "detectionTempMess"> <i class="fa fa-spinner fa-spin fa-3x"></i></div></div>'
+  			+'<div class = "footerFilter"><div class = "mdePart">'
+  			+ buttonStrict
+	    		+'</div><button class ="btn btn-primary apply pull-right"><i class="fa fa-power-off"></i> Apply</button></div></div></div>'
  		/*	+'<div class="tab-pane" id="messages">...</div>'
  			+'<div class="tab-pane" id="settings">...</div>'*/
 			+'</div>';
 		    
 		    
 		    var scaffold =  '<div id="loopLargeWrapper">'
-			+ '<div class = "loopNetworkHeader"><span class="closeCall"><i class="fa fa-minus-square-o fa-2x"></i></span></div>'
+			+ '<div class = "loopNetworkHeader"><span class="closeCall"><i class="fa fa-minus-square-o fa-2x"></i></span>'
+			+'<i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>'
 			+ test
 			+ '</div>'		
-			+ '<div id="loopBookmarkWrapper"><i class="fa fa-search fa-4x"></i></div>';		    
+			+ '<div id="loopBookmarkWrapper"><i class="fa fa-filter fa-4x"></i></div>';		    
 		    $(self.target).append(scaffold);
 		    /*Explicit defauklt data load for devel purpose 
 		     self.update(self.data);	  
@@ -98,6 +104,53 @@ function initNetworkFilter (opt) {
 		    $(self.target + ' #myTab a').click(function () {
   							   $(this).tab('show');
 						       });
+			$(this.target + ' i.helpMe').popover({ 
+	    	   html : true,
+	    	   placement : 'right', 
+			   title : 'For advanced usage see our <a target = "_blank" href = "http://youtube.com" >help</a>', 
+			   container : 'body',
+			   trigger : "manual"
+			   })
+			   .on("mouseenter", function () {
+			   	if(!window.showHelp){return;}
+		        var _this = this;
+		        $(_this).popover('show');
+		        $(".popover").on("mouseleave", function () {
+		            $(_this).popover('hide');
+		        });
+		    }).on("mouseleave", function () {
+		    	if(!window.showHelp){return;}
+		        var _this = this;
+		        setTimeout(function () {
+		            if (!$(".popover:hover").length) {
+		                $(_this).popover("hide")
+		            }
+		        }, 100);
+	    });
+	    
+			$(this.target + ' div.mdeCheck i.fa-question-circle').popover({ 
+	    	   html : true,
+	    	   placement : 'top', 
+			   title : '<dl><dt>MDE :</dt><dd>Missing Data Element(s)</dd><dt>TPM</dt><dd>Tanscrit Per Million</dd></dl>', 
+			   container : 'body',
+			   trigger : 'manual',
+			   }).on('mouseenter', function () {
+			   	if(!window.showHelp){return;}
+		        var _this = this;
+		        $(_this).popover('show');
+		        $(".popover").on("mouseleave", function () {
+		           $(_this).popover('hide');
+		        });
+		    }).on("mouseleave", function () {
+		    	if(!window.showHelp){return;}
+		        var _this = this;
+		        setTimeout(function () {
+		            if (!$(".popover:hover").length) {
+		                $(_this).popover("hide")
+		            }
+		        }, 100);
+	    });
+			  
 		    this.miniSel = this.target + ' #loopBookmarkWrapper';
 		    this.maxiSel = this.target + ' #loopLargeWrapper';
 		    var defaultCss = self.computeBookmarkPosition();	 	  
@@ -105,16 +158,16 @@ function initNetworkFilter (opt) {
 		    defaultCss.left = "20%";
 		    defaultCss.top = "30%";
 		    $(this.maxiSel).css(defaultCss);
-		    $(self.target).find('div.footerFilter div.btn-group button')
+		    $(self.target).find('div.footerFilter div.mdeCheck span.clickBox')
 			.click(function(){
-	    			   if($(this).hasClass('btn-success')){
+	    			   if(!self.strict){
 	    			       self.strict = true;
-	    			       $(this).addClass("openPersSuccess");
-	    			       $(self.target).find('div.footerFilter div.btn-group button.btn-danger').removeClass("openPersDanger")
-	    			   }if($(this).hasClass('btn-danger')){
+	    			       $(self.target).find('div.footerFilter div.mdeCheck span.clickBox').find("i.checkStrict").removeClass("fa-check-square-o");
+	    			       $(self.target).find('div.footerFilter div.mdeCheck span.clickBox').find("i.checkStrict").addClass("fa-square-o");
+	    			   }else{
 	    			       self.strict = false;
-	    			       $(this).addClass("openPersDanger");
-	    			       $(self.target).find('div.footerFilter div.btn-group button.btn-success').removeClass("openPersSuccess")
+	    			       $(self.target).find('div.footerFilter div.mdeCheck span.clickBox').find("i.checkStrict").removeClass("fa-square-o")
+	    			       $(self.target).find('div.footerFilter div.mdeCheck span.clickBox').find("i.checkStrict").addClass("fa-check-square-o");
 	    			   }
 	    			   self.onChangeCallback(self.nodeOrLinkFilter,self.strict);
 			       });
@@ -209,7 +262,7 @@ function initNetworkFilter (opt) {
 			var self = this;
 			
 			if(type === "node"){
-			
+				console.dir('pass here')
 				return {
 					hasFilter : self.nodeOrLinkFilter.length > 0 ? true : false,
 					filter : function (nodeData) {
@@ -268,10 +321,14 @@ function initNetworkFilter (opt) {
 			/*call by maestro on any network content change*/
 			var self = this;
 			self.tpm = 0;
+			console.dir('now update')
+			console.dir(data)
 			if(data.type == "expressionLevels"){
+				$(self.target).find("div.expressionTempMess").remove();
 				self._datatableExpressionLevel(data);
 			}
 			if(data.type =="detectionMethod"){
+				$(self.target).find("div.detectionTempMess").remove();
 				self._datatableDetectionMethod(data);
 			}
 				
@@ -315,7 +372,7 @@ function initNetworkFilter (opt) {
      					alert('toto');
      					})*/
      					
-     					//
+     					
  				 		//});
  					 		
 				 	}

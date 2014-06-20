@@ -1,17 +1,10 @@
 #!/usr/bin/perl
-
-=pod Profiling statements
-#!/usr/bin/perl -d:NYTProf
-$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
-=cut
-
 use strict;
 use vars qw/$DB $URL %EQUIV/;
-
 use warnings;
 use diagnostics;
 
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 
 #from CPAN
 use CGI;
@@ -31,8 +24,8 @@ use psimi;
 use mergedAssociation;
 
 
-Log::Log4perl->init("./conf/interactomAce.conf");
-my $logger = get_logger(); 
+Log::Log4perl->init("$ENV{ IDN_CONF }/interactomAce.conf");
+our $logger = get_logger(); 
 
 =pod
   Pure ace based network construction
@@ -44,41 +37,43 @@ my $logger = get_logger();
 
 $logger->info("*** CGI activation at " . common::getTime());
 our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||$logger->error ("Couldn't open database");
-our $nameMutator = biomoleculeMapper->new (template => '../data/biomoleculeMapper.json');
+our $nameMutator = biomoleculeMapper->new (template => "$ENV{ IDN_DATA }/biomoleculeMapper.json");
 
 # retrieving get parameters
 my $query = CGI->new();
 my %params = $query->Vars;
 my $queryData = decode_json($params{'POSTDATA'});
 $logger->info("query content:\n" . Dumper($queryData));
-$logger->info("interactom expansion start");
-
+$logger->trace("[TS]interactomElementExpansionStart");
 my $dataContainer = getKnownData($queryData);
-
 $dataContainer->{ association }->{'addCenter'} = createCritBiomoleculeList($queryData,'addCenter'); 
-
 closeAllNetwork($dataContainer);
+$logger->trace("[TS]interactomElementExpansionDone");
 
 $logger->info("main data container:\n" . Dumper($dataContainer));
 # All new center nodes will have to carry center:true.
-
+$logger->trace("[TS]creatingNetworkObject");
 my $networkObject = networkMapperAce->new (	
-    mappersFileDef => {'UniprotKW' => '../data/upKeywordTree.json', 'nameMutator' => '../data/biomoleculeMapper.json'},
+    mappersFileDef => {
+		       'UniprotKW' => "$ENV{ IDN_DATA }/upKeywordTree.json", 
+		       'nameMutator' => "$ENV{ IDN_DATA }/biomoleculeMapper.json"
+		      },
     mappersSocketDef => {'MI' => '/tmp/miSocket', 'GO' => '/tmp/goSocket' },  
     DB => $DB,
     aceBiomoleculeList => $dataContainer->{ biomolecule }->{ new });
-
-
-my $annotationTemplate = $queryData->{ completeAnnotation } eq "no" ? "../data/nutshellTemplate.json" : "../data/richLinkTemplate.json";
-$logger->info("---->$annotationTemplate");
+$logger->trace("[TS]networkObjectCreated");
+my $annotationTemplate = $queryData->{ completeAnnotation } eq "no" ? "$ENV{ IDN_DATA }/nutshellTemplate.json" : "$ENV{ IDN_DATA }/richLinkTemplate.json";
+$logger->trace("[TS]addingLink");
 $networkObject->addLink( 
     template => $annotationTemplate, aceAssociationList => $dataContainer->{ association }->{ new }
     ); 
-
+$logger->trace("[TS]linkAdded");
+$logger->trace("[TS]addingNodeAttributes");
 $networkObject->addNodeAttributes( nodeAceList => $dataContainer->{ association }->{'addCenter'},
 				   attributes => { central => 1 } ); # 'true'
+$logger->trace("[TS]nodeAttributesAdded");
 
-$logger->trace("NetworkObject Complete" . Dumper ($networkObject));
+#$logger->trace("NetworkObject Complete" . Dumper ($networkObject));
 
 my $jsonObject = $networkObject->getJSON (nodeDataType => 'LOCAL');
 
@@ -90,7 +85,7 @@ print "$jsonObject";
 open TEST, ">/tmp/network.json";
 print TEST "$jsonObject\n";
 close TEST;
-$logger->trace("TIMEprofile:(exit)");     
+$logger->trace("[TS](exit)");     
 
 
 sub JSONaddNewCenter {
@@ -126,7 +121,7 @@ sub closeAllNetwork {
     $DB->raw_query("sor");
     $DB->raw_query("spop");
     $DB->raw_query("kstore newCenter");
-    my @biomoleculeNewCenter = $DB->fetch(-query=>'Type');
+    my @biomoleculeNewCenter = $DB->fetch(-query=>'CLASS biomolecule');
     $dataContainer->{ biomolecule }->{'newCenter'} = \@biomoleculeNewCenter;
     
     my $closedNetwork = makeClosure('newCenter', 'all');
@@ -192,7 +187,6 @@ sub getKnownData {
     $DB->raw_query("kstore oldAllNodes");
     my @biomolecule = $DB->fetch(-query=>'Type');
     
-      
     my $data = makeClosure ('oldCenterNodes', 'old');
 
     $logger->trace("dim:: previous network selection assoc " . scalar(@{ $data->{ association } }) .
@@ -270,10 +264,10 @@ sub makeClosure {
     $DB->raw_query('spop');
     $DB->raw_query("kstore ${prefix}Aclose");
     
-    my @associationObjects = $DB->fetch(-query=>'Kind');
+    my @associationObjects = $DB->fetch(-query=>'CLASS Association');
     
     $DB->raw_query("kget ${prefix}B1");
-    my @biomoleculeObjects = $DB->fetch(-query=>'Type');
+    my @biomoleculeObjects = $DB->fetch(-query=>'CLASS Biomolecule where Association');
 
     return { association => \@associationObjects,
 	     biomolecule => \@biomoleculeObjects
@@ -299,18 +293,21 @@ sub createCritBiomoleculeList {
 	    $DB->raw_query("find biomolecule $name");
 	    $DB->raw_query("$sAct");
 	} elsif($crit->{ type } eq "publication") {
-	    $DB->raw_query("find publication $crit->{ name }");
-	    $DB->raw_query("follow association");
-	    $DB->raw_query("follow biomolecule");	    
-	    $DB->raw_query("$sAct");	   
+	  $DB->raw_query("find publication $crit->{ name }");
+	  $DB->raw_query("follow association");
+	  $DB->raw_query("follow biomolecule");	    
+	  $DB->raw_query("$sAct");	   
+	} elsif($crit->{ type } eq "keyword") {
+	  $DB->raw_query("find Keywrd $crit->{ name }");
+	  $DB->raw_query("follow biomolecule");
+	  $DB->raw_query("$sAct");
 	}
-	
 	$first = 0;
     }
 
     $DB->raw_query("spop");
     $DB->raw_query("kstore $kname");
-    my @obj = $DB->fetch(-query=>'Type');
+    my @obj = $DB->fetch(-query=>'CLASS biomolecule');
     $logger->trace("dim:: crit based biomolecule selection" . scalar(@obj));
     $logger->trace(Dumper(@obj) );
 

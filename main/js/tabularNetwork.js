@@ -52,12 +52,14 @@ function tabularInit (opt) {
 	getTabularSelector : function () {
 	    return this.maxiSel;
 	},
-	draw : function () {
+	draw : function (opt) {
 	    var self = this;
 	    $(this.target).append('<div id="tabularLargeWrapper"></div>'
 				  + '<div id="tabularBookmarkWrapper"><i class="fa fa-list-alt fa-4x"></i></div>');
 	    var headerHtml = '<div class="tabularNetworkHeader">'
-		+ '<i class="fa fa-minus-square-o fa-3x pull-left"></i><button id="nodeLabelToggler" type="button" class="btn btn-info" data-toggle="button">Toogle node labels</button></div>';
+		+ '<i class="fa fa-minus-square-o fa-3x pull-left"></i>'+
+		'<button id="nodeLabelToggler" type="button" class="btn btn-info" data-toggle="button">Toogle node labels</button>'+
+		'<i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>';
 	    
 	    $(this.target + ' div#tabularLargeWrapper').append(headerHtml);
 	    /* LABEL TOGGLER*/
@@ -115,15 +117,15 @@ function tabularInit (opt) {
 		+ '<div class="tabularNetworkBodyContent">'
     		+ '<div class="tabularNetworkBodyNodeTable">'
 		+ '<table class="table table-stripped"><thead>'
-		+ '<th id="checkAll"><i class="fa fa-square-o fa-large"></i></th>'
-		+ '<th>Identifier</th>' 
-		+ '<th>Common name</th>'	
-		+ '<th><i class="fa fa-group"></i></th>' 
+		+ '<th id="checkAll"><i class="fa fa-square-o fa-large"  style="text-align:center; width:100%"></i></th>'
+		+ '<th style="font-size:1.25em;" >Identifier</th>' 
+		+ '<th style="font-size:1.25em;">Common name</th>'	
+		+ '<th><i class="fa fa-group fa-large"></i></th>' 
 		+ '</thead>'    
 		+ '<tbody></tbody></table>'
 		+ '</div>'
 		+ '<div class="tabularNetworkBodyLinkTable" style="display:none">'
-		+ '<table class="table table-stripped"><thead><th>type</th><th>partner "A"</th><th>partner "B"</th><th>Data</th></thead>'
+		+ '<table class="table table-stripped"><thead><th>Type</th><th>Partner "A"</th><th>Partner "B"</th><th>Data</th></thead>'
 		+ '<tbody></tbody></table>'
 		+ '</div></div></div>'
 		+ '<div class="tabularNetworkFooter">'
@@ -133,31 +135,105 @@ function tabularInit (opt) {
 	     //   + '<div class="span12">Operate on Selection</div>'
 	//	+ '<div class="span4">'
 		+ '<div class="btn-group">'
-		+ '<button class="btn btnCart" type="button">'
-		+ '<i class="fa fa-shopping-cart fa-lg"></i>'
-		+ '</button>' //<span style="margin-left:5px">Add to Cart</span>
+
 	     //   + '</div>'
 	//	+ '<div class="span4">'
-		+ '<button class="btn btnDel" type="button">'
-		+ '<i class="fa fa-minus-circle fa-lg"></i>'
+		+ '<button class="btn btnInv" type="button">'
+		+ '<i class="fa fa-adjust fa-lg"></i>'
 		+ '</button>' //<span style="margin-left:5px">Delete</span>
 	//	+ '</div>'
 	//        + '<div class="span3">'
 		+ '<button class="btn btnHide" type="button">'
-	        + '<i class="fa fa-eye-slash fa-lg"></i>'
+	        + '<i class="fa fa-eraser fa-lg"></i>'
+		+ '</button>' //<span style="margin-left:5px">Hide</span>
+		+ '<button class="btn btnShow" type="button">'
+	        + '<i class="fa fa-eye fa-lg"></i>'
 		+ '</button>' //<span style="margin-left:5px">Hide</span>
 	//	+ '</div>'
+		+ '<button class="btn btnCart" type="button">'
+		+ '<i class="fa fa-shopping-cart fa-lg"></i>'
+		+ '</button>' //<span style="margin-left:5px">Add to Cart</span>
 		+ '</div>'
 		+ '</div>'
 		+ '</div>';
 	    $(this.target + ' div#tabularLargeWrapper').append(bodyHtml);
-	    $(this.target + ' button.btnDel')
-		.tooltip({placement:'bottom', title:'Delete the current node selection from network', container : 'body'});
-	     $(this.target + ' button.btnHide')
-		.tooltip({placement:'bottom', title:'Hide the current node selection from network', container : 'body'});
-	    $(this.target + ' button.btnCart')
-		.tooltip({placement:'bottom', title:'Add the current node selection to the cart', container : 'body'});
+	    $(this.target + ' i.helpMe').popover({ 
+	    	   html : true,
+	    	   placement : 'right', 
+			   title : 'For advanced usage see our <a target = "_blank" href = "http://youtube.com" >help</a>', 
+			   container : 'body',
+			   trigger : "manual"
+			   })
+			   .on("mouseenter", function () {
+			   	if(!window.showHelp){return;}
+		        var _this = this;
+		        $(_this).popover('show');
+		        $(".popover").on("mouseleave", function () {
+		            $(_this).popover('hide');
+		        });
+		    }).on("mouseleave", function () {
+		    	if(!window.showHelp){return;}
+		        var _this = this;
+		        setTimeout(function () {
+		            if (!$(".popover:hover").length) {
+		                $(_this).popover("hide")
+		            }
+		        }, 100);
+	    });
+	    $(this.target + ' button.btnInv')
+		.tooltip({placement:'bottom', title:'Inverse current node selection', container : 'body'})
+		.on('click', function(){
+			var nodeTable = $(self.maxiSel + ' .tabularNetworkBodyNodeTable');
+			$(nodeTable).find('tbody tr').each(function () {
+							       self._tickToggle(this);
+							   });
+			alert('CLICK');
+			var data = self._getTickedNodes();		 // All is set as clicked seems so
+			var nodeList = data.map(function(elem, i, array){
+						    return elem.extID;
+						});	
+			console.dir(nodeList);
+			$(self.target).trigger("tickToggle", { nodeNameList : nodeList });		
+		    });
 	    
+	     $(this.target + ' button.btnHide')
+		.tooltip({ placement : 'bottom', 
+			   title : 'Hide the current node selection from network', 
+			   container : 'body'})
+		.on('click', function(){
+			var data = self._getTickedNodes();
+			console.log(data);
+			var nodeList = data.map(function(elem, i, array){
+						    return elem.extID;
+						});
+			$(self.target).trigger('nodeHideTabularAction', { nodeNameList : nodeList });
+		    });
+	     $(this.target + ' button.btnShow')
+		.tooltip({ placement : 'bottom', 
+			   title : 'Show the current node selection', 
+			   container : 'body'})
+		.on('click', function(){
+			var data = self._getTickedNodes();
+			console.log(data);
+			var nodeList = data.map(function(elem, i, array){
+						    return elem.extID;
+						});
+			$(self.target).trigger('nodeShowTabularAction', { nodeNameList : nodeList });
+		    });
+	    $(this.target + ' button.btnCart')
+		.tooltip({placement:'bottom', title:'Add the current node selection to the cart', container : 'body'})
+		.on('click', function(){
+			var t_nodes = self._getTickedNodes();
+			var array =  t_nodes.map(function(elem, i, array){
+						    return {
+							type : "biomolecule",
+							name : elem.extID
+						    };
+						});
+			
+			console.dir(array);
+			self.callback.addCriterion(array);
+		    });
 
             $(this.maxiSel).css({'min-width' : this.width, 'max-width' : this.width});    
     	    
@@ -217,10 +293,18 @@ function tabularInit (opt) {
 			var setState = $(this).find('i').first().hasClass('fa-check-square-o') ? 'uncheck' : 'check';
 			console.log("------>ClickAll, setting to " + setState);
 			
-			$(nodeTable).find('tr').each(function () {
+			$(nodeTable).find('tbody tr').each(function () {
 							 self._tickToggle(this, {setTo : setState});
 						     });			    
 			$(this).find('i').toggleClass('fa fa-check-square-o').toggleClass('fa fa-square-o');			
+
+
+			//var data = [];
+			var data = self._getTickedNodes();		
+			var nodeList = data.map(function(elem, i, array){
+						    return elem.extID;
+						});
+			$(self.target).trigger("tickToggle", {  nodeNameList : nodeList });			
 		    })
 		.on('mouseover', function() { 
 		//	$(this).toggleClass('fa-large').toggleClass('fa-2x');
@@ -231,6 +315,11 @@ function tabularInit (opt) {
 	    
 	    if (this.size === "magnified")
 		this._toggleToNodeTab();  
+
+	    if (opt) {
+		if (opt.tooltipContent)
+		    $(this.miniSel).tooltip(opt.tooltipContent);
+	    }
 
 //	    console.log("tabular component drawn");
 	},
@@ -294,15 +383,16 @@ function tabularInit (opt) {
 	tickNeighbourNodes : function (nodeName){
 	    var self = this;	    
 	    if (!this.nodeDT) {
-		return; 
+		return []; 
 	    }	
 	    /* Call internal to component */
 	    var list = self._getNeighbourNodes(nodeName);
 	    list.forEach(function(name){
 			     self._tickToggle(name, {setTo : 'check'});			     
-			 });	    	    
+			 });
+	    return list;
 	},
-	tickNodes : function (data) {
+	tickNodes : function (data) { // External CALL!!
 	    var self = this;	    
 	    if (!this.nodeDT) {
 		return; 
@@ -312,8 +402,6 @@ function tabularInit (opt) {
 	    // we could store the tickstatus in nodeRawData
 	    
 	    var setState = data.setToGlow ? 'check' : 'uncheck';
-	    
-	 
 	    
 	    /* Empty datum list means all network*/
 	    if (data.data.length == 0) {	
@@ -348,12 +436,10 @@ function tabularInit (opt) {
 	    } 
 	    if (!iconElement) { 
 		console.log("input element does not allow for tick assignement");
-		console.dir(element);		
+		console.log(element);		
 		return;
 	    }
-	    //console.dir(iconElement);
-	    //console.dir(opt);
-	    
+	
 	    // opt-Force tick state
 	    if (opt) {
 		if(opt.hasOwnProperty('setTo')) {
@@ -369,15 +455,16 @@ function tabularInit (opt) {
 	    }
 	    
 	    // classic toggling
-	    $(iconElement).toggleClass('fa fa-check-empty').toggleClass('fa fa-check');
+	    $(iconElement).toggleClass('fa fa-square-o').toggleClass('fa fa-check-square-o');
 	    
+
 	    return;
 	},
 	_getTickedNodes : function (opt) { //    {type: "biomolecule", name: "P98063"};
 	    var self = this;
 	    var tArray = [];
 
-	    $(self.maxiSel + ' .tabularNetworkBodyContent td i.fa.fa-check')
+	    $(self.maxiSel + ' .tabularNetworkBodyContent td i.fa.fa-check-square-o')
 		.each(function () {
 			  $(this).parents('tr')
 			      .each(function(){
@@ -523,7 +610,8 @@ function tabularInit (opt) {
 		//    return '<span href="#" rel="tooltip" title="' + nodeData[i].biofunc +   '" data-placement="left" data-container="body">' + nodeData[i].biofunc + '</span>'; }() : " ";
 //		var centrality = nodeData[i].betweenness;	
 		var neighbourhoodList = self._getNeighbourNodes(nodeData[i].name);	
-		self.nodeTableData.push(['<i class="fa fa-square-o fa-large" style="text-align:center; width:100%"></i>', name, common, neighbourhoodList.length - 1]);			
+		var tmp = neighbourhoodList.length - 1 > 0 ? neighbourhoodList.length - 1 : 0;
+		self.nodeTableData.push(['<i class="fa fa-square-o fa-large" style="text-align:center; width:100%"></i>', name, common, '<a style="cursor:pointer;font-size:1.1em;">' + tmp.toString() + '</a>']);			
 	    }	  	   	   
         },
 	unFocus : function () {	 
@@ -599,8 +687,7 @@ function tabularInit (opt) {
 					       var nodeName = $(this).find('td:nth-child(2) a').text();
 					       $(this).attr('extID', nodeName);
 					       $(this)
-						   .on('mouseenter',function (event){								   
-							   console.log("you enter " + nodeName);								    
+						   .on('mouseenter',function (event){
 							   $(self.target).trigger('nodeRowMouseOver', {name : nodeName}); 					   
 						       });
 					       
@@ -618,16 +705,19 @@ function tabularInit (opt) {
 								      $(self.target).trigger('neighbourhoodCellMouseOver', {name : nodeName}); 
 								  });
 						       var Sparent = $(this).get()[0];	
-						       //console.dir(parent);
 						       Sparent
 							   .addEventListener('mouseout',
 									     makeMouseOutFn(Sparent, function(){
-												console.log("CUSTOM MOUSE OUT OF CELL with name-->" + nodeName);
 												$(self.target).trigger('neighbourhoodCellMouseOut', {name : nodeName});
 											    }),true);
 						  }).on('click', function(){
-							    console.log('------>' + nodeName);
-							    self.tickNeighbourNodes(nodeName);
+						//	    console.log('------>' + nodeName);
+							    var nodeList = self.tickNeighbourNodes(nodeName);
+/*							    var data = self._getTickedNodes();		
+			var nodeList = data.map(function(elem, i, array){
+						    return elem.extID;
+						});*/
+			$(self.target).trigger("tickToggle", {  nodeNameList : nodeList });
 							});
 					   });
 			       }
@@ -639,13 +729,12 @@ function tabularInit (opt) {
 		.on('click', function (){
 			var setStatus = $(this).hasClass('fa fa-square-o') 
 			    ? 'check' : 'uncheck';
-			console.log("A CLICKK --> " + setStatus);
-			console.dir(this);
-			//self._tickToggle(this);
-	//		if($(this).hasClass('fa fa-check-empty') ) {
-			//    var mainIcon = $(self.target + ' .tabularNetworkBodyNodeTable th i')[0];
 			self._tickToggle(this, { setTo : setStatus });
-		//	}
+			var data = self._getTickedNodes();		
+			var nodeList = data.map(function(elem, i, array){
+						    return elem.extID;
+						});
+			$(self.target).trigger("tickToggle", { nodeNameList : nodeList });
 		    });	    
 	},	
 	clearDataTables : function () {	    
@@ -733,7 +822,7 @@ function tabularInit (opt) {
 	    var self = this;
 	    var linkData = data.linksData;
 	    for (var i = 0; i < linkData.length; i++) {
-		console.log("Creating link");
+		//console.log("Creating link");
 		self._processLinkDatum (linkData[i]);		
             }		    	  
 	},
@@ -745,7 +834,7 @@ function tabularInit (opt) {
 
 	    var sNode = linkDatum.source,
 	    tNode = linkDatum.target;
-	    console.log("Touching link");
+//	    console.log("Touching link");
 	    this._processLinkDatum(linkDatum);
 	    if(this.linkDT) {	
 		var target = tNode.name.replace(":", "\\:"),
@@ -805,7 +894,7 @@ function tabularInit (opt) {
 	 */
 	    /* Referencing the link */
 	    var linkStringID = linkDatum.source.name + '--' +  linkDatum.target.name;
-	    console.log(linkStringID);
+	//    console.log(linkStringID);
 	    if (! this.linkRawData[linkStringID]) {   // then we may have to fnAddData instead of redraw ?
 		this.linkRawData[linkStringID] = linkDatum;		
 		this.linkTableData.push([]);  
@@ -872,11 +961,7 @@ function tabularInit (opt) {
 		    return;
 		}
 	    }
-	//    console.log("<>" + selector);
-//	    $(selector).addClass("rowFocus");
 	    var scrollTo = $(selector);
-	    
-	    console.log("<><>");
 	    $(scroller)
 		.animate({
 			     scrollTop: scrollTo.offset().top - scroller.offset().top + scroller.scrollTop()},

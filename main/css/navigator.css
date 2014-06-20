@@ -15,6 +15,9 @@ div#vizContainer {
     cursor : pointer;
 }
 
+
+/* LOAD SAVE NETWORK DIALOG BOX */
+/* error/success popup */
 .cacheInOk {
     border-radius: 10px 10px 10px 10px;
     z-Index : 9999999;
@@ -23,24 +26,58 @@ div#vizContainer {
     background-color : rgba(255,255,255,1);
     padding : 10px 20px 15px 25px;
 }
-
+/* success popup specific*/
 .cacheInOk-header {
-    color : rgba(0,100,0,1);
+    color : rgba(0, 100, 0, 1);
     font-size : 4em;
     text-align:center;
 }
-
 .cacheInOk-header span {
     font-size: 0.33em;  
 }
+.cacheInOk-header i.fa-times-circle {
+    font-size: 0.6em;  
+    color:#777777;
+    cursor : pointer;
+}
+/* Error popup specific */
+.cacheInError {
+    border-radius: 10px 10px 10px 10px;
+    z-Index : 9999999;
+    position : absolute;
+    border : solid 2px #777777;
+    background-color : rgba(255,255,255,1);
+    padding : 10px 20px 15px 25px;
+}
 
-.cacheInOk-header .icon-remove-circle {
+.cacheInError-header {
+    color : rgba(255,0,0, 0.7);
+    font-size : 4em;
+    text-align:center;
+}
+.cacheInError-header span {
+    font-size: 0.66em;  
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.cacheInError-header i.fa-times-circle {
     font-size: 0.6em;  
     color:#777777;
     cursor : pointer;
 }
 
-.cacheInOk-footer {
+.cacheInError-body {
+    min-width : 150px;
+    font-size : 3.5em;
+    text-align:center;
+    font-weight : 100;
+    min-height: 0.75em;
+    border-top: 1px solid;
+    padding: 25px 5px 5px 5px;
+    margin-top: 5px;
+}
+.cacheInOk-footer.cacheInError-footer {
     padding-top:10px;
     color:#777777;
     font-weight : 400;
@@ -91,7 +128,9 @@ div#vizContainer {
 }
 
 #navbarTop {
-    margin-bottom : 5px;    
+    margin-bottom : 5px;
+    position: relative;
+    z-index: 1000;    
 }
 
 #unitySearchBar {
@@ -167,4 +206,33 @@ div#vizContainer {
     border: 1px solid #3079ed;
     color: #fff;    
 }
+#showHelp i{
+	width: 15px;
+}
+#showHelp{
+	
+	padding-top: 10px;
+	cursor: pointer;
+	padding-bottom: 10px;
+	height: 100%;
+	border-right: solid 1px #C6C6C6;
+	float: left;
+	margin-right: 10px;
+	padding-right: 10px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 200;
+	color: #777;
+	text-shadow: 0 1px 0 #fff;
+	width: 90px;
 
+}
+.linkToHelp a{
+	float: left;
+	padding-top: 10px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 200;
+	color: #777;
+	text-shadow: 0 1px 0 #fff;
+	text-decoration: underline;
+	
+}

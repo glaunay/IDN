@@ -132,7 +132,14 @@ function initCart (options){
 		draw : function(){// dessine le composant cart
 			var self = this ;
 			$(self.targetDomElem).find('div.cartDraw').remove();//ligne du dessous a la fin rajouter le link ver le constructeur
-			$(self.targetDomElem).append('<div class = "cartDraw"><div class = "clearDiv "><a class ="drop cog" data-toggle="dropdown "><i class="fa fa-cog  fa-2x"></i></a><ul class="dropdown-menu liste"><li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li><li class = "liCart"><a class = "leftalign linkToNetwork" target = "_blank"><i class="fa fa-gavel"></i> Build items interactions network</a></li><li class="divider"></li><li class="liCart"><a class = "leftalign"><i class ="fa fa-question"></i> Help</a></li></ul></div><div class = "leftThing"><div class = "ico"><div id= "pastille" >' + self.data.length + '</div></div><div class = "drop "> <a class ="drop" data-toggle="dropdown "><i class="fa fa-shopping-cart fa-2x icon-white dropArrow"></i></a><ul class="dropdown-menu liste "></ul></div></div></div>');
+			$(self.targetDomElem).append('<div class = "cartDraw"><div class = "clearDiv "><a class ="drop cog" data-toggle="dropdown ">'+
+										 '<i class="fa fa-cog  fa-2x"></i></a><ul class="dropdown-menu liste">'+
+										 '<li class = "liCart"><a class = "leftalign linkToNetwork" target = "_blank"><i class="fa fa-gavel"></i> Build items interactions network</a></li>'+
+										 '<li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li>'+
+										 '<li class="divider"></li><li class="liCart"><a class = "leftalign"><i class ="fa fa-question"></i> Help</a></li></ul></div>'+
+										 '<div class = "leftThing"><div class = "ico"><div id= "pastille" >' + self.data.length + '</div></div><div class = "drop ">'+
+										 ' <a class ="drop" data-toggle="dropdown "><i class="fa fa-shopping-cart fa-2x icon-white dropArrow"></i></a>'+
+										 '<ul class="dropdown-menu liste "></ul></div></div></div>');
 			self._refreshCount(true)	
 			self._hrefNetWork()
 			self._ajoutListe(self.data);

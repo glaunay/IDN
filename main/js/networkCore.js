@@ -34,7 +34,22 @@ function coreInit (opt) {
 	expressionTag : {},	
 	expresionTagLess : [],
 	detectionMethod : {},
-	detectionMethodLess : [],	
+	detectionMethodLess : [],
+	status : "fetching",//or "complete"	
+	getStatus : function () {	    
+	    return this.status;
+	},
+	setStatus : function (state) {
+	    if (!state){	      	  
+		this.status = this.status === "fetching" ? "complete" : "complete";
+	    } else {
+		if (state !== "fetching" && state !== "complete"){
+		    alert ("Wrong status at \"" + state + "\"");
+		}
+		this.status = state;
+	    }
+	    return this.status;
+	},
 	draw : function () {
 	    
 	    this.width = $(window).width() * 0.95,
@@ -108,12 +123,26 @@ function coreInit (opt) {
 	    d3.select(link) //.style('stroke', "yellow")
 		.style("stroke-dasharray", null)
 		.style('stroke-width','3px').each(function(d){
-						      self._storeNodeStyle(this); // IMPORTANT
+						      self._storeElementStyle(this); // IMPORTANT
 						  });
 	},
+	activateNode : function (d) {
+	    /*	    var self = this;
+	     var node = this.nodeToSvg[d.name];
+	     d3.select(node)
+	     .style('stroke', "yellow")
+	     .each(function(d){
+	     self._storeElementStyle(this); // IMPORTANT
+	     });
+	     */
+	},
 	bubbleNodeClear : function () {
+		var temp = vizObject.core.force.nodes();
+		for (var node=0; node < temp.length; node++) {
+		  this.bubbleNode(temp[node],"stop");
+		};
 	    this.bubblingNodes = [];
-	    //console.log("clearing All");
+	    console.log("clearing All");
 	},
 	_bubbleCycleStep : function (node, animationSettings) {
 	    var nodeName;
@@ -124,11 +153,14 @@ function coreInit (opt) {
 		console.dir(node);
 		return;
 	    }
+	    //console.dir(d);
 	    var specLow = this.shapeCreator[d.type](node, "regular", "getShapeSpecs");
 	    var specBig = this.shapeCreator[d.type](node, "glowy", "getShapeSpecs");
 
 	  /*  d3.select(node).transition().attr('r', animationSettings.rmax).duration(250);
 	    d3.select(node).transition().attr('r', animationSettings.rmin).delay(250);*/
+	    
+//	    console.dir(specBig);
 	    
 	    d3.select(node).transition().attr('d', d3.svg.symbol()
 					      .size(specBig.size)
@@ -172,6 +204,59 @@ function coreInit (opt) {
 		}	 
 	    }
 	},
+	bubbleSearchedNodes : function(string, type){
+		var self = this;
+	    if (type === "start") {
+			console.log("bubbling node digger");
+			var regexp = new RegExp(string,"i");
+			console.dir(regexp);
+			var tableOfSearch = [];
+			self.hotNodes = [];		
+			var nodesForce = self.force.nodes();
+			var nodeFound = [];
+			
+			nodesForce.forEach(function (node) {
+				
+				    tableOfSearch = getPropByKey(node,"common.anyNames");
+				    var temp = getPropByKey(node, "aceAccessor");
+				    
+				    if(temp){tableOfSearch.push(temp);};
+				    var temp2 = getPropByKey(node, "name");
+				    if(temp2){tableOfSearch.push(temp2);};
+					
+					if(!self._searchString(regexp,tableOfSearch)){return;}
+					nodeFound.push(node);
+					var svg =  self.nodeToSvg[node.name];
+					if (svg) {
+						 self.hotNodes.push(svg);
+						 console.log('search in network =>' + node.name)
+						 self.bubbleNode ({name : node.name, rFactor : 2.5, 
+								   style : {'stroke-width' : '5px', stroke : 'orange', fill : 'red'} 
+								  },'start');
+					     }
+					 
+			});
+			return nodeFound;
+	    } else {
+		
+		self.hotNodes.forEach(function(node) {
+					  console.log("stopping hot node");
+					//  console.dir(node);
+					  var nodeName;
+					  d3.select(node).each(function(d){nodeName = d.name;});
+					  self.bubbleNode ({name : nodeName}, "stop");
+				      });
+		self.hotNodes = [];
+	    }
+	},
+	_searchString : function(regexp,tableOfObject){
+		for (var name=0; name < tableOfObject.length; name++) {
+		  if(regexp.test(tableOfObject[name])){
+		  	return true;
+		  }
+		};
+		return false;
+	},
 	bubbleCriterionNodes : function (data, type) {
 	    var self = this;
 	    if (type === "start") {
@@ -206,7 +291,6 @@ function coreInit (opt) {
 	},
 	_getNeighbourhood : function (nodeName) {
 	    var list = [];
-	    console.log('-->' + nodeName);
 	    this.nodeToLinks[nodeName].forEach(function(elem){
 						   var link = elem.linkRef;
 						   var item = elem.role === "source" 
@@ -218,11 +302,8 @@ function coreInit (opt) {
 	},
 	bubbleNodeNeighbourhood : function (data, type) {
 	    var self = this;
-	    console.log("this is bubbleNodes " + type);
-	    console.dir(data);
 	    if (!data.hasOwnProperty('name')) return;
 	    var list = this._getNeighbourhood(data.name);
-	    console.dir(list);
 	    list.forEach(function(nodeName){
 			     self.bubbleNode({name : nodeName}, type);     
 			 });
@@ -230,11 +311,8 @@ function coreInit (opt) {
 	bubbleNode : function (data, type) {	  
 	    var self = this;
 	    var node;
-	    //console.dir(data);
 	    if (data.hasOwnProperty('name'))
 		node = this.nodeToSvg[data.name];
-//	    console.log("node to bubble " + type + "  is");
-//	    console.dir(node);
 	    if (type === 'start') {			    	    
 		var rmin, rmax, nodeName;	    
 		d3.select(node)
@@ -251,16 +329,20 @@ function coreInit (opt) {
 			      if (data.hasOwnProperty('rFactor'))
 				  rmax = rmin * data.rFactor;
 			      if (data.hasOwnProperty('style')) {
+			      	
 				  d3.select(this)
 				      .style('stroke', function() {
-						 if (data.style.stroke)
-						     return data.style.stroke;								       
+						 if (data.style.stroke){
+						     return data.style.stroke;	
+						 }							
 						 return  d3.select(this).style('stroke');
 					     })
 				      .style('fill', function() {
-						 if (data.style.fill)
-						     return data.style.fill;								       
+						 if (data.style.fill){
+						     return data.style.fill;
+						  }
 						 return  d3.select(this).style('fill');
+						 
 					     })
 				      .style('stroke-width', function() {
 						 if (data.style['stroke-width'])
@@ -271,14 +353,15 @@ function coreInit (opt) {
 			      
 			  });
 		    
-/*		console.log('Adding bubbling effect to '+ nodeName +
-			    ' boundary a current animation step ' + rmin + ' ' + rmax);	    */
+		//console.log('Adding bubbling effect to '+ nodeName +
+			//    ' boundary a current animation step ' + rmin + ' ' + rmax);	    
 		var bubbleLoopStamp = setInterval(function() {
 						      self._bubbleCycleStep(node,{ rmax : rmax, rmin : rmin});
 						  }, 550);	    
 		self.bubblingNodes.push({name : nodeName, stamp : bubbleLoopStamp});
 	    } else if(type === 'stop') {
 		self._bubbleCycleStop(node);
+		d3.select(node).each(function(d){ if (d.glow) self._glowToggle([this],{ type : "forced" });});
 	    }
 	    
 	},
@@ -303,15 +386,20 @@ function coreInit (opt) {
 	_setExpressionTag : function () {
 	    this.expressionTag = {};
 	    this.expressionTagLess = [];
-	    
 	    var nodes = this.force.nodes();
 	    for (var iNode = 0; iNode < nodes.length; iNode++) {
 		var node = nodes[iNode];
-		var eData = getPropByKey(node, "location.expressionLevels.data");
+		var eData=false
+		if(node.location.expressionLevels &&node.location.expressionLevels.data){
+			//console.dir('new Data')
+			var eData = getPropByKey(node, "location.expressionLevels.data");
+		};
+		//console.dir(node);
 		if(!eData) {
 		    this.expressionTagLess.push(node);
 		    continue;
 		}
+		
 		for (var key in eData.data) {
 		    for (var iTag = 0; iTag < eData.data[key].length; iTag++) {
 			var cTag = eData.data[key][iTag][2];
@@ -324,6 +412,9 @@ function coreInit (opt) {
 		    }
 		}
 	    }
+	},
+	dispatchNodeData : function () {
+		this._comExpressionTagDistribution();
 	},
 	dispatchLinkData : function () {
 	    this._setLinkData();
@@ -366,24 +457,22 @@ function coreInit (opt) {
 		});
 	},
 	_comExpressionTagDistribution : function () {
-	    //   if (isEmpty(this.expressionTag)) {
 	    
 	    this._setExpressionTag();
-	    //   }
-	    var filterComponent = this._getFilterCom();
-
+	    var filterComponent = this._getFilterCom();		
 	    if(!filterComponent) {
 		console.log("No filter component registred for com");
 		return;
 	    }
-	    var data = {};	    
+	    var data = {};	
+	    //console.dir(this.expressionTag)  ;  
 	    for (var tag in this.expressionTag) {
 		data[tag] = this.expressionTag[tag].length;
 	    }
-	    console.dir(data);
+	    //console.dir(data);
  	    filterComponent.update({type : "expressionLevels", data : data, action : "init"});	    
 	},
-	_storeNodeStyle : function (node) {
+	_storeElementStyle : function (node) {
 	    var styleAttr = ['stroke', 'stroke-width', 'fill', 'r'];
 	    d3.select(node).each(
 		function(d) {
@@ -416,12 +505,15 @@ function coreInit (opt) {
 	applyFilter : function () {
 	    d3.selectAll('.node')
 		.style('visibility', function(d) {					    
+			   if (d.manualHide) return "hidden";
 			   return d.nearVanish === "yes" ? "hidden" : "visible";
 		       })
 		.style(function(d){ return d.previousStyleZ; });
 
 	    d3.selectAll('.link')
-		.style('visibility', function(d) {					    
+		.style('visibility', function(d) {
+			   if (d.source.manualHide || d.target.manualHide) return "hidden";
+					    
 			   if (d.source.nearVanish === "yes" || 
 			       d.target.nearVanish === "yes" || d.nearVanish === "yes") {
 			       return "hidden";
@@ -432,40 +524,54 @@ function coreInit (opt) {
 	    
 	
 	},
+	// Hide Show node(s) and their related link(s)
+	nodeVisibilityToggle : function (data, visibility) {
+	    var self = this;
+	    console.dir(data);
+	    if (data.nodeNames) {
+		data.nodeNames.forEach(function(name){
+					   var nSvg = self.nodeToSvg[name];
+					   if (!nSvg) return;					   
+					   d3.select(nSvg)
+					       .style("visibility", visibility)
+					       .each(function(d){d.manualHide = visibility === "hidden" ? true : false;});
+					   var test = d3.select(nSvg).style("visibility");
+					   
+				       });
+		data.nodeNames
+		    .forEach(function(name){
+				 self.nodeToLinks[name]
+				     .forEach(function(obj){
+						  var linkName =  obj.linkRef.source.name 
+						      + "--"
+						      + obj.linkRef.target.name;
+						  var lSvg = self.linkToSvg[linkName];
+						  if (!lSvg) return;						  
+						  d3.select(lSvg)
+						      .style("visibility", function (d){								 
+								 var sNode = self.nodeToSvg[d.source.name];
+								 var tNode = self.nodeToSvg[d.target.name];
+								 if (d3.select(sNode).style("visibility") === "hidden") return "hidden";
+								 if (d3.select(tNode).style("visibility") === "hidden") return "hidden";
+								 return "visible";
+							     });
+					      });
+			     });
+		
+	    } else if (data.nodes) {
+	  // ????	
+	    }	    
+	},	
 	add : function (datum, options) { /* add node(s) to a empty/not-empty graph 
 					    options for later development needs
 					   */
-// var nodeFilterRobot = this.targetCom.hasOwnProperty('filter') ? this.targetCom['filter'].getActive('node') 
-// : null;
-	    
-//	    nodeFilterRobot.filter();
-
-	    console.log("Network Data Add routine !!!!!!!!!!!");
-	    
+	    $(this.target).trigger('startMonitor', { nodes : datum.nodeData.length,
+						     links : datum.linksData.length });
 	    var nodes = this.force.nodes(),
 	    links = this.force.links();
-	/*freeze all previous*/
+	    /*freeze all previous*/
 	    this.svg.selectAll(".node").each (function (d){d.fixed = true;});
-	    //	    if(!nodeFilterRobot.hasFilter) {
-	    // map 'vizible' /yes/no/shady to each node
-	    
-	    console.dir(datum);
-	    nodes.push.apply(nodes, datum.nodeData);   
-//	    } else {
-//		for (var iNode = 0; iNode < datum.nodeData.length; iNode++) {
-		   /* var eDatum = datum.nodeData[iNode].location.hasOwnProperty("expressionLevels") 
-			? datum.nodeData[iNode].location.expressionLevels.data
-			: null;*/
-//		    var isVizible = nodeFilterRobot.applyFilter(datum.nodeData[iNode]);
-		    
-//		}
-//	    }
-	    	    
-	    /*
-	     *  Overall source/target node reference process must be speeded up using updated hashTable referncing nodes
-	     * 
-	     */
-	    //console.log("-->" + datum.linksData.length);
+	    nodes.push.apply(nodes, datum.nodeData);	    
 	    for (var iLink = 0; iLink < datum.linksData.length; iLink++) {
 		if (!datum.linksData[iLink].details) {
 		    console.log("Attempting to enter an invalid link element in core selection");
@@ -483,11 +589,8 @@ function coreInit (opt) {
 	    var newNetworkElem = this._drawNetwork(nodes, links, options);
 	    
 	    if (this.targetCom.hasOwnProperty('tabular'))
-		$(this.targetCom['tabular']).trigger('add', newNetworkElem);	    
-	
-	    this._comExpressionTagDistribution();
+		$(this.targetCom['tabular']).trigger('add', newNetworkElem);			    	    
 	},
-
 	/*
 	 *  remove node and link element from a pre existant force.nodes/links selection
 	 * append specify node to deletedNodeList attribute 	 
@@ -582,7 +685,6 @@ function coreInit (opt) {
 			    d.y = parseFloat(d.y);
 			    d.py = parseFloat(d.py);
 			}
-			
 			self.shapeCreator[d.type](this, "regular");
 			newNodes.push(d);
 			var node = this;
@@ -594,6 +696,7 @@ function coreInit (opt) {
 					     };
 			d['unBubbleStyle'] = {};
 			d['glow'] = false; 
+			d['manualHide'] = false;
 			self.nodeToSvg[d.name] = this;			
 			self.nodeToLinks[d.name] = [];
 			d.linkStore = self.nodeToLinks[d.name];
@@ -601,10 +704,10 @@ function coreInit (opt) {
 			    d.central = false;			    
 			} 		
 
-			self._storeNodeStyle(this); // IMPORTANT
+			self._storeElementStyle(this); // IMPORTANT
 		    }
 		).each(function (d) {
-			 
+			   $(self.target).trigger('nodeDataToFetch',d);			   
 			   var node = this;
 			   $(this).tooltip({
 					       title : function (){ 
@@ -630,10 +733,11 @@ function coreInit (opt) {
 							if (!self.tooltipForced) {
 							    $(node).tooltip('hide');
 							}
-//							$(node).tooltip('show');
 						    }
 						});			   
-		       });
+		       })
+		.style("visibility", "visible");
+	    
 	    node.exit().remove();   
 	    node.on('mouseover',function (d) {	
 			//setFocusNode(this);
@@ -662,18 +766,19 @@ function coreInit (opt) {
 	    /* Send them to the layout */
 	    this.force.nodes(nodes);	    
 	    
-	   var link = this.svg.selectAll("line.link")
+	    // Link visibility is conditional to both its node being visible
+
+	    var link = this.svg.selectAll(".link")
 		.data(links, function(d) {
 			  console.log("adding link");
 			  var sNode,sData;
 			  if (d.source.hasOwnProperty('name')) {
 			      sData = d.source;
-			 //     console.log("SOURCE link spec is an object");
-			  } else {
+			      //console.log("SOURCE link spec is an object");
+			  } else { // 
 			      sNode = self.nodeToSvg[d.source];
 			      sData = d3.select(sNode).data()[0];
 			  }
-
 			  //var string = d.source + " " + d.target;			 
 			  var tNode, tData;
 			  if (d.target.hasOwnProperty('name')) {			    
@@ -685,7 +790,8 @@ function coreInit (opt) {
 			  }			  
 			  
 			  if (!sData || !tData) {
-			      console.log("not found source/target for following linkj object");
+			      console.log("not found source/target for following link object ");
+			      console.dir(d);
 			      return '';
 			  } else {
 			      d.source = sData;
@@ -703,7 +809,14 @@ function coreInit (opt) {
     		.on('mousedown', function() { d3.event.stopPropagation(); })
 		.style("stroke", "grey")
 		.style('cursor', 'pointer')
-	    .each(function (d){
+		.style('visibility', function (d){
+			   var sNode = self.nodeToSvg[d.source.name];
+			   var tNode = self.nodeToSvg[d.target.name];			   
+			   if (d3.select(sNode).style("visibility") === "hidden") return "hidden";
+			   if (d3.select(tNode).style("visibility") === "hidden") return "hidden";
+			   return "visible";
+		       })
+		.each(function (d){
 		      newLinks.push(d);		      
 		      if (!self.nodeToLinks[d.source.name] || 
 			  ! self.nodeToLinks[d.target.name] ){			      			  
@@ -712,15 +825,9 @@ function coreInit (opt) {
 			      return;
 			  }
 		      self.nodeToLinks[d.source.name].push ({linkRef : d, role : 'source'/*, crossRef : null*/});
-		      self.nodeToLinks[d.target.name].push ({linkRef : d, role : 'target'/*, crossRef : null*/});
-		      //var iTarget = self.nodeToLinks[d.target.name].length - 1;
-		      //var iSource = self.nodeToLinks[d.source.name].length - 1;
-		     // self.nodeToLinks[d.source.name][iSource].crossRef = self.nodeToLinks[d.target.name][iTarget];
-		     // self.nodeToLinks[d.target.name][iTarget].crossRef = self.nodeToLinks[d.source.name][iSource];
-		      self.linkToSvg[d.source.name + "--" + d.target.name] = this;
-		      
-		      $(self.target).trigger('linkDataToFetch',d);
-		      
+		      self.nodeToLinks[d.target.name].push ({linkRef : d, role : 'target'/*, crossRef : null*/});		     
+		      self.linkToSvg[d.source.name + "--" + d.target.name] = this;		      
+		      $(self.target).trigger('linkDataToFetch', d);		      
 		  })
 		  .each(function(d){
 		  	    $(this).hoverIntent(
@@ -738,7 +845,7 @@ function coreInit (opt) {
 	    //.attr('display', 'none');				      
 	    link.exit().remove();				     
 	    
-	    this.svg.selectAll("line.link")
+	    this.svg.selectAll(".link")
 		.on('dblclick', function (d) {	
 			//
 		    }
@@ -748,7 +855,13 @@ function coreInit (opt) {
 		   )
 		.on('mouseout', function (d) {	
 		    }
-		   );
+		   );/*
+		.each(function(d){
+			  var sNode = self.nodeToSvg[d.source.name];
+			  var tNode = self.nodeToSvg[d.target.name];
+			  console.log(d3.select(sNode).style("visibiliy"));
+			  console.log(d3.select(tNode).style("visibiliy"));
+		      });*/
 	    
 
 	    function tick() {
@@ -833,7 +946,7 @@ function coreInit (opt) {
 	    // Run Layout
 	    
 	    $(this.target).trigger('networkRendering');
-	    this.force.start();            	 
+	    this.force.friction(0.75).start();            	 
 	   
 	    return {
 		nodeData : newNodes,
@@ -848,6 +961,115 @@ function coreInit (opt) {
 	    var i = 0;
 	    while(layout.alpha() > alpha && i++ < max) layout.tick();
 	},*/
+	centrum : function(){
+		// appel on click centre le réseaux
+		var self = this;
+		var nodesList = self.force.nodes();
+		if(nodesList.length === 0){return;}
+		//first step recup barycentre
+		var moyX = 0;
+		var moyY = 0;
+		for (var node=0; node < nodesList.length; node++) {
+		  moyX += nodesList[node].x;
+		  moyY += nodesList[node].y;
+		};
+		var moyX = moyX / nodesList.length;
+		var moyY = moyY /nodesList.length;
+		console.dir("moyenne barycentre" + moyX + " , " + moyY);
+		//centre du svg par translation
+		var start = $('div#networkWindow svg ').offset();
+		var width = $('div#networkWindow svg ').width();
+		var height = $('div#networkWindow svg ').height();
+		var box = {top : start, dim : {width : width, height : height}}
+		
+		var xCentre = (width )/2;
+		var yCentre = (height )/2;
+		var diffX = xCentre - moyX;
+		var diffY = yCentre - moyY;
+		var matrix = [1,0,0,1,diffX,diffY];
+		var newMatrix = "matrix(" +  matrix.join(' ') + ")";
+		
+		//$('div#networkWindow svg g#network').attr("transform",newMatrix);
+		//recherche du zoom idéal
+		var zFactorUp = 0.9;
+		var zFactorDown = 1.1;
+		var zStep = 1;
+		
+		if(self._allIn(matrix, nodesList, box, zStep)){
+			while (true){
+				var tempMatrix = self._applyZ(zFactorDown,matrix,width,height);
+				zStep *= zFactorDown;
+				if(!self._allIn(tempMatrix, nodesList, box, zStep)){
+					newMatrix = "matrix(" +  matrix.join(' ') + ")";
+					break;
+				}
+				matrix = tempMatrix
+			}
+		}else{
+			while (true){
+				matrix = self._applyZ(zFactorUp,matrix, width, height);
+				zStep *= zFactorUp;
+				if(self._allIn(matrix, nodesList, box, zStep)){
+					newMatrix = "matrix(" +  matrix.join(' ') + ")";
+					break;
+				}
+			}
+		}
+		console.dir(matrix);
+		$('div#networkWindow svg g#network').attr("transform",newMatrix);
+
+	},
+	_applyZ : function(zLevel,matrix,docWidth,docHeight){
+		
+			for (var i=0; i< matrix.length; i++)
+			{
+			    
+			    matrix[i] *= zLevel;
+			  	//console.log('to ' +  this.transMatrix[i]);
+			}
+			matrix[4] += (1-zLevel)*docWidth/2;
+			matrix[5] += (1-zLevel)*docHeight/2;
+			return matrix;
+			
+	},
+	_allIn : function(matrix,nodes,box,zStep){
+	
+		var xTop = 0 ;
+		var yTop = 0 ;
+		var xBot = box.dim.width ;
+		var yBot = box.dim.height ;
+		var margin = 50 * zStep;
+		
+
+		for (var i=0; i < nodes.length; i++) {
+			var coor = this._testMatrixToNode(nodes[i], matrix);
+	
+
+			if(margin > coor.x ){
+				return false;
+			}
+			if(xBot - margin < coor.x){
+				return false;
+			}
+			if(margin > coor.y){
+				return false;
+			}
+			if(yBot -margin < coor.y){
+				return false;
+			}
+		
+		};
+		return true;
+	},
+	_testMatrixToNode : function (node,matrix){
+
+		var tempX =  node.x * matrix[0] + node.y * matrix[2] + matrix[4];
+		var tempY =  node.x * matrix[1] + node.y * matrix[3] + matrix[5];
+		return {
+			x : tempX,
+			y : tempY
+			};
+	},
 	_setDrawDragBox : function () {
 	    var self = this;
 	    /* d3 get local svg coordinates
@@ -867,10 +1089,11 @@ function coreInit (opt) {
 	    var $container = $(this.target + ' #networkWindow');
 	    var $selection = $('<div>').addClass('selection-box');
 	    
-//	    console.log("setting drag box");
+	    console.log("setting drag box");
 	    $container.on('mousedown', function(e) {	
 			      //console.log("--->" + e.target);
-			      //console.dir(e.target);
+			     // console.dir(e.target);
+			     // console.dir(e);
 			      if ($(e.target).parents('g#controler').length > 0)  
 				  return;
 			      
@@ -881,7 +1104,7 @@ function coreInit (opt) {
 			      var click_x = e.pageX - parentOffset.left;
 			      */
 			      //var parentOffset = $element.parent().offset();			      
-			      var click_y = e.pageY;
+			      var click_y = e.pageY ;
 			      var click_x = e.pageX;
 
 			      $selection.css({
@@ -890,8 +1113,8 @@ function coreInit (opt) {
 						 'width':  0,
 						 'height': 0
 					     });
-			      var oX = click_x;
-			      var oY = click_y;
+			      var oX = click_x ;
+			      var oY = click_y - 62;
 			      $selection.appendTo($container);			
 
 			      $container
@@ -914,15 +1137,16 @@ function coreInit (opt) {
 				      }).on('mouseup', function(e) {
 						
 						var parentOffset = $element.parent().offset();						
-						var clickUp_y = e.pageY - parentOffset.top;
-						var clickUp_x = e.pageX - parentOffset.left;
+						var clickUp_y = e.pageY - 62;
+						var clickUp_x = e.pageX ;
 						//console.dir(e);
-						/*console.log("get from" + oX + ' ' + oY + " to" +
-							    clickUp_x + ' ' + clickUp_y);*/
-						
+						//console.log("get from" + oX + ' ' + oY + " to " +
+							//    clickUp_x + ' ' + clickUp_y);
+				
 						$container.off('mousemove');
 						$container.off('mouseup');
 						$selection.remove();
+						
 						var Xlo = oX < clickUp_x ? oX : clickUp_x,
 						Ylo = oY < clickUp_y ? oY : clickUp_y,
 						Xhi = oX > clickUp_x ? oX : clickUp_x,
@@ -931,8 +1155,8 @@ function coreInit (opt) {
 						
 						/*Single, or double click unglow all*/
 						if (
-						    oX == (clickUp_x + parentOffset.left) &&
-							oY == (clickUp_y + parentOffset.top) 
+						    oX == clickUp_x  &&
+							oY == clickUp_y  
 						) {						   
 						    self._unglowAll();
 						    $(self.target).trigger('glowingTouch', {data : [], setToGlow : false});
@@ -941,14 +1165,29 @@ function coreInit (opt) {
 						/* a drawn rectable triggers glowing */
 						var nodeArrayGlow = [];
 						var data = [];
+						//here transform
+						console.dir('here transform');
+						var actualTrans = self._getTransformMatrice();
+						console.dir(actualTrans);
+
+						console.dir("here the select no modif " + Xhi + " , " + Yhi + " : " + Xlo + " , " + Ylo);
+						/*transform of corner selection*/
+						/*Xhi = Xhi * actualTrans[0][0] + Yhi * actualTrans[0][1] + actualTrans[0][2];
+						Yhi = Xhi * actualTrans[1][0] + Yhi * actualTrans[1][1] + actualTrans[1][2];
+						Xlo = Xlo * actualTrans[0][0] + Ylo * actualTrans[0][1] + actualTrans[0][2];
+						Ylo = Xlo * actualTrans[1][0] + Ylo * actualTrans[1][1] + actualTrans[1][2];
+						console.dir("here the select modif " + Xhi + " , " + Yhi + " : " + Xlo + " , " + Ylo);*/
 						self.svg.selectAll(".node")
 						    .each(function (d){							      
 							      var node = this;
+							      var tempX =  d.x * actualTrans[0][0] + d.y * actualTrans[0][1] + actualTrans[0][2];
+							      var tempY =  d.x * actualTrans[1][0] + d.y * actualTrans[1][1] + actualTrans[1][2];
 							      //console.log( d.x + " , " + d.y);
-							      if (d.x > Xhi) return;
-							      if (d.x < Xlo) return;
-							      if (d.y > Yhi) return;
-							      if (d.y < Ylo) return;
+							      //console.log( tempX + " , " + tempY);
+							      if (tempX > Xhi) return;
+							      if (tempX < Xlo) return;
+							      if (tempY> Yhi) return;
+							      if (tempY < Ylo) return;
 							      nodeArrayGlow.push(this);
 							      data.push(d);
 							  });
@@ -959,7 +1198,18 @@ function coreInit (opt) {
 			  });
 	    
 	},
-	getGlowyNodes: function () { /* Testing with javascript motor*/
+	setGlowyNodes : function(data) {
+	    var self = this;
+	  //[nameList of node to be glowy];
+	    // unglow all, glow the specified ones
+	    console.dir(data);
+	    if (data.nodeNameList.length === 0) this._unglowAll();
+	    var nodes = data.nodeNameList.map(function(elem, i, array) {
+						  return self.nodeToSvg[elem];
+					      }); 
+	    self._glowToggle(nodes, {type : "forced"});
+	},
+	getGlowyNodes : function () { /* Testing with javascript motor*/
 	    var self = this;
 	    var array = [];
 	    this.svg.selectAll('.node').each(function (d) {
@@ -1008,8 +1258,12 @@ function coreInit (opt) {
 	    var nodes = this.force.nodes();
 	    if (isEmpty(filterData.expressionLevel)) {
 		nodes.forEach(function(node) {node.nearVanish = "no";});
-		d3.selectAll('.node').style({ "visibility" : "visible" });
-		d3.selectAll('.link').style({ "visibility" : "visible" });
+		d3.selectAll('.node').style("visibility", function(d) { 
+					
+						return "visible";});
+		d3.selectAll('.link').style("visibility", function (d){
+						return "visible"; 
+					    });
 		return;
 	    } 		    		
 		
@@ -1037,7 +1291,6 @@ function coreInit (opt) {
 			      node.nearVanish = node.fCount === eTagTot
 				  ? "no" : "yes";
 			  });
-	    
 	},
 	_setLinkBasedPreviewFilter : function (filterData, strict) {
 	    var links = this.force.links();
@@ -1084,32 +1337,29 @@ function coreInit (opt) {
 			   if (d.nearVanish === "no") return "green";
 			   return "red";
 		       })
-		.style('visibility', function(d){
+		.style('visibility', function(d){			 
 			   if(d.nearVanish === "no") return "visible";
 			   var cViz = d3.select(this).style("visibility");
 			   return cViz;
 		       });
 
-	    d3.selectAll('.link').style("stroke", function (d){
+	    d3.selectAll('.link').style("stroke", function (d){					    
 					    if (d.nearVanish === "unk") return "orange";
 					    if (d.nearVanish === "yes") return "black";
 					    if (d.nearVanish === "no") return "green";
-					    
-					    //		    console.dir(d);
-					    
-//					    var d3.select(self.linkToSvg[d.source+'--'+d.target]);
-/*					    console.log(d3.select(d.source).style("visibility"));
-					    console.log(d3.select(d.target).style("visibility"));*/
-				/*	    if (d3.select(d.source).style("visibility") === "hidden")
-						return "hidden";
-					    if (d3.select(d.target).style("visibility") === "hidden")
-						return "hidden";
-					    return "visible";*/
-					});    
-	    
+					    return d3.select(this).style("stroke");
+					});  
+	    d3.selectAll('.node').style("visibility",function(d){
+					   if(d.manualHide) return "hidden"; 
+					   return d3.select(this).style("visibility");
+				       });
+	    d3.selectAll('.link').style("visibility", function(d){
+					   if(d.source.manualHide) return "hidden";
+					   if(d.target.manualHide) return "hidden";
+					   return d3.select(this).style("visibility");
+				       });	    
 	},
 	colorGlowyNodes : function (hexCode) {
-	    var gNodes;
 	    this.svg.selectAll('.node')
 		.each(function (d) {
 			  if (d.glow) {			      			  
@@ -1125,28 +1375,59 @@ function coreInit (opt) {
 	    this.svg.selectAll(".node").each(function(d){d.glow = true; nodes.push(this);});
 	    this._glowToggle(nodes, null);
 	},
+	_getTransformMatrice : function(){
+		var self = this;
+		var defaultMatrix = [[1,0,0],[0,1,0],[0,0,1]];
+		var matrix = $('div#networkWindow svg g#network').attr('transform');
+		console.log(matrix)
+		if(matrix){
+			/*here parsing of matrix*/
+			var reg = /-?[0-9]+(\.[0-9]*)?/gi
+			var numberList = matrix.match(reg);
+			defaultMatrix[0][0] = parseFloat(numberList[0]);
+			defaultMatrix[1][0] = parseFloat(numberList[1]);
+			defaultMatrix[0][1] = parseFloat(numberList[2]);
+			defaultMatrix[1][1] = parseFloat(numberList[3]);
+			defaultMatrix[0][2] = parseFloat(numberList[4]);
+			defaultMatrix[1][2] = parseFloat(numberList[5]);
+		}
+		return defaultMatrix;
+		
+	},
 	_glowToggle : function (data, opt) {
 	    var self = this;
 	    var array = $.isArray(data) ? data : [data];
 	    var type = opt ? opt.type : "nice";
-	   
 	    
+	    console.dir(data);
+
 	    for (var i = 0; i < array.length; i++) {
 		var datum = array[i];
 		d3.select(datum).each(
 		    function(d) {
 			var node = this;
 			if (d.glow) {
-			    if (type === "forced") 
+			    if (type === "forced") {
+				var specs = self.shapeCreator[d.type](node, "glowy", "getShapeSpecs");
+				d3.select(this).transition()
+				    .attr('d', d3.svg.symbol()
+					  .size(specs.size)
+					  .type(specs.shape))	
+	    			    .attr("filter",'url(#blur)')
+				    .style("stroke", '#9ecaed')
+				    .style("stroke-width", '3px');
 				return;
+			    }			    
 			    d.glow = false;
 			    var specs = self.shapeCreator[d.type](node, "regular","getShapeSpecs");
 			    d3.select(this).transition().attr('d', d3.svg.symbol()
 							      .size(specs.size)
 							      .type(specs.shape))
+				.attr("filter",null)
  				.style("stroke", specs.stroke)
 				.style("stroke-width", '1px');
 			} else {
+			    console.log("OUHUOU");
 			    d.glow = true;
 			    var specs = self.shapeCreator[d.type](node, "glowy", "getShapeSpecs");
 			    d3.select(this).transition()
@@ -1366,7 +1647,8 @@ function coreInit (opt) {
 			.append("path")
 			.attr("transform", 
 			      function(d) { 
-				  return "translate(10, 10)"; })
+				  return symbol === "multimer" ?  "matrix(0.5,0,0,0.5,10,10)" : "translate(10, 10)";
+			      })
 			.attr("d", 
 			      d3.svg.symbol().size(specs.size).type(specs.shape))
 			.style("fill", specs.fill)
@@ -1402,7 +1684,11 @@ function coreInit (opt) {
 		links : []
 	    };
 	    
-	    data.nodes = this.force.nodes();
+	    var tmp = this.force.nodes();
+	    data.nodes = tmp.map(function(elem, i, array) {
+				     elem.linkStore = null;
+				     return elem;
+				 });
 	    var links = this.force.links();
 	    for (var i = 0; i < links.length; i++){
 		var link = {
@@ -1410,7 +1696,8 @@ function coreInit (opt) {
 		    target : links[i].target.name,
 		    details : { Experiments:[],
 				name :  links[i].details.name 
-			      }		
+			      },		
+		    type : links[i].type
 		};
 		data.links.push(link);
 	    }  	    
@@ -1448,8 +1735,21 @@ function coreInit (opt) {
 					   };				       
 				       });
 	    return nodes;
+	},
+	getKeywordDistribution : function () {
+		var distrib = {};
+		this.force.nodes().forEach(function (node) {
+			if (!node.uniprotKW) return;
+			node.uniprotKW.forEach(function(keyword){
+				if (distrib[keyword]) { distrib[keyword].push(node.name); }
+				else {
+					distrib[keyword] = [node.name];
+					}
+			});
+		});
+		//console.dir(distrib);
+		return distrib;
 	}
-	
     };
     
 }

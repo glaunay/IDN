@@ -12,59 +12,58 @@ our $ASTERS_ADDRESS = "/tmp/asterStore_DVL";
 
 
 our $logger = get_logger ("networkMapper");
-=pod TO DO
-    - Add mapperSocket to networkObject
-    
-  *get rid of that  $mapableObject = $dataLayer->{ core };
-  make of uniprot&co heritage of miscDataLayer
-  *get rid of ugly json string (nodewriter)
-    
-    SPECIFICATIONS
-
-  *linkData specs:       IE "richLink_1.0"
-    link : {
-    Adata : [
-             ["Unique identifier for interactor A", ...  ],
-             ["Alternative identifier for interactor A", ...  ],     
-             ["Aliases for A", ...  ],                              
-             ["NCBI Taxonomy identifier for interactor A", ...  ],    
-             ["Biological role A", ...  ],                            
-             ["Experimental role A", ...  ],                          
-             ["Interactor type A", ...  ],                          
-             ["Annotations for interactor A", ...  ],                 
-             ["Xref for interactor A", ...  ],
-             ["Stoichiometry for interactor A"],
-             ["Participant identification method for interactor A"]
-    ],
-    Bdata : [
-                ...  
-                    ],
-    iData : [
-             ["Interaction detection methods", ... ],
-             ["Identifier of the publication", ... ],
-             ["Interaction types", ... ],
-             ["Annotations for the interaction", ... ],
-             ["Parameters of the interaction", ... ],
-             ["Interaction identifier(s)", ... ]
-            ] 
-}   
+# TO DO
+#    - Add mapperSocket to networkObject
+#    
+#  *get rid of that  $mapableObject = $dataLayer->{ core };
+#  make of uniprot&co heritage of miscDataLayer
+#  *get rid of ugly json string (nodewriter)
+#    
+#    SPECIFICATIONS
+#
+#  *linkData specs:       IE "richLink_1.0"
+#    link : {
+#    Adata : [
+#             ["Unique identifier for interactor A", ...  ],
+#             ["Alternative identifier for interactor A", ...  ],     
+#             ["Aliases for A", ...  ],                              
+#             ["NCBI Taxonomy identifier for interactor A", ...  ],    
+#             ["Biological role A", ...  ],                            
+#             ["Experimental role A", ...  ],                          
+#             ["Interactor type A", ...  ],                          
+#             ["Annotations for interactor A", ...  ],                 
+#             ["Xref for interactor A", ...  ],
+#             ["Stoichiometry for interactor A"],
+#             ["Participant identification method for interactor A"]
+#    ],
+#    Bdata : [
+#                ...  
+#                    ],
+#    iData : [
+#             ["Interaction detection methods", ... ],
+#             ["Identifier of the publication", ... ],
+#             ["Interaction types", ... ],
+#             ["Annotations for the interaction", ... ],
+#             ["Parameters of the interaction", ... ],
+#             ["Interaction identifier(s)", ... ]
+#            ] 
+#}   
  
     
-    NODE MAPPING CASE CHECKED
-    acedb : name, type, common
-    uniprot: name, type, commo
+#    NODE MAPPING CASE CHECKED
+#    acedb : name, type, common
+#    uniprot: name, type, commo
     
     
-    NOTE
-    psicquic incoming data name are of the form 
-    database:moleculeID we clean them.
-    if we fail to fetch data from matrixDB we fall back to datalayer.
-    added location => [] attributes in nodemapper from miscDataLayer::uniprot
+#    NOTE
+#    psicquic incoming data name are of the form 
+#    database:moleculeID we clean them.
+#    if we fail to fetch data from matrixDB we fall back to datalayer.
+#    added location => [] attributes in nodemapper from miscDataLayer::uniprot
 
    
 
-    # NOTE TYPE is a simple string  could evolve to encompass more data notably genuine or inferred character    
-=cut
+# NOTE TYPE is a simple string  could evolve to encompass more data notably genuine or inferred character    
 
 use lib qw(lib/perl);
 
@@ -81,56 +80,53 @@ use psimi::interactionReport;
 use miscAssociationLayer;
 use matrixdbQuery;
 
-=pod
-    This module maps a list of biomolecule and their interactions in a json
-    object embarking required attributes to be used in the networkt javascript module
-    
+#
+#    This module maps a list of biomolecule and their interactions in a json
+#    object embarking required attributes to be used in the networkt javascript module
+#    
+#
+#  ---- networkNodes prototype ----
+#   	my $node = {
+#            index => scalar [Mandatory]
+#	    name => $biomoleculeName,
+#            common => "",                                  
+#            biofunc => "",
+#            tissue => [],
+#            uniprotKW => [],
+#	    pfam => [],
+#            tpm => [],
+#	    go => [],
+#	    gene => {
+#		geneName => [],
+#		synonym => [],
+#		uniGene => []
+#	    }, 	    
+#	    specie => "",	    
+#            type => "",
+#            relationship => {
+#		isFragmentOf => [],
+#		hasFragment => [],
+#		hasComponent => [],
+#		isComponentOf => [],
+#		boundTo => [] 
+#	    },
+#            location => [],
+#            id = ''
+#	};
+#
+#     ---- networkEdges specifications ----
+#     link = {"source":0 ,"target":1, "type" : "boundTo/partOf/fragmentOf/association"},
 
-  ---- networkNodes prototype ----
-   	my $node = {
-            index => scalar [Mandatory]
-	    name => $biomoleculeName,
-            common => "",                                  
-            biofunc => "",
-            tissue => [],
-            uniprotKW => [],
-	    pfam => [],
-            tpm => [],
-	    go => [],
-	    gene => {
-		geneName => [],
-		synonym => [],
-		uniGene => []
-	    }, 	    
-	    specie => "",	    
-            type => "",
-            relationship => {
-		isFragmentOf => [],
-		hasFragment => [],
-		hasComponent => [],
-		isComponentOf => [],
-		boundTo => [] 
-	    },
-            location => [],
-            id = ''
-	};
 
-     ---- networkEdges specifications ----
-     link = {"source":0 ,"target":1, "type" : "boundTo/partOf/fragmentOf/association"},
-=cut
-
-
-=pod new
-    Object constructor
-    biomoleculeArray : list of matrixdb biomolecule identifier; [MANDATORY]
-    interactionArray : list of biomolecule association; [OPTIONAL]
-    AssociationObject (see asssociationObject.pm)
-=cut
+#    Object constructor
+#    biomoleculeArray : list of matrixdb biomolecule identifier; [MANDATORY]
+#    interactionArray : list of biomolecule association; [OPTIONAL]
+#    AssociationObject (see asssociationObject.pm)
 sub new {
         my $self = {};
-        my $class = shift;
-        bless $self, $class;
-	
+	my $class = shift;
+	bless $self, $class;
+	$logger->info("Creating network Mapper");
 	my $p = common::arg_parser(@_);	
 
 	$self->{ DB } = $p->{ DB };
@@ -151,16 +147,15 @@ sub new {
 	defined ($p->{ mappersFileDef }) && $self->_setMappers ($p->{ mappersFileDef });
 	
 	if (!defined($p->{ DB }) ) {
-	    $logger->logdie("no valid arguments provided");
+	  $logger->logdie("no valid arguments provided");
 	    return;
-	}
-=pod
-    use a previously save network
-=cut	
+	  }
+#    use a previously save network
+	
 	if (defined ($p->{ networkUI })) {
-	    $self->cacheReader (key => $p->{ networkUI });
-	    $self->createNodeAccessors(); # reference node per id key && name
-	    $self->createLinkAccessors(); # reference link per id key && name
+	  $self->cacheReader (key => $p->{ networkUI });
+	  $self->createNodeAccessors(); # reference node per id key && name
+	  $self->createLinkAccessors(); # reference link per id key && name
 	    
 	    #$self->deleteNodes (nodeNameList => $p->{ delElements }->{ nodes });
 	    #$self->pruneLinks ()
@@ -171,18 +166,17 @@ sub new {
 	    return $self;
 	} 
 
-=pod
-    Construct a network from scratch
-=cut	
+
+#    Construct a network from scratch
 	if (!common::sloft ($p->{ biomoleculeArray }, $p->{ fromAssocJSON }, $p->{ mergedAssociationObject })) {
 	    $logger->logdie ("no valid arguments provided");
 	    return;
 	}
 
-	my $biomoleculeArray = [];	
+ 	my $biomoleculeArray = [];	
 	
 	if (defined ($p->{ biomoleculeArray })) {
-	    $logger->info("using specified biomolecule names");
+	  $logger->info("using specified biomolecule names");
 	    $biomoleculeArray = $p->{ biomoleculeArray };
 	} elsif (defined ($p->{ fromAssocJSON })) {
 	    $logger->info("Extracting biomolecules from JSON associations");
@@ -209,10 +203,9 @@ sub new {
 	defined ($p->{ asterCollection }) && $self->addAsters ($p->{ asterCollection });
 	return $self;
 }
-=pod createLinkAccessors 
-    USE ONLY when network is reloaded from previous
-    otherwise use createLink (push,register)
-=cut
+# createLinkAccessors 
+#    USE ONLY when network is reloaded from previous
+#    otherwise use createLink (push,register)
 sub createLinkAccessors {
     my $self = shift;
     for (my $iLink = 0; $iLink < @{ $self->{ links } }; $iLink++ ) {
@@ -231,7 +224,7 @@ sub createNodeAccessors {
     my $IDaccessor = {};
     my $nameAccessor = {};
     foreach my $node (@{$self->{ nodeArray }}) {
-	if (!defined ($node->{ id })) {
+        if (!defined ($node->{ id })) {
 	    $logger->error("current node does not have id attribute");	    
 	    return;
 	}	
@@ -249,9 +242,8 @@ sub createNodeAccessors {
  
 }
 
-=pod set up a non redundant list of biomolecule if a matrixdb key is possible we keep it
-    for all other acases we keep the external source reference
-=cut
+#set up a non redundant list of biomolecule if a matrixdb key is possible we keep it
+#    for all other acases we keep the external source reference
 sub _unstackJSON {
     my $self = shift;
     my $jsonStringAssociation = shift;
@@ -297,10 +289,8 @@ sub _setSockets {
     $logger->info("successfully set [$info] sockets");    
 }
 
-=pod
-mapper can be static (hash table) --> store under staticMapper attribute
-    or objects -> base attribute of their own
-=cut
+#mapper can be static (hash table) --> store under staticMapper attribute
+#    or objects -> base attribute of their own
 sub _setMappers {
     my $self = shift;
     my $fileDef = shift;
@@ -349,8 +339,7 @@ sub _pushLink {
    # $logger->trace($list[0] . " - " . $list[1] . " LINK created");
 }
 
-=pod delete the database psicquic prefix
-=cut
+# delete the database psicquic prefix
 sub _cleanPsicquicPrefix {
     my $self = shift;
     my $arrayRef = shift;
@@ -402,9 +391,8 @@ sub _getLink {
 }
 
 
-=pod Create the basic source, target (int) attributes of each link
-     Also create a LinkTable referencing all knwon links
-=cut
+# Create the basic source, target (int) attributes of each link
+#     Also create a LinkTable referencing all knwon links
 sub _createLinks {
     my $self = shift;   
     my $p = common::arg_parser (@_);
@@ -439,10 +427,9 @@ sub _createLinks {
     } 
     
 }
-=pod _registerLink Populates the $self->{ idLinkTable }, $self->{ nameLinkTable } attributes
-    An optional argument iLink can be specified to reference a link somewhere in the linkArray
-    otherwise the referenced link will be the last in the linkArray
-=cut
+# _registerLink Populates the $self->{ idLinkTable }, $self->{ nameLinkTable } attributes
+#    An optional argument iLink can be specified to reference a link somewhere in the linkArray
+#    otherwise the referenced link will be the last in the linkArray
 sub _registerLink {
     my $self = shift;
     my $p = common::arg_parser(@_);
@@ -483,12 +470,11 @@ sub _registerLink {
 
 }
 
-=pod _jsonNodeNameFixer
-A HACK TO RETURN STANDARD BIOMOLECULE NAME
-create a hash table referencing a node by both its name and ist aceAccessor (if any)
-then we loop over partner names in json data list aaData and replace any string by
-the actual name of the node referenced through this string
-=cut  
+# _jsonNodeNameFixer
+#A HACK TO RETURN STANDARD BIOMOLECULE NAME
+#create a hash table referencing a node by both its name and ist aceAccessor (if any)
+#then we loop over partner names in json data list aaData and replace any string by
+#the actual name of the node referenced through this string
 sub _jsonNodeNameFixer {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -548,8 +534,7 @@ sub _jsonNodeNameFixerOld {
     return $target
 }
 
-=pod addTo inject network description in a json object
-=cut
+# addTo inject network description in a json object
 
 sub addTo {
     my $self = shift;
@@ -573,13 +558,12 @@ sub addTo {
 }
 
 
-=pod	index => sub {
-	    my $node = shift;
-	    my $key = shift;
-	    ($node->{ $key } ne "") || return "";
-	    return "\"$key\" : $node->{ $key },";
-	},
-=cut
+#	index => sub {
+#	    my $node = shift;
+#	    my $key = shift;
+#	    ($node->{ $key } ne "") || return "";
+#	    return "\"$key\" : $node->{ $key },";
+#	},
 
 sub summonLocalNodeWriter {
 # nodes
@@ -605,7 +589,7 @@ sub summonLocalNodeWriter {
 	biofunc => sub {
 	    my $node = shift;
 	    my $key = shift;
-	    ($node->{ $key } ne "") || return "";
+			($node->{ $key } ne "") || return "";
 	    return "\"$key\" : \"$node->{ $key }\",";                            # Partially tested
 	},
 	tissue =>  sub {
@@ -752,10 +736,8 @@ sub _extractInteractorName {
     #my @array = ($jsonObject)
 }
 
-=pod deleteLinks
-    All links will be deleted but for one specified as argument
-=cut
-
+# deleteLinks
+#    All links will be deleted but for one specified as argument
 sub deleteLinks {
     my $self = shift;
     my $p = common::arg_parser(@_);
@@ -777,9 +759,8 @@ sub deleteLinks {
 }
 
 
-=pod pruneLinks
-    suppress link for which the source and / or the target node are not in the node list anymore    
-=cut
+# pruneLinks
+#    suppress link for which the source and / or the target node are not in the node list anymore    
 
 sub pruneLinks {
     my $self = shift;
@@ -804,11 +785,10 @@ sub pruneLinks {
     $self->{ links } = $newLinkList;    
 }
 
-=pod deleteNodes
-    suppress a subset of nodes
-    options can be specified to keep rest of the object intact
-    we do not alter IDaccessor key will stiull exist but value will be undef
-=cut 
+# deleteNodes
+#    suppress a subset of nodes
+#    options can be specified to keep rest of the object intact
+#    we do not alter IDaccessor key will stiull exist but value will be undef
 sub deleteNodes {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -844,23 +824,17 @@ sub deleteNodes {
 
 sub deleteAllNodes {
     my $self = shift;
-=pod 
-   for (my $index = 0; $index < @{ $self->{ nodeArray } }; $index++) {
-	$self->{ nodeArray }->[$index]->{ status } = "removed";	    	
-	splice (@{$self->{ nodeArray }}, $index, 1);	
-    }
-=cut
+#   for (my $index = 0; $index < @{ $self->{ nodeArray } }; $index++) {
+#	$self->{ nodeArray }->[$index]->{ status } = "removed";	    	
+#	splice (@{$self->{ nodeArray }}, $index, 1);	
+#    }
     $self->{ nodeArray } = [];
     $logger->trace("post deletion " . scalar (@{ $self->{ nodeArray }}));
 }
 
 
-=pod
-    fill Go terms datastructure
-    
-=cut
 
-
+#    fill Go terms datastructure
 sub getFreeID {
     my $self  = shift;
 
@@ -876,9 +850,8 @@ sub getFreeID {
     
     return $i;
 }
-=pod update method
-    inject and annotate the new nodes and link DEVEL HERE
-=cut
+# update method
+#    inject and annotate the new nodes and link DEVEL HERE
 sub update {
     my $self = shift;
     my $p = common::arg_parser(@_);
@@ -1007,10 +980,9 @@ sub computeUpKeywordTree {
 
 }
 
-=pod
-    return a datastructure sorting all uniprot keyword occurences
-    preprocessing for the client navigator
-=cut
+
+#    return a datastructure sorting all uniprot keyword occurences
+#    preprocessing for the client navigator
 sub getUpKeywordTree {
     my $self = shift;
     defined ($self->{ networkData }->{ upKeywordTree }) && return $self->{ networkData }->{ upKeywordTree }; 
@@ -1021,10 +993,8 @@ sub getUpKeywordTree {
 
 
 
-=pod fill all biomolecule related fields
-    TODO : miscDataLayer fall back failure, handle/skip the data mapping
- 
-=cut
+# fill all biomolecule related fields
+#    TODO : miscDataLayer fall back failure, handle/skip the data mapping
 sub _fillingNodes {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -1065,7 +1035,7 @@ sub _fillingNodes {
 	};
 	# Set the original object and summon its mapper
 	my $mapper = summonLocalDataMapper();
-	
+	$logger->info("MOBY" . Dumper($mapper));
 	$biomoleculeName = $self->{ nameMutator }->mutateToMatrixdb (key => $biomoleculeName);
 
 	my @tmpAceObjects = $self->{ DB }->fetch (-query => "query find biomolecule $biomoleculeName");
@@ -1103,6 +1073,9 @@ sub _fillingNodes {
 	     $key eq "specie" || $key eq "tpm" || $key eq "tissue")  && next;
 	    $logger->trace("$node->{ name } ". $key);
 	    $node->{ $key } = $mapper->{ $key }($mapableObject);
+	    
+	    $logger->info("ATTEMPTING TO FILL " . $key);
+	    
 	}
 
 	# Deal with the go and uniprot hash table
@@ -1111,7 +1084,7 @@ sub _fillingNodes {
 	    if ($term !~ /GO:[\d]+/) {
 		$logger->warn ("Not at valid GO term \"$term\" involved data structure is \n" . Dumper($node));
 		next;
-	    }
+	      }
 	    my $goContainer = localSocket::runGoRequest(with => $self->{ socketMappers }->{ 'GO' }, 
 							type => 'goNodeSelector', selectors => { id => $term });
 	    defined $goContainer || next;
@@ -1146,10 +1119,9 @@ sub _fillingNodes {
     
 }
 
-=pod LocalMapper(MATRIXDB STORAGE)
-    attribute must match canonical node attributes
+# LocalMapper(MATRIXDB STORAGE)
+#    attribute must match canonical node attributes
     
-=cut
 sub summonLocalDataMapper {
     my $localMapper = {
 	aceAccessor => sub {
@@ -1187,6 +1159,7 @@ sub summonLocalDataMapper {
 	uniprotKW => sub {
 	    my $aceObject = shift @_;
 	    my @val = $aceObject->get('Keywrd');
+	    $logger->info("UNIPROT KEYWORD " . $aceObject->name  . "\n" . Dumper(@val));
 	    my @array;
 	    foreach my $kw (@val) {
 		push @array, $kw->name;
@@ -1332,9 +1305,8 @@ sub getLinkInteractorList {
 }
 
 
-=pod getAsterDataByNode
-    get partner list and link list for a single node
-=cut
+# getAsterDataByNode
+#    get partner list and link list for a single node
 sub getAsterDataByNode {
     my $self = shift;
     
@@ -1416,11 +1388,10 @@ sub getNodeAsID {
     return;
 }
 
-=pod add link element to an preexisting network
-    first create link
-    then supplement data to edges
-    mergedAssociationObject argument must be provided
-=cut
+# add link element to an preexisting network
+#    first create link
+#    then supplement data to edges
+#    mergedAssociationObject argument must be provided
 sub addLink {
     my $self = shift;
     my $p = common::arg_parser(@_);
@@ -1435,11 +1406,10 @@ sub addLink {
 }
 
 
-=pod supplement biological data to egdes
-    by attaching to each link the proper data container 
-    coping with the specified format.
-    Two sources can be combined, local & psimi object list (presumably out of a psicquic query)
-=cut
+# supplement biological data to egdes
+#    by attaching to each link the proper data container 
+#    coping with the specified format.
+#    Two sources can be combined, local & psimi object list (presumably out of a psicquic query)
 sub addLinkData {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -1462,13 +1432,11 @@ sub addLinkData {
 	}
     }
   
-=pod
-    In order to speed up the link filling we use precomputed psimi experiment reference through the
-    assocaition Object
-    we loop over network->links list and associationObject->interactionList using $cnt
-    both list MUST BE COHERENT
-=cut
-    
+
+#    In order to speed up the link filling we use precomputed psimi experiment reference through the
+#    assocaition Object
+#    we loop over network->links list and associationObject->interactionList using $cnt
+#    both list MUST BE COHERENT
     my $cnt = 0;
    
     my $associationObject = $p->{ singleDataObject };
@@ -1564,10 +1532,9 @@ sub addLinkData {
     $logger->trace("subroutine time stamps:\n\tstart:$sTime\n\tstop:".common::getTime());    
 }
 
-=pod read network cache for specified key
-    fill nodeArray and link attribute, avoiding the annotation process on elements 
-    of the previous graph iteration
-=cut
+# read network cache for specified key
+#    fill nodeArray and link attribute, avoiding the annotation process on elements 
+#    of the previous graph iteration
 sub cacheReader {
     my $self = shift;
 
@@ -1637,12 +1604,10 @@ sub cacheWriter {
 
 
 
-=pod astersWriter
-    using the seeds List, we cut network into radial pieces ("asters") centered on each on the seed biomolecules
-    and serialize them with all nodes and links related data to SPEED UP further requests.
-    the generated key is of the form BIOMOLECULEID__PSICQUIC/LOCAL
-=cut
-
+# astersWriter
+#    using the seeds List, we cut network into radial pieces ("asters") centered on each on the seed biomolecules
+#    and serialize them with all nodes and links related data to SPEED UP further requests.
+#    the generated key is of the form BIOMOLECULEID__PSICQUIC/LOCAL
 sub astersWriter {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -1671,14 +1636,12 @@ sub astersWriter {
     
 }
 
-=pod setNodeIdentity
-    This method try to enforce the use of a common/regular node name
-    where node->{ name } are 
-    PRO features leads to ${UNIPROTID}-PRO_XXXXXXXX
-    CHEBI compound CHEBI:XXXX
-    MULTIMER 
-
-=cut
+# setNodeIdentity
+#    This method try to enforce the use of a common/regular node name
+#    where node->{ name } are 
+#    PRO features leads to ${UNIPROTID}-PRO_XXXXXXXX
+#    CHEBI compound CHEBI:XXXX
+#    MULTIMER 
 sub _setNodeIdentity {
     my $self = shift;
     my $p = common::arg_parser (@_);
@@ -1700,9 +1663,8 @@ sub _setNodeIdentity {
     return ;
 }
 
-=pod Merge a collection of radial subnetwork with the current object
-    BEWARE reference access aster content is modified, shoud have to be reread from cache if to be reused in another context
-=cut
+# Merge a collection of radial subnetwork with the current object
+#    BEWARE reference access aster content is modified, shoud have to be reread from cache if to be reused in another context
 sub addAsters {
     my $self = shift;
     my $asterCollection = shift;
@@ -1755,9 +1717,8 @@ sub addAsters {
   
 }   
 
-=pod
-    register the edges which do not exist
-=cut 
+
+#    register the edges which do not exist
 sub _isKnownClosure {
     my $self = shift;
     my $p = common::arg_parser (@_);

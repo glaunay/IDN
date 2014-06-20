@@ -7,7 +7,7 @@ use vars qw/$DB $URL %EQUIV/;
 use warnings;
 use diagnostics;
 
-use lib qw(lib/perl);
+use lib qw(/var/www/matrixdb_2_dev/IDN/main/cgi-bin/current/lib/perl);
 
 #from CPAN
 use CGI;
@@ -16,7 +16,7 @@ use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
 use JSON;
 
-Log::Log4perl->init("./conf/iNavigatorGateWay.conf");
+Log::Log4perl->init("/var/www/matrixdb_2_dev/IDN/main/cgi-bin/current/conf/iNavigatorGateWay.conf");
 my $logger = get_logger();
 
 our $STATUS = 'TEST'; 
@@ -42,7 +42,7 @@ my $jsNetworkStartupCallString = %{$dataContainer}
 
 
 
-my $fTemplateLoc = "../../data/iNavigatorHtmlTemplate.txt";
+my $fTemplateLoc = "/var/www/matrixdb_2_dev/IDN/main/data/iNavigatorHtmlTemplate.txt";
 open HTML, "<$fTemplateLoc" or $logger->logdie("Cant open $fTemplateLoc");
 my $htmlOut = '';
 my $urlRoot = $STATUS eq "PROD" ? 'http://matrixdb-new.ibcp.fr' : 'http://matrixdb.ibcp.fr:9999'; 

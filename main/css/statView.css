@@ -1,0 +1,7 @@
+div#statDiv table{
+	text-align: center;
+	width: 80%;
+}
+div#statDiv td, div#statDiv th{
+	text-align: center;
+}

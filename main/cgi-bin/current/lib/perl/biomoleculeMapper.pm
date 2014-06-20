@@ -13,8 +13,8 @@ sub new {
     my $p = common::arg_parser(@_);
     
     $logger->trace("$p->{ template }");
-    my $t = `ls`;
-    $logger->trace("$t");
+    #my $t = `ls`;
+    #$logger->trace("$t");
     
     open JSON, "<$p->{ template }" || $logger->logdie( $! );
     my @string = <JSON>;

@@ -48,7 +48,7 @@ our $responseTemplate = {
 };
 
 my $time = common::getTime();
-$fhLOG->print ("#$time\n#Opening new server connection\n");
+$fhLOG->print ("#$time\n#Opening new server connection at \"$socket_path\"\n");
 
 
 while (1) {

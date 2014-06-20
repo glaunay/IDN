@@ -1,0 +1,1 @@
+sudo -u apache ./miServerDevel.pl -socket /tmp/miServerDevel.socket -data /var/www/matrixdb_2_dev/IDN/main/services/data/psimi_obo.json

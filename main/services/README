@@ -1,0 +1,4 @@
+# GL 20140603
+# mod_perl nightmare Tryin to monitor I/O socket w/ server log
+
+sudo -u apache nohup ./miServer.pl -socket /tmp/miSocket -data /var/www/matrixdb_2_dev/IDN/main/services/data/psimi_obo.json  > ../log/nohup.out

@@ -17,10 +17,12 @@ function initBarSearchMapper (){
 			var newString = "";
 			if(count>0){ newString = "(" + count + ")";}
 			var dataAttr = 'data-type="' + data.type + '" data-value="' + data.id + '"';
-			
+			var tooltip = ""
 			if(!data.longText){return "error bug"}
-
-			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + data.longText + '" >'+
+			if(data.longText.length > 20){
+				tooltip = data.longText
+			}
+			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + tooltip + '" >'+
 			'<i class="fa fa-circle"></i><a ' + dataAttr + '>' + data.longText +'</a></div><span style = "float:right;">' + newString + "</span>";
 			return newString;			
 			 
@@ -32,10 +34,12 @@ function initBarSearchMapper (){
 			var newString = "";
 			if(count>0){ newString = count;}
 			var dataAttr = 'data-type="author" data-value="' + data.id + '"';
-			
+			var tooltip = "";
 			if(!data.id){return "error bug"}
-
-			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + data.id + '" >'+
+			if(data.id.length > 20){
+				tooltip = data.id
+			}
+			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + tooltip + '" >'+
 			'<i class="fa fa-circle"></i><a ' + dataAttr + '>' + data.id +'</a></div><span style = "float:right;">' + newString + "</span>";
 			return newString;			
 			 
@@ -67,7 +71,8 @@ function initBarSearchMapper (){
 				data.geneName.forEach(function(gene){
 					geneName += gene + ', ';
 				});
-				newString += '<div class = "geneName">' + geneName + '</div>'
+				geneName = geneName.substring(0,geneName.length - 2);
+				newString += '<div class = "geneName">' + geneName + '</div>';
 
 			}
 			if(humanOnly){
@@ -89,11 +94,11 @@ function initBarSearchMapper (){
 			var newString = "";
 			if(count>0){ newString = count;}
 			var dataAttr = 'data-type="publication" data-value="' + data.id + '"';
-			var tooltip = '<div class = inTooltip>' + data.Title + '</div><div  class =inTooltip>Pubmed Id : ' + data.id + '</div>';
+			var tooltip = '<div class = inTooltip>' + data.Title + '</div><div  class =inTooltip>PubMed Id : ' + data.id + '</div>';
 			var icone = '<i class="fa fa-star-o"></i>';
 			if(data.imexID){
 				tooltip += '<div class =inTooltip>Imex-ID : ' + data.imexID + '</div>';
-				icone = '<i class="fa fa-star" style = "color:yellow;"></i>';
+				icone = '<i class="fa fa-star" style = "color:rgb(206, 206, 17);"></i>';
 			}
 			newString = '<div class = "tooltipContent tooltipPubli" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
 						'data-title = "' + tooltip + '" >'+

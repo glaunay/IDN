@@ -1,11 +1,10 @@
 #!/usr/bin/perl
 use strict;
 use vars qw/$DB $URL %EQUIV/;
-
 use warnings;
 use diagnostics;
 
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 
 #from CPAN
 use CGI;
@@ -18,7 +17,7 @@ use CHI;
 use common;
 
 our $CACHE_ADDRESS = "/tmp/networkCache_DVL2";
-Log::Log4perl->init("./conf/storeNetwork.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/storeNetwork.conf");
 my $logger = get_logger(); 
 
 $logger->info("*** CGI activation at " . common::getTime());
@@ -30,28 +29,31 @@ my $mainContainer = decode_json($params{'POSTDATA'});
 
 $logger->trace(Dumper($mainContainer));
 if ($mainContainer->{ type } eq "write") {
-    my $tag = cacheWriter(serializedNetwork => { links => $mainContainer->{ links },
-						 nodes => $mainContainer->{ nodes }});
+  if (@{$mainContainer->{ links }} == 0) {
     print $query->header('application/json');      # create the HTTP header
-    print '{"uid" : "' . $tag . '"}';
+    print '{"exception" : "Empty network"}';
+    exit;
+  }
+  
+  my $tag = cacheWriter(serializedNetwork => { links => $mainContainer->{ links },
+					       nodes => $mainContainer->{ nodes }});
+  print $query->header('application/json');      # create the HTTP header
+  print '{"uid" : "' . $tag . '"}';
 
   #  my $string = encode_json( $mainContainer );
   #  open DBG, ">/tmp/seedTestNetwork_P98160.json";
   #  print DBG "$string\n";
   #  close DBG;
-
+    
     exit;
 } elsif($mainContainer->{ type } eq "read") {
     my $networkContainer = cacheReader (key => $mainContainer->{ userKey });
-    
     my $response = defined $networkContainer ? $networkContainer : {errorStatus => "notFound", inputKey => $mainContainer->{ userKey }};
     my $string = encode_json($response);
     print $query->header('application/json');      # create the HTTP header
     print $string;
     exit;
 }
-
-
 
 sub setUID {
     my $ug  = new Data::UUID;    

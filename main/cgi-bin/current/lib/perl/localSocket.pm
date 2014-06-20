@@ -76,17 +76,17 @@ sub runCvRequest {
     my $socketIO = $p->{ with };
     $logger->trace("socket request content:$jsonRequest\n####\n");
     print $socketIO $jsonRequest . "\n";
-    
+    $logger->trace(Dumper($socketIO));
     my $answer;
     while (my $line = <$socketIO>) {
-	#  $logger->trace("buffer:$line");
+	  $logger->trace("buffer:$line");
 	#  chomp $line;
 	$answer .= $line;
 	if ($answer =~ /<EOMSG>/) {
 	    $answer =~ s/<EOMSG>//;last;
 	}
     }
-        
+
     
     $logger->trace("About to decode\n##\n$answer\n##\n");
     my $response = decode_sereal ($answer);

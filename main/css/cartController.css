@@ -57,20 +57,20 @@
 
 .glowing {
     outline: none!important;
-    border-color: #9ecaed!important;
-    box-shadow: 0 0 30px #9ecaed!important; 
+    border-color: #FF0000!important;
+    box-shadow: 0 0 30px #FF0000!important; 
 }
 
 @keyframes glowing
 {
-    from {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 1px #9ecaed;}
-    to {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 10px #9ecaed;}
+    from {outline: none;border-color: #FF0000;box-shadow: 0 0 30px 1px #FF0000;}
+    to {outline: none;border-color: #FF0000;box-shadow: 0 0 30px 10px #FF0000;}
 }
 
 @-webkit-keyframes glowing /* Safari and Chrome */
 {
-    from {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 1px #9ecaed;}    
-    to {outline: none;border-color: #9ecaed;box-shadow: 0 0 30px 10px #9ecaed;}
+    from {outline: none;border-color: #FF0000;box-shadow: 0 0 30px 1px #FF0000;}    
+    to {outline: none;border-color: #FF0000;box-shadow: 0 0 30px 10px #FF0000;}
 }
 
 #cartBookmarkWrapper {
@@ -117,6 +117,39 @@
     padding : 5px;
     padding-left: 10px;
     display: none;
+}
+
+#cartBookmarkWrapper.hot {
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count : infinite;
+    animation-duration: 1s;
+
+    min-height: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #FF0000, #FF0000); 
+    //    border-color: #FF0000!important;
+    //    box-shadow: 0 0 30px #FF0000!important; 
+
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FF0000), to(#FF0000));
+    background-image: -webkit-linear-gradient(top, #FF0000, #FF0000);
+    background-image: -o-linear-gradient(top, #FF0000, #FF0000);
+    background-image: linear-gradient(to bottom, #FF0000, #FF0000);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 0px 10px 10px 0px;
+    -moz-border-radius: 0px 10px 10px 0px;
+    border-radius: 0px 10px 10px 0px;
+    -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
+    margin-left : -10px;
+    font-weight: 200;
+    color: #777777;
+    text-shadow: 0 1px 0 #ffffff;
 }
 
 .cartMini i {
@@ -195,11 +228,17 @@
 
  .cartFooter .goBut {
     vertical-align: middle;
-    padding : 4px 25px 4px 25px;;
+	padding: 4px 15px 4px 4px;
 }
-
+ .cartFooter div.btn-group button{
+	font-size: 0.9em;
+	font-weight: 100;
+}
+.cartFooter div.btn-group{
+	font-size: 100%;
+}
  .cartFooter .goBut span {
-    padding-left : 10px;
+    
 }
 
 

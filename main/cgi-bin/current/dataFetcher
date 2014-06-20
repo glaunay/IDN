@@ -1,85 +1,83 @@
 #!/usr/bin/perl
-
-=pod Profiling statements
-#!/usr/bin/perl -d:NYTProf
-$ENV{'NYTPROF'}="trace=2:start=init:file=/tmp/interactomProf.out";
-=cut
-
 use strict;
 use vars qw/$DB $URL %EQUIV/;
 
 use warnings;
 use diagnostics;
-
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 
 #from CPAN
 use IO::Socket::UNIX qw( SOCK_STREAM );
 use CGI;
 use Ace 1.51;
-use Ace::Browser::AceSubs qw(:DEFAULT DoRedirect);
-use Ace::Browser::SearchSubs;
 use JSON;
 use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
 #custom
 use matrixDB::interactionReport;
 use common;
-use networkMapperAce;
-use miscDataLayer;
-use psicquicQuery;
-use psimi;
-use mergedAssociation;
+use biomoleculeMapper;
+use newPort;
 
 
-
-Log::Log4perl->init("./conf/dataFetcher.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/dataFetcher.conf");
 my $logger = get_logger(); 
-
-=pod
-  Pure ace based network construction
-
-  receives : - the list of central nodes
-             - the list of deleted nodes
-             - the list of search criterion
-=cut
 
 $logger->info("*** CGI activation at " . common::getTime());
 our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || 
   $logger->logdie ("Couldn't open database");
-our $nameMutator = biomoleculeMapper->new (template => '../data/biomoleculeMapper.json');
+our $nameMutator = biomoleculeMapper->new (template => "$ENV{ IDN_DATA }/biomoleculeMapper.json");
 
 # retrieving get parameters
 my $query = CGI->new();
 my %params = $query->Vars;
 my $queryData = decode_json($params{'POSTDATA'});
-$logger->info("query content:\n" . Dumper($queryData));
+$logger->trace("query content:\n" . Dumper($queryData));
 
-our $socketMI = IO::Socket::UNIX->new(
+my $socketMI = IO::Socket::UNIX->new(
     Type => SOCK_STREAM,
     Peer => '/tmp/miSocket',
     )
     or $logger->logdie("Can't connect to server: $!");;
 
-
 my $results = [];
 foreach my $dataElement (@{ $queryData->{ data } }) {
     my $container;
+    $logger->warn("Fetching data for " . Dumper($dataElement));
     if ($dataElement->{ type } eq "association") {
 	$container = getDataAssociation(
 	    options => { 
 		providers => $queryData->{ providers }
 	    },
 	    name => $dataElement->{ name },
-	    template => '../data/richLinkTemplate.json'
+	    socket => $socketMI,
+	    template => "$ENV{ IDN_DATA }/richLinkTemplate.json"
 	    );	
-    }
+      } elsif ($dataElement->{ type } eq "node") {
+	$container = getDataNode({ name => $dataElement->{ name }, DB => $DB });
+      }
+    (!defined $container) 
+      && $logger->logdie("Element named $dataElement->{ name } returned empty Object\n");
     push (@{ $results }, $container);
 }
+$logger->trace("Serializing following datacontainer:\n" . Dumper($results));
 
 my $jsonString = encode_json($results);
 print $query->header('application/json');
 print "$jsonString\n";
+
+$logger->trace("RETURNED JSON\n". $jsonString);
+
+sub getDataNode {
+  my $p = shift;
+  my $name = $nameMutator->mutateToMatrixdb (key => $p->{ name });
+  my $node = newPort::getData({type => "biomolecule", context => 'networkNodeEnrichment',
+			       value => $name,
+			       DB => $p->{ DB }});
+  $logger->warn(Dumper($node));
+  return $node;
+}
+
 
 sub getDataAssociation {
     my $p = common::arg_parser(@_);
@@ -93,12 +91,11 @@ sub getDataAssociation {
     my $linkObject = matrixDB::interactionReport::fetchAssociation (
 	name => $p->{ name },
 	DB => $DB,
-	template => $dataTemplate, 	
-	socketCv => $socketMI
+	template => $dataTemplate,
+	socketCv => $p->{ socket }
 	);
-    
-    (!defined $linkObject) && $logger->logdie("Link named $p->{ name } returned empty Object\n");
-    
-    
+
     return $linkObject;
 }
+
+

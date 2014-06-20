@@ -16,3 +16,5 @@ main/css/toDel
 main/data/toDel/
 # development test-cases
 main/html/develPages/
+# tmp file for export
+main/html/tmp/*

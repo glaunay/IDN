@@ -432,7 +432,16 @@ function isNumber(n)
 {
    return n == parseFloat(n);
 }
-
+function cleanArray(array) {
+  var i, j, len = array.length, out = [], obj = {};
+  for (i = 0; i < len; i++) {
+    obj[array[i]] = 0;
+  }
+  for (j in obj) {
+    out.push(j);
+  }
+  return out;
+}
 mapperSpecie = [
 							{"name":"Zebrafish","img":"zebrafish_bullet.png","id":"7955"},
 							{"name":"Chicken","img":"chicken_bullet.png","id":"9031"},
@@ -446,11 +455,15 @@ mapperSpecie = [
 							{"name":"Rat","img":"mouse_bullet.png","id":"10116"},
 							{"name":"Guinea pig","img":"guineaPig_bullet.png","id":"10144"},
 							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11686"},
-							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11696"}
+							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11696"},
+							{"name":"none","img":"hiv-1_bullet.png","id":"none"},
 						];
 speciUrl = function (speci,rootUrl){
 			var self = this;
 			var urlRoot = rootUrl ? rootUrl + "/img/" :"./img/";
+			if(!speci){
+				speci = 'none';
+			}
 			for (var i=0; i < mapperSpecie.length; i++) {
 				if (mapperSpecie[i].id == speci){
 					return "src ='" + urlRoot + mapperSpecie[i].img + "'";

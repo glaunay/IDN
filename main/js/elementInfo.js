@@ -216,18 +216,7 @@ function initElementInfo(opt) {
 		$(this.selector + ' .molLoader').remove();
 	    }
 	},	
-	generateLinkContent : function (){
-	    var imgPath = this.context === 'HTML' ? 'img' : '../../img';
-	    imgPath += '/matrixdb_logo_medium.png';
-	    $(this.selector + ' .upmark').append('<div class= "headerEi">'+
-						 '<a target = "_blank" href = "' + this.urlReport.association + this.data.details.name + '">' +
-						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a>' +
-						 '<div class="btn-group center"><a class="btn btn-success btn-mini" ><i class="fa-shopping-cart fa-2x"></i></a>' +
-						 '<a class="btn btn-default btn-mini">Add to cart</a></div>' +
-						 '<i class ="fa-double-angle-right fa-3x pull-right"></i></div>'
-						);
-	    generateLinkContent();
-	},
+	
 	generateNodeContent : function () {	    
 	    //console.log("generating node content");
 	 
@@ -274,15 +263,16 @@ function initElementInfo(opt) {
 	    var listeDiv = [];
 	    self.compteur = 1;
 	    $(self.selector + ' .upmark').append('<div class= "headerEi assoEi">'+
-						 '<a  target = "_blank" href = "' + self.urlReport.association + self.data.details.name + '" style = "float:left;">'+
-						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a>'+
-						 '<div style = "float:left;margin-left:40px;color: rgba(255, 255, 209, 1.0);">Interaction</div>'+
-						 '<i class ="fa fa-angle-double-right fa-3x pull-right"></i></div>'
+						 '<i class = "fa fa-search pull-left fa-3x"></i>'+
+						 '<div class = "titreInfoElem">Interaction</div>'+
+						 '<i class ="fa fa-angle-double-right closerElemInfo fa-3x pull-right"></i></div>'
 										);
 	    var commonInfo = "<div class = 'commonInfo' ><div class = 'compteur'></div><div class = 'type'>" + self.data.details.knowledge + "</div></div>";
 	    if(self.data.details.Experiments.length > 1){
-		var header = "<div class = 'caroussel'><i class='fa fa-chevron-left pull-left fa-2x'></i><div class='titleAsso' style = 'width: 160px;'>" + name + "</div><i class='fa fa-chevron-right pull-right fa-2x'></i>"+
-		    "</div>";
+		var header = "<div class = 'caroussel'><i class='fa fa-chevron-left pull-left fa-2x'></i>"+
+					 "<div class='titleAsso' style = 'width: 81%;'><a  target = '_blank'"+
+					 " href = '" + self.urlReport.association + self.data.details.name + "'>"+ name + "</a></div>"+
+					 "<i class='fa fa-chevron-right pull-right fa-2x'></i></div>";
 		
 			for (var i=0; i < self.data.details.Experiments.length; i++) {
 				listeDiv.push(self._divXpGenerator(self.data.details.Experiments[i],i));
@@ -379,20 +369,20 @@ function initElementInfo(opt) {
 	},
 	bodyVisitCardGenerate : function () {	   
 	    if(!this.data.x){return;}
-	    var imgPath = this.context === 'HTML' ? 'img' : '../../img';
-	    imgPath += '/matrixdb_logo_medium.png';
+	   
 	    $(this.selector + ' .upmark').append('<div class= "headerEi">'+
-						 '<a target = "_blank" href = "' + this.urlReport.biomolecule + this.data.name + '" style = "float:left;">'+
-						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a>'+
-						 '<div style = "float:left;margin-left:10px;color: rgba(255, 255, 209, 1.0);">Biomolecule</div>'+
-						 '<i class ="fa fa-angle-double-right fa-3x pull-right"></i></div>'
+						 '<i class = "fa fa-search pull-left fa-3x"></i>'+
+						 '<div class = "titreInfoElem">Biomolecule</div>'+
+						 '<i class ="fa fa-angle-double-right closerElemInfo fa-3x pull-right"></i></div>'
 						);
 	    if(this.data.common){
 		
 	    }else{
 		$(this.selector + ' .ei-header').hide();
 	    }
-	    var name = '<div style = "text-align:center;">' + this.data.common.anyNames[0] + "</div>";
+	    var name = '<div style = "text-align:center;">'+
+				   '<a target = "_blank" href = "' + this.urlReport.biomolecule + this.data.name + '" >' +
+				   this.data.common.anyNames[0] + "</a></div>";
 	    $(this.selector + ' .ei-body').append(name);
 	    var cv = '<div class="summary"></div>';
 	    $(this.selector + ' .ei-body').append(cv);
@@ -487,6 +477,7 @@ function initElementInfo(opt) {
 		
 		this.molViewIndex = 0;
 		$(this.selector +" .pdbChange i").on('click', function (){
+					 self.defaultSel = [];
 					 if ($(".molLoader .fa-times").length > 0) {
 					 	self.toggleMoleculeLoader();					 	
 					 }								
@@ -499,7 +490,7 @@ function initElementInfo(opt) {
 						 ? self.molViewIndex + 1 : 0;
 					 }
 					 console.log("-->" + self.molViewIndex);
-					 self.molViewer.load(self.data.pdb[self.molViewIndex]);
+					 self.molViewer.load(self.data.pdb[self.molViewIndex],true);
 					 var pdbCode = self.data.pdb[self.molViewIndex].match(/^.{4}/);				
 					 // replace pdbCode and self.molViewIndex	
 					 $(self.selector + ' .ei-body #structureCount').text(self.molViewIndex+1);
@@ -542,8 +533,9 @@ function initElementInfo(opt) {
 	_divXpGenerator : function(xpData , index){
 		var self = this;
 		var index = index + 1;
-		console.dir(xpData);
-		var partnerDetailsContent = self._partnerDetailsContentGenerator(xpData.PartnerDetails);
+		if(!xpData){
+			return "waiting for data..";
+		}
 		var divReturn = '<div class  = "contentXp" index = "' + index + '"><div class = "generalInfo"><dl>'+
 		self._xpModif(xpData) +
 		self._database(xpData) +
@@ -555,14 +547,13 @@ function initElementInfo(opt) {
 		self._publication(xpData) +
 		self._figure(xpData) +
 		self._imexId(xpData) +
-		'</dl></div><div class"partnerDetails"><div class = "titlePartner">Partner details</div>'+
-		partnerDetailsContent +
-		'</div>';
+		'</dl></div></div>';
 		
 		return divReturn;
 	},
 	_xpModif : function(xpData){
 		var self = this;
+		
 		if(!xpData.Experiment_modification || xpData.Experiment_modification == "N/A"){return ''}
 		return '<dt class ="hReport">Experiment modification:</dt><dd> ' + self._linkMi(xpData.Experiment_modification) + "</dd>";
 	},
@@ -674,29 +665,3 @@ function initElementInfo(opt) {
    
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,7 +5,7 @@ use vars qw/$DB $URL %EQUIV/;
 use warnings;
 use diagnostics;
 
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 
 #from CPAN
 use CGI;
@@ -18,13 +18,7 @@ use Log::Log4perl qw(get_logger :levels);
 use common;
 
 
-our $STATUS = 'TEST'; # or 'PROD'
-
-my $rootUrl = $STATUS eq 'TEST' 
-    ? "http://matrixdb.ibcp.fr:9999"
-    : "http://matrixdb-new.ibcp.fr";
-
-Log::Log4perl->init("./conf/csConverter.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/csConverter.conf");
 my $logger = get_logger(); 
 
 $logger->info("*** CGI activation at " . common::getTime());
@@ -38,7 +32,8 @@ my $uuid = $ug->create();
 my $tag = $ug->to_string( $uuid );
 
 
-`mkdir ../../html/tmp/cs_$tag`;
+#`mkdir ../../html/tmp/cs_$tag`;
+`mkdir $ENV{ IDN_TMP }/cs_$tag`;
 
 $logger->info($params{'POSTDATA'});
 my $mainContainer = decode_json($params{'POSTDATA'});
@@ -70,21 +65,21 @@ foreach my $nodeName (keys (%{$mainContainer->{ nodeData }}) ) {
   $naString .= "$nodeName = $node->{ common }\n";
 }
 
-open SIF, ">../../html/tmp/cs_$tag/network.sif" or die $!;
+open SIF, ">$ENV{ IDN_TMP }/cs_$tag/network.sif" or die $!;
 print SIF "$sifString";
 close SIF;
 
-open NAF, ">../../html/tmp/cs_$tag/network.na" or die $!;
+open NAF, ">$ENV{ IDN_TMP }/cs_$tag/network.na" or die $!;
 print NAF "$naString";
 close NAF;
 
-`cd ../../html/tmp/;tar -cjf cs_$tag.tar.bz cs_$tag`;
+`cd $ENV{ IDN_TMP };tar -cjf cs_$tag.tar.bz cs_$tag`;
 
 
 my $response;
 $response = {
     status => 'OK',
-    fileLocation => "$rootUrl/tmp/cs_$tag.tar.bz" # put relative url here
+    fileLocation => "$ENV{ IDN_URL }/tmp/cs_$tag.tar.bz" # put relative url here
 };
 
 print $query->header('application/json');      # create the HTTP header

@@ -89,18 +89,22 @@ sub new {
 	$self->{ idNodeTable } = {};  
 	$self->{ nameNodeTable } =  {};  
 	$self->{ networkData } = {}; # Statistic data container
-	
+	$logger->trace("[TS]settingSockets");
 	defined ($p->{ mappersSocketDef }) && $self->_setSockets ($p->{ mappersSocketDef });
+	$logger->trace("[TS]socketsSet");
+	$logger->trace("[TS]settingMappers");
 	defined ($p->{ mappersFileDef }) && $self->_setMappers ($p->{ mappersFileDef });
-	
+	$logger->trace("[TS]mappersSet");
 	if (!defined($p->{ DB }) ) {
 	    $logger->logdie("no valid arguments provided");
 	    return;
 	}
-	
+	$logger->trace("[TS]fillingNodesStart");
 	$self->_fillingNodes (aceBiomoleculeList => $p->{ aceBiomoleculeList });
+	$logger->trace("[TS]fillingNodesStop");
+	$logger->trace("[TS]creatingNodeAccessors");
 	$self->createNodeAccessors(); # reference node per id key && name
-	
+	$logger->trace("[TS]nodeAccessorsSet");
 	return $self;
 }
 #=pod createLinkAccessors 
@@ -146,7 +150,7 @@ sub _setSockets {
 	    Type => SOCK_STREAM,
 	    Peer => $socketPath,
 	    )
-	    or $logger->logdie("Can't connect to server: $!");
+	    or $logger->logdie("Can't connect to server at \"$socketPath\": $!");
 	$info .= " $key ";
     }	
     
@@ -482,7 +486,6 @@ sub getJSON {
     
     my $dataContainer = {
 			 id => $self->{ UItag },
-			 titi => 'toto',
 			 nodeData => $self->{ nodeArray },
 			 linksData => $self->{ links },
 			 networkData => {
@@ -495,69 +498,6 @@ sub getJSON {
     my $jsonString = encode_json($dataContainer);
     $jsonString =~ s/("source":|"target":)"([\d]+)"/$1$2/g;
     return $jsonString;
-# foreach my $key (qw/upKeywordTree goKeywordTree/) {
-#	if (defined($self->{ networkData }->{ $key })) {
-#	    push @tmp, encode_json ($self->{ networkData }->{ $key }); 
-#	}	
-#    }
-
-
-
-#    my $jsonData = "\"id\" : \"" . $self->{ UItag } . "\",\"nodeData\" : [";
-#    foreach my $node (@{$self->{ nodeArray }}) {
-#	my $nodeAsString;
-#	foreach my $key (qw /name common biofunc tissue uniprotKW pfam tpm go gene pdb specie type molecularWeight relationship central betweenness/) {
-#	    if ($key eq "central") {
-#		if (defined($node->{ $key })) {$nodeAsString .= '"central" : true,';}
-#		next; 
-#	    }
-#	    my $tmp = $nodeWriter->{ $key }($node, $key);
-#	    $tmp eq "" && next;
-#	    $nodeAsString .= $tmp;
-#	}
-#	$logger->info("TOTO " . Dumper($node));	
-#	$logger->info("TITO " . Dumper($node->{ additionalData }));	
-#	my $addString = encode_json({additionalData => $node->{ additionalData }});
-#	$logger->info("TITI " . $addString);
-#	$addString =~ s/^\{(.*)\}$/$1/;
-#	$nodeAsString .= $addString;
-
-	#$nodeAsString =~ s/,$/,a/;
-#	$jsonData .= "{$nodeAsString},\n";
-#    }
-#    $jsonData =~ s/,\n$/\n]\n/;
-#    if (@{$self->{ nodeArray }} == 0) {
-#	$jsonData = "\"nodeData\" : []\n";
-#    }
-
-#    $logger->trace("Empty Exepriment debug");
-#    foreach my $l (@{$self->{ links }}) {
-#	$logger->trace(Dumper($l));
-#    }
-    
-
-    # Add links
-#    if (@{$self->{ links }} > 0) {
-#	$logger->trace("About to encode link data structure:\n" . Dumper($self->{ links }));
-#	my $linkAsJSON = encode_json ($self->{ links });
-	
-#	$linkAsJSON =~ s/("source":|"target":)"([\d]+)"/$1$2/g;
-
-
-#	$jsonData .= ",\"linksData\" : $linkAsJSON\n";	
-#    } else {
-#	$jsonData .= ",\"linksData\" : []\n";	
-#    }
-
-#    my @tmp;   
-#    foreach my $key (qw/upKeywordTree goKeywordTree/) {
-#	if (defined($self->{ networkData }->{ $key })) {
-#	    push @tmp, encode_json ($self->{ networkData }->{ $key }); 
-#	}	
-#    }
-#    $jsonData = @tmp > 0  ne "" ? "{$jsonData, \"networkData\" : [ ". join (",", @tmp) .  " ]}" : "{$jsonData, \"networkData\" : [] }";
-    
-#    return $jsonData;
 }
 
 sub _extractInteractorName {
@@ -773,14 +713,13 @@ sub _fillingNodes {
     my $p = common::arg_parser (@_);
     
     my $sTime = common::getTime();
-    $logger->trace("Starting the filling of " . scalar (@{$p->{ aceBiomoleculeList }}) );     
-		   
-    
+    $logger->trace("[TS]StartFilling " . scalar (@{$p->{ aceBiomoleculeList }} . " nodes"));
+
     my $cnt = 0;
 
+     
     foreach my $biomoleculeObject (@{$p->{ aceBiomoleculeList }}) {
 	$cnt++;
-
 	my $biomoleculeName = $self->{ nameMutator }->mutateToMatrixdb (key => $biomoleculeObject->name);
 	# the target container
 	my $node = newPort::getData({type => "biomolecule", context => 'networkNode',

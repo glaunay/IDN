@@ -32,19 +32,39 @@ function initStatView (options){
 		},
 		_statDraw : function(data){
 				console.dir(data)
+				var scaffold = '<div class = "row-fluid"><div class = "span6 firstPart"></div><div class = "span6 secondPart"></div></div>';
 			 	var self = this;
-			    var pieDataAsso = [] ;
-			    var pieDataInteract = [] ;
-			    var tableFinal = '<table bgcolor="white" class="table table-bordered" style=" height: 193px;">'+
-                      			 '<thead><tr><th>Molecular interaction Data</th><th>Number</th></tr></thead><tbody>';
-                
-			 	$.each(data.associations,function(name, type){
-			 		if(name != "total"){
-			 			pieDataAsso.push({"label":name,"value":type[0]})
-			 			pieDataInteract.push({"label":name,"value":type[1]})
-			 		}
-			 	});
-				tableFinal += '<tr><td>Number of interactors</td><td>' + data.interactors.total + '</td></tr>';
+			    var tableInteractor ='<table bgcolor="white" class="table table-bordered" >'+
+                      			 '<thead><tr><th>Interactions</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
+                      			 '</tr></thead><tbody>'+
+                      			 '<tr><th>GAG**</th><td>' + data.associations.glycosaminoglycanProtein[0] + '</td>'+
+	                      			 '<td>' + data.associations.glycosaminoglycanMultimer[0] + '</td>'+
+	                      			 '<td>' + data.associations.fragmentGlycosaminoglycan[0] + '</td>'+
+	                      			 '<td>' + data.associations.glycosaminoglycanGlycosaminoglycan[0] + '</td></tr>'+
+                      			 '<tr><th>PFrag*</th><td>' + data.associations.fragmentProtein[0] + '</td>'+
+                      			 	'<td>' + data.associations.fragmentMultimer[0] + '</td>'+
+                      			 	'<td>' + data.associations.fragmentFragment[0] + '</td><td></td></tr>'+
+                      			 '<tr><th>Multimer</th><td>' + data.associations.multimerProtein[0] + '</td>'+
+                      			 	'<td>' + data.associations.multimerMultimer[0] + '</td><td></td><td></td></tr>'+
+                      			 '<tr><th>Protein</th><td>' + data.associations.proteinProtein[0] + '</td><td></td><td></td><td></td></tr>';
+			    var tableFinal = '<table bgcolor="white" class="table table-bordered" >'+
+                      			 '<thead><tr><th>Molecular interaction Data</th>'+
+                      			 '<th><img src = "/img/icon-mdb.png" width = "15px" ></img></th>'+
+                      			 '<th><img src = "/img/psicquic.png" width = "20px"></img></th></tr></thead><tbody>';
+			 	tableInteractor += '</tbody></table><div>* = Bioactive protein fragment </br> ** = Glycosaminoglycan</div>';
+			 	var pub = data.publications.total - data.publications.imex
+				tableFinal += '<tr><td>Associations</td><td>' + data.associations.matrixdb[0] + '</td><td>' + data.associations.psicquic[0] + '</td></tr>' +
+							  '<tr><td>Experiments</td><td>' + data.associations.matrixdb[1] + '</td><td>' + data.associations.psicquic[1] + '</td></tr>' +
+							  '</tbody></table>' +'<table bgcolor="white" class="table table-bordered" style=" max-height: 250px;">'+
+                      		  '<thead><tr><th>Publications</th><th>Number</th></tr></thead><tbody>' +
+							  '<tr><td>Mimix level curated publications</td><td>' + pub + '</td></tr>'+
+							  '<tr><td>Imex level curated publications</td><td>' + data.publications.imex + '</td></tr>' ;
+				tableFinal += '</tbody></table>';
+				var date = "<div>Update on " + data.localDate[1] + "/" + data.localDate[2] + "/" + data.localDate[0] +
+						   " at " + data.localDate[3] + "h" + data.localDate[4] +" min</div>";
+				$(self.targetDomElem).append( date + scaffold);
+				$(self.targetDomElem).find("div.firstPart").append(tableFinal);
+				$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
 				
 				
 		},
@@ -77,7 +97,7 @@ function initStatView (options){
 			                .attr("fill", function(d, i) { return color(i); } ) //set the color for each slice to be chosen from the color function defined above
 			                .attr("d", arc);                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing function
 			 
-			        arcs.append("svg:text")                                     //add a label to each slice
+			        /*arcs.append("svg:text")                                     //add a label to each slice
 		                .attr("transform", function(d) {                    //set the label's origin to the center of the arc
 		                //we have to make sure to set these before calling arc.centroid
 		                d.innerRadius = r;
@@ -85,7 +105,7 @@ function initStatView (options){
 		                return "translate(" + arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
 		            })
 			            .attr("text-anchor", "middle")                          //center the text on it's origin
-			            .text(function(d, i) { return pieDataAsso[i].label; }); 
+			            .text(function(d, i) { return pieDataAsso[i].label; }); */
 		}
 		
 	}

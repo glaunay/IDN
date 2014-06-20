@@ -18,6 +18,10 @@ function initBarSearch (options){
 		alert("Cant get targetDiv element in document");
 		return;
 	}
+	
+	var graphSearchCallback =function(){
+		console.dir("here")
+	}
 	var mapperCollection = initBarSearchMapper();
 
 	var clickOnListElement = function () {}; // default callback on list element click override it using listElementClick contructor arguments
@@ -35,6 +39,7 @@ function initBarSearch (options){
 	}
     
     return {
+    graphSearchCallback : options.graphSearchCallback ? options.graphSearchCallback : graphSearchCallback,
 	specifyHref : specifyHref,
 	addCartNavCallback : options.addCartNavCallback ? options.addCartNavCallback : false,
 	iNavContext : options.iNavContext ? true : false,
@@ -45,58 +50,81 @@ function initBarSearch (options){
 	history : [], //mémoire des recherces
 	mappers : mapperCollection, //arrangement des sorties
 	indexNav : -1, // nombre de recherche
+	grapheSearch : false,
+	currentStringForGraphSearch : false,
 	clickOnListElement : clickOnListElement, //callback sur un click d'un élément de la liste
 	stopTime : undefined,//utile pour la latence entre frappe et recherche
 	humanOnly : true,
 	nameColumn : {
 		"biomolecule" : {
 			id: "Biomolecule",
-			tooltip : "coming Soon"
+			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of biomolecule(s) found in Matrixdb</div>" +
+					  "<p>Biomolecule can be protein, bioactive fragment, complex, glycosaminoglycan, ion, lipid or inorganic.</p>"+
+					  "<ul class ='fa-ul'><li><i class='fa fa-hand-o-right'></i>"+
+					  " Hits are ranked according to their number of known interactions within the database.</li>"+
+					  "<li><v"+
+					  " For each hit, gene name(s) and specie as a logo are provided.</li>"+
+					  "<li><i class='fa fa-hand-o-right'></i>"+
+					  " Please note the check box to restrict hits to human only.</li></div>"
+
 			},
 		"keywrd" : {
-			id:"UniProtKB",
-			tooltip : "coming Soon"
+			id:"UniProtKB keyword",
+			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of annotation terms found in Matrixdb</div>"+
+					  "<p>Annotation terms are part of <a target='_blank' href='help uni'>UniprotKB controlled vocabulary</a></p></div>"
+
 			},
 		"publication" : {
 			id:"Publication",
-			tooltip : '<div class = "postitSearchContent"><div class="postitTitle">Curation Level</div>'+
+			tooltip : '<div class = "postitSearchContent"><div class="postitTitle">List of publication(s) found in Matrixdb</div>'+
+					  '<p>Each publication is star labeled according to its curation level</p>'+
 					  '<ul class="fa-ul">'+
-					  '<li><i <i class="fa fa-star fa-li" style = "color:yellow"></i>IMEX</li>'+
-					  '<li><i <i class="fa fa-star-o fa-li"></i>MIMIX</li></ul></div>'
+					  '<li><i <i class="fa fa-star fa-li" style = "color:rgb(206, 206, 17);"></i>'+
+					  '<a target = "_blank" href = "http://www.imexconsortium.org/">IMEX</a></li>'+
+					  '<li><i <i class="fa fa-star-o fa-li" ></i><a target = "_blank" href = "http://www.psidev.info/mimix">MIMIX</a></li></ul>'+
+					  '<p><i class="fa fa-hand-o-right"></i> The number of interactions reported in each publication is also mentioned</p></div>'
 			},
 		"author" : {
 			id:"Author",
-			tooltip : 'Comming soon'
+			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of publication author(s) found in Matrixdb</div>"+
+					  "<p>For each author, a number indicates the total of interactions reported in all his/her publication(s)</p></div>"
 			},
 	},
 	
 	generate : function(string){  // fonction de séléction : test si la recherche à déjà été effectué ou si il faut faire une requéte serveur
 	    var self = this;
-	    console.dir(string)
+	    
 	    if(string.length < 3){
-		self._stopSpin();
+			self._stopSpin();
     		return;
     	    }
-    	self._startSpin()  // debut de la rotation
-  	    
-	    $(self.targetDomElem).find('div.afficheResult').remove();//détruit la recherche précédente
-	    var data = self._getHistory (string); // get JSON datastructure in history 
-	    
-	    if (!data) {//si les données n'existent pas
-			if (self.testWaiter(string)) { 
-		    	return;
-			}else {
-		    self.addWaiter(string);
-			}
-			self.loadFromServer(string);// récupération des données depuis le serveur
-	    } else {
-	    	if(self.iNavContext){
-	    		self._drawNavResult(data)
-	    	}else{
-	    		self._drawResult(data); //sinon rappel des données
-	    	}
-			
-	    }
+    	    
+    	self.currentStringForGraphSearch = string
+    	
+	    	self._startSpin()  // debut de la rotation
+	  	    
+		    $(self.targetDomElem).find('div.afficheResult').remove();//détruit la recherche précédente
+		    var data = self._getHistory (string); // get JSON datastructure in history 
+		    
+		    if (!data) {//si les données n'existent pas
+				if (self.testWaiter(string)) { 
+			    	return;
+				}else {
+			    self.addWaiter(string);
+				}
+				self.loadFromServer(string);// récupération des données depuis le serveur
+		    } else {
+		    	if(self.iNavContext){
+		    		//console.dir(data)
+		    		self._drawNavResult(data)
+		    	}else{
+		    		
+		    		self._drawResult(data); //sinon rappel des données
+		    	}
+				
+		    }
+		
+		
 	},
 	hideResult : function(){  //on cache la fenêtre de résultat
 	    var self = this;
@@ -105,24 +133,24 @@ function initBarSearch (options){
 	},	
 	showResult : function(){ //on affiche la fenêtre résultat
 	    var self = this;
+	    
 	    if($(self.targetDomElem).find('div.afficheResult[prov="true"]').is(':visible')){
 			return;
 	    }
-	    $(self.targetDomElem).find('div.afficheResult').show();	
+	    self._dbGraphChoise();
 	},
 	_stopSpin : function(){
 	    var self = this;
-	    $(self.targetDomElem).find('div.input-prepend>a>i').removeClass('fa-spinner fa-spin');
-	    $(self.targetDomElem).find('div.input-prepend>a>i').addClass('fa-search');
-	    $(self.targetDomElem).find('div.input-prepend>a').removeClass("search");
-	    $(self.targetDomElem).find('div.input-prepend>a').addClass("btn-info btn");
+	    $(self.targetDomElem).find('div.input-prepend span.add-on i').removeClass('fa-spinner fa-spin');
+	    $(self.targetDomElem).find('div.input-prepend span.add-on i').addClass('fa-search');
+	    $(self.targetDomElem).find('div.input-prepend span.add-on ').removeClass("search");
+	    $(self.targetDomElem).find('div.input-prepend span.add-on').css("background-color","rgb(238, 238, 238)");
 	},
 	_startSpin : function(){
 		var self = this
-		$(self.targetDomElem).find('div.input-prepend>a>i').removeClass('fa-search');
-	    $(self.targetDomElem).find('div.input-prepend>a>i').addClass('fa-spinner fa-spin');	
-	    $(self.targetDomElem).find('div.input-prepend>a').addClass("search");
-	    $(self.targetDomElem).find('div.input-prepend>a').removeClass("btn-info btn");
+		$(self.targetDomElem).find('div.input-prepend span.add-on i').removeClass('fa-search');
+	    $(self.targetDomElem).find('div.input-prepend span.add-on i').addClass('fa-spinner fa-spin');	
+	    $(self.targetDomElem).find('div.input-prepend span.add-on ').addClass("search");
 	},
 	_setHistory : function (string, data) {// rajouter une recherche dans history
 	    this.history.push ({ key : string, results : data });
@@ -144,7 +172,7 @@ function initBarSearch (options){
 	loadFromServer : function (string) {
 	    // downlaod json table content
 		var self = this;
-		console.log(self.rootUrl + 'cgi-bin/current/barSearch?key=' + string)
+		//console.log(self.rootUrl + 'cgi-bin/current/barSearch?key=' + string)
 	    var jqxhr = $.ajax({
         			   type: 'GET',
         			   dataType: 'json',
@@ -157,7 +185,7 @@ function initBarSearch (options){
     			      if (currentString.trim() === data.searchString) {// si l'input n'a pas changé
     				  var resData = self._getHistory(data.searchString);
     				  self.indexNav++;
-    				  console.dir(data);
+    				  //console.dir(data);
     				  if(self.iNavContext){self._drawNavResult(resData);}
     				  else{self._drawResult(resData);}
     			      }
@@ -177,23 +205,36 @@ function initBarSearch (options){
 	    var self = this;
 	    
 	    $(self.targetDomElem).addClass(self.barClass);
-	    $(self.targetDomElem).append('<div class="input-prepend">'+
-   					 '<span class="add-on"><i class="fa fa-search"></i></span>'+
-   					 '<input class="inputBar" type="text" placeholder="Molecule Name or Id or Author...">'+
-    					 '<a class="btn btn-small btn-info add-on " >'+
- 					 '<i class="fa fa-search"></i></a>'+
-  					 '</div>');
+	    
+	    var drawBarsearch =  '<div class="input-prepend">'+
+		   					 '<span class="add-on"><i class="fa fa-search"></i></span>'+
+		   					 '<input class="inputBar" type="text" placeholder="Search For ...">';
+		
+		if(self.iNavContext){
+			drawBarsearch += '<a class="btn btn-small add-on matrixdb active">MatrixDB</a>'+
+							 '<a class="btn btn-small add-on graph">network</a>';
+		}
+		drawBarsearch += '</div>';
+	    $(self.targetDomElem).append(drawBarsearch);
+	 	if(!self.iNavContext){
+	 		$(self.targetDomElem).find("input.inputBar").attr("placeholder","Search for any biomolecule, publication, "+
+	 														  "annotation term or author");
+	 	}
 	    var elem = $(self.targetDomElem).find('input');
-			
+		$(self.targetDomElem).find("a").tooltip();
 	    // Save current value of element
 	    
 	    
 	    // Look for changes in the value
 	    elem.bind("propertychange  input paste", function(event){ //recherche effectuer	
-			  var string = elem.val();
-			  console.dir(string);
+			  var string = elem.val().toLowerCase();
+			  
+			  if(self.iNavContext){
+			  	vizObject.core.bubbleNodeClear();
+			  }
+			  
 			  clearTimeout(self.stopTime); //si il n'y a pas d'input pendant 1000 ms 
-    		  self.stopTime = setTimeout(function(){self.generate(elem.val())},1000); 	//	on génére la page de résultat
+    		  self.stopTime = setTimeout(function(){elem.val(string.toLowerCase());self.generate(elem.val())},1000); 	//	on génére la page de résultat
 			  
 		      });
 	    $(self.targetDomElem).click(function(event){// gestion de l'apparition ou disparition de affiche result
@@ -202,11 +243,60 @@ function initBarSearch (options){
 	    $('html').click(function() {// idem
 				self.hideResult();
 		});
-		
+		$(self.targetDomElem).find('a.graph').click(function() {// graphSearch on
+				self.grapheSearch = true;
+				vizObject.core.bubbleNodeClear();
+				var listOfResult = self.graphSearchCallback(self.currentStringForGraphSearch);
+				self.addGraphResult(listOfResult);
+				self._dbGraphChoise();
+		});
+		$(self.targetDomElem).find('a.matrixdb').click(function() {// graphSearch off
+				self.grapheSearch = false;
+				self._dbGraphChoise();
+				vizObject.core.bubbleNodeClear();
+		});
 	    $(self.targetDomElem).find("input").focusin(function() {//idem
+							    
 							    self.showResult(self);
 							});  	
 			
+	},
+	addGraphResult : function(results){
+		var self = this;
+		//console.dir(results)
+		var nbHitgraph = results.length;
+	    var plural = " hit";
+	    if(nbHitgraph > 1){plural = " hits"};
+		
+		$(self.targetDomElem).find('div.afficheResult.graphStyle div.headerTab').text('');
+		var headOfGraphRes = 'This search in current network returned ' + nbHitgraph + plural;
+		$(self.targetDomElem).find('div.afficheResult.graphStyle div.headerTab').append(headOfGraphRes);
+		$(self.targetDomElem).find('div.afficheResult.graphStyle table').remove();
+		$(self.targetDomElem).find('div.afficheResult.graphStyle span').remove();
+		if(!results[0]){
+			var returnString = '<span><i class="fa fa-warning"></i> No match found</span>';
+		}else{
+			var returnString = "<table class = 'inTab'>"
+			for (var i=0; i < results.length; i++) {
+				var name = results[i].aceAccessor?results[i].aceAccessor : results[i].name;
+				returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
+		 						"</td><td>" + results[i].name + "</td><td class = 'infoCart'>" +
+		 						"<a data-value = '" + name + "' data-type = 'biomolecule' target = '_blank' "+
+		 						"href ='/cgi-bin/current/newPort?type=biomolecule&value=" + name + "'>" +
+		 						results[i].common.anyNames[0] + "</a></td></tr>";
+			};
+			returnString += "</table>";
+		}
+		$(self.targetDomElem).find("div.afficheResult.graphStyle").append(returnString);
+		$("td a.addCart").click(function(){
+ 			var critObj = {};
+ 			if($(this).attr("data-original-title")){critObj.description = $(this).attr("data-original-title");}
+ 			else{critObj.description = $(this).text();}
+			critObj.name = $(this).parent().parent().find("td.infoCart a").attr("data-value");
+			critObj.type = $(this).parent().parent().find("td.infoCart a").attr("data-type"); 			
+ 			self.addCartNavCallback(critObj);
+ 		})
+		
 	},
 /*--------------------------------------------------------------------------
  partie navigateur*/
@@ -215,62 +305,85 @@ function initBarSearch (options){
 		$(self.targetDomElem).find('div.afficheResult').remove();
 	    // setup a local results objects storing mapper results
 	    var listeMapper ={biomolecule : [], publication : []};
-	    jQuery.each(data.results,function(type,val){// appel au composant mapper pour la mise en forme des résultat
-	    		    if(type == "biomolecule" || type =="publication"){
-	    			for (var i = 0; i < val.length; i++) {
-				    if (val[i].count === "0") 
-					continue;				    
-				    listeMapper[type].push(self._resultNav(val[i]));
-				}; 
-			    }
-			});
+	    
+		jQuery.each(data.results,function(type,val){// appel au composant mapper pour la mise en forme des résultat
+		   		    if(type == "biomolecule" || type =="publication"){
+		   			for (var i = 0; i < val.length; i++) {
+					    if (val[i].count === "0") 
+						continue;				    
+					    listeMapper[type].push(self._resultNav(val[i]));
+					}; 
+				}
+		});
 	    
 	    self._stopSpin();
-	    $(self.targetDomElem).append('<div class = "afficheResult" ></div>');
-	    var widjet = $(self.targetDomElem).find('div.afficheResult');
-	    widjet.css('position','absolute');
-		var tab = '<ul style = "width:100%;" class="nav nav-tabs" id="myTab">' +
- 				  
-				  '<div  class=" closer navCloser"><i class="fa fa-minus-square-o"></i></div></ul>'+
+	    $(self.targetDomElem).append('<div class = "afficheResult dbStyle"></div><div class = "afficheResult graphStyle"></div>');
+	    
+	    $(self.targetDomElem).find('div.afficheResult').css('position','absolute');
+	    self._dbGraphChoise();
+	    
+		var tab = '<div class = "headerTab"></div><ul style = "width:100%;" class="nav nav-tabs" id="myTab">' +
+				  '<div  class=" closer navCloser"><i class="fa fa-angle-double-up" style = "margin-top:-15px;"></i></div></ul>'+
 				  '<div class="tab-content">'+
 				  '</div>';
-				  
 		
-		widjet.append(tab);
-		/* Rajout des tab si contenu*/
-		if(listeMapper.biomolecule.length > 0){
-			var listeBio = self._tableHtmlCreator(listeMapper.biomolecule)
-			widjet.find('ul.nav').append(' <li class="active"><a href="#biomol">Biomolecule (' + listeMapper.biomolecule.length+ ')</a></li>')
-			widjet.find('div.tab-content').append('<div class="tab-pane active" id="biomol">' + listeBio + '</div>')
+		
+		
+		$(self.targetDomElem).find('div.afficheResult').append(tab);
+		
+		if(self.grapheSearch){
+			self.addGraphResult(self.graphSearchCallback(self.currentStringForGraphSearch));
 		}
- 		if(listeMapper.publication.length > 0){
- 			var listePubli = self._tableHtmlCreator(listeMapper.publication)
- 			widjet.find('ul.nav').append(' <li><a href="#publi">Publication (' + listeMapper.publication.length+ ')</a></li>');
- 			widjet.find('div.tab-content').append('<div class="tab-pane" id="publi">' + listePubli + '</div>')
- 		}
- 		if(listeMapper.publication.length == 0 && listeMapper.biomolecule.length == 0){
- 			widjet.find('ul.nav').append(' <li><i class="fa fa-warning"></i> No match found</li>');
- 		}
-		$('#myTab a').click(function (e) {
-  			e.preventDefault();
-  			$(this).tab('show');
-		})
-		var taille = $(self.targetDomElem).find('div.input-prepend input').width()
-		var resize = $(self.targetDomElem).find('table.inTab tr').width()
-		if(taille > 305){widjet.width(taille);}
- 		widjet.find("div.tooltipContent").tooltip();
- 		$( window ).resize(function() {
- 			taille = $(self.targetDomElem).find('div.input-prepend input').width()
-  			if(taille > 305){widjet.width(taille);}
-		});
- 		widjet.find("div.tab-pane a").click(function(){
+		var nbHitmdb = listeMapper.biomolecule.length + listeMapper.publication.length;
+	    var plural = " hit";
+	    if(nbHitmdb > 1){plural = " hits"};
+	    
+		var headOfMdbRes = 'This MatrixDB search returned ' + nbHitmdb + plural;
+		
+		$(self.targetDomElem).find('div.afficheResult.dbStyle div.headerTab').append(headOfMdbRes);
+		
+		/* Rajout des tab si contenu*/
+			var widjet = $(self.targetDomElem).find('div.afficheResult.dbStyle');
+			if(listeMapper.biomolecule.length > 0){
+				var listeBio = self._tableHtmlCreator(listeMapper.biomolecule)
+				widjet.find('ul.nav').append(' <li class="active"><a href="#biomol">Biomolecule (' + listeMapper.biomolecule.length+ ')</a></li>')
+				widjet.find('div.tab-content').append('<div class="tab-pane active" id="biomol">' + listeBio + '</div>')
+			}
+	 		if(listeMapper.publication.length > 0){
+	 			var active = '';
+	 			if(listeMapper.biomolecule.length ==0){
+	 				active = 'active'
+	 			}
+	 			var listePubli = self._tableHtmlCreator(listeMapper.publication)
+	 			widjet.find('ul.nav').append(' <li class = "' + active + '"><a href="#publi">Publication (' + listeMapper.publication.length+ ')</a></li>');
+	 			widjet.find('div.tab-content').append('<div class="tab-pane ' + active + '" id="publi">' + listePubli + '</div>')
+	 		}
+	 		if(listeMapper.publication.length == 0 && listeMapper.biomolecule.length == 0){
+	 			widjet.append(' <li><i class="fa fa-warning"></i> No match found</li>');
+	 		}
+			$('#myTab a').click(function (e) {
+	  			e.preventDefault();
+	  			$(this).tab('show');
+			})
+			var widjet = $(self.targetDomElem).find('div.afficheResult');
+			var taille = $(self.targetDomElem).find('div.input-prepend input').width()
+			var resize = $(self.targetDomElem).find('table.inTab tr').width()
+			if(taille > 305){widjet.width(taille);}
+	 		widjet.find("div.tooltipContent").tooltip();
+	 		$( window ).resize(function() {
+	 			taille = $(self.targetDomElem).find('div.input-prepend input').width()
+	  			if(taille > 305){widjet.width(taille);}
+			});
+		
+		self._dbGraphChoise();
+ 		$("td a.addCart").click(function(){
  			var critObj = {};
  			if($(this).attr("data-original-title")){critObj.description = $(this).attr("data-original-title");}
  			else{critObj.description = $(this).text();}
-			critObj.name = $(this).attr("data-value");
-			critObj.type = $(this).attr("data-type"); 			
+			critObj.name = $(this).parent().parent().find("td.infoCart a").attr("data-value");
+			critObj.type = $(this).parent().parent().find("td.infoCart a").attr("data-type"); 			
  			self.addCartNavCallback(critObj);
- 		})
+ 		});
  		widjet.find("div.navCloser").click(function(){
  			self.hideResult();
  		});
@@ -290,7 +403,8 @@ function initBarSearch (options){
 		}
 		var dataAttr = 'data-type="' + type + '" data-value="' + data.id + '"';
 		if(!longText){return "error bug"}
-		newString= '<a ' + dataAttr + '>' + longText + '</a>';
+		var url = "/cgi-bin/current/newPort?type=" + type + '&value=' + data.id 
+		newString= '<a ' + dataAttr + ' href ="'+ url +	'" target = "_blank">' + longText + '</a>';
 		return newString;
 		
 	},
@@ -317,18 +431,19 @@ function initBarSearch (options){
 		listeLip.sort(sortAlphaNum);
 		listePfrag.sort(sortAlphaNum);
 		listeOther.sort(sortAlphaNum);
-		var returnString = "<table class = 'inTab'>"
+		var returnString = "<table class = 'inTab'>";
 		var addRow = function (liste){
 			for (var i=0; i < liste.length; i++) {
-		 		returnString += "<tr><td>" + liste[i] + "</td><td>" + littSortable[liste[i]] + "</td></tr>"
+		 		returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
+		 						"</td><td>" + liste[i] + "</td><td class = 'infoCart'>" + littSortable[liste[i]] + "</td></tr>";
 			};
 		};
 		addRow(listeMult);
-		addRow(listeGag)
-		addRow(listePfrag)
-		addRow(listeLip)
-		addRow(listeOther)
-		returnString += "</table>"
+		addRow(listeGag);
+		addRow(listePfrag);
+		addRow(listeLip);
+		addRow(listeOther);
+		returnString += "</table>";
 		return returnString;
 	},
 /*fin navigateur
@@ -360,7 +475,6 @@ function initBarSearch (options){
 	    jQuery.each(data.results,function(i,val){// appel au composant mapper pour la mise en forme des résultat
 				    listeMapper[i] = self.mappers[i](val, { key : i, strict : false,  string : data.key})
 			});
-	    console.dir(listeMapper.biomolecule);
 	    
 	    $(self.targetDomElem).append('<div class = "afficheResult" ></div>');
 	    var widjet = $(self.targetDomElem).find('div.afficheResult');
@@ -368,7 +482,6 @@ function initBarSearch (options){
 	    widjet.append('<span class = "noRes"><i class="fa fa-warning"></i> No match found</span>');
 	    jQuery.each(listeMapper,function(i,liste){
 			    var arrayItem = liste.length;
-			    console.dir(self.nameColumn[i].id)
 			     if(arrayItem>0 && i != "biomolecule"){//si ya de l'info on créer 
 					
 						widjet.find("span.noRes").remove();
@@ -376,11 +489,24 @@ function initBarSearch (options){
 						if(arrayItem>1){plural = 's'}
 				    	widjet.append('<div class = "afficheElem" name="' + i +'">'+
 				    				  '<h4 class = "nomListe">'+ self.nameColumn[i].id + plural + ' (' + arrayItem + ')'+
-				    				  //'<div class = "pull-right tooltipContain" data-toggle="tooltip" data-html = "true" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
-				    				  //'data-title=' + self.nameColumn[i].tooltip + '>'+
+				    				 
 				    				  '<i class="fa fa-question-circle pull-right" style = "margin-right: 20px;"></i>' +
 				    				  '</h4></div>');
-				    	widjet.find('i.fa-question-circle').tooltip({html : true, title: self.nameColumn[i].tooltip});
+				    	widjet.find('i.fa-question-circle').popover({html : true,container : 'body', title: self.nameColumn[i].tooltip, placement : "bottom",trigger : "manual"})
+				    				.on("mouseenter", function () {
+									        var _this = this;
+									        $(_this).popover('show');
+									        $(".popover").on("mouseleave", function () {
+									           $(_this).popover('hide');
+									        });
+									    }).on("mouseleave", function () {
+									        var _this = this;
+									        setTimeout(function () {
+									            if (!$(".popover:hover").length) {
+									               $(_this).popover("hide")
+									            }
+									        }, 100);
+									    });
 				    	var divSelector = 'div.afficheResult>div[name="'+i+'"]';
 				    	if (arrayItem < 5){
 							self._listeCreator(liste,$(self.targetDomElem).find(divSelector))	
@@ -400,13 +526,28 @@ function initBarSearch (options){
 						arrayItem = liste[numList].length;
 						var plural = '';
 						if(arrayItem>1){plural = 's'}
+						console.dir(i)
 						widjet.append('<div class = "afficheBiom" name="' + i +'">'+
 									  '<h4 class = "nomListe"> <div class ="humanOnly">' + checkBox + ' Human only</div>'+ 
 									  self.nameColumn[i].id + plural + ' (' + arrayItem + ')'+
-				    				  '<div class = "pull-right tooltipContain" data-toggle="tooltip" data-html = "true" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
-				    				  'data-title="' + self.nameColumn[i].tooltip + '" >'+
 				    				  '<i class="fa fa-question-circle pull-right" style = "margin-right: 20px;"></i>' +
 				    				  '</h4></div>');
+				    				  widjet.find('i.fa-question-circle')
+				    				  		.popover({html : true,container : 'body', title: self.nameColumn[i].tooltip, placement : "bottom",trigger : "manual"})
+						    				.on("mouseenter", function () {
+											        var _this = this;
+											        $(_this).popover('show');
+											        $(".popover").on("mouseleave", function () {
+											            $(_this).popover('hide');
+											        });
+											    }).on("mouseleave", function () {
+											        var _this = this;
+											        setTimeout(function () {
+											            if (!$(".popover:hover").length) {
+											                $(_this).popover("hide")
+											            }
+											        }, 100);
+											    });
 						if (arrayItem < 5){
 							self._listeCreatorBiom(liste[numList],widjet.find("div.afficheBiom"));
 				   		}else if(arrayItem <= 10){
@@ -432,13 +573,13 @@ function initBarSearch (options){
 									    }
 									    if($(this).hasClass('naviguePre')){
 										if (self.indexNav > 0){
-										    self.indexNav -= 1
+										    self.indexNav -- 
 										    self._drawResult(self.history[self.indexNav]);	
 										    
 										}
 									    }if($(this).hasClass('navigueSuiv')){
 										if (self.indexNav < self.history.length-1){
-										    self.indexNav += 1	
+										    self.indexNav ++ ;
 										    self._drawResult(self.history[self.indexNav]);						
 										}
 									    }
@@ -448,12 +589,14 @@ function initBarSearch (options){
 	    widjet.find("div>ul>li a").click(function(){
 						 self.clickOnListElement();
 					     });
+	
+		
+		//human only
 	    $(self.targetDomElem).find('div.humanOnly').click(function(){
 	    	self._clickHuman(data,"classique");
 	    })
 	    //tooltip
 	    widjet.find("div>ul>li div").tooltip();
-	    console.dir($(self.targetDomElem).find(".tooltipContain"))
 		$(self.targetDomElem).find(".tooltipContain").tooltip();
 	    
 	    //bouton disable
@@ -496,7 +639,21 @@ function initBarSearch (options){
 					$(self.targetDomElem).append('<div class = "afficheResult" prov="true"><h4 class = "nomListe">'+ button + self.nameColumn[i].id + plural + ' (' + val.length + ')'+
 				    				  '<i class="fa fa-question-circle pull-right" style = "margin-right: 20px;"></i>' +
 				    				  '</h4></div>');
-				    $(self.targetDomElem).find('i.fa-question-circle').tooltip({html : true, title: self.nameColumn[i].tooltip});
+				    $(self.targetDomElem).find('i.fa-question-circle').popover({html : true,container : 'body', title: self.nameColumn[i].tooltip, placement : "bottom",trigger : "manual"})
+				    				.on("mouseenter", function () {
+									        var _this = this;
+									        $(_this).popover('show');
+									        $(".popover").on("mouseleave", function () {
+									            $(_this).popover('hide');
+									        });
+									    }).on("mouseleave", function () {
+									        var _this = this;
+									        setTimeout(function () {
+									            if (!$(".popover:hover").length) {
+									              $(_this).popover("hide")
+									            }
+									        }, 100);
+									    });
 					if (val.length < 20){ // gestion de l'affichage des résultats
 					    self._listeCreator(val,$(self.targetDomElem).find('div.afficheResult[prov="true"]'))	
 					}else{//on affiche 60 resultat max a raison de 20 item par colonne
@@ -514,7 +671,7 @@ function initBarSearch (options){
 					    		self._listeCreator(val.slice(i+compteur,i+compteur+20),$(self.targetDomElem).find('div.afficheResult[prov="true"]'))
 					    		compteur += 19;
 						}
-						$(self.targetDomElem).find('div.afficheResult[prov="true"]>ul:last').append('<button type="button" class="btn btn-link btn-mini">too many match find all</button>')
+						
 				    }
 				}
 				
@@ -575,6 +732,24 @@ function initBarSearch (options){
 			self._drawResult(dataClass);
 			self._drawSpeci(name, data);
 			
+		}
+	},
+	_dbGraphChoise : function(){
+		var self = this;
+		if(self.iNavContext){
+			if (self.grapheSearch){
+				$(self.targetDomElem).find("div.afficheResult.dbStyle").hide();
+				$(self.targetDomElem).find("div.afficheResult.graphStyle").show();
+				$(self.targetDomElem).find('a.graph').addClass('active');
+				$(self.targetDomElem).find('a.matrixdb').removeClass('active');
+			}else{
+				$(self.targetDomElem).find("div.afficheResult.dbStyle").show();
+				$(self.targetDomElem).find("div.afficheResult.graphStyle").hide();
+				$(self.targetDomElem).find('a.graph').removeClass('active');
+				$(self.targetDomElem).find('a.matrixdb').addClass('active');
+			}
+		}else{
+			$(self.targetDomElem).find("div.afficheResult").show();
 		}
 	}
     }//fin du return

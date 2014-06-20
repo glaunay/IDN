@@ -7,7 +7,6 @@ div#reportDiv .header{
 	background-color: black ;
 	height: 40px;
 	clear : both ;
-
 	
 }
 div#reportDiv .navigueBar{
@@ -491,7 +490,6 @@ div.noMatch{
 }
 .popover-content{
 	padding: 0;
-	overflow-y: auto;
 	max-height: 350px;
 }
 div.popoverContent:nth-child(even){
@@ -601,4 +599,19 @@ clearfix:after {content: ".";
 }
 div.footer div.container{
 	background-color: rgb(230, 230, 230);
+}
+i.helpMe{
+	color:white;
+	position: absolute;
+	top: 6px;
+	right : 230px;
+	cursor:pointer;
+	font-size: 2em;
+}
+.header div.popover-content{
+	padding: 5px;
+	text-align: center;
+	
+	
+	
 }

@@ -1,6 +1,6 @@
 #loopBookmarkWrapper {
     min-height: 40px;
-    padding-left: 20px;
+    padding-left: 25px;
     padding-right: 20px;
     background-color: #fafafa;
     background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
@@ -27,6 +27,9 @@
     cursor : pointer;
 }
 
+#loopLargeWrapper i.fa-minus-square-o{
+	cursor:pointer;
+}
 #loopLargeWrapper .go .popover {
     background-color : rgba(255, 51, 51, .9);   
     border : 2px solid rgba(255, 51, 51, 1);
@@ -68,9 +71,9 @@
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
     border: 1px solid #d4d4d4;
-    -webkit-border-radius: 0px 10px 10px 0px;
-    -moz-border-radius: 0px 10px 10px 0px;
-    border-radius: 0px 10px 10px 0px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
     -webkit-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
     -moz-box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
     box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.065);
@@ -119,8 +122,10 @@
     padding : 20px 20px 20px 20px;
   }
 #loopLargeWrapper .tableFilter{
-	min-height: 317px;
-	padding : 20px 20px 20px 20px;
+	min-height: 400px;
+	padding : 0px 20px 0px 20px;
+	min-width: 410px;
+	max-width: 410px;
 }
 #loopLargeWrapper tbody td:nth-child(2){
 	padding-left: 10px;
@@ -132,6 +137,9 @@
 #loopLargeWrapper input.tpm{
 	margin-left:10px;
 	width: 50px;
+	margin-top: 5px;
+	border-radius: 10px 0 0 10px;
+	direction: rtl;
 }
 #loopLargeWrapper button.openPersDanger{
 	text-shadow:none;
@@ -142,5 +150,70 @@
 	background-image: linear-gradient(to bottom, #6DA56D, #51a351);
 }
 #loopLargeWrapper div.footerFilter{
-	padding : 20px 20px 20px 20px;
+	padding : 5px 20px 5px 20px;
+	width: 410px;
+	background-color: #DDD;
+}
+div.expressionTempMess, div.detectionTempMess{
+	font-size: 2em;
+	text-align:center;
+	padding-top: 120px;
+}
+div.expressionTempMess:nth-child(2), div.detectionTempMess:nth-child(2){
+	padding-top: 20px;
+}
+#loopLargeWrapper .apply{
+	margin-left: 20px;
+	margin-top: -50px;
+}
+#loopLargeWrapper div.mdePart{
+	display: block;
+	width: 70%;
+	border-right: 1px solid grey;
+	height: 60px;
+	
+}
+#loopLargeWrapper div.mdePart div.mdeCheck{
+	cursor: pointer;
+}
+#loopLargeWrapper div.mdePart i.fa-question-circle{
+	padding: 15px;
+	cursor: pointer;
+}
+#loopLargeWrapper div.mdePart div.jolieDiv{
+	display: inline-block;
+	height: 20px;
+	background-color: whitesmoke;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	-webkit-border-radius: 0px 10px 10px 0px;
+	-moz-border-radius: 0px 10px 10px 0px;
+	border-radius: 0px 10px 10px 0px;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: #FFFBFB;
+	border: 1px solid #ddd;
+	color: #9da0a4;
+	padding-top: 6px;
+	padding-right: 5px;
+	padding-bottom: 2px;
+	padding-left: 3px;
+
+}
+.top .popover-title , .top .popover-content, .popover {
+	font-weight: normal;
+	border :  rgba(51, 108, 174, 1);
+	background-color: rgba(51, 108, 174, 1);
+	color : white;
+	font-size: 0.9em;
+}
+#loopLargeWrapper i.helpMe{
+	cursor: pointer;
+}
+.top div.arrow:after{
+	border-top-color:rgba(51, 108, 174, 1) !important;
+}
+#loopLargeWrapper .dataTables_paginate {
+	float: none;
+	font-size : 0.8em;
 }

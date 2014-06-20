@@ -36,8 +36,6 @@ if (!defined($dataContainer)) {
 }
 $logger->info(Dumper($dataContainer));
 
-
-
 #my $jsonContainer = json_encode($dataContainer);
 ##
 #open FOUT, ">$fLastStat";
@@ -45,7 +43,6 @@ $logger->info(Dumper($dataContainer));
 #print $query->header('application/json');      # create the HTTP header
 #print $dataContainer;
 #}
-
 
 sub readStatistics {
   my $p = shift;
@@ -68,7 +65,7 @@ sub readStatistics {
 		  "$dataContainer->{ date }");
     return $dataContainer;
   }
-
+  
   return undef;
 }
 
@@ -96,7 +93,8 @@ sub createStatistics {
 				      multimerProtein => 0,
 				      multimerMultimer => 0,
 				      multimerGag => 0
-				     }
+				     },
+		       publications => {total => 0, imex => 0}
 		    };
 
 
@@ -112,14 +110,15 @@ sub createStatistics {
   if ($r =~ /Found ([\d]+) object/) {
     $dataContainer->{ interactors }->{ total } = $1;
   }
-  $r = $DB->raw_query('kstore allInteractors');
+  $DB->raw_query('kstore allInteractors');
   
   $DB->raw_query('query find Biomolecule where Source');
   $DB->raw_query('kstore allProt');
   $DB->raw_query('spush');
   $DB->raw_query('kget allInteractors');
   $DB->raw_query('sand');
-  $DB->raw_query('spop');
+  
+  $r = $DB->raw_query('spop');
   #$logger->info($r);
   if ($r =~ /([\d]+) Active Object/) {
     $dataContainer->{ interactors }->{ protein } = $1;
@@ -130,10 +129,23 @@ sub createStatistics {
   $DB->raw_query('spush');
   $DB->raw_query('kget allInteractors');
   $DB->raw_query('sand');
-  $DB->raw_query('spop');
+  
+  $r = $DB->raw_query('spop');
   #$logger->info($r);
   if ($r =~ /([\d]+) Active Object/) {
     $dataContainer->{ interactors }->{ gag } = $1;
   }
+
+
+  $DB->raw_query('find Association');
+  $r = $DB->raw_query('follow PMID');
+  if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ publications }->{ total } = $1;
+  }
+  $r = $DB->raw_query('query find Publication where IMEx_ID');
+  if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ publications }->{ imex } = $1;
+  }
+  
   return $dataContainer;
 }

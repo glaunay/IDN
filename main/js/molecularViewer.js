@@ -84,8 +84,11 @@ function GLmolInit (opt) {
 	    }
 	   	
 	},
-	load : function (pdbName) {
+	load : function (pdbName,change) {
 	    var self = this;
+	    if(change){
+	    	self.residueSel = [];
+	    }
 	    console.dir("bug")
 	    console.dir(pdbName)
 	    var JSONText = JSON.stringify({pdbName : pdbName});

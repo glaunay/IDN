@@ -1,16 +1,12 @@
 #!/usr/bin/perl
-
-=pod CGI interface to batik 1.7
-    
-=cut
-
+# CGI interface to batik 1.7
 use strict;
 use vars qw/$DB $URL %EQUIV/;
 
 use warnings;
 use diagnostics;
 use JSON;
-use lib qw(lib/perl);
+use lib ("$ENV{ IDN_LIB }/perl");
 use Data::UUID;
 
 #from CPAN
@@ -18,14 +14,9 @@ use CGI;
 use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
 
-our $STATUS = 'TEST'; # or 'PROD'
+our $BATIK_PATH="$ENV{ IDN_DEP }/batik-1.7";
 
-my $rootUrl = $STATUS eq 'TEST' 
-    ? "http://matrixdb.ibcp.fr:9999"
-    : "http://matrixdb-new.ibcp.fr";
-
-our $BATIK_PATH="../../../dependencies/batik-1.7";
-Log::Log4perl->init("./conf/exporter.conf");
+Log::Log4perl->init("$ENV{ IDN_CONF }/exporter.conf");
 my $logger = get_logger(); 
 
 my $ug    = new Data::UUID;
@@ -41,10 +32,9 @@ my %params = $query->Vars;
 $logger->trace(Dumper(%params));
 
 my $htmlString = '<?xml version="1.0" standalone="no"?>' . "\n" .
-    ' <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"' . "\n" .  '"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">' . "\n";
+  ' <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"' . "\n" .  '"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">' . "\n";
 
-
-my $filename = "../../html/tmp/$tag.svg";
+my $filename = "$ENV{ IDN_TMP }/$tag.svg";
 open SVG, ">$filename" or die $!;
 foreach my $value (@{$query->{keywords}}) {
     $htmlString .= "$value ";
@@ -62,12 +52,12 @@ my $response;
 my $location = "tmp/$tag.tif";
 if (-e $target) {
    `gzip -f -c $target > $target.gz`;
-    $response = {
-	status => 'OK',
-	fileLocation => "$rootUrl/$location.gz" # put relative url here
-    };
-} else {
-    $response = {
+   $response = {
+		status => 'OK',
+		fileLocation => "$ENV{ IDN_URL }/$location.gz" # put relative url here
+	       };
+ } else {
+   $response = {
 	status => 'ERROR'	
     };
 }
