@@ -22,7 +22,7 @@ function initBarSearchMapper (){
 			if(data.longText.length > 20){
 				tooltip = data.longText
 			}
-			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + tooltip + '" >'+
+			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-container = "body" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + tooltip + '" >'+
 			'<i class="fa fa-circle"></i><a ' + dataAttr + '>' + data.longText +'</a></div><span style = "float:right;">' + newString + "</span>";
 			return newString;			
 			 
@@ -39,7 +39,7 @@ function initBarSearchMapper (){
 			if(data.id.length > 20){
 				tooltip = data.id
 			}
-			newString= '<div class = "tooltipContent" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + tooltip + '" >'+
+			newString= '<div class = "tooltipContent" data-container = "body" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title="' + tooltip + '" >'+
 			'<i class="fa fa-circle"></i><a ' + dataAttr + '>' + data.id +'</a></div><span style = "float:right;">' + newString + "</span>";
 			return newString;			
 			 
@@ -63,7 +63,7 @@ function initBarSearchMapper (){
 			var geneName = '';
 			
 			geneName = geneName.substring(0,geneName.length-2)
-			newString = '<div specie ="' + specie + '" class = "tooltipContent" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '" >'+
+			newString = '<div specie ="' + specie + '" class = "tooltipContent" data-container = "body" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '" >'+
 					   logoBullet +
 					   '<a ' + dataAttr + '>' + data.name +'</a></div><span style = "float:right;">' + newString + "</span>";
 			if(data.geneName.length > 0){
@@ -100,7 +100,7 @@ function initBarSearchMapper (){
 				tooltip += '<div class =inTooltip>Imex-ID : ' + data.imexID + '</div>';
 				icone = '<i class="fa fa-star" style = "color:rgb(206, 206, 17);"></i>';
 			}
-			newString = '<div class = "tooltipContent tooltipPubli" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
+			newString = '<div class = "tooltipContent tooltipPubli" data-container : "body" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
 						'data-title = "' + tooltip + '" >'+
 					    icone +'<a ' + dataAttr + '>' + data.Title +'</a></div><span style = "float:right;">' + newString + "</span>";
 
