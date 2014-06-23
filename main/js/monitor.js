@@ -151,7 +151,7 @@ function initMonitor (opt) {
 		$("div.divMon").slideDown(3000);
 	},
 	hide : function (){
-		$("div.divMon").slideUp(3000);
+		$("div.divMon").slideUp(1000);
 	},
 	update : function (data) {
 		var self = this;

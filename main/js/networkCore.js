@@ -280,8 +280,8 @@ function coreInit (opt) {
 	    } else {
 		
 		self.hotNodes.forEach(function(node) {
-					//  console.log("stopping node");
-					//  console.dir(node);
+					  console.log("stopping node");
+					  console.dir(node);
 					  var nodeName;
 					  d3.select(node).each(function(d){nodeName = d.name;});
 					  self.bubbleNode ({name : nodeName}, "stop");
@@ -1411,8 +1411,6 @@ function coreInit (opt) {
 	    var array = $.isArray(data) ? data : [data];
 	    var type = opt ? opt.type : "nice";
 	    
-	    console.dir(data);
-
 	    for (var i = 0; i < array.length; i++) {
 		var datum = array[i];
 		d3.select(datum).each(
@@ -1424,10 +1422,11 @@ function coreInit (opt) {
 				d3.select(this).transition()
 				    .attr('d', d3.svg.symbol()
 					  .size(specs.size)
-					  .type(specs.shape))	
-	    			    .attr("filter",'url(#blur)')
+					  .type(specs.shape))		    			  
 				    .style("stroke", '#9ecaed')
-				    .style("stroke-width", '3px');
+				    .style("fill", specs.fill)/*'#9ecaed')*/
+				    .style("stroke-width", '3px')
+				    .attr("filter",'url(#blur)');
 				return;
 			    }			    
 			    d.glow = false;
@@ -1438,8 +1437,7 @@ function coreInit (opt) {
 				.attr("filter",null)
  				.style("stroke", specs.stroke)
 				.style("stroke-width", '1px');
-			} else {
-			    console.log("OUHUOU");
+			} else {			   
 			    d.glow = true;
 			    var specs = self.shapeCreator[d.type](node, "glowy", "getShapeSpecs");
 			    d3.select(this).transition()

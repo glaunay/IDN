@@ -412,7 +412,7 @@ function tabularInit (opt) {
 	},
 	tickNodes : function (data) { // External CALL!!
 	    var self = this;	
-	    console.dir(data);    
+	
 	    if (!this.nodeDT) {
 		return; 
 	    }	    
