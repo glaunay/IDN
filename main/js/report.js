@@ -414,7 +414,7 @@ function initMyReport (options){
   		},
   		_ftGenerateDivHtml : function(barchart){
   			var self = this;
-  			if(!self.jsonData.biofunc && !self.jsonData.comments && !self.jsonData.location){return false;}
+  			if(!self.jsonData.biofunc && !self.jsonData.comments /*&& !self.jsonData.location*/){return false;}
   			self.nbDiv++;
   			var divCible = self._newRow(barchart);
   			var content = "<div class ='divTitre'>Biological function and location</div><div class = 'divers postitContent'><dl>";
@@ -452,7 +452,7 @@ function initMyReport (options){
 		},
 		_specie : function(){
 			var self = this;
-			if(!self.jsonData.specie){return "";}
+			if(!self.jsonData.specie.name){return "";}
 			var nom =  self.jsonData.specie.names[0];
 			for (var i = 1; i <  self.jsonData.specie.names.length; i++) {
 			   nom += ', ' + self.jsonData.specie.names[i];

@@ -1,8 +1,10 @@
 /* Vizualiser component declaration and settings */
 
 
-function networkTest_alpha (opt) {
+function vizObjectInit (opt) {
     
+    
+
     vizObject = { 
 	core : null, 
 	tabular : null,
@@ -34,8 +36,6 @@ function networkTest_alpha (opt) {
     bindExportActions();
     
     var context = vizObject.getContext();
-    console.log("CONTEXT");
-    console.dir(context);
     // polluting namespance with #networkWindow should be sent as opt.target to core Init
     // later ...
     vizObject.core = coreInit(opt);          
@@ -74,18 +74,16 @@ function networkTest_alpha (opt) {
 					    ajaxSearch : function (data) {
 						vizObject.core.setStatus("fetching");
 						networkExpand(data, function (networkData, request) {
-								  console.log("network Expand callback");
 								  vizObject.networkID = networkData.id;
 								  vizObject.core.add(networkData);
 								  vizObject.core.addCenter(networkData.newCenters);	
 								  var keywordDistrib = vizObject.core.getKeywordDistribution();
-								  vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);								  
+								  vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);
 							      });
 					    },
 					    jobExhaustion : function () {
 						var tabularDomElemSelector = vizObject.tabular.getSelector("maxi");
-						console.log("dataFetchDone STAGE <<<<");
-						$(tabularDomElemSelector).trigger('dataFetchDone');						
+						$(tabularDomElemSelector).trigger('dataFetchDone');	
 					    },
 					    getGlowyAsCriterionList : function () {
 						var data = vizObject.core.getGlowyNodes();
@@ -146,16 +144,14 @@ function networkTest_alpha (opt) {
 	    "iState" : "minified", // "magnified", 
 	    location : {host : opt.target , position : { side : "left", rank : 3, total : 5 }},
 	    computeBookmarkPosition : computeBookmarkPosition,
-            onApplyCallback : function () {
-		vizObject.core.applyFilter();  
+            onApplyCallback : function (strict) {
+		vizObject.core.applyFilter(strict);  
 	    },
-	    onChangeCallback : function(filterSet) {
-	    if(vizObject.core.getStatus() === "fetching"){
-	    	return;
-	    }
-		//console.log("filterData");
-		//console.dir(filterSet);
-		vizObject.core.previewFilter(filterSet, true);    		
+	    onChangeCallback : function(filterSet, strict) {
+		if(vizObject.core.getStatus() === "fetching"){
+	    	    return;
+		}
+		vizObject.core.previewFilter(filterSet, strict);    		
 	    },
 	    onCancelCallback : function () {
 		vizObject.core.cancelFilter();    	
@@ -173,7 +169,6 @@ function networkTest_alpha (opt) {
    							if(data.type != "association"){
    							    vizObject.core.bubbleNode(data, 'start');
    							}else{
-   							    console.log("css change on link")
    							}
    							
    						    },
@@ -181,7 +176,7 @@ function networkTest_alpha (opt) {
    							if(data.type != "association"){
    							    vizObject.core.bubbleNode(data, 'stop');
    							}else{
-   							    console.log("stop css change on link")
+
    							}
    						    }
    						});
@@ -256,15 +251,11 @@ function networkTest_alpha (opt) {
 						 },
 						 callback : {
 						     success : function (referer, data){
-							 console.dir(referer);
-							 	 //console.dir(data);
 							 var nodeCount = 0;
 							 var linkCount = 0;
 							 
 							 for (var i = 0; i < referer.length; i++) {
 							     if (referer[i].type === "association") {
-								 console.log("Association data, treating dataFetched for " + data[i].name);
-							     	 console.dir(data[i]);
 								 
 								 if (referer[i].details.name !== data[i].name) {  // link.details can be undefined 
 								     console.log("Error! in ajax link data retrieval ");
@@ -280,8 +271,6 @@ function networkTest_alpha (opt) {
 								 vizObject.core.activateLink(referer[i]);
 								 vizObject.tabular.touchLink(referer[i]);
 							     } else { // nodes by default
-							     	console.log("Default, treating dataFetched for " + data[i].name);
-							     	console.dir(data[i]);
 								 for (var key in data[i]) {
 								     if (key === "name") continue;
 								     referer[i][key] = data[i][key];
@@ -336,7 +325,7 @@ function networkTest_alpha (opt) {
 
     $(vizObject.tabular.target)
     	.on('tickToggle', function (event,d){
-		vizObject.core.setGlowyNodes(d); 
+		vizObject.core.setGlowyNodes(d);
 		//event.stopPropagation();
 	    })
 	.on('nodeLabelToggle', function (event,d){
@@ -348,7 +337,26 @@ function networkTest_alpha (opt) {
 	    })
 	.on('nodeShowTabularAction', function (event, data){	
 		vizObject.core.nodeVisibilityToggle({nodeNames : data.nodeNameList}, "visible");
-	    });
+	    })
+	 .on('getCustomNodeSel', function (event, data){	
+		if(!data.hasOwnProperty("type")){return;}
+		if(data.type === "human"){
+			vizObject.tabular.tickNodes({data : []});
+			var humanNode = vizObject.core.getNodePerSpecie("9606");
+			vizObject.tabular.tickNodes({data : humanNode,setToGlow : 'check'});
+			vizObject.core.setGlowyNodes({nodeNameList : humanNode});
+		}
+		else if(data.type === "orphans"){
+			vizObject.tabular.tickNodes({data : []});
+			var orphanNode = vizObject.core.getOrphanNodes();
+			vizObject.tabular.tickNodes({data : orphanNode, setToGlow : 'check'});
+			vizObject.core.setGlowyNodes({nodeNameList : orphanNode});
+		}else{
+			console.dir('this type is wrong');
+			console.dir(data.type);
+		}
+	   });
+	 
 
     /*    $(vizObject.core.target).on('networkChangeStart', function(event,d) {
      vizObject.networkFilter.blockAll();
@@ -458,8 +466,7 @@ function litteralLoader (searchCrit) {
 		      vizObject.core.add(networkData);
 		      vizObject.core.addCenter(networkData.newCenters);	
 		      var keywordDistrib = vizObject.core.getKeywordDistribution();
-		      vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);		
-		      		  
+		      vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);		      
 		  });
 }
 
@@ -472,10 +479,8 @@ function jsonLoader (jsonLocation) {
                url: jsonLocation,
                dataType: 'json',
                success: function(data) {                   
-                   console.log("Data loaded as:");
-		   console.dir(data);
                    networkData = data;	
-                   },
+               },
 	       error: function (request, type, errorThrown){
 		   ajaxErrorDecode(request, type, errorThrown);		  
 	       },		
@@ -490,12 +495,6 @@ function jsonLoader (jsonLocation) {
     if (vizObject.core) {	    
 	vizObject.core.add (networkData, coreOptions);
     }
-  /*
-   *   if (vizObject.tabular)
-	vizObject.tabular.add (networkData);
-   */
-    console.log("data added");
-
 }
 
 function computeBookmarkPosition () {
@@ -511,7 +510,6 @@ function computeBookmarkPosition () {
 	    };
 	return defaultCss;
     }
-    console.dir(this);
     alert("no position settings for current bookmark");
     return null;
 }
@@ -528,10 +526,10 @@ function bindWidgetTooltips (){
 	    //delay : { show : 1000, hide : 1000 },
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
-		+ '<div class = "titreHelp">Tabular network widget</div>'
+		+ '<div class = "titreHelp">Tabular network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can manage node and link selections</p>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="http://youtu.be/BR6LetDITmw?t=1m39s">Help<a/> </p>'
-		+ '</div>',
+		+ '</div></div>',
 	    placement : 'right' ,
 	    trigger : 'manual'
 	},
@@ -540,10 +538,10 @@ function bindWidgetTooltips (){
 	    //delay : { show : 1000, hide : 1000 },
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
-		+ '<div class = "titreHelp">Cart network widget</div>'
+		+ '<div class = "titreHelp">Cart network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can add new node to the current graph</p>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="http://youtu.be/BR6LetDITmw?t=1m39s">Help<a/></p>'
-		+ '</div>',
+		+ '</div></div>',
 	    placement : 'right' ,
 	    trigger : 'manual'
 	},
@@ -552,11 +550,11 @@ function bindWidgetTooltips (){
 	    //delay : { show : 1000, hide : 1000 },
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
-		+ '<div class = "titreHelp">Filter network widget</div>'
+		+ '<div class = "titreHelp">Filter network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can filter element out of the network basedone:</p>'
 	       +'<ul><li>Expression Level of biomolecules</li><li>Experimental detection method of association</li></ul>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="http://youtu.be/BR6LetDITmw?t=1m39s">Help<a/> </p>'
-		+ '</div>',
+		+ '</div></div>',
 	   placement : 'right' ,
 	    trigger : 'manual'
 	},
@@ -565,10 +563,10 @@ function bindWidgetTooltips (){
 	    //delay : { show : 1000, hide : 1000 },
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
-		+ '<div class = "titreHelp">Palette network widget</div>'
+		+ '<div class = "titreHelp">Palette network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can change the color of the selected node </p>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="http://youtu.be/BR6LetDITmw?t=1m39s">Help<a/></p>'
-		+ '</div>',
+		+ '</div></div>',
 	    placement : 'right' ,
 	    trigger : 'manual'
 	}
@@ -577,18 +575,14 @@ function bindWidgetTooltips (){
     var button = "<div class = 'help'><div id = 'showHelp' class = 'showHelp'><i class = 'fa fa-check-square-o'></i> Show help</div>"+
     			 "<div class = 'linkToHelp'> <a target = '_blank' href = 'http://www.youtube.com' >Online tutorial</a></div></div>";
      $('div.container').append(button);
-     console.dir($('div.container'))
     // 1ST bind toggle check box w/ this.helpActive boolean.
 	$('#showHelp').click(function(){
-		console.dir("click");
 		if ($(this).hasClass('showHelp')){
-			console.dir("no show")
 			$(this).find('i').removeClass('fa-check-square-o');
 			$(this).find('i').addClass('fa-square-o');
 			$(this).removeClass('showHelp');
 			self.showHelp = false;
 		}else{
-			console.dir("show")
 			$(this).find('i').removeClass('fa-square-o');
 			$(this).find('i').addClass('fa-check-square-o');
 			$(this).addClass('showHelp');
@@ -596,9 +590,6 @@ function bindWidgetTooltips (){
 		}
 	});
     // iterate over minified widget DOM elements and create tooltips accordingly;
-    console.dir("here tooltip")
-   console.dir(this)
-    
     $('#tabularBookmarkWrapper').popover(helpTooltip.tooltipContentTabular)
     	.on("mouseenter", function () {
     		if(!self.showHelp){return;}
@@ -698,12 +689,10 @@ function bindExportActions () {
 		      });
 
     $('#serializeIn').on('click', function (event) {			  
-			      cacheOutNetwork({callback : function(data){
-						   console.log("Calling add Network with::::");
-						   console.dir(data);
-						   vizObject.core.add(data, "static");
-					       }});
-			  //event.stopPropagation();  
+			     cacheOutNetwork({callback : function(data){
+						  vizObject.core.add(data, "static");
+					      }});
+			     //event.stopPropagation();  
 		      });
 
     $('#cytoscapeOut').on('click', function (event) {			  
@@ -716,13 +705,11 @@ function bindExportActions () {
 					 });
 			      vizObject.core.svg.selectAll(".link")
 				  .each( function (d) {   
-					     console.dir(this);
 					     var sd = {
 						 source : d.source.name,
 						 target : d.target.name,
 						 associationData : d.details
 					     };
-//					     console.dir(sd);
 					     links.push(sd);      
 					 });
 			     // var networkData = [this.graphFeatures.upKeywordTree];
@@ -730,7 +717,6 @@ function bindExportActions () {
 				  linksData : links,
 				  nodeData : vizObject.core.exportNodes()/*,networkData : networkData*/
 			      };
-			      console.dir(networkState);
 			      cytoscapeExporter({networkState: networkState});
 			  });
 
@@ -743,13 +729,11 @@ function bindExportActions () {
 				     });
 			  vizObject.core.svg.selectAll(".link")
 			      .each( function (d) {   
-					 console.dir(this);
 					 var sd = {
 					     source : d.source.name,
 					     target : d.target.name,
 					     associationData : d.details
 					 };
-					 //					     console.dir(sd);
 					 links.push(sd);      
 				     });
 			  // var networkData = [this.graphFeatures.upKeywordTree];
@@ -757,7 +741,6 @@ function bindExportActions () {
 			      linksData : links,
 			      nodeData : vizObject.core.exportNodes()/*,networkData : networkData*/
 			  };
-			  console.dir(networkState);
 			  excelExporter({networkState: networkState});
 		      });
 

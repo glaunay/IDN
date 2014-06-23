@@ -456,7 +456,7 @@ mapperSpecie = [
 							{"name":"Guinea pig","img":"guineaPig_bullet.png","id":"10144"},
 							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11686"},
 							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11696"},
-							{"name":"none","img":"hiv-1_bullet.png","id":"none"},
+							{"name":"none","img":"unknown_bullet.png","id":"none"},
 						];
 speciUrl = function (speci,rootUrl){
 			var self = this;

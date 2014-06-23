@@ -108,7 +108,8 @@ sub getSubType {
 		{ type => "Cation", value => "cation" },
 		{ type => "Lipid", value => "lipid" },
 		{ type => "Multimer", value => "multimeric complex" },
-		{ type => "Inorganic", value => "inorganic compound" });
+		{ type => "Inorganic", value => "inorganic compound" },
+		{ type => "SyntheticPeptide", value => "synthetic peptide" });
 		
   foreach my $type (@kTypes) {
     ($subType->name eq $type->{ type }) && return $type->{ value };
@@ -372,8 +373,10 @@ sub getGene {
 sub getSpecie {
   my $aceObject = shift;
 
+  my $data = {type => "ncbitaxon", value => undef, names => undef};
+
   my @specie = $aceObject->follow('In_Species');
-  @specie == 0 && return undef;
+  @specie == 0 && return $data;
 
   my @names;
   foreach my $key (qw/Scientific_name English_name Synonym/) {
@@ -381,7 +384,10 @@ sub getSpecie {
     defined($val) || next;
     push @names, $val->name;
   }
-  return {type => "ncbitaxon", value => $specie[0]->name, names => \@names};
+  $data->{ value } = $specie[0]->name;
+  $data->{ names } = \@names;
+  return $data;
+#  return {type => "ncbitaxon", value =>  $specie[0]->name, names => \@names};
 }
 
 sub getType {

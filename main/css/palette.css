@@ -1,8 +1,5 @@
 #paletteMaxiWrapper {
-    padding : 5px 5px 15px 15px;
-    position: relative;
-    top: -444px;
-    left: 299px;    
+    
  }
 
 #paletteMiniWrapper.bookmarkWrapper {
@@ -31,6 +28,11 @@
 }
 
 #paletteMaxiWrapper {
+    padding : 5px 5px 15px 15px;
+    position: relative;
+    top: -444px;
+    left: 20%;    
+
     background-color: #fafafa;
     background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));

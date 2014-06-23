@@ -6,7 +6,6 @@ function initMonitor (opt) {
 	height : opt.height ? opt.height : 200,
 	target : opt.target	? opt.target : "body",
 	selector : "svg.monitor #load",
-	completeReload : true,
 	total : {
 	    nodes : 0,
 	    links : 0
@@ -95,7 +94,7 @@ function initMonitor (opt) {
  
 	},
 	reset : function (){
-		console.log('reset')
+		//console.log('reset')
 	    this.count.nodes = 0;
 	    this.count.links = 0;
 	    this.total.nodes = 0;
@@ -135,22 +134,14 @@ function initMonitor (opt) {
 	},
 
 	start : function (data) {
-		console.log("start")
+		//console.log("start")
 		var self = this;
    		self.completeReload = true;
 	    self.total.nodes += data.nodes;
 	    self.total.links += data.links;
-	    if(self.total.nodes == 0 || self.total.links == 0){
-	    	self.stop();
+	    if(self.total.nodes == 0 && self.total.links == 0){
+	    	return;
 	    }
-	    setTimeout(function(){
-	    	console.dir("timeOut")
-	    	if(self.completeReload){
-	    		console.dir("stop this shit")
-	    		self.stop();
-	    		}
-	    	
-	    },15000);
 	    this.show();
 	},
 	show : function (){
@@ -164,9 +155,8 @@ function initMonitor (opt) {
 	},
 	update : function (data) {
 		var self = this;
-		console.log("update")
-		console.dir(data);
-		this.completeReload = false;
+		//console.log("update")
+		//console.dir(data);
 	    this.count.nodes += data.nodes;
 	    this.count.links += data.links;
 

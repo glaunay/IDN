@@ -76,10 +76,8 @@ function initBarSearchMapper (){
 
 			}
 			if(humanOnly){
-				if( !data.specie){
-					return newString;
-				}
-				if(data.specie.name ==='Human'){
+				
+				if(data.specie.name ==='Human' || !data.specie.name){
 					return newString;
 				}else{
 					return false;

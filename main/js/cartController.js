@@ -147,7 +147,7 @@ function initCartCtrl (opt) {
 	    
 	    // set Footer
 	    var footerContent = '<div class="btn-group"><button class="btn btn-primary goBut">'
-		+ '<i class="fa fa-empire"></i><span> Get Interactom</span></button>'
+		+ '<i class="fa fa-empire"></i><span> Get Interactome</span></button>'
 		+'<button class ="btn btn-danger flush"><i class="fa fa-times-circle"></i><span> Clear</span></button></div>';
 	    
 	    $(this.target + ' .cartFooter').append(footerContent);

@@ -128,29 +128,30 @@ function initNetworkFilter (opt) {
 		        }, 100);
 	    });
 	    
-			$(this.target + ' div.mdeCheck i.fa-question-circle').popover({ 
-	    	   html : true,
-	    	   placement : 'top', 
-			   title : '<dl><dt>MDE :</dt><dd>Missing Data Element(s)</dd><dt>TPM</dt><dd>Tanscrit Per Million</dd></dl>', 
-			   container : 'body',
-			   trigger : 'manual',
-			   }).on('mouseenter', function () {
-			   	if(!window.showHelp){return;}
-		        var _this = this;
-		        $(_this).popover('show');
-		        $(".popover").on("mouseleave", function () {
-		           $(_this).popover('hide');
-		        });
-		    }).on("mouseleave", function () {
-		    	if(!window.showHelp){return;}
-		        var _this = this;
-		        setTimeout(function () {
-		            if (!$(".popover:hover").length) {
-		                $(_this).popover("hide")
-		            }
-		        }, 100);
-	    });
-			  
+			$(this.target + ' div.mdeCheck i.fa-question-circle')
+			.popover({ 
+	    			     html : true,
+	    			     placement : 'top', 
+				     title : '<dl><dt>MDE :</dt><dd>Missing Data Element(s)</dd><dt>TPM</dt><dd>Tanscrit Per Million</dd></dl>', 
+				     container : 'body',
+				     trigger : 'manual',
+				 }).on('mouseenter', function () {
+			   		   if(!window.showHelp){return;}
+					   var _this = this;
+					   $(_this).popover('show');
+					   $(".popover").on("mouseleave", function () {
+								$(_this).popover('hide');
+							    });
+				       }).on("mouseleave", function () {
+		    				 if(!window.showHelp){return;}
+						 var _this = this;
+						 setTimeout(function () {
+								if (!$(".popover:hover").length) {
+								    $(_this).popover("hide")
+								}
+							    }, 100);
+					     });
+		    
 		    this.miniSel = this.target + ' #loopBookmarkWrapper';
 		    this.maxiSel = this.target + ' #loopLargeWrapper';
 		    var defaultCss = self.computeBookmarkPosition();	 	  
@@ -168,12 +169,12 @@ function initNetworkFilter (opt) {
 	    			       self.strict = false;
 	    			       $(self.target).find('div.footerFilter div.mdeCheck span.clickBox').find("i.checkStrict").removeClass("fa-square-o")
 	    			       $(self.target).find('div.footerFilter div.mdeCheck span.clickBox').find("i.checkStrict").addClass("fa-check-square-o");
-	    			   }
+	    			   }				 
 	    			   self.onChangeCallback(self.nodeOrLinkFilter,self.strict);
 			       });
 		    $(self.target).find('div.dataTableDiv button.apply')
 			.click(function(){
-	    			   self.onApplyCallback();
+	    			   self.onApplyCallback(self.strict);
 			       });
 		    $( window )
 			.resize(function() {
@@ -217,7 +218,6 @@ function initNetworkFilter (opt) {
 					    
 					    $(self.maxiSel + ' li i')
 						.each(function (){
-							  console.log("one here");
 							  type = $(this).parent().attr("etype");
 						      });
 					    var value = $(self.maxiSel + ' input').val();
@@ -262,7 +262,6 @@ function initNetworkFilter (opt) {
 			var self = this;
 			
 			if(type === "node"){
-				console.dir('pass here')
 				return {
 					hasFilter : self.nodeOrLinkFilter.length > 0 ? true : false,
 					filter : function (nodeData) {
@@ -284,7 +283,6 @@ function initNetworkFilter (opt) {
 			return null;*/
 		},
 		generatenodeOrLinkFilter : function(){
-			console.dir(self);
 			/*var returnLitt = {};
 			for (var i=0; i < nodeOrLinkFilter.length; i++) {
 			  nodeOrLinkFilter[i]
@@ -321,8 +319,8 @@ function initNetworkFilter (opt) {
 			/*call by maestro on any network content change*/
 			var self = this;
 			self.tpm = 0;
-			console.dir('now update')
-			console.dir(data)
+			//console.dir('now update')
+			//console.dir(data)
 			if(data.type == "expressionLevels"){
 				$(self.target).find("div.expressionTempMess").remove();
 				self._datatableExpressionLevel(data);
@@ -335,9 +333,9 @@ function initNetworkFilter (opt) {
 		},
 		_datatableExpressionLevel : function (data){
 			var self = this;
-			console.dir('construct expression filter')
+			//console.dir('construct expression filter')
 			if(self.table.exp){
-				console.dir('here destroy')
+				//console.dir('here destroy')
 				self.table.exp.fnDestroy();
 			}
 			$(self.target).find(".tableExpressionData").remove();
@@ -358,13 +356,13 @@ function initNetworkFilter (opt) {
   					"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
 					"fnInitComplete": function(oSettings, json) {
 						var oTable = this;
-						console.dir(oTable);
+						//console.dir(oTable);
   						$('tr').each(function(){
  		  					$(this).attr("pStatue", "uncheck");
  	 					})
  		  					
      					$(".tableExpressionData th:first-child").click(function(){
-     						console.log("toggle all ExpressionData click");
+     						//console.log("toggle all ExpressionData click");
  	  						self._toggleAll(this, oTable, "expressionLevel");     					
      					});
      					/*
@@ -377,7 +375,7 @@ function initNetworkFilter (opt) {
  					 		
 				 	}
  	  			});
- 	  			console.dir(table);
+ 	  //			console.dir(table);
  	 			table.$("td:nth-child(1)").click(function(){
  	  						self._toggleCheckBox($(this).find("i"),"expressionLevel");
 	  					})
@@ -387,7 +385,7 @@ function initNetworkFilter (opt) {
 		},
 		_datatableDetectionMethod : function (data){
 			var self = this;
-			console.dir("construct detect filter")
+			//console.dir("construct detect filter")
 			if(self.table.detect){
 				self.table.detect.fnDestroy();
 			}
@@ -415,7 +413,7 @@ function initNetworkFilter (opt) {
  	 					})
  		  					
      					$("table.tableDetectionMethod th:nth-child(1)").click(function(){
-     						console.log("toggle all tableDetectionMethod click");
+//     						console.log("toggle all tableDetectionMethod click");
  	  						self._toggleAll(this, oTable, "detectionMethod")
  				 		});
  					 		
@@ -469,13 +467,10 @@ function initNetworkFilter (opt) {
 		},
 		_toggleAll : function(cible,table,typeOfTable){
 			var self = this;
-			console.dir("click")
 			
 			if($(cible).find('i').hasClass('fa-square-o')){
-				console.dir("vide")
-				$(cible).find('i').attr("class", "fa fa-check-square-o");
-				console.dir(table)
-				table.$('td:nth-child(2)').each(function(){
+			    $(cible).find('i').attr("class", "fa fa-check-square-o");
+			    table.$('td:nth-child(2)').each(function(){
 					if(typeOfTable == 'expressionLevel'){
 	    				self.nodeOrLinkFilter.expressionLevel[$(this).find("span").attr('data-original-title')] = self.tpm;
 	    			}
@@ -487,7 +482,6 @@ function initNetworkFilter (opt) {
 	    			$(this).attr("class","fa fa-check-square-o");
 		    	});
 			}else{
-				console.dir("plein")
 				$(cible).find('i').attr("class", "fa fa-square-o");
 				if(typeOfTable == 'expressionLevel'){
 	    				self.nodeOrLinkFilter.expressionLevel = {};

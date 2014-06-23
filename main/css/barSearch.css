@@ -323,8 +323,7 @@ div.postitSearchContent ul.fa-ul i{
 }
 .popover-title div.titreHelp{
 	margin-top: -5px;
-	margin-left : -14px;
-	width:236px;
+	width:100%;
 	padding:5px;
 	margin-bottom:5px;
 	padding-bottom : 10px;

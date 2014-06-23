@@ -3,6 +3,11 @@
     position: relative;
 }
 
+#tabularLargeWrapper {
+    left : 20%;
+}
+
+
 #tabularBookmarkWrapper {
     min-height: 40px;
     padding-left: 25px;
@@ -310,7 +315,7 @@
     line-height : 1.15em;
 }
 
-.tabularNetworkFooter .btn-group>.btnCart{
+.tabularNetworkFooter .btn-group .listMe{
     //background-color:green;
     -webkit-border-radius: 0px 10px 10px 0px;
     -moz-border-radius: 0px 10px 10px 0px;
@@ -325,11 +330,19 @@
 .tabularNetworkFooter .btn-group>.btnHide{
     //background-color:green;
 }
-
+.tabularNetworkFooter .dropdown-menu{
+	right: 0;
+	left:75%;
+	cursor: pointer;
+}
 .jspTrack {
     background: rgba(0, 136, 204, 0.2) !important;
 }
-
+.tabularNetworkFooter ul.dropdown-menu li a i{
+	margin-left: -10px;
+	margin-right: 15px;
+	padding-top: 3px;
+}
 .jspVerticalBar {
     background: rgba(0, 136, 204, 0.2) !important;
 }

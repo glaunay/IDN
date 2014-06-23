@@ -138,9 +138,7 @@ function tabularInit (opt) {
 
 	     //   + '</div>'
 	//	+ '<div class="span4">'
-		+ '<button class="btn btnInv" type="button">'
-		+ '<i class="fa fa-adjust fa-lg"></i>'
-		+ '</button>' //<span style="margin-left:5px">Delete</span>
+		 //<span style="margin-left:5px">Delete</span>
 	//	+ '</div>'
 	//        + '<div class="span3">'
 		+ '<button class="btn btnHide" type="button">'
@@ -152,7 +150,16 @@ function tabularInit (opt) {
 	//	+ '</div>'
 		+ '<button class="btn btnCart" type="button">'
 		+ '<i class="fa fa-shopping-cart fa-lg"></i>'
-		+ '</button>' //<span style="margin-left:5px">Add to Cart</span>
+		+ '</button>'
+		+'<button type="button" class="btn btn-default listMe dropdown-toggle" data-toggle="dropdown">'
+		+  '<i class="fa fa-caret-square-o-down fa-lg"></i>'
+		+' </button>'
+		+  '<ul class="dropdown-menu" role="menu">'
+		+    '<li><a class = "btnInv"><i class="fa fa-adjust pull-left"></i>Inverse selection</a></li>'
+		+    '<li><a class = "btnHuman"><i class="fa fa-male pull-left"></i>Human nodes</a></li>'
+		+    '<li><a class = "btnLonely"><i class="fa fa-circle pull-left"></i>Select orphan(s)</a></li>'
+		+ ' </ul>'
+		 //<span style="margin-left:5px">Add to Cart</span>
 		+ '</div>'
 		+ '</div>'
 		+ '</div>';
@@ -180,18 +187,27 @@ function tabularInit (opt) {
 		            }
 		        }, 100);
 	    });
-	    $(this.target + ' button.btnInv')
-		.tooltip({placement:'bottom', title:'Inverse current node selection', container : 'body'})
+	    $(this.target + ' a.btnHuman')//this event callback object method in maestro
+		.on('click', function(){
+			$(self.target).trigger('getCustomNodeSel', { type : "human" });
+		});
+		$(this.target + ' a.btnLonely')//this event callback object method in maestro
+		.on('click', function(){
+			$(self.target).trigger('getCustomNodeSel', { type : "orphans" });
+		});
+		
+	    $(this.target + ' a.btnInv')
 		.on('click', function(){
 			var nodeTable = $(self.maxiSel + ' .tabularNetworkBodyNodeTable');
 			$(nodeTable).find('tbody tr').each(function () {
 							       self._tickToggle(this);
 							   });
-			alert('CLICK');
 			var data = self._getTickedNodes();		 // All is set as clicked seems so
 			var nodeList = data.map(function(elem, i, array){
+					
 						    return elem.extID;
 						});	
+						console.dir('here $$$$$$$')
 			console.dir(nodeList);
 			$(self.target).trigger("tickToggle", { nodeNameList : nodeList });		
 		    });
@@ -380,6 +396,7 @@ function tabularInit (opt) {
 		});	  
 	    return list;
 	},
+
 	tickNeighbourNodes : function (nodeName){
 	    var self = this;	    
 	    if (!this.nodeDT) {
@@ -393,7 +410,8 @@ function tabularInit (opt) {
 	    return list;
 	},
 	tickNodes : function (data) { // External CALL!!
-	    var self = this;	    
+	    var self = this;	
+	    console.dir(data);    
 	    if (!this.nodeDT) {
 		return; 
 	    }	    
@@ -411,9 +429,10 @@ function tabularInit (opt) {
 			  });		
 		return;
 	    }
-	    
 	    for (var i = 0; i <  data.data.length; i++) {
-		var datum = data.data[i];
+		var datum = typeof data.data[i] == 'string' 
+			? { name : data.data[i] }
+			: data.data[i];
 //	 	var nRow = self._get({type : 'nodeIndex', name : datum.name});
 		self._tickToggle(datum.name, {setTo : setState});
 	    }

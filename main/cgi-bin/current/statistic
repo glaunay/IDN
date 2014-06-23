@@ -57,7 +57,8 @@ $dataContainer = {
 				  glycosaminoglycan => [],
 				  cation => [],
 				  lipid => [],
-				  inorganic => []
+				  inorganic => [],
+				  synthetic => []
 				 },
 		  associations => {
 				   total => [0,0],
@@ -91,7 +92,8 @@ my $hTags = {
 	     Multimer => 'multimer',
 	     Protein_Fragment => 'fragment',
 	     Lipid => 'lipid',
-	     Inorganic => 'inorganic'
+	     Inorganic => 'inorganic',
+	     SyntheticPeptide => 'synthetic'
 	    };
 foreach my $iKey ( keys(%{ $hTags }) ) {
   $labelMaker->{ $iKey } = {};
