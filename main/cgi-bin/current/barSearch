@@ -146,7 +146,7 @@ sub getBiomolecule {
     foreach my $tagName (qw /Common_Name
 			      GAG_Name Phospholipid_Name Cation_Name Glycolipid_Name 
 			      Multimer_Name Inorganic_Name FragmentName EntryName
-			      More_Info Other_Fragment_Name SpepName Spep_ShortName/) {
+			      More_Info Other_Fragment_Name Spep_Name Spep_ShortName/) {
       my $tag = $biomoleculeObj->$tagName;
       if (defined ($tag)) {
 	$datum->{ name } = $tag->name;
