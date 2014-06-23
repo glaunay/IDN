@@ -76,6 +76,8 @@
 #searchBar ul.dropdown-menu{
 	float:left;
 	z-index: 11;
+	max-height: 200px;
+	overflow-y: auto;
 }
 #searchBar ul.resultMore{
 	float : left;

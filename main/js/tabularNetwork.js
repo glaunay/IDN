@@ -156,6 +156,7 @@ function tabularInit (opt) {
 		+' </button>'
 		+  '<ul class="dropdown-menu" role="menu">'
 		+    '<li><a class = "btnInv"><i class="fa fa-adjust pull-left"></i>Inverse selection</a></li>'
+		+	 '<li class="divider"></li>'
 		+    '<li><a class = "btnHuman"><i class="fa fa-male pull-left"></i>Human nodes</a></li>'
 		+    '<li><a class = "btnLonely"><i class="fa fa-circle pull-left"></i>Select orphan(s)</a></li>'
 		+ ' </ul>'
