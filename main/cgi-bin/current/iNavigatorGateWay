@@ -38,7 +38,7 @@ my $jsNetworkStartupCallString = %{$dataContainer}
 
 
 
-my $fTemplateLoc = "$END{ IDN_DATA }/iNavigatorHtmlTemplate.txt";
+my $fTemplateLoc = "$ENV{ IDN_DATA }/iNavigatorHtmlTemplate.txt";
 open HTML, "<$fTemplateLoc" or $logger->logdie("Cant open $fTemplateLoc");
 my $htmlOut = '';
 my $urlRoot = $ENV{ IDN_URL };
