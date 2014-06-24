@@ -77,7 +77,7 @@ my @aceAssociations = $DB->fetch(Association => '*');
 
 foreach my $aceAssoc (@aceAssociations) {
   foreach my $source ($aceAssoc->at('Source')) {
-    my $sKey = $source->name eq "MatrixDB" ? "matrixdb" : "psicquic";
+    my $sKey = $source->name =~ /^MatrixDB$/i ? "matrixdb" : "psicquic";
     $dataContainer->{ associations }->{ $sKey }->[0] += 1;
     $dataContainer->{ associations }->{ total }->[0] += 1;
   }
@@ -137,7 +137,7 @@ foreach my $aceAssociation (@aceAssociations) {
   $dataContainer->{ associations }->{ $labelMaker->{ $types[0] }->{ $types[1] } }->[1] += scalar(@experiments);
 
   foreach my $aceExp (@experiments) {
-    my $sKey = $aceExp->name =~ /MatrixDB/ ? "matrixdb" : "psicquic";
+    my $sKey = $aceExp->name =~ /MatrixDB/i ? "matrixdb" : "psicquic";
     $dataContainer->{ associations }->{ $sKey }->[1] += 1;
     $dataContainer->{ associations }->{ total }->[1] += 1;
   }

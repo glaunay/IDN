@@ -51,7 +51,7 @@ function initStatView (options){
                       			 '<thead><tr><th>Molecular interaction Data</th>'+
                       			 '<th><img src = "/img/icon-mdb.png" width = "15px" ></img></th>'+
                       			 '<th><img src = "/img/psicquic.png" width = "20px"></img></th></tr></thead><tbody>';
-			 	tableInteractor += '</tbody></table><div>* = Bioactive protein fragment </br> ** = Glycosaminoglycan</div>';
+			 	tableInteractor += '</tbody></table><div><b>  *</b> : Bioactive <b>P</b>rotein <b>frag</b>ment</br><b>**</b> : <b>G</b>lycos<b>A</b>mino<b>G</b>lycan</div>';
 			 	var pub = data.publications.total - data.publications.imex
 				tableFinal += '<tr><td>Associations</td><td>' + data.associations.matrixdb[0] + '</td><td>' + data.associations.psicquic[0] + '</td></tr>' +
 							  '<tr><td>Experiments</td><td>' + data.associations.matrixdb[1] + '</td><td>' + data.associations.psicquic[1] + '</td></tr>' +

@@ -7,6 +7,11 @@ body {
     width:100%;
 /* The html and body elements cannot have any padding or margin. */
 }
+span.sup {
+	position: relative;
+  	bottom: 1ex; 
+ 	font-size: 80%;
+}
 
 .accordion-group {
     border : none; !important
