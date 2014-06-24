@@ -139,6 +139,7 @@ div#vizContainer {
 }
 
 #legend {
+    //z-index : -10;
     position : absolute;
     top : 85px;
     right : 50px;

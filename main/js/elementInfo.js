@@ -280,8 +280,8 @@ function initElementInfo(opt) {
 			
 			var taille = listeDiv.length
 		}else{
-			var header = "<div class = 'caroussel'><div class='titleAsso' style = 'width: 100%;'>" + name + "</div></div>"+
-			"</div>";
+			var header = "<div class='titleAsso' style = 'width: 81%;'><a  target = '_blank'"+
+						 " href = '" + self.urlReport.association + self.data.details.name + "'>"+ name + "</a></div>"+
 			listeDiv.push(self._divXpGenerator(self.data.details.Experiments[0],0))
 			var taille = 1
 		}

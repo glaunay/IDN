@@ -186,8 +186,7 @@ function initCartCtrl (opt) {
 
 		 $(this.maxiSel + " .plusNotificationMagnified").show();
 		 $(this.maxiSel + " .plusNotificationMagnified")
-		   .on('click', function(event){
-		    console.dir(event.currentTarget);
+		   .on('click', function(event){		 
 		    var critObjList = self.callback.getGlowyAsCriterionList();
 		    self.addCriterion(critObjList);							      
 		    event.stopPropagation();
@@ -198,7 +197,6 @@ function initCartCtrl (opt) {
 	    
 	},
 	searchTrigger : function () {
-	    console.dir(this.criterionList);	    
 	    $(this.target).trigger('databaseQuery', {criterionList : this.criterionList});
 	    this.callback.ajaxSearch(this.criterionList);
 	},
@@ -279,7 +277,6 @@ function initCartCtrl (opt) {
 	    else
 		array = [data];
 	    for (var i = 0; i < array.length; i++) {
-		console.log(array[i]);
 		if (this._isKnownCriterion(array[i]))
 		    continue;
 		this.addOneCriterion(array[i], symbolTable);

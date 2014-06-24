@@ -35,7 +35,7 @@ function tabularInit (opt) {
 	target : opt.target, 
 	draggable : draggable,
 	size : size,
-	nodeBuffer : {},	
+	nodeBuffer : null,	
 	target : opt.target,
 	activePanel : "node",
 	nodeRawData : {},
@@ -59,7 +59,7 @@ function tabularInit (opt) {
 				  + '<div id="tabularBookmarkWrapper"><i class="fa fa-list-alt fa-4x"></i></div>');
 	    var headerHtml = '<div class="tabularNetworkHeader">'
 		+ '<i class="fa fa-minus-square-o fa-3x pull-left"></i>'+
-		'<button id="nodeLabelToggler" type="button" class="btn btn-info" data-toggle="button">Toogle node labels</button>'+
+		'<button id="nodeLabelToggler" type="button" class="btn btn-info" data-toggle="button">Toggle node labels</button>'+
 		'<i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>';
 	    
 	    $(this.target + ' div#tabularLargeWrapper').append(headerHtml);
@@ -209,8 +209,6 @@ function tabularInit (opt) {
 					
 						    return elem.extID;
 						});	
-						console.dir('here $$$$$$$')
-			console.dir(nodeList);
 			$(self.target).trigger("tickToggle", { nodeNameList : nodeList });		
 		    });
 	    
@@ -219,8 +217,7 @@ function tabularInit (opt) {
 			   title : 'Hide the current node selection from network', 
 			   container : 'body'})
 		.on('click', function(){
-			var data = self._getTickedNodes();
-			console.log(data);
+			var data = self._getTickedNodes();		
 			var nodeList = data.map(function(elem, i, array){
 						    return elem.extID;
 						});
@@ -281,13 +278,10 @@ function tabularInit (opt) {
 			      });
 
 	    $(this.maxiSel).on('add', function (event, param1) {
-				   console.log("add TRIGGER EVENT RESPONSE");
 				   self.add(param1);
 			       });
 	    $(this.maxiSel).on('dataFecthDone', function (event) {
-				   console.log("DATA FETCH DONE CASCADE 0");
 				   self._removeIdle();
-				   console.log("DATA FETCH DONE CASCADE 1");
 				   if(self.activePanel === "link")
 				       self.toggleToLinkTab();
 			       });
@@ -309,7 +303,6 @@ function tabularInit (opt) {
 	    $(nodeTable).find('th#checkAll').first()
 		.on('click', function(){
 			var setState = $(this).find('i').first().hasClass('fa-check-square-o') ? 'uncheck' : 'check';
-			console.log("------>ClickAll, setting to " + setState);
 			
 			$(nodeTable).find('tbody tr').each(function () {
 							 self._tickToggle(this, {setTo : setState});
@@ -388,7 +381,7 @@ function tabularInit (opt) {
 		
 		if(this.nodeBuffer){
 			this.tickNodes(this.nodeBuffer);
-			this.nodeBuffer = {};
+			this.nodeBuffer = null;
 		}
 			    
 	},
@@ -419,7 +412,6 @@ function tabularInit (opt) {
 	},
 	tickNodes : function (data) { // External CALL!!
 	    var self = this;	
-		console.dir('here call tickNodes')
 	    if (!this.nodeDT) { 
 	    	this.nodeBuffer = data;
 		return; 
@@ -547,23 +539,13 @@ function tabularInit (opt) {
 	    var self = this;
 	  //  console.log("toggling to node tab");
 	    this.activePanel = "node";
-	    	    
-	    // activate the add to cart operator
-	    var link = $(this.target + ' .tabularNetworkHeader li.action')[0];
-	    $(link).show();
+	    	    	   
 	    $(this.target + ' #linkTab').removeClass('active');
 	    $(this.target + ' #nodeTab').addClass('active');					     
 	    $(this.target + ' .tabularNetworkBodyLinkTable').hide();
 	    $(this.target + ' .tabularNetworkBodyNodeTable').show();
 	    $(this.target + ' .selectionOperator').show();
 
-	    /*
-	     *    if (!this.linkTabIsReady) {			    
-	     this._showIdle();
-	     return;
-	     }
-	     */ 
-	    
 	    if (!this.nodeDT) 
 		this._createNodeTable();
 	    
@@ -605,13 +587,21 @@ function tabularInit (opt) {
 
 	    return string;
 	},
+	setNeighbourhoods : function () {
+	for (var id in this.nodeRawData) {
+			var string = this.nodeRawData[id].name;
+			var neighbours = this._getNeighbourNodes(string);
+			var name = string.replace(":", "\\:");	
+			selector = this.target + 
+			    ' .tabularNetworkBodyNodeTable .dataTables_scrollBody tbody tr[extID=' 
+		    	+ name + '] td:nth-child(4) a';
+			$(selector).text(neighbours.length);
+		} 
+	},	
 	addNode : function (data) { // append node list to current content
 	    var self = this;
-	    
-	    
 	    //this._displayWaitMsg();
 	    var nodeData = data.nodeData;
-            console.dir(data);
 	    for (var i = 0; i < nodeData.length; i++) {
 		if (this.nodeRawData[nodeData[i].name])
 		    continue;
@@ -644,8 +634,8 @@ function tabularInit (opt) {
         },
 	unFocus : function () {	 
 	    //console.log('unfocus');
-	    $(this.target +  ' tr.rowFocusOdd').removeClass('rowFocusOdd'); 
-	    $(this.target +  ' tr.rowFocusEven').removeClass('rowFocusEven'); 
+	    $(this.target +  ' tr td.rowFocusOdd').removeClass('rowFocusOdd'); 
+	    $(this.target +  ' tr td.rowFocusEven').removeClass('rowFocusEven'); 
 
 	},
 	togglePanel : function () {
@@ -653,15 +643,14 @@ function tabularInit (opt) {
 	    /* BE CAREFULL in prod stage, passed objects could be reference to node object */
 	},
 	add : function (data) {
-	    console.log("Adding elements");
 	    this.addNode(data);
-	 //   console.log("node added");
 	    this.addLink(data);
-	 //   console.log("link added");
 	    /* Displaying new nodes tab by default */
 	    this.clearDataTables();
 	    if (this.size === "magnified")
 		this._toggleToNodeTab();  
+	    // here refresh ticked selection
+	   $(this.target).trigger('refreshTickForTabular');
 	},
 	_createLinkTable : function () {
 	    var self = this;
@@ -738,21 +727,14 @@ function tabularInit (opt) {
 									     makeMouseOutFn(Sparent, function(){
 												$(self.target).trigger('neighbourhoodCellMouseOut', {name : nodeName});
 											    }),true);
-						  }).on('click', function(){
-						//	    console.log('------>' + nodeName);
-							    var nodeList = self.tickNeighbourNodes(nodeName);
-/*							    var data = self._getTickedNodes();		
-			var nodeList = data.map(function(elem, i, array){
-						    return elem.extID;
-						});*/
+						  })
+	.on('click', function(){
+			var nodeList = self.tickNeighbourNodes(nodeName);
 			$(self.target).trigger("tickToggle", {  nodeNameList : nodeList });
-							});
+			});
 					   });
 			       }
 			   });
-/*	    $(this.target + ' .tabularNetworkBodyNodeTable')
-		.tooltip({ selector: "span[rel=tooltip]"});*/
-	    
 	    $(this.target + ' .tabularNetworkBodyContent table td:nth-child(1) i')
 		.on('click', function (){
 			var setStatus = $(this).hasClass('fa fa-square-o') 
@@ -766,7 +748,6 @@ function tabularInit (opt) {
 		    });	    
 	},	
 	clearDataTables : function () {	    
-	    console.log ("clearing datatables");
 	    if (this.nodeDT)
 		$(this.nodeDT).dataTable().fnDestroy();
 	    this.nodeDT = null;
@@ -774,67 +755,6 @@ function tabularInit (opt) {
 		$(this.linkDT).dataTable().fnDestroy();
 	    this.linkDT = null;
 	},
-	// Deprecated for now
-/*
-	_createExperimentDetailsCellHtml : function (data) {
-	    var dbSource = {
-		matrixdb : 0,
-		intact : 0,
-		others : 0
-	    };
-	    var detectMethod = {};
-	    
-	    var htmlTooltip = '<div><div><h6>Source database</h6><ul>';
-	    var nExp = 0;
-	    if (!data.details) {
-		console.log("error current link does not have any detail attribute");
-		console.dir(data);
-	    } else {
-		nExp = data.details.Experiments.length;
-		for (var i = 0; i < data.details.Experiments.length; i++) {
-		    var expObj = data.details.Experiments[i];
-		    
-		    //detectMethod.push(expObj.Interaction_Detection_Method);
-		    if (dbSource[expObj.source]) 
-			dbSource[expObj.source]++;
-		    else
-			dbSource.others++;
-		}	
-	    }    
-	    for (var key in dbSource) {
-		if (dbSource[key] == 0) continue;
-		htmlTooltip += "<li>"  + key + ' ' + dbSource[key]  + "</li>";
-	    }
-	    htmlTooltip += '</ul><h6>Detection Methods</h6><ul>';
-	    
-	    for (var i = 0; i < detectMethod.length; i++) {
-		htmlTooltip += '<li>' +   + '</li>';
-	    }
-	    
-	    htmlTooltip += '</ul></div>';
-	    //console.log("<span href=\"#\"  data-container=\"#" + this.target + "\" data-html=\"true\" rel=\"tooltip\" title=\"" +   htmlTooltip + "\">" +  data.details.Experiments.length + "</span>");
-	    return "<span href=\"#\"  data-container=\"" + this.target + "\" data-html=\"true\" rel=\"tooltip\" title=\"" +   htmlTooltip + "\">" + nExp + "</span>";
-	},
-	_createProofTypeCellHtml : function (data) {
-	    var gen = 0, inf = 0; 
-	    if (!data.details) {
-		console.log("error current link does not have any detail attribute");
-		console.dir(data);
-	    } else {			    
-		// console.dir(data);
-		for (var i = 0; i < data.details.Experiments.length; i++) {
-		    if (! data.details.Experiments[i].knowledgeSupport) {
-			console.log("no knwoledge support");
-		    }
-		    if (data.details.Experiments[i].knowledgeSupport === "actual") gen++;
-		    else inf++;
-		}
- }	    
-	    return gen === 0
-		? '<span class="genuine"><i class="fa fa-star-o fa-lg"></i></span>'
-		: '<span class="inferred" ><i class="fa fa-star fa-lg"></i></span>';
-	},
-*/
 	/*
 	 * 
 	 *  Because link data may be fetched from ajax call at undertimed timers
@@ -844,9 +764,6 @@ function tabularInit (opt) {
 	 * 
 	 */
         addLink : function (data) { // append new link to current content
-	    console.log("Adding a link set of " 
-			+ data.linksData.length 
-			+ " elements");
 	    var self = this;
 	    var linkData = data.linksData;
 	    for (var i = 0; i < linkData.length; i++) {
@@ -1001,7 +918,8 @@ function tabularInit (opt) {
 				     .on('click', function () {
 					     self.unFocus();
 					 });*/
-	        		 $(selector).addClass(function(){
+				console.log(selector);
+	        		 $(selector + ' td').addClass(function(){
 							 return $(this).hasClass('odd')
 							      ? "rowFocusOdd" 
 							      : "rowFocusEven"; 

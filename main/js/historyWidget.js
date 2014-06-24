@@ -48,7 +48,6 @@ function initHistoricHover (options){
 		},
 		draw : function (){
 			var self = this;
-			console.log('lets draw');
 			for (var i=0; i < self.historicDataLink.length; i++) {
 			  self.stopBubbling(self.historicDataLink[i]) 
 			};

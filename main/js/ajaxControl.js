@@ -21,10 +21,6 @@
 window.CGI_PREFIX = "/cgi-bin/current/";
 
 function networkExpand (data, callback) {        
-    
-    //    var parent = settings.parent;
-
-    console.dir(data);
     var requestObject = {
 	completeAnnotation : "no",
 	providers : vizObject.getProviderList(),

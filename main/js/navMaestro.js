@@ -79,6 +79,7 @@ function vizObjectInit (opt) {
 								  vizObject.core.addCenter(networkData.newCenters);	
 								  var keywordDistrib = vizObject.core.getKeywordDistribution();
 								  vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);
+							          vizObject.tabular.setNeighbourhoods();
 							      });
 					    },
 					    jobExhaustion : function () {
@@ -355,7 +356,11 @@ function vizObjectInit (opt) {
 			console.dir('this type is wrong');
 			console.dir(data.type);
 		}
-	   });
+	   })
+	.on('refreshTickForTabular', function () {
+		    var nodeSelection = vizObject.core.getGlowyNodes();
+		    vizObject.tabular.tickNodes({ data : nodeSelection, setToGlow : true });
+	});
 	 
 
     /*    $(vizObject.core.target).on('networkChangeStart', function(event,d) {

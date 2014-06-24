@@ -144,7 +144,6 @@ function coreInit (opt) {
 		  this.bubbleNode(temp[node],"stop");
 		};
 	    this.bubblingNodes = [];
-	    console.log("clearing All");
 	},
 	_bubbleCycleStep : function (node, animationSettings) {
 	    var nodeName;
@@ -262,9 +261,7 @@ function coreInit (opt) {
 	bubbleCriterionNodes : function (data, type) {
 	    var self = this;
 	    if (type === "start") {
-		console.log("bubbling node digger");
 		self.hotNodes = [];		
-		console.dir(data);
 		data.criterionList
 		    .forEach(function (elem) {
 				 if (elem.type === 'biomolecule') {
@@ -277,14 +274,12 @@ function coreInit (opt) {
 				     }
 				 }
 			     });
-	    } else {
-		
+	    } else {		
 		self.hotNodes.forEach(function(node) {
-					  console.log("stopping node");
-					  console.dir(node);
 					  var nodeName;
-					  d3.select(node).each(function(d){nodeName = d.name;});
-					  self.bubbleNode ({name : nodeName}, "stop");
+					  d3.select(node).each(function(d){
+							 self.bubbleNode ({ name : d.name }, "stop");
+							});					 
 				      });
 		self.hotNodes = [];
 	    }
@@ -432,7 +427,6 @@ function coreInit (opt) {
 	    for (var tag in this.detectionMethod) {
 		data[tag] = this.detectionMethod[tag].length;
 	    }
-	    console.dir(data);
 	    
 	    filterComponent.update({type : "detectionMethod", data : data, action : "init"});		    
 	},
@@ -538,8 +532,7 @@ function coreInit (opt) {
 	},
 	// Hide Show node(s) and their related link(s)
 	nodeVisibilityToggle : function (data, visibility) {
-	    var self = this;
-	    console.dir(data);
+	    var self = this;	 
 	    if (data.nodeNames) {
 		data.nodeNames.forEach(function(name){
 					   var nSvg = self.nodeToSvg[name];
@@ -734,7 +727,9 @@ function coreInit (opt) {
 					   });
 			   $(this).hoverIntent( {
 						    over : function () {
+						    if(d3.select(node).style("visibily") === "hidden"){return;}
 							if ('tabular' in self.targetCom) {
+								
 							    $(self.targetCom.tabular).trigger('nodeScroll', [d3.select(node).datum()]);
 							}
 							if (!self.tooltipForced) {
@@ -784,20 +779,16 @@ function coreInit (opt) {
 
 	    var link = this.svg.selectAll(".link")
 		.data(links, function(d) {
-			  console.log("adding link");
 			  var sNode,sData;
 			  if (d.source.hasOwnProperty('name')) {
 			      sData = d.source;
-			      //console.log("SOURCE link spec is an object");
-			  } else { // 
+			  } else { 
 			      sNode = self.nodeToSvg[d.source];
 			      sData = d3.select(sNode).data()[0];
 			  }
-			  //var string = d.source + " " + d.target;			 
 			  var tNode, tData;
 			  if (d.target.hasOwnProperty('name')) {			    
 			      tData = d.target;
-			   //   console.log("TARGET link spec is an object");   
 			  } else {			
 			      tNode = self.nodeToSvg[d.target];
 			      tData = d3.select(tNode).data()[0];
@@ -1103,12 +1094,8 @@ function coreInit (opt) {
 	      THIS MAY NOT BREAK AT WINDOW RESIZING, because navbar is the only offset cause (y axis)
 	     and it remains static at resize
 	     */
-	    
-	    //var $container = $(this.target + ' #networkWindow g[id=network]');
 	    var $container = $(this.target + ' #networkWindow');
 	    var $selection = $('<div>').addClass('selection-box');
-	    
-	    console.log("setting drag box");
 	    $container.on('mousedown', function(e) {	
 			      //console.log("--->" + e.target);
 			     // console.dir(e.target);
@@ -1207,8 +1194,7 @@ function coreInit (opt) {
 							      if (tempY < Ylo) return;
 							      nodeArrayGlow.push(this);
 							      data.push(d);
-							  });
-						console.dir("here")
+							  });				
 						self._glowToggle(nodeArrayGlow, {type : "forced"});
 						$(self.target).trigger('glowingTouch', {data : data, setToGlow : true});
 					    });
@@ -1218,9 +1204,6 @@ function coreInit (opt) {
 	},
 	setGlowyNodes : function(data) {
 	    var self = this;
-	    //[nameList of node to be glowy];
-	    // unglow all, glow the specified ones
-	    console.dir(data);
 	    this._unglowAll();
 	    var nodes = data.nodeNameList.map(function(elem, i, array) {
 						  return self.nodeToSvg[elem];
@@ -1260,7 +1243,6 @@ function coreInit (opt) {
 	 *  */
 	addCenter : function (nodeList) {
 	    var self = this;
-	    console.log(nodeList);
 	    nodeList.forEach(function (name) {
 				 var node = self.nodeToSvg[name];
 				 d3.select(node).each(function(d){ d.central = true; });
@@ -1388,7 +1370,6 @@ function coreInit (opt) {
 		      });	    	    
 	},
 	_unglowAll : function () {
-	    console.log("unglownig all");
 	    var nodes = [];
 	    this.gNodes = [];
 	    this.svg.selectAll(".node").each(function(d){d.glow = true; nodes.push(this);});
@@ -1417,9 +1398,6 @@ function coreInit (opt) {
 	    var self = this;
 	    var array = $.isArray(data) ? data : [data];
 	    var type = opt ? opt.type : "nice";
-	    console.dir("pass _glowToggle")
-	    console.dir(data)
-	    console.dir(opt)
 	    for (var i = 0; i < array.length; i++) {
 		var datum = array[i];
 		d3.select(datum).each(
@@ -1661,9 +1639,6 @@ function coreInit (opt) {
 	    var list = [];
 	    var cnt = 1;
 	    for (var symbol in this.shapeCreator) {	
-		console.log("Pushing " + symbol);
-	//	if (symbol === "biomolecule") continue;
-		//var colSel = isOdd(cnt) ? "> div:nth-child(odd)" : "> div:nth-child(even)";
 		if(isOdd(cnt)) 
 		    $('#legend tbody').append('<tr><td><svg width="20px" height="20px"></svg><div class="legendText"></div></td>'
 					      + '<td><svg width="20px" height="20px"></svg><div class="legendText"></div></td></tr>');
@@ -1677,8 +1652,7 @@ function coreInit (opt) {
 	    d3.selectAll( "div#legend tbody td svg" ).each(
 		function (){
 		    var symbol = list[inner];
-		    if (!symbol) return;
-		    console.dir(symbol);
+		    if (!symbol) return;	
 		    var specs = self.shapeCreator[symbol](null, "regular", "getShapeSpecs");
 		    d3.select(this)
 			.append("path")

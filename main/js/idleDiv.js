@@ -1,5 +1,4 @@
 function startIdle (opt) {
-    console.log('starting MSG component');
     return {
 	register : [],
 	parent : opt.parent,
