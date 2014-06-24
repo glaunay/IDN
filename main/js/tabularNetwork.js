@@ -34,7 +34,8 @@ function tabularInit (opt) {
 	width : width,
 	target : opt.target, 
 	draggable : draggable,
-	size : size,	
+	size : size,
+	nodeBuffer : {},	
 	target : opt.target,
 	activePanel : "node",
 	nodeRawData : {},
@@ -357,7 +358,7 @@ function tabularInit (opt) {
 	    
 	    this.size = "magnified";
 	    $(this.target + ' #tabularBookmarkWrapper').hide();	    
-
+		
 	    var string = '.tabularNetworkBodyLinkTable';
 	    if (this.activePanel === "link")
 		string = '.tabularNetworkBodyNodeTable';
@@ -383,7 +384,13 @@ function tabularInit (opt) {
 	    if (this.activePanel === "link")
 	    	this._toggleToLinkTab();
 	    else
-		this._toggleToNodeTab();	    
+		this._toggleToNodeTab();
+		
+		if(this.nodeBuffer){
+			this.tickNodes(this.nodeBuffer);
+			this.nodeBuffer = {};
+		}
+			    
 	},
 	_getNeighbourNodes : function (nodeName) {
 	    var list = [nodeName];
@@ -412,8 +419,9 @@ function tabularInit (opt) {
 	},
 	tickNodes : function (data) { // External CALL!!
 	    var self = this;	
-	
-	    if (!this.nodeDT) {
+		console.dir('here call tickNodes')
+	    if (!this.nodeDT) { 
+	    	this.nodeBuffer = data;
 		return; 
 	    }	    
 	    /* receive the d3 data array, untick all, tick rows of glowy nodes set main Ticker accordingly*/

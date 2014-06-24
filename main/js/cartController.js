@@ -49,7 +49,8 @@ function initCartCtrl (opt) {
 	draw : function () {
 	    var self = this;
 	    
-	    var scaffold = '<div id="cartLargeWrapper"><div class="cartHeader"><i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>'
+	    var scaffold = '<div id="cartLargeWrapper"><div class="plusNotificationMagnified" style="display:none"><i class="fa fa-plus"></i></div>'
+	    +'<div class="cartHeader"><i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>'
 		+ '<div class="cartBody"></div>'
 		+ '<div class="cartFooter"></div></div>'
 		+ '<div id="cartBookmarkWrapper"><i class="fa fa-shopping-cart fa-4x"></i><div class="plusNotification" style="display:none"><i class="fa fa-plus"></i></div></div>';
@@ -167,10 +168,11 @@ function initCartCtrl (opt) {
 	notify : function (data) { // glow modification shortcut to add to selection
 	    if (! data.setToGlow || data.data.length === 0) {
 		$(this.miniSel + " .plusNotification").hide();
+		$(this.maxiSel + " .plusNotificationMagnified").hide();
 		return;
 	    };
 	    var self = this;
-	    if (this.size === "minified") {
+		
 		$(this.miniSel + " .plusNotification").show();
 		$(this.miniSel + " .plusNotification")
 		    .on('click', function(event){							      
@@ -178,10 +180,21 @@ function initCartCtrl (opt) {
 			    var critObjList = self.callback.getGlowyAsCriterionList();
 			    self.addCriterion(critObjList);							      
 			    event.stopPropagation();
-			    $(this).hide();			    
+			    $(this).hide();
+			    $(self.maxiSel + " .plusNotificationMagnified").hide();			    
 			});
-		//    .css({'animation-name' : 'notify', webkitAnimationName : 'notify'});		
-	    }
+
+		 $(this.maxiSel + " .plusNotificationMagnified").show();
+		 $(this.maxiSel + " .plusNotificationMagnified")
+		   .on('click', function(event){
+		    console.dir(event.currentTarget);
+		    var critObjList = self.callback.getGlowyAsCriterionList();
+		    self.addCriterion(critObjList);							      
+		    event.stopPropagation();
+		    $(this).hide();
+		    $(self.miniSel + " .plusNotification").hide();			    
+		});
+	   
 	    
 	},
 	searchTrigger : function () {

@@ -363,6 +363,7 @@ function coreInit (opt) {
 		self.bubblingNodes.push({name : nodeName, stamp : bubbleLoopStamp});
 	    } else if(type === 'stop') {
 		self._bubbleCycleStop(node);
+		
 		d3.select(node).each(function(d){ if (d.glow) self._glowToggle([this],{ type : "forced" });});
 	    }
 	    
@@ -371,7 +372,8 @@ function coreInit (opt) {
 	    if ('tabular' in data)
 		this.targetCom['tabular'] = data.tabular;
 	    if ('filter' in data)
-		this.targetCom['filter'] = data.filter;	   
+		this.targetCom['filter'] = data.filter;
+			   
 	},
 	_getFilterCom : function (){
 	    return this.targetCom['filter']  ? this.targetCom['filter']  : null;
@@ -976,15 +978,21 @@ function coreInit (opt) {
 	centrum : function(){
 		// appel on click centre le rÃ©seaux
 		var self = this;
-		var nodesList = self.force.nodes();
-		if(nodesList.length === 0){return;}
+		
+		
 		//first step recup barycentre
 		var moyX = 0;
 		var moyY = 0;
-		for (var node=0; node < nodesList.length; node++) {
-		  moyX += nodesList[node].x;
-		  moyY += nodesList[node].y;
-		};
+		var nodesList = [];
+		d3.selectAll(".node").each(function (d){
+			if (d3.select(this).style('visibility') === "visible") {
+				moyX += d.x;
+				moyY += d.y;
+				nodesList.push(d);
+			}
+		});
+		if(nodesList.length === 0){return;}
+		
 		var moyX = moyX / nodesList.length;
 		var moyY = moyY /nodesList.length;
 		//centre du svg par translation
@@ -1177,11 +1185,9 @@ function coreInit (opt) {
 						var nodeArrayGlow = [];
 						var data = [];
 						//here transform
-						console.dir('here transform');
 						var actualTrans = self._getTransformMatrice();
-						console.dir(actualTrans);
 
-						console.dir("here the select no modif " + Xhi + " , " + Yhi + " : " + Xlo + " , " + Ylo);
+						//console.dir("here the select no modif " + Xhi + " , " + Yhi + " : " + Xlo + " , " + Ylo);
 						/*transform of corner selection*/
 						/*Xhi = Xhi * actualTrans[0][0] + Yhi * actualTrans[0][1] + actualTrans[0][2];
 						Yhi = Xhi * actualTrans[1][0] + Yhi * actualTrans[1][1] + actualTrans[1][2];
@@ -1202,6 +1208,7 @@ function coreInit (opt) {
 							      nodeArrayGlow.push(this);
 							      data.push(d);
 							  });
+						console.dir("here")
 						self._glowToggle(nodeArrayGlow, {type : "forced"});
 						$(self.target).trigger('glowingTouch', {data : data, setToGlow : true});
 					    });
@@ -1391,7 +1398,7 @@ function coreInit (opt) {
 		var self = this;
 		var defaultMatrix = [[1,0,0],[0,1,0],[0,0,1]];
 		var matrix = $('div#networkWindow svg g#network').attr('transform');
-		console.log(matrix)
+		//console.log(matrix)
 		if(matrix){
 			/*here parsing of matrix*/
 			var reg = /-?[0-9]+(\.[0-9]*)?/gi
@@ -1410,7 +1417,9 @@ function coreInit (opt) {
 	    var self = this;
 	    var array = $.isArray(data) ? data : [data];
 	    var type = opt ? opt.type : "nice";
-	    
+	    console.dir("pass _glowToggle")
+	    console.dir(data)
+	    console.dir(opt)
 	    for (var i = 0; i < array.length; i++) {
 		var datum = array[i];
 		d3.select(datum).each(

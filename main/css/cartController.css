@@ -40,6 +40,7 @@
     width:25px;
     -moz-border-radius:25px;
     -webkit-border-radius:25px;
+    border-radius:25px;
 
     padding:8px;
     text-align:center;
@@ -51,7 +52,27 @@
     font-size : 2em;
 }
 
-
+.plusNotificationMagnified{
+	 background: -webkit-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:    -moz-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:     -ms-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:      -o-radial-gradient( center, circle, rgb(0,255,102), rgb(0,153,51));
+    background:         radial-gradient( circle at center, rgb(0,255,102), rgb(0,153,51));
+    
+    height:25px;
+    width:25px;
+    -moz-border-radius:25px;
+    -webkit-border-radius:25px;
+	border-radius:25px;
+	
+    padding:8px;
+    text-align:center;
+    color:white;
+    font-size : 2em;
+    float: right;
+	margin-right: -25px;
+	margin-top: -30px;
+}
 
 
 
