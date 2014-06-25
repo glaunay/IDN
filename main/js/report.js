@@ -410,9 +410,9 @@ function initMyReport (options){
   			var self = this;
   			var subtype = self.jsonData.subType.charAt(0).toUpperCase() + self.jsonData.subType.slice(1);
   			var specie = self.jsonData.specie.names[1] ? self.jsonData.specie.names[1] : "Universal";
-  			
-  			var tooltip = "Specie : " + specie; 
-  			console.dir(tooltip)
+  			var taxonId = self.jsonData.specie.value ? self.jsonData.specie.value : "Universal";
+  			var tooltip = "<div>Specie : " + specie + "</div><div> Taxon id : </div>"; 
+  			console.dir(tooltip);
 			var content = "<span class = 'reportType'>" + subtype + "</span><div class ='divTitre'>" + self.jsonData.name + "<div class = ' tooltipContent postitSpecie' "+
 			              'data-container = "body" data-placement = "bottom" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '">'+
 			              '<a target = "_blank" href = "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + self.jsonData.specie.value + '"><img ' + speciUrl(self.jsonData.specie.value,self.rootUrl) + '>'+

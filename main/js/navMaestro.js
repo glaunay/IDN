@@ -18,8 +18,10 @@ function vizObjectInit (opt) {
 		var self = this;
 		
 		var data = widgetAttributeKeys.map(function(widgetKey, index, array) {
+			if (!vizObject[widgetKey]) {
+				console.log("ERROR, widget " + widgetKey + " undefined");
+			}
 			var tmp = vizObject[widgetKey].getSelectors();
-			console.log(tmp);
 			return tmp;	
 		});
 		return data;
