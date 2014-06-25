@@ -305,6 +305,8 @@ function initMyReport (options){
   			
   			$(self.targetDomElem).find('div.inPostit div.span6:last-child > div:nth-child(2)').attr("class","odd");
   			$(self.targetDomElem).find('div.inPostit div.span6:first-child > div:nth-child(3)').attr("class","odd");
+  			infoDiv.find("div.postitSpecie").tooltip()
+  			
   		},
   		/*méthode de génération des div
   		 */
@@ -406,8 +408,15 @@ function initMyReport (options){
   		},
   		_nameGenerateDivHtml : function(barchart){
   			var self = this;
-  			var subtype = self.jsonData.subType.charAt(0).toUpperCase() + self.jsonData.subType.slice(1); ;
-			var content = "<span class = 'reportType'>" + subtype + "</span><div class ='divTitre'>" + self.jsonData.name + "</div><div class = 'name postitContent'><span class = 'cartBio'>" + self.cartButton.biomAdd + "</span><dl>";
+  			var subtype = self.jsonData.subType.charAt(0).toUpperCase() + self.jsonData.subType.slice(1);
+  			var specie = self.jsonData.specie.names[1] ? self.jsonData.specie.names[1] : "Universal";
+  			
+  			var tooltip = "Specie : " + specie; 
+  			console.dir(tooltip)
+			var content = "<span class = 'reportType'>" + subtype + "</span><div class ='divTitre'>" + self.jsonData.name + "<div class = ' tooltipContent postitSpecie' "+
+			              'data-container = "body" data-placement = "bottom" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '">'+
+			              '<a target = "_blank" href = "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + self.jsonData.specie.value + '"><img ' + speciUrl(self.jsonData.specie.value,self.rootUrl) + '>'+
+						  "</img></a></div></div><div class = 'name postitContent'><span class = 'cartBio'>" + self.cartButton.biomAdd + "</span><dl>";
 			content += self._names() + self._gene() + self._specie() + self._molWeight() + self._aaNumber() + "</dl></div>"
   			var divString ="<div class = 'row-fluid'><div class = 'span12 general'>" + content + "</div></div>" ;
   			return divString;
@@ -1381,7 +1390,6 @@ function initMyReport (options){
 						xpObject.name = info.id;
 						commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + id + '">'+
 									 '<a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
-						console.dir(info.specie)
 						if(!info.specie){
 							speci = '<i class="fa fa-ban"></i>';
 						}else{

@@ -130,6 +130,9 @@ function initPalette (opt) {
 
 	echoRGB : function () {	  
 	 //   return [this.color.rgb[0], this.color.rgb[1], this.color.rgb[2]];
-	}	    		
+	},
+	getSelectors : function(){
+    	return {maxi : this.maxiSel, mini: this.miniSel};
+    }	    		
     };
 }

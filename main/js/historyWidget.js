@@ -60,7 +60,7 @@ function initHistoricHover (options){
 				active ="link";
 			}
 			$(self.targetDomElem).find("div.historyWidjet").remove();
-			$(self.targetDomElem).append("<div class ='historyWidjet " + self.status + "'>");
+			$(self.targetDomElem).append("<div id = 'historic' class ='historyWidjet " + self.status + "'>");
 			self._constructHtml(active);
 			
 			$(self.targetDomElem).find(".toggle").click(function (){
@@ -181,5 +181,8 @@ function initHistoricHover (options){
 			}
 			
 		},
+		getSelectors : function(){
+	    	return {maxi : "#historic", mini:  "#historic"};
+    }	   
 	}
 }

@@ -11,6 +11,10 @@
 	width:90%;
 }
 
+.bsContainer #searchBar .input-prepend {
+	width: 115%;
+}
+
 #searchBar{
 	position : relative;
 	clear:both;

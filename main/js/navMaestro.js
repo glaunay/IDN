@@ -8,9 +8,21 @@ function vizObjectInit (opt) {
     vizObject = { 
 	core : null, 
 	tabular : null,
+	zStack : [],
 	tooltipContents : null,
 	getProviderList : function () {
 	    return ["matrixdb"];
+	},
+	getWidgetSelectors : function () {
+		var widgetAttributeKeys = ['tabular', 'networkFilter',"cartCtrl","paintCtrl","historicHover"];
+		var self = this;
+		
+		var data = widgetAttributeKeys.map(function(widgetKey, index, array) {
+			var tmp = vizObject[widgetKey].getSelectors();
+			console.log(tmp);
+			return tmp;	
+		});
+		return data;
 	},
 	getContext : function() {
 	    var context = {
@@ -446,7 +458,8 @@ function vizObjectInit (opt) {
     
 
 //    setTimeout (function(){jsonLoader("data/customExtraCellularNetwork.json");}, 10000);
-	this.bindWidgetTooltips()
+	this.bindWidgetTooltips();
+	this.bindWidgetZstack();
 	
 }
 
@@ -751,5 +764,42 @@ function bindExportActions () {
 
 
 }
-
+function bindWidgetZstack (){
+	var self = this;
+	
+	var widgetSelectorList = vizObject.getWidgetSelectors();  // [{mini : "jquerySelString", maxi : "jquerySelString" }, ... ]
+	
+	var zSwap = function (domElem) {
+		if( !$(domElem).attr("id") ) {
+			console.log("ERROR unable to zswap w/out id attribute");
+			return;
+		}
+		//splice
+		for (var i=0; i < vizObject.zStack.length; i++) {
+		    if(vizObject.zStack[i].attr("id") === $(domElem).attr("id")){
+		    	vizObject.zStack.splice(i,1);
+		    }
+		};
+		//unshift
+		vizObject.zStack.unshift($(domElem));
+		// refresh zindex
+		var ePlacementIndex = 900;
+		for (var i=0; i < vizObject.zStack.length; i++) {
+		    vizObject.zStack[i].css('z-index',ePlacementIndex);
+		  	ePlacementIndex --; 
+		};		
+   }; 
+	
+	widgetSelectorList.forEach(function(wSelectors){
+		
+		var domElem = $(wSelectors.maxi);
+		domElem.on('click', function (){
+			zSwap(this);
+		});
+		$(wSelectors.mini).on('click', function (){
+			zSwap(domElem);
+		});	
+	});
+		
+}
 

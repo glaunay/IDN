@@ -976,7 +976,9 @@ function coreInit (opt) {
 		var moyY = 0;
 		var nodesList = [];
 		d3.selectAll(".node").each(function (d){
-			if (d3.select(this).style('visibility') === "visible") {
+			
+			if (d3.select(this).style('visibility') === "visible" && d) {
+				
 				moyX += d.x;
 				moyY += d.y;
 				nodesList.push(d);
@@ -1025,7 +1027,6 @@ function coreInit (opt) {
 				}
 			}
 		}
-		console.dir(matrix);
 		$('div#networkWindow svg g#network').attr("transform",newMatrix);
 
 	},

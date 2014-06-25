@@ -30,6 +30,11 @@ div.span12.mainAlias {
     font-family : Verdana;
     min-height: 75px;
 }
+
+div.span10.bsContainer {
+	margin-left: 10%;
+}
+
 div.span6.topHead {
     padding-top : 20px;
 }

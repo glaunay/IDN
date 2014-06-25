@@ -615,3 +615,8 @@ i.helpMe{
 	
 	
 }
+ #reportDiv .postitSpecie{
+	float: right;
+	display: inline-block;
+	margin-right: 20px;
+}

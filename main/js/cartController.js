@@ -374,7 +374,10 @@ function initCartCtrl (opt) {
 	    }
 	    
 	    alert ('following name " ' + name  + ' " not found in search widget litteral');*/
-	}
+	},
+	getSelectors : function(){
+    	return {maxi : this.maxiSel, mini: this.miniSel};
+    }
 	
     };
 

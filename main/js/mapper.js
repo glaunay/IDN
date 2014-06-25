@@ -50,7 +50,7 @@ function initBarSearchMapper (){
 			var specie  = '';
 			var logoBullet = '<div class = "bulletSpecie"><i class="fa fa-ban"></i></div>';
 			if(data.specie){
-				specie = data.specie.name;
+				specie = data.specie.name ? data.specie.name : "Universal";
 				logoBullet = '<div class = "bulletSpecie"><img ' + speciUrl(data.specie.taxon) + ' width = "15px"></img></div>';
 			}
 			var newString = "";

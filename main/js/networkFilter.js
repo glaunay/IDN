@@ -517,6 +517,9 @@ function initNetworkFilter (opt) {
 				}
 			}
 			self.onChangeCallback(self.nodeOrLinkFilter, self.strict);
-		}
+		},
+		getSelectors : function(){
+	    	return {maxi : this.maxiSel, mini: this.miniSel};
+   		}
 	}
 }

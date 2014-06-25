@@ -990,8 +990,10 @@ function tabularInit (opt) {
 	},
 	_removeIdle : function () {
 	    $(this.maxiSel + ' .tabularBlocker').remove();
-	}
-
+	},
+    getSelectors : function(){
+    	return {maxi : this.maxiSel, mini: this.miniSel};
+    }	
     };        
 
 }

@@ -30,7 +30,7 @@ function ei_test() {
 					     var left = $(jqueryNode).position().left ;
 					     
 					     return {main : {top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
-						     upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px', display : 'none',width : "100%",}
+						     upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px', display : 'none',width : "100%"}
 						    };
 				     	 }
 				     }				  
@@ -135,7 +135,7 @@ function initElementInfo(opt) {
 	    var self = this;
 	    console.dir("sele---->" + self.selector);
 	    var actualTargetId = this.targetSuffix  ? '#glmolWidget' + this.targetSuffix : '#glmolWidget';
-	    this.molViewer = GLmolInit({width : '100%', height : '200px', target : self.selector +' .pdbDiv', defaultSel :self.defaultSel, forceGlmolId : actualTargetId, 
+	    this.molViewer = GLmolInit({width : '90%', height : '200px', target : self.selector +' .pdbDiv', defaultSel :self.defaultSel, forceGlmolId : actualTargetId, 
 			       callbackLoadSuccess : function (){ 
 				   console.log("success");
 				   self.toggleMoleculeLoader({display : "hide"});
@@ -461,10 +461,10 @@ function initElementInfo(opt) {
 		console.log(self.baseUrl.pdb)
 		var pdbCode = this.data.pdb[0].match(/^.{4}/);
 		$(this.selector + ' .ei-body').append('<div class="pdbDiv"><div class="pdbBanner"><div class="pull-left">PDB code<a' 
-						      + ' href="' + self.baseUrl.pdb  + pdbCode[0] + '" target="_blank" class = "aPdb">'
+						      + ' href="' + self.baseUrl.pdb  + pdbCode[0] + '" target="_blank" class = "aPdb"> '
 						      + pdbCode[0] + '</a></div><div class="pull-right"><span class="pdbChange"><i class="fa fa-angle-double-left"></i>'
-						      +	'</span><span id="structureCount">1</span>/' +  this.data.pdb.length 
-						      + '<span class="pdbChange"><i class="fa fa-angle-double-right"></i></span></div></div></div>');	
+						      +	'</span><span class="sup"><span id="structureCount">1</span>/' +  this.data.pdb.length 
+						      + '</span><span class="pdbChange"><i class="fa fa-angle-double-right"></i></span></div></div></div>');	
 		var e = $(this.selector + ' div.pdbDiv')[0];
 		console.dir(this.selector)
 		this.molViewer.draw();

@@ -442,8 +442,10 @@ function cleanArray(array) {
   }
   return out;
 }
-mapperSpecie = [
-							{"name":"Zebrafish","img":"zebrafish_bullet.png","id":"7955"},
+mapperSpecie = [			
+							{"name":"Flavobacterium","img":"flavobacterium_bullet.png","id":"984"},
+							{"name":"Slime mold","img":"slime_bullet.png","id":"44689"},
+							{"name":"Zebrafish","img":"fish_bullet.png","id":"7955"},
 							{"name":"Chicken","img":"chicken_bullet.png","id":"9031"},
 							{"name":"Human","img":"human_bullet.png","id":"9606"},
 							{"name":"Dog","img":"dog_bullet.png","id":"9615"},
@@ -452,11 +454,11 @@ mapperSpecie = [
 							{"name":"Sheep","img":"sheep_bullet.png","id":"9940"},
 							{"name":"Rabbit","img":"rabbit_bullet.png","id":"9986"},
 							{"name":"Mouse","img":"mouse_bullet.png","id":"10090"},
-							{"name":"Rat","img":"mouse_bullet.png","id":"10116"},
-							{"name":"Guinea pig","img":"guineaPig_bullet.png","id":"10144"},
-							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11686"},
-							{"name":"HIV-1","img":"hiv-1_bullet.png","id":"11696"},
-							{"name":"none","img":"unknown_bullet.png","id":"none"},
+							{"name":"Rat","img":"rat_bullet.png","id":"10116"},
+							{"name":"Guinea pig","img":"guineapig_bullet.png","id":"10144"},
+							{"name":"HIV-1","img":"hiv_bullet.png","id":"11686"},
+							{"name":"HIV-1","img":"hiv_bullet.png","id":"11696"},
+							{"name":"none","img":"universal_bullet.png","id":"none"},
 						];
 speciUrl = function (speci,rootUrl){
 			var self = this;
