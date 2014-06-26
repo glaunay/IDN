@@ -409,13 +409,16 @@ function initMyReport (options){
   		_nameGenerateDivHtml : function(barchart){
   			var self = this;
   			var subtype = self.jsonData.subType.charAt(0).toUpperCase() + self.jsonData.subType.slice(1);
-  			var specie = self.jsonData.specie.names[1] ? self.jsonData.specie.names[1] : "Universal";
-  			var taxonId = self.jsonData.specie.value ? self.jsonData.specie.value : "Universal";
-  			var tooltip = "<div>Specie : " + specie + "</div><div> Taxon id : </div>"; 
+  			var specie = self.jsonData.specie.names ? self.jsonData.specie.names[1] : "Universal";
+  			var taxonId = self.jsonData.specie.value ? self.jsonData.specie.value : "NA";
+  			var tooltip = "<div>Specie : " + specie + "</div><div> Taxon id : " + taxonId + "</div>"; 
   			console.dir(tooltip);
+  			var linkSpeci = self.jsonData.specie.value ? 
+  							'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + self.jsonData.specie.value :
+  							'http://www.ncbi.nlm.nih.gov/Taxonomy';
 			var content = "<span class = 'reportType'>" + subtype + "</span><div class ='divTitre'>" + self.jsonData.name + "<div class = ' tooltipContent postitSpecie' "+
-			              'data-container = "body" data-placement = "bottom" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '">'+
-			              '<a target = "_blank" href = "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + self.jsonData.specie.value + '"><img ' + speciUrl(self.jsonData.specie.value,self.rootUrl) + '>'+
+			              'data-container = "body" data-html = "true" data-placement = "left" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '">'+
+			              '<a target = "_blank" href = "' + linkSpeci + '"><img ' + speciUrl(self.jsonData.specie.value,self.rootUrl) + '>'+
 						  "</img></a></div></div><div class = 'name postitContent'><span class = 'cartBio'>" + self.cartButton.biomAdd + "</span><dl>";
 			content += self._names() + self._gene() + self._specie() + self._molWeight() + self._aaNumber() + "</dl></div>"
   			var divString ="<div class = 'row-fluid'><div class = 'span12 general'>" + content + "</div></div>" ;
@@ -1305,8 +1308,8 @@ function initMyReport (options){
       		 		sScrollY: "100%",
    		  	 		"aoColumns": [
    		  	 	   		{ "sTitle": "Partner name", "sClass": "center","sWidth": "350px"},
-       			   		{ "sTitle": "Number of experiment", "sClass": "center" },
-       			   		{ "sTitle": "Specie", "sClass": "center","sWidth": "auto" },
+       			   		{ "sTitle": "Number of experiments", "sClass": "center" },
+       			   		{ "sTitle": "Species", "sClass": "center","sWidth": "auto" },
        			   		{ "sTitle": "", "sClass": "center"},],
     				"oLanguage": {
     				 	"sSearch": "Filter:"
