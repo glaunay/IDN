@@ -195,7 +195,17 @@ div#reportDiv div.kinetic{
 	border: 1px solid;
 	margin-top: 10px;
 	margin-right: 5px;
+	margin-bottom : 7px;
 }
+
+div#reportDiv div.kinetic dt.hReport {
+	font-weight : 300;
+}
+
+div#reportDiv div.kinetic dd span.unit{
+	font-size:0.7em;
+}
+
 div#reportDiv div.kinetic dl.featureContent{
 	padding-left: 5px;
 }
@@ -381,6 +391,7 @@ div#reportDiv div.assocTable div.title{
 	text-align: center;
 	
 }
+
 div#reportDiv div.Small:nth-child(odd) div.divTitre{
 	background: rgba(144, 209, 235, 1);
 }
@@ -441,7 +452,7 @@ div#reportDiv div.Go div.dataTables_wrapper{
 	margin-right: auto;
 }
 div#reportDiv div.assocTable div.dataTables_wrapper{
-	width: 500px;
+	width: 550px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -619,4 +630,10 @@ i.helpMe{
 	float: right;
 	display: inline-block;
 	margin-right: 20px;
+}
+#reportDiv div.publicationContent table.assoTable th:nth-child(1), 
+#reportDiv div.publicationContent table.assoTable th:nth-child(2), 
+#reportDiv div.publicationContent table.assoTable td:nth-child(1),
+#reportDiv div.publicationContent table.assoTable td:nth-child(2){
+	width: 250px !important;
 }

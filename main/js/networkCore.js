@@ -148,7 +148,7 @@ function coreInit (opt) {
 	_bubbleCycleStep : function (node, animationSettings) {
 	    var nodeName;
 	    var d = d3.select(node).data()[0];
-	    //console.log("it is a bubble cycle step of " + nodeName);
+	    //console.dir(node)
 	    if (!d) {
 		console.log("Error: failed load d3datum from");
 		console.dir(node);
@@ -177,7 +177,7 @@ function coreInit (opt) {
 	    var nodeName;
 	    d3.select(node).each(function(d){nodeName = d.name;});
 	    var d = d3.select(node).data()[0];
-	    //console.log("attempting to stop bubble cycle of " + nodeName);
+        //console.log("attempting to stop bubble cycle of " + nodeName);
 	    if (!d) {
 		console.log("Error: failed load d3datum from");
 		console.dir(node);
@@ -242,7 +242,7 @@ function coreInit (opt) {
 		
 		self.hotNodes.forEach(function(node) {
 					  console.log("stopping hot node");
-					//  console.dir(node);
+					  console.dir(node);
 					  var nodeName;
 					  d3.select(node).each(function(d){nodeName = d.name;});
 					  self.bubbleNode ({name : nodeName}, "stop");
@@ -308,6 +308,12 @@ function coreInit (opt) {
 	bubbleNode : function (data, type) {	  
 	    var self = this;
 	    var node;
+	    if(type != "stop"){
+	    	console.dir("pass in bubble node with")
+	    console.dir(data)
+	    console.dir(type)
+	    }
+	    
 	    if (data.hasOwnProperty('name'))
 		node = this.nodeToSvg[data.name];
 	    if (type === 'start') {			    	    
@@ -315,6 +321,7 @@ function coreInit (opt) {
 		d3.select(node)
 		    .each(function(d){
 			      nodeName = d.name;
+			      console.dir(d)
 			   /* 
 			    * d.previousStyle.stroke = d3.select(this).style('stroke');
 			      d.previousStyle.fill = d3.select(this).style('fill');
@@ -323,35 +330,35 @@ function coreInit (opt) {
 			    */
 			      rmin = d3.select(this).attr("r");
 			      rmax = rmin * 2;
+			  //    console.log('Adding bubbling effect to '+ nodeName +
+			  //  ' boundary a current animation step ' + rmin + ' ' + rmax);
 			      if (data.hasOwnProperty('rFactor'))
 				  rmax = rmin * data.rFactor;
 			      if (data.hasOwnProperty('style')) {
-			      	
-				  d3.select(this)
+			    d3.select(this)
 				      .style('stroke', function() {
 						 if (data.style.stroke){
 						     return data.style.stroke;	
-						 }							
+						 }		
 						 return  d3.select(this).style('stroke');
 					     })
 				      .style('fill', function() {
-						 if (data.style.fill){
+						 if (data.style.fill){				
 						     return data.style.fill;
 						  }
 						 return  d3.select(this).style('fill');
 						 
 					     })
 				      .style('stroke-width', function() {
-						 if (data.style['stroke-width'])
+						 if (data.style['stroke-width']){
 						     return data.style['stroke-width'];
-						 return  d3.select(this).style('stroke-width');
-					     });					     					     
-			      }
-			      
+						 }
+						 return  d3.select(this).style('stroke-width');						
+					     });
+			      }			     
 			  });
 		    
-		//console.log('Adding bubbling effect to '+ nodeName +
-			//    ' boundary a current animation step ' + rmin + ' ' + rmax);	    
+			    
 		var bubbleLoopStamp = setInterval(function() {
 						      self._bubbleCycleStep(node,{ rmax : rmax, rmin : rmin});
 						  }, 550);	    
@@ -359,7 +366,7 @@ function coreInit (opt) {
 	    } else if(type === 'stop') {
 		self._bubbleCycleStop(node);
 		
-		d3.select(node).each(function(d){ if (d.glow) self._glowToggle([this],{ type : "forced" });});
+		d3.select(node).each(function(d){if (d.glow) self._glowToggle([this],{ type : "forced" });});
 	    }
 	    
 	},
@@ -727,7 +734,7 @@ function coreInit (opt) {
 					   });
 			   $(this).hoverIntent( {
 						    over : function () {
-						    if(d3.select(node).style("visibily") === "hidden"){return;}
+							if(d3.select(node).style("visibily") === "hidden"){return;}
 							if ('tabular' in self.targetCom) {
 								
 							    $(self.targetCom.tabular).trigger('nodeScroll', [d3.select(node).datum()]);
@@ -948,11 +955,25 @@ function coreInit (opt) {
 		}
 	    }
 	    
-	    // Run Layout
+	    // hide orphans
+
+	    newNodes.forEach(function(datum) {
+				 var node = self.nodeToSvg[datum.name];
+				 
+				 d3.select(node)
+				     .style("visibility", function(d){
+						return self._isOrphan(d) ? "hidden" : "visible";
+					    });				 
+			     });
+//	    d3.selectAll(".node")
+//		.style("visibility", function(d) {
+//			   return self._isOrphan(d) ? "hidden" : "visible";
+//		       });
 	    
+
+	    // Run Layout	    
 	    $(this.target).trigger('networkRendering');
-	    this.force.friction(0.75).start();            	 
-	   
+	    this.force.friction(0.75).start();            	 	    
 	    return {
 		nodeData : newNodes,
 		linksData : newLinks
@@ -1362,11 +1383,13 @@ function coreInit (opt) {
 				       });	    
 	},
 	colorGlowyNodes : function (hexCode) {
+	    var self = this;
 	    this.svg.selectAll('.node')
 		.each(function (d) {
 			  if (d.glow) {			      			  
 			      d3.select(this).style('fill', hexCode);
 			      d.userColor = hexCode;
+			      self._storeElementStyle(this); 
 			  }
 		      });	    	    
 	},
@@ -1572,8 +1595,7 @@ function coreInit (opt) {
 			  .type(shape)
 			 )
 		    .style('fill', fill)
-		    .style('stroke', stroke)
-		    .attr("transform", function(d) { return "rotate(90" + d.x + " " + d.y + ")"; });
+		    .style('stroke', stroke);
 		return null;
 	    },
 	    lipid : function (node, level, opt) {
@@ -1611,8 +1633,7 @@ function coreInit (opt) {
 			  .type(shape)
 			 )
 		    .style('fill', fill)
-		    .style('stroke', stroke)
-		    .attr("transform", function(d) { return "rotate(90" + d.x + " " + d.y + ")"; });// Doesnot seem to work
+		    .style('stroke', stroke);
 		return null;
 	    },
 	    biomolecule : function (node, level, opt) {

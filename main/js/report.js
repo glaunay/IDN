@@ -911,17 +911,31 @@ function initMyReport (options){
 		_associationRate : function(){
 			var self = this;
 			if(!self.jsonData.affinityKinetic.AssociationRate1){return '';}
-			return '<dt class ="hReport">Association rate (ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate1 + " M-1s-1</dd>";
+			var string = '<dt class ="hReport">Association rate (ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate1 + ' <span class="unit">M-1s-1</span></dd>';
+                        if(self.jsonData.affinityKinetic.AssociationRate2_MS){
+				string += '<dt class ="hReport">Association rate 2(ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate2_MS + ' <span class="unit">M-1s-1</span></dd>';
+			} else if(self.jsonData.affinityKinetic.AssociationRate2_S) {
+				string += '<dt class ="hReport">Association rate 2(ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate2_S + ' <span class="unit">s-1</span></dd>';
+			}	
+			return string;
 		},
 		_dissociation : function(){
 			var self = this;
 			if(!self.jsonData.affinityKinetic.DissociationRate1){return '';}
-			return '<dt class ="hReport">Dissociation rate (kd):</dt><dd> ' + self.jsonData.affinityKinetic.DissociationRate1 + " s-1</dd>";
+			var string = '<dt class ="hReport">Dissociation rate (kd):</dt><dd> ' + self.jsonData.affinityKinetic.DissociationRate1 + ' <span class="unit">s-1</span></dd>';
+			if(self.jsonData.affinityKinetic.DissociationRate2){
+				string += '<dt class ="hReport">Dissociation rate 2 (kd):</dt><dd> ' + self.jsonData.affinityKinetic.DissociationRate2 + ' <span class="unit">s-1</span></dd>';
+			}	 
+			return string;
 		},
 		_kd : function(){
 			var self = this;
 			if(!self.jsonData.affinityKinetic.KD1_nM){return '';}
-			return '<dt class ="hReport">Affinity (KD) :</dt><dd> ' + self.jsonData.affinityKinetic.KD1_nM + " nM</dd>";
+			var string = '<dt class ="hReport">Affinity (KD) :</dt><dd> ' + self.jsonData.affinityKinetic.KD1_nM + ' <span class="unit">nM</span></dd>';
+			if(self.jsonData.affinityKinetic.KD2_nM){
+				string += '<dt class ="hReport">Affinity 2 (KD) :</dt><dd> ' + self.jsonData.affinityKinetic.KD2_nM + ' <span class="unit">nM</span></dd>';
+			}
+			return string;
 		},
 /*fin de bandeau info xp
  * ----------------------------------------------------------------------------------------------------------------------------------
@@ -1833,8 +1847,8 @@ bandeau keywrd
       		 	"aaData": aaData.aaData,
       		 	sScrollX: "100%",
    		  	 	"aoColumns": [
-   		  	 		{ "sTitle": "First partner", "sWidth": "200px", "sClass": "center"},
-   		  	 		{ "sTitle": "Second partner", "sClass": "center","sWidth": "200px"},  
+   		  	 		{ "sTitle": "First partner", "sClass": "center"},
+   		  	 		{ "sTitle": "Second partner","sClass": "center"},  
        			    { "sTitle": "Supporting experiment", "sWidth": "30px", "sClass": "center"}],
     			"oLanguage": {
     				 	"sSearch": "Filter:",

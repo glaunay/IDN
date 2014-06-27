@@ -721,10 +721,12 @@ function bindExportActions () {
 			      
 			      vizObject.core.svg.selectAll(".node")
 				  .each( function (d) {   
+					     if(d3.select(this).style("visibility") === "hidden") return;
 					     nodes.push(d);                         
 					 });
 			      vizObject.core.svg.selectAll(".link")
 				  .each( function (d) {   
+					     if(d3.select(this).style("visibility") === "hidden") return;
 					     var sd = {
 						 source : d.source.name,
 						 target : d.target.name,
@@ -745,10 +747,12 @@ function bindExportActions () {
 			  links = [];
 			  vizObject.core.svg.selectAll(".node")
 			      .each( function (d) {   
+					 if(d3.select(this).style("visibility") === "hidden") return;
 					 nodes.push(d);                         
 				     });
 			  vizObject.core.svg.selectAll(".link")
 			      .each( function (d) {   
+					 if(d3.select(this).style("visibility") === "hidden") return;
 					 var sd = {
 					     source : d.source.name,
 					     target : d.target.name,

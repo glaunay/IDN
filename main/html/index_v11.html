@@ -83,7 +83,7 @@
               <div class="accordion-group">
                 <div id="toggleTwo" class="accordion-heading"> <a href="#collapseTwo"
                     data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
-                    MatrixDB data & statistics</a> </div>
+                    MatrixDB download & statistics</a> </div>
                 <div class="accordion-body collapse" id="collapseTwo">
                   <div class="accordion-inner">
                     <ul class="fa-ul">
@@ -212,25 +212,25 @@
             <!--Body content-->
             <!-- content One -->
             <div class="mainContent" id="contentOne">
-              <p style="margin-bottom:9px; text-align: justify;"><b>MatrixDB is
-                  a freely available database focused of interactions
-                  established by extracellular proteins and polysaccharides.</b></p>
+              <p style="margin-bottom:9px; text-align: center;font-size:1.2em;margin-bottom:1.5em"><b>MatrixDB is
+                  a freely available database focused on interactions
+                  established by extracellular proteins and polysaccharides</b></p>
               <dd style="margin-bottom:9px">
                 <div style="text-align: justify;">MatrixDB stores experimental
                   data established by full-length proteins, matricryptins,
                   glycosaminoglycans, lipids and cations. </div>
               </dd>
               <dd style="margin-bottom:9px">
-                <div style="text-align: justify;">MatrixDB reports interaction
+                <div style="text-align: justify;margin-bottom:1.5em;">MatrixDB reports interactions
                   with individual polypeptide chains or with multimers (e.g.
                   collagens, laminins, thrombospondins) when appropriate.
-                  Multimers are treated as permanent complexes with EBI
-                  identifiers.</div>
+                  Multimers are treated as permanent complexes, referencing EBI
+                  identifiers when possible.</div>
               </dd>
               <div> <a href="http://www.imexconsortium.org/" target="_blank"><img
                     width="100" src="img/IMEx_logo_webmedium.png" style="float: left; margin: 0px 15px 15px 0px" /></a>
                 <br />
-                <div style="text-align: justify;"> MatrixDB is an active member
+                <div style="text-align: justify;margin-top:0.5em"> MatrixDB is an active member
                   of the <a href="http://www.imexconsortium.org/" target="_blank">International
                     Molecular Exchange (IMEx)</a> consortium and has adopted the
                   <a target="_blank" href="http://psidev.sourceforge.net/molecular_interactions//xml/doc/user/#mi-purpose">
@@ -241,13 +241,14 @@
               <div> <a href="https://code.google.com/p/psicquic/" target="_blank"><img
                     src="img/psicquic.png" style="float: left; margin: 0px 15px 15px 0px; width: 100px; height: 98px;" /></a>
                 <br />
-                <div style="text-align: justify;"> It also offers access to
-                  interaction data stored in our IMEx partner databases through
+                <div style="text-align: justify;margin-top:0.5em">Data curated in-house by MatrixDB curators are accessible through
                   the <a target="_blank" href="http://www.ebi.ac.uk/Tools/webservices/psicquic/view/main.xhtml">
                     PSICQUIC</a> webservice. </div>
+		<div style="text-align: justify;">These data are augmented with ECM-associated interactions from other IMEx partners (DIP, InnateDB, IntAct, MINT).
+		</div>
               </div>
               <br style="clear:both" />
-              <div style="text-align: center;"> MatrixDB is in charge of the
+              <div style="text-align: center;font-size:1.2em;"> MatrixDB is in charge of the
                 curation of papers published in <a href="http://www.journals.elsevier.com/matrix-biology"
                   target="_blank">Matrix Biology</a> since January 2009. </div>
               <br />
@@ -272,18 +273,17 @@
                  <h4>Downloads</h4>
                  <ul class="fa-ul">
                    <li>
-		     <a href="./download/matrixdb_2.4_CORE.mitab.gz"
+		     <a href="download/matrixdb_CORE.tab.gz"
                    	target="_blank">
 		       <i class="fa fa-li fa-download fa-large"></i>
-		       <b>Core</b> MatrixDB dataset as psimi<span class="sup">2.7</span> tab delimited file.
-		     </a>
+		       <b>Core</b> MatrixDB dataset as psimi<span class="sup">2.7</span> tab delimited file : </a> features data curated in-house.		    
 		   </li>
 		   <li>
-		     <a href="./download/matrixdb_2.4_FULL.mitab.gz"
+		     <a href="download/matrixdb_FULL.tab.gz"
                    	target="_blank">
 		       <i class="fa fa-li fa-download fa-large"></i>
-		       <b>Psicquic extended</b> MatrixDB Data as psimi<span class="sup">2.7</span> tab delimited file.
-		     </a>
+		       <b>Psicquic extended</b> MatrixDB Data as psimi<span class="sup">2.7</span> tab delimited file :</a>
+		     features additional extracellular interactions accessible through psicquic partners (DIP, InnateDB, IntAct, MINT).
 		   </li>
                  </ul>                 
 	       </div>
@@ -304,6 +304,11 @@
                     Macromolecule and interaction data can be accessed and
                     visualized directly from the network. </div>
                 </dd>
+		<div class="row-fluid">
+		  <div class="offset6 span6 browser"><p>The network navigator is compatible with the following web browsers</p>
+		    <img src="img/browserLogo.png"></img>
+		  </div>
+		</div>
                <dt>Rewiring the network</dt>
                <dd> <br />
                  <div style="text-align: justify;">

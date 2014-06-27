@@ -200,20 +200,25 @@ sub getKinetics {
   my $aceObject = shift;
   
   my $aceBuffer = $aceObject->at('AffinityKinetics', 1);
+  
+  $logger->warn("TOTOO" . $aceObject->asString);
+  
   my $dataContainer = {
-		       KD1_nM => undef,
-		       KD2_nM => undef,
-		       Range_nM => undef,
-		       AssociationRate1 => undef,
-		       AssociationRate2 => undef,
-		       DissociationRate1 => undef,
-		       DissociationRate2 => undef,
-		       Kinetics_Comments => undef,
-		       Interaction_Model => undef
-		      };
+      KD1_nM => undef,
+      KD2_nM => undef,
+      Range_nM => undef,
+      AssociationRate1 => undef,
+      AssociationRate2_MS => undef,
+      AssociationRate2_S => undef,
+      DissociationRate1 => undef,
+      DissociationRate2 => undef,
+      Kinetics_Comments => undef,
+      Interaction_Model => undef
+      };
   my $bool = 0;
   while (defined($aceBuffer)) {
     my $key = $aceBuffer->name;
+    $logger->warn("TESTING " . $key);
     my $aceBufferSub = $aceBuffer->right();
     my $value = $aceBufferSub->name;
     $dataContainer->{ $key } = $value;

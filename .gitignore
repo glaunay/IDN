@@ -18,3 +18,5 @@ main/data/toDel/
 main/html/develPages/
 # tmp file for export
 main/html/tmp/*
+# download location
+main/html/download/*
