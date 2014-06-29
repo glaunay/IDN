@@ -321,6 +321,9 @@ div.postitSearchContent ul.fa-ul i{
 	color : white;
 	
 }
+.popover a{
+	color: yellow;
+}
  .popover {
 	width: auto;
 }

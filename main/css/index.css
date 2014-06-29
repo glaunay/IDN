@@ -17,6 +17,13 @@ span.sup {
     border : none; !important
 }
 
+ul.custom {
+    margin-right : 10px;
+}
+li.custom {
+    padding-top : 7px;
+    margin-bottom : 10px;
+}
 /* Wrapper for page content to push down footer */
 html, body {height: 100%;}
 

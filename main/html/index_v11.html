@@ -125,7 +125,8 @@
                   <div class="accordion-inner">
                     <ul class="fa-ul">
                       <li><i class="fa-li fa fa-caret-right"></i>The matrisome project</li>
-                      <li><i class="fa-li fa fa-caret-right"></i>MatrixDB datasets</li>
+		      <li><i class="fa-li fa fa-caret-right"></i>MatrixDB biomolecules</li>
+                      <li><i class="fa-li fa fa-caret-right"></i>MatrixDB annotated sets</li>
                     </ul>
                   </div>
                 </div>
@@ -309,21 +310,42 @@
 		    <img src="img/browserLogo.png"></img>
 		  </div>
 		</div>
-               <dt>Rewiring the network</dt>
-               <dd> <br />
-                 <div style="text-align: justify;">
-		   <a href="http://www.cytoscape.org/"
-		      target="_blank"><img width="100" src="img/cytoscape_small.png"
-					   style="float: left;  margin: 0px 15px 15px 0px;" /></a>
-                   <br />
-                   Once exported under <a href="http://www.cytoscape.org" target="_blank">Cytoscape</a>
-                   format, you can use the full power of Cytoscape to obtain
-                   the most relevant network representation. <br />
-                   <a href="http://www.cytoscape.org/download.html" target="_blank">Download
-                     Cytoscape</a> <a href="http://www.cytoscape.org/download.html"
-				      target="_blank"><i class="icon-download-alt"></i></a></div>
-               </dd>
-             </dl>
+		<div style="margin-bottom : 75px">
+		  <dt>Rewiring the network</dt>
+		  <dd> 
+                    <div style="text-align: justify;">
+		      <a href="http://www.cytoscape.org/"
+			 target="_blank"><img width="100" src="img/cytoscape_small.png"
+					      style="float: left;  margin: 0px 15px 15px 0px;" /></a>
+                      <br />
+                      Once exported under <a href="http://www.cytoscape.org" target="_blank">Cytoscape</a>
+                      format, you can use the full power of Cytoscape to obtain
+                      the most relevant network representation. <br />
+                      <a href="http://www.cytoscape.org/download.html" target="_blank">Download
+			Cytoscape</a> <a href="http://www.cytoscape.org/download.html"
+					 target="_blank"><i class="icon-download-alt"></i></a>
+		    </div>
+		  </dd>
+		</dl>
+
+	     <h4>Vizualise the network of selected publications</h4>
+	     <div class="subContent">
+	       <ul class="fa-ul custom">
+		 <li class="custom"><a href="cgi-bin/current/iNavigatorLoader?network=endostatin&">
+		     <i class="fa-li fa fa-play-circle fa-2x"></i></a>
+		   The endostatin interaction network (Faye et al. 2009 J Biol Chem. 284:22041-7)
+		   <a class="pubmedLink"
+		      href="http://www.ncbi.nlm.nih.gov/pubmed/1954224" target="_blank">PubMed</a>
+		 </li>
+		 <li class="custom"><a href="cgi-bin/current/iNavigatorLoader?network=PCPE1&">
+		     <i class="fa-li fa fa-play-circle fa-2x"></i></a>
+		   The procollagen C-proteinase enhancer-1 extracellular interaction network
+		   (Salza et al. 2014 Biochem. J. 1470-8728)
+		   <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/24117177" 
+		      target="_blank">PubMed</a>
+		 </li> 
+	       </ul>
+	     </div>	      
            </div>
            <!-- content three-->
            <div class="mainContent" id="contentFour">
@@ -353,6 +375,63 @@
                </ul>
                <br style="clear:both" />
 	     </div>
+
+	     <h4>Matrixdb biomolecule entries</h4>
+	       <div class="subContent">
+		 <dl>
+		   <dt>Proteins</dt>
+		   <dd>
+		     They are identified by their UniProtKB/Swiss-Prot 
+		     primary Accession Number (Example: P98160). 
+		     This is the more stable identifier of 
+		     UniProtKB/Swiss-Prot (when a protein entry is modified,
+		     the previous accession number is retained in a secondary
+		     accession number list).
+		   </dd>
+		   <dt>Multimers</dt>
+		   <dd>
+		   They are identified by a MatrixDB identifier 
+		   "MULT_x_species" or "MULT_x_VARy_species" for molecular 
+		   isoforms where x and y are numbers. A cross-reference 
+		   to EBI complexes is provided when available.
+		 </dd>
+		 <dt>Glycosaminoglycans</dt>
+		 <dd>
+		   They are registred in MatrixDB using an identifier 
+		   "GAG_x" where x is
+		   a number, and cross-referenced to the ChEBI (Chemical 
+		   Entities of Biological Interest) database.
+		 </dd>
+		 <dt>Protein fragments</dt>
+		   <dd>
+		     PFRAG in short-form, they 
+		     are identified by a MatrixDB identifier "PFRAG_x_species" 
+		     where x is a number and a cross-reference to the PRO 
+		     feature of UniProtKB when available.
+		   </dd>
+		   <dt>Cations</dt> 
+		   <dd>
+		     They are registred in MatrixDB using identifier:
+		       "CAT_x" where x is a number and a cross-reference 
+		     to the ChEBI (Chemical Entities of Biological Interest)
+		     database. 
+		   </dd>
+		   <dt>Lipidic molecules</dt>
+		   <dd>
+		     Fatty-acid related biomolecule are registred in 
+		     MatrixDB using identifier: "LIP_x" where x is a 
+		     number and a cross-reference to the ChEBI (Chemical 
+		     Entities of Biological Interest) database.
+		   </dd>
+		   <dt>Others</dt>
+		   <dd>    
+		     Remaining molecules are registered in MatrixDB using 
+		     identifier: "INORG_x" where x is a number and a 
+		     cross-reference to the ChEBI (Chemical Entities of 
+		     Biological Interest) database.
+		   </dd>
+		 </div>
+
 	     <h4>MatrixDB datasets</h4>
 	     <div class="subContent listBiomol">
 	       <b>Lists</b> of human <b>extracellular matrix</b>, <b>secreted</b> 
@@ -550,9 +629,26 @@
             <h4>Watch the tutorial</h4>
             Coming soon
             <h4>Frequently Asked Questions</h4>
-            Coming soon
+            <dl>
+	      <dt>What is an interaction?</dt>
+	      <dd>It refers to a molecular interaction between two molecules.
+		It is supported by a set of experimental evidences.
+		It is identified by a MatrixDB interaction identifier: 
+		identifiers (UniProtKB accession number for proteins and 
+		MatrixDB identifiers for other molecules) of the participants,
+		separated by an underscore in alphabetical order.
+	      </dd>
+	      <dt>How are experimental evidences indexed?</dt>
+	      <dd>MatrixDB uses the following naming convention for
+		experiments: identifiers of the biomolecules in alphabetical
+		order separated by two underscore, followed by the PMID
+		(PubMed Identifier), the name of the source database
+		and the number of the experiment (1 for the first 
+		reported experiment).
+	      </dd>
+	    </dl>
           </div>
-	  
+
           <div class="mainContent" id="contentNine">
             <h4>Contact</h4>
             Visit the <a href="http://www.ibcp.fr/bmssi/-Interactions-hote-pathogene-S-?lang=en"
@@ -612,17 +708,16 @@ var d="";for(var i=0;i<721;i++)d+=String.fromCharCode(("\"l}+ H-aoL=v&`TVeAqMW~Q
 -->
 <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">
 	      <img width="100px" style="float:left" src="img/SFP.png" /></a></div>
-          <div class="span6">Matrixdb Fundings:
+          <div class="span5">MatrixDB is funded by:
             <ul>
-              <li>The European Commission under PSIMEx, contract number
-                FP7-HEALTH-2007-223411</li>
-              <li>The Rhone Alpes Complex Systems Institute</li>
+              <li>European Commission PSIMEx grant FP7-HEALTH-2007-223411</li>
+	      <li>Institut Rh&ocirc;ne-Alpin des Syst&egrave;mes Complexes</li>
               <li>CNRS PEPS BMI</li>
             </ul>
           </div>
-          <div class="span3" style = "padding : 5px 5px 5px 5px">
+          <div class="span4" style = "padding : 5px 5px 5px 5px">
 	    <a target="_blank" href="http://www.ixxi.fr"><img width="120px" style="float:right" src="img/ixxi.png" /></a>
-	    <a target="_blank" href="http://www.rhonealpes.fr"><img width="90px" style="float:right;margin-right:15px" src="img/logo_region_footer.png"/></a>
+	    <a target="_blank" href="http://www.lyonbiopole.com/financer/Cluster-de-recherche-n10--Infectiologie-.html"><img width="200px" style="float:right;margin-right:15px" src="img/logoCluster.png"/></a>
 	  </div>
          
         </div>

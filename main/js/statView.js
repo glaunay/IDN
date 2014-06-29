@@ -35,7 +35,7 @@ function initStatView (options){
 				var scaffold = '<div class = "row-fluid"><div class = "span6 firstPart"></div><div class = "span6 secondPart"></div></div>';
 			 	var self = this;
 			    var tableInteractor ='<table bgcolor="white" class="table table-bordered" >'+
-                      			 '<thead><tr><th>Interactions</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
+                      			 '<thead><tr><th>Association</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
                       			 '</tr></thead><tbody>'+
                       			 '<tr><th>GAG**</th><td>' + data.associations.glycosaminoglycanProtein[0] + '</td>'+
 	                      			 '<td>' + data.associations.glycosaminoglycanMultimer[0] + '</td>'+

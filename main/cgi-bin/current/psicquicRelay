@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+use warnings;
+use diagnostics;
+
+use lib ("$ENV{ IDN_LIB }/perl");
+
+#from CPAN
+use CGI;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use common;
+
+
+Log::Log4perl->init("$ENV{ IDN_CONF }/psicquicRelay.conf");
+our $logger = get_logger();
+
+my $query = CGI->new();
+my %params = $query->Vars;
+$logger->trace(Dumper(%params));
+
+my $queryData = decode_json($params{'data'});
+
+$logger->info(Dumper($queryData));
+
+my $url = "\"http://www.ebi.ac.uk/Tools/webservices/psicquic/view/main.xhtml?query="
+    . $queryData->{ biomolecule } . "&conversationContext=1\"";
+
+my $cnt;
+my $html = `curl $url`;
+$logger->trace($url);
+$logger->trace($html);
+
+my ($cnt) = $html =~ /<span id="totalResults" style="font-weight: bold;">([\d]+)<\/span>/;
+$logger->trace("psicquic hit number : $cnt");
+my $data = { number => $cnt,
+	     url => $url
+	   };	
+
+my $jsonString = encode_json($data);
+print $query->header('application/json');      # create the HTTP header
+print "$jsonString";

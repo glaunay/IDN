@@ -3,12 +3,73 @@ div#reportDiv .navigueBar a{
 	text-decoration: none;
 	cursor: pointer;
 }
+
+div#reportDiv #psicquicView .psqTitle {
+	color : rgb(61, 55, 55);
+	font-size: 0.7em;
+	font-weight: 500;
+	margin-top: -18px;
+	padding-left: 15%;
+}
+
+div#reportDiv #psicquicView {
+	border : 1px solid black;
+	padding : 5px 5px 5px 5px;
+	margin-top : 40px;
+	min-height : 53px;
+	width : 95%;
+	margin-left : 5px;
+background-color: #fafafa;
+background-image: -moz-linear-gradient(top,#fff,#f2f2f2);
+background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#f2f2f2));
+background-image: -webkit-linear-gradient(top,#fff,#f2f2f2);
+background-image: -o-linear-gradient(top,#fff,#f2f2f2);
+background-image: linear-gradient(to bottom,#fff,#f2f2f2);
+background-repeat: repeat-x;
+border: 1px solid #d4d4d4;
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#fff2f2f2',GradientType=0);
+-webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.065);
+-moz-box-shadow: 0 1px 4px rgba(0,0,0,0.065);
+box-shadow: 0 1px 4px; 
+
+
+}
+
+div#reportDiv #psicquicView .psqStatus.psqError {
+	color : rgb(232, 37, 37);
+}
+
+div#reportDiv #psicquicView .psqFont.psqError {
+	color : rgb(232, 37, 37);
+}
+
+div#reportDiv #psicquicView div.psqLogo { 
+	padding-left : 10px;
+	padding-top : 5px;
+}
+
+div#reportDiv #psicquicView div.psqStatus { 
+	font-size : 1.5em;
+	padding-top : 15px;
+	font-weight : 200;
+}
+
+div#reportDiv #psicquicView div.psqFont { 
+	font-size : 1.5em;
+	padding-left: 35px;
+	padding-top: 10px;
+}
+
 div#reportDiv .header{
 	background-color: black ;
 	height: 40px;
 	clear : both ;
 	
 }
+
 div#reportDiv .navigueBar{
 	height: 30px;
 	float : left;
@@ -363,6 +424,7 @@ div#reportDiv div.content.barChart{/*copy paste bootstrap must adapt webKit*/
 	border-top-style: solid;
 	border-top-width: 1px;
 }
+
 div#reportDiv span.cartBio{
 	float: right;
 	margin-top: -15px;

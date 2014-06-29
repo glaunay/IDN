@@ -27,7 +27,7 @@ my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/;
 $logger->info("search key is \"$string\"\n");
 
 my $specieRef = indexingSpecies($DB);
-$logger->info(Dumper($specieRef));
+$logger->trace(Dumper($specieRef));
 my $dataContainer = cacheReader($string); # trying to cache out string
 
 if (defined ($dataContainer)) {
@@ -120,7 +120,7 @@ sub getBiomolecule {
   $DB->raw_query("query CLASS biomolecule");
   my $cHit = $DB->count(-query=> '*');
   
-  $logger->error("Current newt count " . $cHit);
+  $logger->warn("Current newt count " . $cHit);
   if ($cHit > $MAX_HITS) { # If total biomoecule exceeds limit, only keep 
     # those featuring at least one association
     $DB->raw_query("query Association");
@@ -160,8 +160,7 @@ sub getBiomolecule {
     }
     push @array, $datum;
   }
-  $logger->error(Dumper(\@array));
-  
+  $logger->warn(Dumper(\@array));
   return \@array;
 }
 
@@ -251,6 +250,21 @@ sub getPublication {
 		   imexID => defined ($pmidObj->IMEx_ID) ? $pmidObj->IMEx_ID->name : undef,
 		   count => scalar(@buffer)
 		 };
+  }
+# HOT FIX IMEX_ID is of type Text (not?Text) and cant be greped, it seems
+  if ($string =~ /[\d]+$/) {
+      $DB->raw_query('query find Publication where IMEX_ID=*' . $string . '*');
+      my $pmidAceObjIt2 = $DB->fetch_many(-query=> '*');
+      while (my $pmidObj2 = $pmidAceObjIt2->next ) {
+	  $cHit++;
+	  ($cHit > $MAX_HITS) && last;
+	  my @buffer2 = $pmidObj2->Association;
+	  push @array, { id => $pmidObj2->name,
+			    Title => defined ($pmidObj2->Title) ? $pmidObj2->Title->name : undef,
+                   imexID => defined ($pmidObj2->IMEx_ID) ? $pmidObj2->IMEx_ID->name : undef,
+                   count => scalar(@buffer2)
+		   };
+      }
   }
 
   return \@array;

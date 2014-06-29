@@ -1,0 +1,18 @@
+{
+	"comments" : "This file is a mapper for any new custom network, allowing for a direct load",
+	"data" : {
+	     "testOne" : {
+	     	       	 "comments" : "a dummy network",  
+	     	       	 "fileLocation" : "data/testCustomNetwork.json"
+			 },
+	     "endostatin" : {	
+	     	       	 "comments" : "Faye and al 2009",  
+	     	       	 "fileLocation" : "data/endostatinStoredNetwork.json"
+			 },
+	     "PCPE1" : {	
+	     	       	 "comments" : "Salza et 2014",  
+	     	       	 "fileLocation" : "data/PCPE1_storedNetwork.json"
+			 }
+
+	}
+}

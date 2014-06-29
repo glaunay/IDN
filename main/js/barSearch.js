@@ -77,12 +77,7 @@ function initBarSearch (options){
 		"publication" : {
 			id:"Publication",
 			tooltip : '<div class = "postitSearchContent"><div class="postitTitle">List of publication(s) found in Matrixdb</div>'+
-					  '<p>Each publication is star labeled according to its curation level</p>'+
-					  '<ul class="fa-ul">'+
-					  '<li><i <i class="fa fa-star fa-li" style = "color:rgb(206, 206, 17);"></i>'+
-					  '<a target = "_blank" href = "http://www.imexconsortium.org/">IMEX</a></li>'+
-					  '<li><i <i class="fa fa-star-o fa-li" ></i><a target = "_blank" href = "http://www.psidev.info/mimix">MIMIX</a></li></ul>'+
-					  '<p><i class="fa fa-hand-o-right"></i> The number of interactions reported in each publication is also mentioned</p></div>'
+					  '<p>Yellow stars highlight publications with an imex identifier</p><p><i class="fa fa-hand-o-right"></i> The number of interactions reported in each publication is also mentioned</p></div>'
 			},
 		"author" : {
 			id:"Author",
@@ -217,8 +212,9 @@ function initBarSearch (options){
 		drawBarsearch += '</div>';
 	    $(self.targetDomElem).append(drawBarsearch);
 	 	if(!self.iNavContext){
-	 		$(self.targetDomElem).find("input.inputBar").attr("placeholder","Search for any biomolecule, publication, "+
-	 														  "annotation term or author");
+	 		$(self.targetDomElem)
+			.find("input.inputBar")
+			.attr("placeholder","Search for a biomolecule, annotation term, author, publication or IMeX identifier");
 	 	}
 	    var elem = $(self.targetDomElem).find('input');
 		$(self.targetDomElem).find("a").tooltip();

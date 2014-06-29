@@ -40,13 +40,13 @@ if ($mainContainer->{ type } eq "write") {
   print $query->header('application/json');      # create the HTTP header
   print '{"uid" : "' . $tag . '"}';
 
-  #  my $string = encode_json( $mainContainer );
-  #  open DBG, ">/tmp/seedTestNetwork_P98160.json";
-  #  print DBG "$string\n";
-  #  close DBG;
+  my $string = encode_json( $mainContainer );
+  open DBG, ">/tmp/latestStoreNetwork.json";
+  print DBG "$string\n";
+  close DBG;
     
-    exit;
-} elsif($mainContainer->{ type } eq "read") {
+  exit;
+} elsif ($mainContainer->{ type } eq "read") {
     my $networkContainer = cacheReader (key => $mainContainer->{ userKey });
     my $response = defined $networkContainer ? $networkContainer : {errorStatus => "notFound", inputKey => $mainContainer->{ userKey }};
     my $string = encode_json($response);

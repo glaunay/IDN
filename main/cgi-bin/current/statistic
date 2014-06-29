@@ -23,7 +23,7 @@ my $query = CGI->new();
 my $timeStamp = time();
 
 my $fLastStat = '/tmp/statisticsLatest';
-my $maxDelay = 604800; #weektime : 604800, set to 0 for reset
+my $maxDelay = 6048000; #weektime : 604800, set to 0 for reset
 
 my $dataContainer;
 if (-e $fLastStat) {

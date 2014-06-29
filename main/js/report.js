@@ -16,6 +16,14 @@ $.fn.popover.Constructor.prototype.show = function () {
   }
 }
 
+/*
+GL 2014 30 06
+ a div to ajax display the number of interactions reported in psicquicview and provide and hyperlink to
+ the results page
+	the div is inserted in table interact at the bottom of it
+*/
+
+
 function initMyReport (options){
 	
 	if (! options.hasOwnProperty('reportDiv')) {
@@ -142,6 +150,53 @@ function initMyReport (options){
     				self._draw();
   				})
   		},
+	psicquicViewHotPatch : function () {
+		var scaffold = '<div id="psicquicView" class="row-fluid"><div class="span2 psqLogo"><img class="pull-left" src="' + this.rootUrl + 
+			'/img/psicquic.png"></img></div>'
+			+ '<div class="psqStatus span8"><div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div class="span12">Expanding to non-ECM partners</div></div></div>' 
+			+'<div class="psqFont span2"><i class="fa fa-spinner fa-spin fa-2x"></i></div>' 
+			+'</div>';	
+			$('.tableInteract').append(scaffold);
+			var self = this;
+			var data = { biomolecule : this.jsonData.name };
+			var text = JSON.stringify(data);
+	setTimeout  (function (){
+			var jqxhr = $.ajax({
+		            contentType: 'application/json',
+        		     	dataType : "json",
+		             	cache : false,
+				data : { data : text },	
+				url : self.rootUrl + "/cgi-bin/current/psicquicRelay"					
+				})
+  				.success(function (data) {
+					console.log("psq successe");
+					console.log(data);
+					if (data.number) {
+	console.log("--->" + data.url);
+						$(".psqStatus").empty()
+							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div><a href="' + data.url + '" target="_blank">'
+								+ data.number + ' partners found in psicquic</a></div></div>');
+						$(".psqFont").empty()
+							.append('<i class="fa fa-2x fa-check-circle"></i>');
+					} else {
+						$(".psqStatus").empty().addClass("psqError")
+							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div class="span12">Sorry, unable to reach service</div></div>');
+						$(".psqFont").empty().addClass("psqError")
+							.append('<i class="fa fa-2x fa-exclamation-circle"></i>');
+					}
+	
+				})
+				.error(function(){
+			
+				})
+				.complete(function(){
+					
+				});	
+	}, 2000);
+
+	
+	},	
+
   		_draw : function(){//dessine les composant en fonction du type de data
   			var self = this;
   			var data = data;
@@ -254,7 +309,9 @@ function initMyReport (options){
 				
 		//	})
 			$(self.targetDomElem).find("span.cartBio").click(function(){self.addCartCallback({type : "biomolecule" , value : self.jsonData.name})});
-  		},
+  		
+			this.psicquicViewHotPatch();
+		},
 /*fin event onload
  * ___________________________________________________________________________________________________________________________________
  * bandeau info biomol
@@ -378,7 +435,7 @@ function initMyReport (options){
 				"Molecule_Processing" : {url : "http://www.uniprot.org/uniprot/", term : "Uniprot fragment"},  				
   				"CheBI_identifier" : {url : "http://www.ebi.ac.uk/chebi/searchId.do?chebiId=", term : "CheBI"},
   				"KEGG_Compound" : {url : "http://www.genome.jp/dbget-bin/www_bget?cpd:", term : "KEGG"},
-  				"EBI_xref" : {url : "http://www.ebi.ac.uk/intact/interaction/", term : "EBI"},
+  				"EBI_xref" : {url : "http://www.ebi.ac.uk/intact/complex/details/", term : "EBI"},
   				"LipidMaps": {url : "http://www.lipidmaps.org/data/LMSDRecord.php?LMID=", term : "LipidMaps"},
   			}
   			
@@ -1379,7 +1436,6 @@ function initMyReport (options){
    				
    				
 			});
-			
   		},
   		_interactionGenerateTableData : function(){
   			var self = this;
@@ -2007,8 +2063,8 @@ bandeau keywrd
 			self.tailleHeader++
   			$(self.targetDomElem).append("<div class='content uniprot' ></div>");
   			var uniDiv =$(self.targetDomElem).find("div.content:last");
-  			var ancre = "<div class = 'navigueBar'><a cible = 'div.uniprot' > UniProt Keyword</a></div>";
-  			var titre = "<h3> This molecule is annoted by <span class = 'niceRed' >" + self.jsonData.uniprotKW.length + "</span> UniProt keyword</h3>";
+  			var ancre = "<div class = 'navigueBar'><a cible = 'div.uniprot' > UniProtKB keywords</a></div>";
+  			var titre = "<h3> This molecule is annoted by <span class = 'niceRed' >" + self.jsonData.uniprotKW.length + "</span> UniProtKB keywords</h3>";
   			var tableForm = "<table class='Uniprot'><thead></thead><tbody></tbody></table>";
   			uniDiv.append(titre);
   			uniDiv.append(tableForm)
