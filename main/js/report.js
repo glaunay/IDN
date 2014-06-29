@@ -169,13 +169,9 @@ function initMyReport (options){
 				url : self.rootUrl + "/cgi-bin/current/psicquicRelay"					
 				})
   				.success(function (data) {
-					console.log("psq successe");
-					console.log(data);
 					if (data.number) {
-	console.log("--->" + data.url);
-	var test = data.url;
-						$(".psqStatus").empty()
-							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div><a href="' + test + '" target="_blank">'
+					$(".psqStatus").empty()
+							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div><a href="' + data.url + '" target="_blank">'
 								+ data.number + ' interactions found in psicquic</a></div></div>');
 						$(".psqFont").empty()
 							.append('<i class="fa fa-2x fa-check-circle"></i>');
