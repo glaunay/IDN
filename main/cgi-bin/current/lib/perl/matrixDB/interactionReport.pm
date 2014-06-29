@@ -221,9 +221,11 @@ sub fetchAssociation {
     } else {
 	$CV_SOCKET = $p->{ socketCv } ;	   
     }
-    
-    $logger->trace("matrix db association fetching \"$p->{ molA }__$p->{ molB }\"");     
-    
+    if (!defined($p->{ name })) {
+	$logger->trace("matrix db association fetching \"$p->{ molA }__$p->{ molB }\"");     
+    } else {
+	$logger->trace("matrix db association fetching \"$p->{ name }\"");     
+    }
     my $mapper = getMapper ($p->{ template });
 
 #    my $container = $mapper->{ associationDescriptor } ($mapper, 
