@@ -65,7 +65,7 @@ function initStatView (options){
 				$(self.targetDomElem).append( date + scaffold);
 				$(self.targetDomElem).find("div.firstPart").append(tableFinal);
 				$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
-				$("th.mdbHead").tooltip({title : "Matrixdb CORE dataset", container : 'body'});
+				$("th.mdbHead").tooltip({title : "MatrixDB CORE dataset", container : 'body'});
 				$("th.psqHead").tooltip({title : "Psicquic extended dataset", container : 'body'});
 				
 		},
