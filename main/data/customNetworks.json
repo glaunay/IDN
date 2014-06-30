@@ -10,8 +10,12 @@
 	     	       	 "fileLocation" : "data/endostatinStoredNetwork.json"
 			 },
 	     "PCPE1" : {	
-	     	       	 "comments" : "Salza et 2014",  
+	     	       	 "comments" : "Salza et al 2014",  
 	     	       	 "fileLocation" : "data/PCPE1_storedNetwork.json"
+			 },
+	     "ELASTIC" : {	
+	     	       	 "comments" : "Cain et al 2009",  
+	     	       	 "fileLocation" : "data/CAIN_storedNetwork.json"
 			 }
 
 	}

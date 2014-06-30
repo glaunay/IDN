@@ -87,46 +87,52 @@ function initMyReport (options){
 			},
 		helpLink : {
 			"experiment"  : {
-								title :"Here you can browse all data related to experiment.",
-								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+								title :"Here you can browse all data related to an experiment.",
+								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
 							 	html  : true,
 							 	placement : "bottom",
-							 	container : "body"
+							 	container : "div#reportDiv",
+							 	trigger : "manual"
 							 },
 			"association" : {
-								title :"Here you can browse all data related to association.",
-								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+								title :"Here you can browse all data related to an association.",
+								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
 							 	html  : true,
 							 	placement : "bottom",
-							 	container : "body"
+							 	container : "div#reportDiv",
+							 	trigger : "manual"
 							 },
 			"publication" : {
-								title :"Here you can browse all data related to publication.",
-								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+								title :"Here you can browse all data related to a publication.",
+								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
 							 	html  : true,
 							 	placement : "bottom",
-							 	container : "body"
+							 	container : "div#reportDiv",
+							 	trigger : "manual"
 							 },
 			"biomolecule" : {
-								title :"Here you can browse all data related to biomolecule.",
-								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+								title :"Here you can browse all data related to a biomolecule.",
+								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
 							 	html  : true,
 							 	placement : "bottom",
-							 	container : "body"
+							 	container : "div#reportDiv",
+							 	trigger : "manual"
 							 },
 			"author"      : {
-								title :"Here you can browse all data related to author.",
-								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+								title :"Here you can browse all data related to an author.",
+								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
 							 	html  : true,
 							 	placement : "bottom",
-							 	container : "body"
+							 	container : "div#reportDiv",
+							 	trigger : "manual"
 							 },
 			"keywrd"	  : {
-								title :"Here you can browse all data related to UniprotKB keyword.",
-								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
+								title :"Here you can browse all data related to a UniprotKB keyword.",
+								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "http://youtube.com" target = "_blank">Here</a>',
 							 	html  : true,
 							 	placement : "bottom",
-							 	container : "body"
+							 	container : "div#reportDiv",
+							 	trigger : "manual"
 							 },
 		},
 /*
@@ -164,7 +170,23 @@ function initMyReport (options){
 			+'</div>';	
 			$('.tableInteract').append(scaffold);
 			var self = this;
-			var data = { biomolecule : this.jsonData.name };
+			var name;
+			if (this.jsonData.xref){
+				this.jsonData.xref.forEach(function(elem){
+					if(elem.hasOwnProperty('EBI_xref')) {
+						console.dir(elem.EBI_xref);
+						name = elem.EBI_xref;							
+					}	
+					if(elem.hasOwnProperty('CheBI_identifier')) {
+						console.dir(elem.CheBI_identifier);
+						name = elem.CheBI_identifier;							
+					}	
+	
+				})
+			}
+			name = name ? name : this.jsonData.name;
+	
+			var data = { biomolecule : name };
 			var text = JSON.stringify(data);
 	setTimeout  (function (){
 			var jqxhr = $.ajax({
@@ -183,7 +205,7 @@ function initMyReport (options){
 							.append('<i class="fa fa-2x fa-check-circle"></i>');
 					} else {
 						$(".psqStatus").empty().addClass("psqError")
-							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div class="span12">Sorry, unable to reach service</div></div>');
+							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div class="span12">Sorry, unable to contact service</div></div>');
 						$(".psqFont").empty().addClass("psqError")
 							.append('<i class="fa fa-2x fa-exclamation-circle"></i>');
 					}
@@ -225,7 +247,22 @@ function initMyReport (options){
   											 "'> Click here to go to index </a></div>");
   				return;
   			}
-  			$(self.targetDomElem).find('i.helpMe').popover(self.helpLink[self.jsonData.type]);
+  			$(self.targetDomElem).find('i.helpMe').popover(self.helpLink[self.jsonData.type])
+			   .on("mouseenter", function () {
+		        var _this = this;
+		        $(_this).popover('show');
+		        $(".popover").on("mouseleave", function () {
+		            $(_this).popover('hide');
+		        });
+		    }).on("mouseleave", function () {
+		    	if(!window.showHelp){return;}
+		        var _this = this;
+		        setTimeout(function () {
+		            if (!$(".popover:hover").length) {
+		                $(_this).popover("hide")
+		            }
+		        }, 100);
+		       })
   			if (self.jsonData.type == 'biomolecule'){
   				self._infoOrganisatorBiomol();
   				self._barchartOrganisator();

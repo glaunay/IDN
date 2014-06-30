@@ -49,8 +49,8 @@ function initStatView (options){
                       			 '<tr><th>Protein</th><td>' + data.associations.proteinProtein[0] + '</td><td></td><td></td><td></td></tr>';
 			    var tableFinal = '<table bgcolor="white" class="table table-bordered" >'+
                       			 '<thead><tr><th>Molecular interaction Data</th>'+
-                      			 '<th><img src = "/img/icon-mdb.png" width = "15px" ></img></th>'+
-                      			 '<th><img src = "/img/psicquic.png" width = "20px"></img></th></tr></thead><tbody>';
+                      			 '<th class="mdbHead"><img src = "/img/icon-mdb.png" width = "15px" ></img></th>'+
+                      			 '<th class="psqHead"><img src = "/img/psicquic.png" width = "20px"></img></th></tr></thead><tbody>';
 			 	tableInteractor += '</tbody></table><div><b>  *</b> : Bioactive <b>P</b>rotein <b>frag</b>ment</br><b>**</b> : <b>G</b>lycos<b>A</b>mino<b>G</b>lycan</div>';
 			 	var pub = data.publications.total - data.publications.imex
 				tableFinal += '<tr><td>Associations</td><td>' + data.associations.matrixdb[0] + '</td><td>' + data.associations.psicquic[0] + '</td></tr>' +
@@ -65,7 +65,8 @@ function initStatView (options){
 				$(self.targetDomElem).append( date + scaffold);
 				$(self.targetDomElem).find("div.firstPart").append(tableFinal);
 				$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
-				
+				$("th.mdbHead").tooltip({title : "Matrixdb CORE dataset", container : 'body'});
+				$("th.psqHead").tooltip({title : "Psicquic extended dataset", container : 'body'});
 				
 		},
 		_dataPie : function(data){

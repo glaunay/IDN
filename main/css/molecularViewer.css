@@ -11,18 +11,19 @@
 
 
 #segid-toggle.btn-group {
+    padding-top:1em;
     width : 2em;
     min-width : 2em;
     text-align : center;
     cursor : pointer;
     margin-left: 5px;
     height: 22px;
-    
-    
 }
+
 #segid-toggle.btn-group a span.caret{
 	margin-left: 5px;
 }
+
 #segid-toggle.btn-group a{
 	padding : 0 20px 0 5px;
 	width : 5px;

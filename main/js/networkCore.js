@@ -95,8 +95,7 @@ function coreInit (opt) {
 			self.height = $(window).height() * 0.95;
 			d3.select(self.target + ' #networkWindow svg')
 			    .attr("width", self.width)
-			    .attr("height", self.height);
-			console.log ("resizing network window to " + self.width + ' / ' + self.height);
+			    .attr("height", self.height);		
 		    });
 	    
 	    this.force = d3.layout.force()
@@ -308,11 +307,11 @@ function coreInit (opt) {
 	bubbleNode : function (data, type) {	  
 	    var self = this;
 	    var node;
-	    if(type != "stop"){
-	    	console.dir("pass in bubble node with")
+	    /*if(type != "stop"){
+	    console.dir("pass in bubble node with")
 	    console.dir(data)
 	    console.dir(type)
-	    }
+	    }*/
 	    
 	    if (data.hasOwnProperty('name'))
 		node = this.nodeToSvg[data.name];
@@ -321,7 +320,7 @@ function coreInit (opt) {
 		d3.select(node)
 		    .each(function(d){
 			      nodeName = d.name;
-			      console.dir(d)
+			  
 			   /* 
 			    * d.previousStyle.stroke = d3.select(this).style('stroke');
 			      d.previousStyle.fill = d3.select(this).style('fill');
@@ -577,26 +576,66 @@ function coreInit (opt) {
 	    } else if (data.nodes) {
 	  // ????	
 	    }	    
+	},
+	_nrNewNode : function (nodeList) {
+		if (isEmpty(this.nodeToSvg)) return nodeList;
+		var buffer = [];
+		var self = this;
+		
+		nodeList.forEach(function(elem){
+			if(!self.nodeToSvg.hasOwnProperty(elem.name)) {
+				buffer.push(elem);
+			} else {
+				//console.log(elem.name + " already in network");
+			}
+		});	
+		console.log("Nodes: Made NR from " + nodeList.length + " to " + buffer.length);
+		return buffer;
+	},	
+	_nrNewLink : function (linkList) {
+		if (isEmpty(this.linkToSvg)) return linkList;
+		var buffer = [];
+		var self = this;
+		
+		linkList.forEach(function(elem){
+			if(!self.linkToSvg.hasOwnProperty(elem.name)) {
+				buffer.push(elem);
+			} else {
+				console.log(elem.name + " already in network");
+			}
+		});	
+		console.log("Links: Made NR from " + linkList.length + " to " + buffer.length);
+		return buffer;
 	},	
 	add : function (datum, options) { /* add node(s) to a empty/not-empty graph 
 					    options for later development needs
 					   */
+
+	/* Custom network startup patch 
+	Check that all nodes and links are not already part of the network
+	*/	
+	
+	var nodeData = this._nrNewNode(datum.nodeData);
+	var linksData = this._nrNewLink(datum.linksData);
+
+	
+
 	    var nodes = this.force.nodes(),
 	    links = this.force.links();
 	    /*freeze all previous*/
 	    this.svg.selectAll(".node").each (function (d){d.fixed = true;});
-	    nodes.push.apply(nodes, datum.nodeData);	    
+	    nodes.push.apply(nodes, nodeData);	    
 	    for (var iLink = 0; iLink < datum.linksData.length; iLink++) {
-		if (!datum.linksData[iLink].details) {
+		if (!linksData[iLink].details) {
 		    console.log("Attempting to enter an invalid link element in core selection");
 		    console.dir(datum.linksData[iLink]);
 		    continue;
 		}
 		var singleLink = {
-		    source :  datum.linksData[iLink].source,
-		    target :  datum.linksData[iLink].target,		    
-		    details : datum.linksData[iLink].details,
-		    type : datum.linksData[iLink].type
+		    source :  linksData[iLink].source,
+		    target :  linksData[iLink].target,		    
+		    details : linksData[iLink].details,
+		    type : linksData[iLink].type
 		};
 		links.push(singleLink);					  
 	    }
@@ -761,6 +800,9 @@ function coreInit (opt) {
 		       })
 		.style("visibility", "visible");
 	    
+	/*console.dir("NEW NODE SELECTION");
+	console.dir(newNodes);*/
+
 	    node.exit().remove();   
 	    node.on('mouseover',function (d) {	
 			//setFocusNode(this);

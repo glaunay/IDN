@@ -60,7 +60,7 @@ function initPalette (opt) {
 	    $(this.target + ' i.helpMe').popover({ 
 	    	   html : true,
 	    	   placement : 'right', 
-			   title : 'For advanced usage see our <a target = "_blank" href = "http://youtube.com" >help</a>', 
+			   title : 'For advanced usage see our <a target = "_blank" href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" >help</a>', 
 			   container : 'body',
 			   trigger : "manual"
 			   })

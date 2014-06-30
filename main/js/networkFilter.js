@@ -107,7 +107,7 @@ function initNetworkFilter (opt) {
 			$(this.target + ' i.helpMe').popover({ 
 	    	   html : true,
 	    	   placement : 'right', 
-			   title : 'For advanced usage see our <a target = "_blank" href = "http://youtube.com" >help</a>', 
+			   title : 'For advanced usage see our <a target = "_blank" href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" >help</a>', 
 			   container : 'body',
 			   trigger : "manual"
 			   })
@@ -179,7 +179,6 @@ function initNetworkFilter (opt) {
 		    $( window )
 			.resize(function() {
 				    var newWindowCss = self.computeBookmarkPosition();	 
-				    console.dir(newWindowCss);   
 				    $(self.miniSel).css(newWindowCss);
 				});
 		    $(this.target).on('click', function (event){

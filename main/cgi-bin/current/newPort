@@ -76,13 +76,13 @@ my $htmlContent =
 "<html lang=\"en-US\" xml:lang=\"en-US\" xmlns=\"http://www.w3.org/1999/xhtml\">".
 "<head><meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=windows-1252\"/>" .
 "<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/dependencies/css/bootstrap.min.css\"/>" .
-"<link href=\"//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css\" rel=\"stylesheet\">" .
+"<link href=\"$ENV{ IDN_URL }/dependencies/css/font-awesome.css\" rel=\"stylesheet\">" .
 "<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/report.css\"/>" .
 "<link rel=\"stylesheet\" href=\"$ENV{ IDN_URL }/css/cart.css\"/>" .
-"<link rel=\"stylesheet\" type=\"text/css\" href=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css\">" .
-"<script src=\"http://code.jquery.com/jquery-1.10.1.min.js\"></script>" .
-"<script src=\"http://d3js.org/d3.v3.min.js\"></script>" .
-"<script type=\"text/javascript\" charset=\"utf8\" src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js\"></script>" .
+"<link rel=\"stylesheet\" type=\"text/css\" href=\"$ENV{ IDN_URL }/dependencies/css/jquery.dataTables.css\">" .
+"<script src=\"$ENV{ IDN_URL }/dependencies/js/jquery-1.10.1.min.js\"></script>" .
+"<script src=\"$ENV{ IDN_URL }/dependencies/js/d3.v3.min.js\"></script>" .
+"<script type=\"text/javascript\" charset=\"utf8\" src=\"$ENV{ IDN_URL }/dependencies/js/jquery.dataTables.min.js\"></script>" .
 "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/bootstrap.js\"></script>" .
 "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/bootstrapExtDatatable.js\"></script>" .
 "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/dependencies/js/jquery.cookie.js\"></script>" .

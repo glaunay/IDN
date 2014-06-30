@@ -321,7 +321,7 @@ function loadNetwork (uidString, callback) {
 		 console.log("success");
                  console.dir(data); 
                  if (data.hasOwnProperty("errorStatus")) {
-		     return;   
+			   return;   
 		 }
 		 callback({nodeData : data.nodes, linksData : data.links});
 	     },
@@ -330,16 +330,18 @@ function loadNetwork (uidString, callback) {
                  console.dir(resp); // resp.getAllResponseHeaders() 
 		 var msgContent;
 		 var timeOut = 250;
-		 if (!resp.hasOwnProperty("responseJSON")) {
+		 
+		if (!resp.hasOwnProperty("responseText")) {
 		     timeOut = 3000;
 		     msgContent = "A network error appended";
-		 } else if(resp.responseJSON.hasOwnProperty("errorStatus")) {
-		     timeOut = 3000;
-		     msgContent = "<div>The key you entered is not valid</div>";
 		 } else {
-		     
-		 }
-		 if (timeOut !== 250) {		     		 
+			var responseStatus = JSON.parse(resp.responseText);
+			if(responseStatus.hasOwnProperty("errorStatus")) {
+			     timeOut = 3000;
+			     msgContent = "<div>The key you entered is not valid</div>";
+			}
+		}	 
+		if (timeOut !== 250) {		     		 
 		     $(".exporterIdle").empty()
 			 .append('<div style="font-size:0.3em; margin-bottom:35px">' +
 				 msgContent

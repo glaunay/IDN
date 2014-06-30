@@ -406,6 +406,23 @@ div#reportDiv dt.hReport{
 	margin : 0 5px 0 0;
 	float: left;
 }
+div#reportDiv .popover-title, div#reportDiv .popover-content,div#reportDiv .bottom .popover-title ,div#reportDiv .bottom .popover-content,div#reportDiv .popover {
+	font-weight: normal;
+	border :  rgba(51, 108, 174, 1);
+	background-color: rgba(51, 108, 174, 1);
+	color : white;
+	
+}
+div#reportDiv .popover a{
+	color:yellow;
+}
+div#reportDiv .popover-content{
+	padding: 5px;
+	text-align: center;
+}
+div#reportDiv .bottom .arrow:after{
+	border-bottom-color: rgba(51, 108, 174, 1) !important;
+}
 div#reportDiv div.content.barChart{/*copy paste bootstrap must adapt webKit*/
 	min-height: 0px !important;
 	padding: 20px 0 0 0;
@@ -454,7 +471,7 @@ div#reportDiv div.reportTarget{
 }
 div#reportDiv div.pdb.postitContent{
 	min-height: 368px;
-	
+	padding-bottom : 15px;
 }
 div#reportDiv div.assocTable div.title{
 	font-weight:bold;

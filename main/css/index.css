@@ -330,9 +330,15 @@ div.browser {
     padding-top : 0em;
     margin-bottom : 0.5em;
 }
+
+div.browser figure,figcaption {
+	display : block;
+}
+
 div.browser figcaption {
     font-weight : 200;
     font-size : 0.85em;
+    padding-top:20px;
 }
 
 div.browser img {
@@ -341,4 +347,10 @@ div.browser img {
 div.browser p {
     float : right;
     
+}
+
+div.youtubeSnipet {
+	text-align:center;
+	margin-bottom : 35px;
+	margin-top : 20px;
 }

@@ -9,7 +9,6 @@ circle:hover {
 }
 
 .glowingNode {
-  
     stroke: "#9ecaed"
     box-shadow: 0 0 30px #9ecaed!important; 
 }
