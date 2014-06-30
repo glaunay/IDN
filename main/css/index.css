@@ -331,14 +331,10 @@ div.browser {
     margin-bottom : 0.5em;
 }
 
-div.browser figure,figcaption {
-	display : block;
-}
-
-div.browser figcaption {
+div.browser .figCaption {
     font-weight : 200;
     font-size : 0.85em;
-    padding-top:20px;
+    text-align : center;	
 }
 
 div.browser img {
