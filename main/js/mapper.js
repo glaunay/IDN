@@ -98,7 +98,7 @@ function initBarSearchMapper (){
 				tooltip += '<div class =inTooltip>Imex-ID : ' + data.imexID + '</div>';
 				icone = '<i class="fa fa-star" style = "color:rgb(206, 206, 17);"></i>';
 			}
-			newString = '<div class = "tooltipContent tooltipPubli" data-container : "body" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
+			newString = '<div class = "tooltipContent tooltipPubli" data-container = "body" data-html = "true" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' '+
 						'data-title = "' + tooltip + '" >'+
 					    icone +'<a ' + dataAttr + '>' + data.Title +'</a></div><span style = "float:right;">' + newString + "</span>";
 

@@ -317,13 +317,21 @@ div#reportDiv .contentXp{
 div#reportDiv .contentXp h3{
 	text-align: center;
 }
+div#reportDiv div.divTitre.special{
+	border-radius: 5px;
+	font-size: 1.5em;
+	font-weight: bold;
+	text-align: center;
+	padding-bottom: 5px;
+	padding-top: 40px;
+	
+}
 div#reportDiv div.divTitre{
 	border-radius: 5px;
 	font-size: 1.5em;
 	font-weight: bold;
 	text-align: center;
 	padding-bottom: 10px;
-	min-height: 30px;
 	padding-top: 10px;
 	
 }
@@ -690,6 +698,7 @@ i.helpMe{
 }
  #reportDiv .postitSpecie{
 	float: right;
+	margin-top: -40px;
 	display: inline-block;
 	margin-right: 20px;
 }

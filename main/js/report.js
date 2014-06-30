@@ -90,37 +90,43 @@ function initMyReport (options){
 								title :"Here you can browse all data related to experiment.",
 								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
 							 	html  : true,
-							 	placement : "bottom"
+							 	placement : "bottom",
+							 	container : "body"
 							 },
 			"association" : {
 								title :"Here you can browse all data related to association.",
 								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
 							 	html  : true,
-							 	placement : "bottom"
+							 	placement : "bottom",
+							 	container : "body"
 							 },
 			"publication" : {
 								title :"Here you can browse all data related to publication.",
 								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
 							 	html  : true,
-							 	placement : "bottom"
+							 	placement : "bottom",
+							 	container : "body"
 							 },
 			"biomolecule" : {
 								title :"Here you can browse all data related to biomolecule.",
 								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
 							 	html  : true,
-							 	placement : "bottom"
+							 	placement : "bottom",
+							 	container : "body"
 							 },
 			"author"      : {
 								title :"Here you can browse all data related to author.",
 								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
 							 	html  : true,
-							 	placement : "bottom"
+							 	placement : "bottom",
+							 	container : "body"
 							 },
 			"keywrd"	  : {
 								title :"Here you can browse all data related to UniprotKB keyword.",
 								content : ' additionnal help can be found <a href = "http://youtube.com" target = "_blank">here</a>',
 							 	html  : true,
-							 	placement : "bottom"
+							 	placement : "bottom",
+							 	container : "body"
 							 },
 		},
 /*
@@ -470,7 +476,7 @@ function initMyReport (options){
   			var linkSpeci = self.jsonData.specie.value ? 
   							'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + self.jsonData.specie.value :
   							'http://www.ncbi.nlm.nih.gov/Taxonomy';
-			var content = "<span class = 'reportType'>" + subtype + "</span><div class ='divTitre'>" + self.jsonData.name + "<div class = ' tooltipContent postitSpecie' "+
+			var content = "<span class = 'reportType'>" + subtype + "</span><div class ='divTitre special'>" + self.jsonData.name + "<div class = ' tooltipContent postitSpecie' "+
 			              'data-container = "body" data-html = "true" data-placement = "left" data-toggle="tooltip" data-delay=\'{"show":"1000", "hide":"1000"}\' data-title = "' + tooltip + '">'+
 			              '<a target = "_blank" href = "' + linkSpeci + '"><img ' + speciUrl(self.jsonData.specie.value,self.rootUrl) + '>'+
 						  "</img></a></div></div><div class = 'name postitContent'><span class = 'cartBio'>" + self.cartButton.biomAdd + "</span><dl>";
@@ -742,11 +748,11 @@ function initMyReport (options){
 			//listeSpeci.push(self._interaction());
 			/*experiment detail*/
 			if(self.jsonData.partnerDetails.length == 2){
-				listeSpeci.push("<span class = 'reportType'> Experiment </span><div class = 'divTitreGeneral divTitre'>" +
+				listeSpeci.push("<span class = 'reportType'> Experiment </span><div class = 'divTitreGeneral divTitre special'>" +
 								self.jsonData.partnerDetails[0].commonName + '</span></br> and <span></br>' + 
 								self.jsonData.partnerDetails[1].commonName + " </span></div>");
 			}else{
-				listeSpeci.push("<span class = 'reportType'> Experiment </span><div class = 'divTitreGeneral divTitre'>  <span> " +
+				listeSpeci.push("<span class = 'reportType'> Experiment </span><div class = 'divTitreGeneral special divTitre'>  <span> " +
 								self.jsonData.partnerDetails[0].commonName + '</span></div>');
 			}
 			listeSpeci.push( '<dt class ="hReport">Identifier:</dt><dd> ' + self.jsonData.name + "</dd>");
@@ -1089,9 +1095,9 @@ function initMyReport (options){
 		_namePartner : function(index){
 			var self = this;
 			if(!self.jsonData.partnerDetails[index].name){return '';}
-			var logoBullet = '<div class = "bulletSpecie"><i class="fa fa-ban"></i></div>';
+			var logoBullet = '<div class = "bulletSpecie"><img ' + speciUrl(false,self.rootUrl) + ' ></img></div>';
 			if(self.jsonData.partnerDetails[index].specie){
-				logoBullet = '<div class = "bulletSpecie"><img ' + speciUrl(self.jsonData.partnerDetails[index].specie,self.rootUrl) + ' width = "15px"></img></div>';
+				logoBullet = '<div class = "bulletSpecie"><img ' + speciUrl(self.jsonData.partnerDetails[index].specie,self.rootUrl) + ' ></img></div>';
 			}
 			var RootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
 			var lineString = '<div class="divTitre feature" >';
@@ -1796,7 +1802,7 @@ bandeau keywrd
 			var star = self.jsonData.imexId ?  '<i class="fa fa-star pull-right" style="color:yellow;"></i>' 
 											:  '<i class="fa fa-star-o pull-right"></i>';
 			var returnString = "<span class = 'reportType'> Publication </span>"+
-							   "<div class = 'divTitre' style='padding-right:10px;padding-left: 20px;'>Reference" + star + "</div><span class = 'addCart publi pull-right' name = '" + 
+							   "<div class = 'divTitre special' style='padding-right:10px;padding-left: 20px;'>Reference" + star + "</div><span class = 'addCart publi pull-right' name = '" + 
 							   self.jsonData.name + "'>" + self.cartButton.publiAdd + "</span><div class = 'postitContent'><dl>" + 
 							   self._imexIdPubli() + self._journal() + self._copyright() + self._date() + self._aviable() + 
 							   self._contact() + self._ref() + "</dl></div>";

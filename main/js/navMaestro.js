@@ -514,6 +514,7 @@ function jsonLoader (jsonLocation) {
     
     if (vizObject.core) {	    
 	vizObject.core.add (networkData, coreOptions);
+//	vizObject.core.setAllCenter ();
     }
 }
 

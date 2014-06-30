@@ -541,15 +541,19 @@ function coreInit (opt) {
 	nodeVisibilityToggle : function (data, visibility) {
 	    var self = this;	 
 	    if (data.nodeNames) {
-		data.nodeNames.forEach(function(name){
-					   var nSvg = self.nodeToSvg[name];
-					   if (!nSvg) return;					   
-					   d3.select(nSvg)
-					       .style("visibility", visibility)
-					       .each(function(d){d.manualHide = visibility === "hidden" ? true : false;});
-					   var test = d3.select(nSvg).style("visibility");
-					   
-				       });
+		data.nodeNames
+		    .forEach(function(name){
+				 var nSvg = self.nodeToSvg[name];
+				 if (!nSvg) return;					   
+				 d3.select(nSvg)
+				     .style("visibility", visibility)
+				     .each(function(d){d.manualHide = visibility === "hidden" ? true : false;});
+				 var test = d3.select(nSvg).style("visibility");
+				 if(d3.select(nSvg).style("visibility") === "hidden"){
+				     $(nSvg).tooltip('hide');
+				 } 
+				 
+			     });
 		data.nodeNames
 		    .forEach(function(name){
 				 self.nodeToLinks[name]
@@ -725,13 +729,16 @@ function coreInit (opt) {
 			   var node = this;
 			   $(this).tooltip({
 					       title : function (){ 
-						   var text = d3.select(this).datum().name;						   
+						   var text = '<div>' + d3.select(this).datum().name + '</div>';
 						   return text;
-					       },							 
+					       },
+					       template: '<div class="tooltip nodeTooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+					       html : true,
 					       animation: true,
 					       container: 'body',
 					       trigger : 'manual'
 					   });
+
 			   $(this).hoverIntent( {
 						    over : function () {
 							if(d3.select(node).style("visibily") === "hidden"){return;}
@@ -1264,11 +1271,14 @@ function coreInit (opt) {
 	 * using the additional network attribute newCenters returned by server
 	 *  */
 	addCenter : function (nodeList) {
-	    var self = this;
+	    var self = this;	    
 	    nodeList.forEach(function (name) {
 				 var node = self.nodeToSvg[name];
 				 d3.select(node).each(function(d){ d.central = true; });
 			     });
+	},
+	setAllCenter : function () {
+		d3.selectAll(".node").each(function(d) { d.central = true ;});    
 	},
 	/*Dynamic filtering of the network elements -> preview tobe-deleted elements as shady nodes
 	 data = { 

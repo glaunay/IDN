@@ -327,9 +327,14 @@ div.mainAlias img {
 }
 
 div.browser {
-    padding-top : 1em;
+    padding-top : 0em;
     margin-bottom : 0.5em;
 }
+div.browser figcaption {
+    font-weight : 200;
+    font-size : 0.85em;
+}
+
 div.browser img {
     float : right;
 }

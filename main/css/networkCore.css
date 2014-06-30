@@ -14,3 +14,6 @@ circle:hover {
     box-shadow: 0 0 30px #9ecaed!important; 
 }
 
+.nodeTooltip {
+    z-index : 100;
+}

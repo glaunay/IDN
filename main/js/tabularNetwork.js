@@ -380,6 +380,8 @@ function tabularInit (opt) {
 		this._toggleToNodeTab();
 		
 		if(this.nodeBuffer){
+			console.dir(this.nodeBuffer)
+			
 			this.tickNodes(this.nodeBuffer);
 			this.nodeBuffer = null;
 		}
@@ -411,8 +413,8 @@ function tabularInit (opt) {
 	    return list;
 	},
 	tickNodes : function (data) { // External CALL!!
-	    var self = this;	
-	    if (!this.nodeDT) { 
+	    var self = this;
+	    if (!this.nodeDT && data.data.length > 0) { 
 	    	this.nodeBuffer = data;
 		return; 
 	    }	    
