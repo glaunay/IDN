@@ -185,7 +185,7 @@ function initMyReport (options){
 				})
 			}
 			name = name ? name : this.jsonData.name;
-	
+			console.log(name);
 			var data = { biomolecule : name };
 			var text = JSON.stringify(data);
 	setTimeout  (function (){
@@ -509,7 +509,6 @@ function initMyReport (options){
   			var specie = self.jsonData.specie.names ? self.jsonData.specie.names[1] : "Universal";
   			var taxonId = self.jsonData.specie.value ? self.jsonData.specie.value : "NA";
   			var tooltip = "<div>Specie : " + specie + "</div><div> Taxon id : " + taxonId + "</div>"; 
-  			console.dir(tooltip);
   			var linkSpeci = self.jsonData.specie.value ? 
   							'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + self.jsonData.specie.value :
   							'http://www.ncbi.nlm.nih.gov/Taxonomy';
@@ -2215,8 +2214,7 @@ bandeau keywrd
 			var heigthOfDiv = [];
 			$(self.targetDomElem).find("div.postitGeneral div.inPostit:last-child div.span6").each(function(){
 				heigthOfDiv.push($(this).height())
-			});
-			console.dir(heigthOfDiv)
+			});	
 			if(heigthOfDiv.length >= 2){
 				var h = Math.abs(heigthOfDiv[0] - heigthOfDiv[1]);
 				if (h > 90){
