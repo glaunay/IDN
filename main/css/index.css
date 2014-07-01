@@ -323,7 +323,6 @@ div.downloadContent  ul{
 div.mainAlias img {
     margin-top: -30px;
     margin-bottom: 20px;
-    
 }
 
 div.browser {
@@ -334,7 +333,7 @@ div.browser {
 div.browser .figCaption {
     font-weight : 200;
     font-size : 0.85em;
-    text-align : center;	
+    text-align : right;	
 }
 
 div.browser img {
