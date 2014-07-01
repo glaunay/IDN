@@ -271,7 +271,6 @@ function tabularInit (opt) {
 	    $(this.maxiSel + ' .tabularNetworkBodyContent').css({"min-height" : "335px"});
 	    
 	    $(this.maxiSel).on('nodeScroll', function (event, param1) { 
-				  console.log("hophohp");
 				  if (self.size === "minified")
 				      return;
 				  self.scrollFocus({type : "node", name : param1.name});				  

@@ -104,20 +104,20 @@ function initElementInfo(opt) {
 	},
 	draw : function (data) {
 	    this.setUrl();
-	    console.log("lets draw " + this.targetSuffix);
+	   // console.log("lets draw " + this.targetSuffix);
 	    this.data = data;
-	    console.dir(data);
+	 //   console.dir(data);
 	    if (data.defaultSel){
 	    	this.defaultSel = data.defaultSel;
 	    }
 	    
 	    var divId = this.targetSuffix ? "elementInfo" +  this.targetSuffix : "elementInfo";
-	    console.log(divId);
+	  //  console.log(divId);
 	    $(this.target).append('<div id="' + divId + '"><div class="upmark"></div><div class="ei-main"><div class="ei-header"></div><div class="ei-body"></div></div><div>');
 
 	    var self = this;
 	   
-	    console.log(this.data);
+	//    console.log(this.data);
 	    if (this.data.details) {
 	    	this.generateLinkContent()
 	    } else {
@@ -164,8 +164,7 @@ function initElementInfo(opt) {
 	    
 	    if (!callback) {
 		callback = function (){};
-	    }
-	    console.log(callback);
+	    }	
 	    this.toggleMoleculeLoader({display : "show"});
 	    $(this.selector).fadeToggle({duration : 200, easing : "swing", complete : function (){ $(self.selector).remove();callback();}});
 	},
@@ -380,8 +379,10 @@ function initElementInfo(opt) {
 	    }else{
 		$(this.selector + ' .ei-header').hide();
 	    }
+	 //   console.dir(this.data);
+	    var tmpName = this.data.aceAccessor ? this.data.aceAccessor : this.data.name;
 	    var name = '<div style = "text-align:center;">'+
-				   '<a target = "_blank" href = "' + this.urlReport.biomolecule + this.data.name + '" >' +
+				   '<a target = "_blank" href = "' + this.urlReport.biomolecule + tmpName + '" >' +
 				   this.data.common.anyNames[0] + "</a></div>";
 	    $(this.selector + ' .ei-body').append(name);
 	    var cv = '<div class="summary"></div>';
@@ -397,6 +398,7 @@ function initElementInfo(opt) {
 		},
 		Specie : function () {
 		    if (!self.data.specie) return null;
+		    if (!self.data.specie.name) return null;
 		    this.cnt++;
 			var nom =  self.data.specie.names[0];
 			for (var i = 1; i <  self.data.specie.names.length; i++) {
@@ -426,11 +428,11 @@ function initElementInfo(opt) {
 		    return '<dt class = "hReport">Molecular weight</dt><dd>' + self.data.molecularWeight + ' Da</dd>';
 		}
 	    };	 
-	    console.log(tags);
+	   // console.log(tags);
 	    for (var i = 0; i < tags.length; i++) {	
 			var html = writer[tags[i]]();		
 			if (!html) continue;
-			console.dir(html)
+		//	console.dir(html);
 			$(this.selector + " .summary").append('<div class = "info"><dl>' + html + '</dl></div>');
 	    }
 	    
@@ -649,12 +651,11 @@ function initElementInfo(opt) {
 	_linkMi : function(string){
 		var self = this;
 		var regExpMi = /\[MI:[0-9]{4}\]/;
-		var debutUrl = "https://www.ebi.ac.uk/ontology-lookup/?termId="
+		var debutUrl = "https://www.ebi.ac.uk/ontology-lookup/?termId=";
 		if (regExpMi.test(string)) {
 			var listeString = string.split("[");
 			var name = listeString[0];
 			var finUrl = listeString[1].substring(0,listeString[1].length - 1);
-			console.dir("ici====>" + name + " ---- " + finUrl);
 			var returnString = "<a target = '_blank' href = '" + debutUrl + finUrl + "'>" + name + "</a>";
 			return returnString;
 		}else{

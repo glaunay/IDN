@@ -105,27 +105,27 @@ function startPanZoomControler(opt) {
 	    zoom : function (scale)
 		{
 		    this._releaseMatrix();
-		    console.log('from ' +  this.transMatrix);
+		    //console.log('from ' +  this.transMatrix);
 			for (var i=0; i<this.transMatrix.length; i++)
 			{
 			    
 			    this.transMatrix[i] *= scale;
 			  	//console.log('to ' +  this.transMatrix[i]);
 			}
-			console.log((1-scale)*this.docWidth/2 + " " + (1-scale)*this.docHeight/2);
+			//console.log((1-scale)*this.docWidth/2 + " " + (1-scale)*this.docHeight/2);
 			this.transMatrix[4] += (1-scale)*this.docWidth/2;
 			this.transMatrix[5] += (1-scale)*this.docHeight/2;
-			console.log('to ' +  this.transMatrix);
+			//console.log('to ' +  this.transMatrix);
 			var newMatrix = "matrix(" +  this.transMatrix.join(' ') + ")";
 			$(this.svgElement + ' g#network').attr("transform", newMatrix);	   	      
 		}, 
 		setViewPoint : function (data) { // x,y coor and an option to encompass all displayed element
 			var xOffset = this.docWidth / 2 - data.x,
 			yOffset = this.docHeight / 2 - data.y;
-			console.log(this.docWidth + " x "  + this.docHeight);
-			console.log("bary : " + data.x + "  " + data.y);
+			//console.log(this.docWidth + " x "  + this.docHeight);
+			//console.log("bary : " + data.x + "  " + data.y);
 			this.pan(xOffset, yOffset);
-			console.log(xOffset, yOffset);
+			//console.log(xOffset, yOffset);
 	    }
 	};
     } ();

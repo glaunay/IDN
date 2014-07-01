@@ -21,6 +21,10 @@ jQuery.fn.justtext = function() {
  * @return {*} Returns the value (if any) located at the key
  */
 getPropByKey = function( obj, key ) {
+   /* console.dir(this);
+    console.dir(obj);
+    console.log(key);*/
+
     var ret = false, ns = key.split("."),
         args = arguments,
         alen = args.length;

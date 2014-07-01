@@ -55,9 +55,9 @@ function initHistoricHover (options){
 			  self.stopBubbling(self.historicDataNode[i]) 
 			};
 			
-			var active = "node";
-			if($(self.targetDomElem).find("div.historyWidjet div#link").hasClass("active")){
-				active ="link";
+			var active = "nodeHistoric";
+			if($(self.targetDomElem).find("div.historyWidjet div#linkTabH").hasClass("active")){
+				active ="linkHistoric";
 			}
 			$(self.targetDomElem).find("div.historyWidjet").remove();
 			$(self.targetDomElem).append("<div id = 'historic' class ='historyWidjet " + self.status + "'>");
@@ -67,13 +67,13 @@ function initHistoricHover (options){
 				self._toggleStatus();
 				self.draw();
 			});
-			$(self.targetDomElem).find("div.historyWidjet div#node ul li").click(function (){
+			$(self.targetDomElem).find("div.historyWidjet div#nodeTabH ul li").click(function (){
 				self.eInfoMore = self.historicDataNode[$(this).attr("index")]
 				self.callbackInfo(self.eInfoMore);
 				self.startBubbling(self.eInfoMore)
 				
 			});
-			$(self.targetDomElem).find("div.historyWidjet div#link ul li").click(function (){
+			$(self.targetDomElem).find("div.historyWidjet div#linkTabH ul li").click(function (){
 				self.eInfoMore = self.historicDataLink[$(this).attr("index")]
 				self.callbackInfo(self.eInfoMore);
 				self.startBubbling(self.eInfoMore)
@@ -82,21 +82,21 @@ function initHistoricHover (options){
 				self.stopBubbling(self.eInfoMore);
 				self.eInfoMore = null;
 			});
-			$(self.targetDomElem).find("div.historyWidjet div#link ul li").hover(
+			$(self.targetDomElem).find("div.historyWidjet div#linkTabH ul li").hover(
 				function (){
 					self.startBubbling(self.historicDataLink[$(this).attr("index")])
 				},function (){
 					self.stopBubbling(self.historicDataLink[$(this).attr("index")]);
 				}
 			);
-			$(self.targetDomElem).find("div.historyWidjet div#link ul li").hover(
+			$(self.targetDomElem).find("div.historyWidjet div#linkTabH ul li").hover(
 				function (){
 					self.startBubbling(self.historicDataLink[$(this).attr("index")])
 				},function (){
 					self.stopBubbling(self.historicDataLink[$(this).attr("index")]);
 				}
 			);
-			$(self.targetDomElem).find("div.historyWidjet div#node ul li").hover(
+			$(self.targetDomElem).find("div.historyWidjet div#nodeTabH ul li").hover(
 				function (){
 					self.startBubbling(self.historicDataNode[$(this).attr("index")])
 				},function (){
@@ -138,7 +138,7 @@ function initHistoricHover (options){
 			var self = this;
 			var activeNode = ""
 			var activeLink = ""
-			if(tabActive === "node"){
+			if(tabActive === "nodeHistoric"){
 				activeNode = 'active';
 			}else{
 				activeLink = 'active';
@@ -156,13 +156,13 @@ function initHistoricHover (options){
 			}else{
 				/* on affiche les info si il y en a */
 				var content = '<div class = "header"> Recently visited elements </div><ul class="nav nav-tabs">'
-									+'<li class="' + activeNode + '"><a href="#node" data-toggle="tab">Node (' + tailleNode + ')</a></li>'
-							  		+'<li class="' + activeLink + '"><a href="#link" data-toggle="tab">Link (' + tailleLink +')</a></li>'
-								+'</ul>'
-								+'<div class="tab-content">'
-						  			+'<div class="tab-pane ' + activeNode + '" id="node"><ul class="fa-ul node"></ul></div>'
-						  			+'<div class="tab-pane ' + activeLink + '" id="link"><ul class="fa-ul link"></ul></div>'
-					  			+'</div>';
+				+'<li class="' + activeNode + '"><a href="#nodeTabH" data-toggle="tab">Node (' + tailleNode + ')</a></li>'
+				+'<li class="' + activeLink + '"><a href="#linkTabH" data-toggle="tab">Link (' + tailleLink +')</a></li>'
+				+'</ul>'
+				+'<div class="tab-content">'
+				+'<div class="tab-pane ' + activeNode + '" id="nodeTabH"><ul class="fa-ul nodeUlH"></ul></div>'
+				+'<div class="tab-pane ' + activeLink + '" id="linkTabH"><ul class="fa-ul linkUlH"></ul></div>'
+				+'</div>';
 				divCible.append(content);
 				var linkList = '';
 				for (var i=0; i < self.historicDataLink.length; i++) {
@@ -175,8 +175,8 @@ function initHistoricHover (options){
 				  	nodeList += "<li index = '" + i + "'><i class='fa fa-search'></i>" + name + "</li>";
 				};
 				
-				divCible.find("div#node ul.node").append(nodeList)
-				divCible.find("div#link ul.link").append(linkList)
+				divCible.find("div#nodeTabH ul.nodeUlH").append(nodeList)
+				divCible.find("div#linkTabH ul.linkUlH").append(linkList)
 				divCible.append("<div class = 'footer'><span class = 'toggle hideDiv'> Hide </span></div>");
 			}
 			
