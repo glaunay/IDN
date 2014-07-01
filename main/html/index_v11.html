@@ -124,9 +124,9 @@
                 <div class="accordion-body collapse" id="collapseFour">
                   <div class="accordion-inner">
                     <ul class="fa-ul">
-                      <li><i class="fa-li fa fa-caret-right"></i>The matrisome project</li>
 		      <li><i class="fa-li fa fa-caret-right"></i>MatrixDB biomolecules</li>
                       <li><i class="fa-li fa fa-caret-right"></i>MatrixDB annotated sets</li>
+		      <li><i class="fa-li fa fa-caret-right"></i>The matrisome project</li>					    
                     </ul>
                   </div>
                 </div>
@@ -361,32 +361,7 @@
            </div>
            <!-- content three-->
            <div class="mainContent" id="contentFour">
-             <div class="subContent">
-               <h4>The matrisome</h4>
-               <ul class="fa-ul">
-		 <li><i class="fa fa-li fa-caret-right"></i></span>
-		   Overview of the matrisome - an inventory of extracellular matrix 
-		   constituents and functions. Hynes et al. 2012 Cold Spring Harb Perpsect Biol.
-		   <a class="pubmedLink"
-		      href="http://www.ncbi.nlm.nih.gov/pubmed/21937732" target="_blank">PubMed</a>.
-		 </li>
-		 <li><i class="fa fa-li fa-caret-right"></i>Towards definition of an ECM parts list: An advance on GO
-                   categories. Naba et al. 2012 Matrix Biology. <a class="pubmedLink"
-		      href="http://www.ncbi.nlm.nih.gov/pubmed/23199376" target="_blank">PubMed</a>.
-                 </li>
-		 <li><i class="fa fa-li fa-caret-right"></i>The matrisome: in silico definition and in vivo
-                   characterization by proteomics of normal and tumor
-                   extracellular matrices. Naba et al. 2012 Mol Cell
-                   Proteomics. <a href="http://www.ncbi.nlm.nih.gov/pubmed/22159717"
-					target="_blank" class="pubmedLink">PubMed</a></li>
-                 <li><i class="fa fa-li fa-download"></i>Download the human and murine matrisomes from 
-		   <a href="http://web.mit.edu/hyneslab/matrisome/" target="_blank">the Hynes Lab</a>
-		 </li>
-               </ul>
-               <br style="clear:both" />
-	     </div>
-
-	     <h4>Matrixdb biomolecule entries</h4>
+             <h4>MatrixDB biomolecule entries</h4>
 	       <div class="subContent" style="margin-bottom: 40px;">
 		 <dl>
 		   <dt>Proteins</dt>
@@ -400,52 +375,53 @@
 		   </dd>
 		   <dt>Multimers</dt>
 		   <dd>
-		   They are identified by a MatrixDB identifier 
+		   They are identified by a MatrixDB-specific identifier 
 		   "MULT_x_species" or "MULT_x_VARy_species" for molecular 
 		   isoforms where x and y are numbers. A cross-reference 
 		   to EBI complexes is provided when available.
 		 </dd>
 		 <dt>Glycosaminoglycans</dt>
 		 <dd>
-		   They are identified in MatrixDB using an identifier 
+		   They are identified by a MatrixDB-specific identifier 
 		   "GAG_x" where x is a number. A cross-reference 
 		   to ChEBI (Chemical Entities of Biological Interest) is provided when available.
 		 </dd>
 		 <dt>Protein fragments</dt>
 		   <dd>
 		     PFRAG in short-form, they 
-		     are identified by a MatrixDB identifier "PFRAG_x_species" 
+		     are identified by a MatrixDB-specific identifier "PFRAG_x_species" 
 		     where x is a number. A cross-reference to the PRO 
 		     feature of UniProtKB is provided when available.
 		   </dd>
 		   <dt>Cations</dt> 
 		   <dd>
-		     They are identified in MatrixDB using identifier:
+		     They are identified by a MatrixDB-specific identifier 
 		     "CAT_x" where x is a number. A cross-reference 
 		     to ChEBI (Chemical Entities of Biological Interest) is provided when available.
 		   </dd>
 		   <dt>Lipidic molecules</dt>
 		   <dd>
-		     Fatty-acid related biomolecules are identified in 
-		     MatrixDB using identifier: "LIP_x" where x is a 
+		     Fatty-acid related biomolecules are identified by a 
+		     MatrixDB-specific identifier "LIP_x" where x is a 
 		     number. A cross-reference to ChEBI (Chemical Entities of Biological Interest)
 		     is provided when available.
 		   </dd>
 		   <dt>Others</dt>
 		   <dd>    
-		     Remaining molecules are identified in MatrixDB using 
-		     identifier: "INORG_x" where x is a number. A cross-reference 
+		     Remaining molecules are identified by a MatrixDB-specific identifier 
+		     "INORG_x" where x is a number. A cross-reference 
 		     to ChEBI (Chemical Entities of Biological Interest)
 		     is provided when available.
 		   </dd>
 		 </div>
 
-	     <h4>MatrixDB datasets</h4>
+	     <h4>MatrixDB annotated sets</h4>
 	     <div class="subContent listBiomol">
 	       <b>Lists</b> of human <b>extracellular matrix</b>, <b>secreted</b> 
-	       and <b>membrane</b> proteins stored in MatrixDB. 
-	       These lists are built based on <a href="http://web.mit.edu/hyneslab/matrisome/">
-		 the Matrisome Project</a>, as well as relevant
+	       and <b>membrane</b> proteins stored in MatrixDB are provided here. 
+	       They are built based on <a href="http://web.mit.edu/hyneslab/matrisome/">
+		 the Matrisome Project</a> as well as relevant
+	       Interactions involving these proteins are extracted using psicquic to enrich the MatrixDB core dataset.	       
                <a href="http://www.uniprot.org">UniProt</a> keywords and 
 	       <a href="http://www.geneontology.org">Gene Ontology</a> terms.
 	       <ul class="fa-ul">
@@ -466,6 +442,33 @@
 		 </li>
 	       </ul>
              </div>
+
+	       <div class="subContent">
+               <h4>The matrisome</h4>
+               <ul class="fa-ul">
+		 <li><i class="fa fa-li fa-caret-right"></i></span>
+		   Overview of the matrisome - an inventory of extracellular matrix 
+		   constituents and functions. Hynes et al. 2012 Cold Spring Harb Perpsect Biol.
+		   <a class="pubmedLink"
+		      href="http://www.ncbi.nlm.nih.gov/pubmed/21937732" target="_blank">PubMed</a>.
+		 </li>
+		 <li><i class="fa fa-li fa-caret-right"></i>Towards definition of an ECM parts list: An advance on GO
+                   categories. Naba et al. 2012 Matrix Biology. <a class="pubmedLink"
+		      href="http://www.ncbi.nlm.nih.gov/pubmed/23199376" target="_blank">PubMed</a>.
+                 </li>
+		 <li><i class="fa fa-li fa-caret-right"></i>The matrisome: in silico definition and in vivo
+                   characterization by proteomics of normal and tumor
+                   extracellular matrices. Naba et al. 2012 Mol Cell
+                   Proteomics. <a href="http://www.ncbi.nlm.nih.gov/pubmed/22159717"
+					target="_blank" class="pubmedLink">PubMed</a></li>
+                 <li><i class="fa fa-li fa-download"></i>Download the human and murine matrisomes from 
+		   the <a href="http://web.mit.edu/hyneslab/matrisome/" target="_blank">Hynes Lab</a>
+		 </li>
+               </ul>
+               <br style="clear:both" />
+	     </div>
+
+
 	   </div>
 	   
            <!-- content five -->
