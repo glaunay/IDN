@@ -572,7 +572,7 @@ function bindWidgetTooltips (){
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
 		+ '<div class = "titreHelp">Filter network widget</div><div class = "bodyHelp">'
-		+ '<p>Here you can filter element out of the network basedone:</p>'
+		+ '<p>Here you can filter element out of the network based on:</p>'
 	       +'<ul><li>Expression Level of biomolecules</li><li>Experimental detection method of association</li></ul>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg">Help<a/> </p>'
 		+ '</div></div>',
