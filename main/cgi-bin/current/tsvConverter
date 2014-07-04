@@ -60,12 +60,13 @@ foreach my $link (@{$mainContainer->{ linksData }}) {
   }
 }
 close TSV;
-`cd $ENV{ IDN_TMP };tar -cjf network_$tag.tar.bz network_$tag.tsv`;
+#`cd $ENV{ IDN_TMP };tar -cjf network_$tag.tar.bz network_$tag.tsv`;
+`cd $ENV{ IDN_TMP };zip network_$tag.tsv.zip network_$tag.tsv`;
 
 my $response;
 $response = {
     status => 'OK',
-    fileLocation => "$ENV{ IDN_URL }/tmp/network_$tag.tar.bz" # put relative url here
+    fileLocation => "$ENV{ IDN_URL }/tmp/network_$tag.tsv.zip" # put relative url here
 };
 
 print $query->header('application/json');      # create the HTTP header

@@ -35,7 +35,7 @@ function initStatView (options){
 				var scaffold = '<div class = "row-fluid"><div class = "span6 firstPart"></div><div class = "span6 secondPart"></div></div>';
 			 	var self = this;
 			    var tableInteractor ='<table bgcolor="white" class="table table-bordered" >'+
-                      			 '<thead><tr><th>Association</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
+                      			 '<thead><tr><th>Associations</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
                       			 '</tr></thead><tbody>'+
                       			 '<tr><th>GAG**</th><td>' + data.associations.glycosaminoglycanProtein[0] + '</td>'+
 	                      			 '<td>' + data.associations.glycosaminoglycanMultimer[0] + '</td>'+
@@ -57,8 +57,8 @@ function initStatView (options){
 							  '<tr><td>Experiments</td><td>' + data.associations.matrixdb[1] + '</td><td>' + data.associations.psicquic[1] + '</td></tr>' +
 							  '</tbody></table>' +'<table bgcolor="white" class="table table-bordered" style=" max-height: 250px;">'+
                       		  '<thead><tr><th>Publications</th><th>Number</th></tr></thead><tbody>' +
-							  '<tr><td>Mimix level curated publications</td><td>' + pub + '</td></tr>'+
-							  '<tr><td>Imex level curated publications</td><td>' + data.publications.imex + '</td></tr>' ;
+							  '<tr><td>MIMIx-level curated publications</td><td>' + pub + '</td></tr>'+
+							  '<tr><td>IMEx-level curated publications</td><td>' + data.publications.imex + '</td></tr>' ;
 				tableFinal += '</tbody></table>';
 				var date = "<div>Update on " + data.localDate[1] + "/" + data.localDate[2] + "/" + data.localDate[0] +
 						   " at " + data.localDate[3] + "h" + data.localDate[4] +" min</div>";

@@ -73,13 +73,14 @@ open NAF, ">$ENV{ IDN_TMP }/cs_$tag/network.na" or die $!;
 print NAF "$naString";
 close NAF;
 
-`cd $ENV{ IDN_TMP };tar -cjf cs_$tag.tar.bz cs_$tag`;
-
+#`cd $ENV{ IDN_TMP };tar -cjf cs_$tag.tar.bz cs_$tag`;
+`cd $ENV{ IDN_TMP };zip -r cs_$tag.zip cs_$tag`;
 
 my $response;
 $response = {
     status => 'OK',
-    fileLocation => "$ENV{ IDN_URL }/tmp/cs_$tag.tar.bz" # put relative url here
+    fileLocation => "$ENV{ IDN_URL }/tmp/cs_$tag.zip"
+#    fileLocation => "$ENV{ IDN_URL }/tmp/cs_$tag.tar.bz" # put relative url here
 };
 
 print $query->header('application/json');      # create the HTTP header

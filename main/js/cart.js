@@ -136,7 +136,7 @@ function initCart (options){
 										 '<i class="fa fa-cog  fa-2x"></i></a><ul class="dropdown-menu liste">'+
 										 '<li class = "liCart"><a class = "leftalign linkToNetwork" target = "_blank"><i class="fa fa-gavel"></i> Build items interactions network</a></li>'+
 										 '<li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li>'+
-										 '<li class="divider"></li><li class="liCart"><a class = "leftalign"><i class ="fa fa-question"></i> Help</a></li></ul></div>'+
+										 '<li class="divider"></li><li class="liCart"><a class = "leftalign" href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg"><i class ="fa fa-question"></i> Help</a></li></ul></div>'+
 										 '<div class = "leftThing"><div class = "ico"><div id= "pastille" >' + self.data.length + '</div></div><div class = "drop ">'+
 										 ' <a class ="drop" data-toggle="dropdown "><i class="fa fa-shopping-cart fa-2x icon-white dropArrow"></i></a>'+
 										 '<ul class="dropdown-menu liste "></ul></div></div></div>');

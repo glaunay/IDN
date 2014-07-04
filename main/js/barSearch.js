@@ -214,7 +214,7 @@ function initBarSearch (options){
 	 	if(!self.iNavContext){
 	 		$(self.targetDomElem)
 			.find("input.inputBar")
-			.attr("placeholder","Search for a biomolecule, annotation term, author, publication or IMeX identifier");
+			.attr("placeholder","Search for a biomolecule, annotation term, author, publication or IMEx identifier");
 	 	}
 	    var elem = $(self.targetDomElem).find('input');
 		$(self.targetDomElem).find("a").tooltip();

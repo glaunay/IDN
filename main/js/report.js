@@ -128,7 +128,7 @@ function initMyReport (options){
 							 },
 			"keywrd"	  : {
 								title :"Here you can browse all data related to a UniprotKB keyword.",
-								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "http://youtube.com" target = "_blank">Here</a>',
+								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "http://youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
 							 	html  : true,
 							 	placement : "bottom",
 							 	container : "div#reportDiv",

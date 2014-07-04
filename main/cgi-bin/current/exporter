@@ -44,12 +44,12 @@ print SVG $htmlString;
 close SVG;
 
 my $target = $filename;
-$target =~ s/svg$/tif/;
-
-warn "running: java -jar ${BATIK_PATH}/batik-rasterizer.jar $filename";# 1&2> /dev/null";
-`java -jar ${BATIK_PATH}/batik-rasterizer.jar -m 'image/tiff' $filename`; #1&2> /dev/null`;
+#$target =~ s/svg$/tif/;
+$target =~ s/svg$/png/;
+$logger->info("running: java -jar ${BATIK_PATH}/batik-rasterizer.jar  $filename");# 1&2> /dev/null"; # -m 'image/tiff'
+`java -jar ${BATIK_PATH}/batik-rasterizer.jar $filename`; #1&2> /dev/null`;
 my $response;
-my $location = "tmp/$tag.tif";
+my $location = "tmp/$tag.png";
 if (-e $target) {
    `gzip -f -c $target > $target.gz`;
    $response = {
