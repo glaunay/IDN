@@ -705,7 +705,7 @@ function initMyReport (options){
   			if(!self.jsonData.relationship){return "";}
   			if(!self.jsonData.relationship.Belongs_to[0]){return "";}
   			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
-  			var line = "<dt class ='hReport'>Precursor of:</dt><dd>";
+  			var line = "<dt class ='hReport'>Processed from:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.Belongs_to.length; i++) {
 			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.Belongs_to[i] + "'>" + self.jsonData.relationship.Belongs_to[i] + "</a>, ";
 			};
