@@ -27,7 +27,7 @@ my $queryData = decode_json($params{'data'});
 $logger->info(Dumper($queryData));
 
 my $url = "\"http://www.ebi.ac.uk/Tools/webservices/psicquic/view/main.xhtml?query=id:"
-    . $queryData->{ biomolecule } . "&conversationContext=1\"";
+    . $queryData->{ biomolecule } . "\"";
 
 my $cnt;
 my $html = `curl $url`;
