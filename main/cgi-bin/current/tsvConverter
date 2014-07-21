@@ -42,7 +42,8 @@ foreach my $key (keys (%{$mainContainer}))  {
     $logger->info("$key\n");
 }
 
-$logger->info(Dumper($mainContainer));
+$logger->info( @{$mainContainer->{ linksData }} 
+	       . " associations to mitab dump(Based on following dataContainer)\n". Dumper($mainContainer));
 
 open TSV, ">$ENV{ IDN_TMP }/network_$tag.tsv" or $logger->logdie($!);
 print TSV "#" . $mitabDumper->getHeader("\t") . "\n";
