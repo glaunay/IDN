@@ -328,15 +328,33 @@
     width : 80%;
 }
 
- .cartBody li div.span2 {
+.cartBody li div.span2 {
     vertical-align : middle;
 }
 
- .cartBody li {
+.cartBody li {
     white-space: nowrap
 }
 
- .cartBody li .row-fluid {
+.cartBody li i.fa-li {
+    padding-top : 0.4em;
+    padding-left : 0.7em;
+    font-size : 1.4em;
+}
+
+.cartBody li div.span10 {
+    text-align: center;
+    font-size: 1.3em;
+    padding-top:0.2em;
+}
+
+.cartBody li div.span2 {
+    text-align: center;
+    font-size: 1.5em;
+    padding-top:0.2em
+}
+
+.cartBody li .row-fluid {
     padding-top : 5px;
 }
 

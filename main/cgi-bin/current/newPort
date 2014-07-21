@@ -14,6 +14,8 @@ use CHI;
 use JSON;
 use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
+use IO::Socket::UNIX qw( SOCK_STREAM );
+
 #custom
 use common;
 use newPort;
@@ -35,10 +37,18 @@ if (defined($dataCached)) {
   our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||
     $logger->logdie("Couldn't open database");
   #our $DB = Ace->connect(-path=>'/home/matrixdb/matrixdb_latest') || die "couldnot connect to DB";
+
+  my $socketMI = IO::Socket::UNIX->new(
+    Type => SOCK_STREAM,
+    Peer => '/tmp/miSocket',
+    )
+    or $logger->logdie("Can't connect to server: $!");;
+
   my $data = newPort::getData({
 			       type => $query->{ type }->[0],
 			       value => $query->{ value }->[0],
-			       DB => $DB
+			       DB => $DB,
+			       cvSocket => $socketMI
 			      });
   $logger->trace(Dumper( $data ));
   $jsonString = encode_json($data);
@@ -92,8 +102,32 @@ my $htmlContent =
 "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/cart.js\"></script>";
 my $htmlTrailer = "<script type=\"text/javascript\">" .  '$(function(){'  . "runReportMaestro({rootUrl:\"$ENV{ IDN_URL }\", cart : true, reportDiv : \"#reportDiv\", jsonData : " . $jsonString . "})})</script>" .
   "<title>MatrixDB report</title></head><body><div class=\"wrap\"><div id = \"reportDiv\"></div></div>" .
-  "<div class=\"footer\"><div class=\"push\"></div><div class=\"container row-fluid\"><div class=\"span3\" style=\"padding : 5px 0px 0px 5px\"><a target=\"_blank\" href=\"http://www.cnrs.fr\"><img width=\"70px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/logo_cnrs_footer.png\" /></a><a target=\"_blank\" href=\"http://cordis.europa.eu/fp7/home_en.html\"><img width=\"100px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/SFP.png\" /></a></div><div class=\"span6\">Matrixdb Fundings: <ul><li>The European Commission under PSIMEx, contract number FP7-HEALTH-2007-223411</li><li>The Rhone Alpes Complex Systems Institute</li></ul></div><div class=\"span3\" style = \"padding : 5px 5px 5px 5px\"><a target=\"_blank\" href=\"http://www.ixxi.fr\"><img width=\"120px\" style=\"float:right\" src=\"$ENV{ IDN_URL }/img/ixxi.png\" /></a><a target=\"_blank\" href=\"http://www.rhonealpes.fr\"><img width=\"90px\" style=\"float:right;margin-right:15px\" src=\"$ENV{ IDN_URL }/img/logo_region_footer.png\"/></a></div></div>" .
-"</div></body></html>\n";
+   '<div class="footer">'
+    	. '<div class="push"></div>'
+        . '<div class="container row-fluid">'
+        . '<div class="span3" style="padding : 5px 0px 0px 5px">' 
+	. '<a target="_blank" href="http://www.cnrs.fr">'
+	. '<img width="70px" style="float:left" src="' . $ENV{ IDN_URL } . '/img/logo_cnrs_footer.png" /></a>'
+        . '<a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">'
+	. '<img width="100px" style="float:left" src="' . $ENV{ IDN_URL } . '/img/SFP.png" /></a></div>'
+        . '<div class="span5">MatrixDB is funded by:'
+        .   '<ul>'
+        .     '<li>European Commission PSIMEx grant FP7-HEALTH-2007-223411</li>'
+	.     '<li>Institut Rh&ocirc;ne-Alpin des Syst&egrave;mes Complexes</li>'
+        .     '<li>CNRS PEPS BMI 2013</li>'
+        .   '</ul>'
+        .  '</div>'
+        .  '<div class="span4" style = "padding : 5px 5px 5px 5px">'
+	.   '<a target="_blank" href="http://www.ixxi.fr"><img width="120px" style="float:right" src="' . $ENV{IDN_URL} . '/img/ixxi.png" /></a>'
+	.   '<a target="_blank" href="http://www.lyonbiopole.com/financer/Cluster-de-recherche-n10--Infectiologie-.html"><img width="200px" style="float:right;margin-right:15px" src="' . $ENV{ IDN_URL }. '/img/logoCluster.png"/></a>'
+	. ' </div>'
+        . '</div>'
+        . '</div>'
+        .'</body></html>';
+
+
+#  "<div class=\"footer\"><div class=\"push\"></div><div class=\"container row-fluid\"><div class=\"span3\" style=\"padding : 5px 0px 0px 5px\"><a target=\"_blank\" href=\"http://www.cnrs.fr\"><img width=\"70px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/logo_cnrs_footer.png\" /></a><a target=\"_blank\" href=\"http://cordis.europa.eu/fp7/home_en.html\"><img width=\"100px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/SFP.png\" /></a></div><div class=\"span6\">Matrixdb Fundings: <ul><li>The European Commission under PSIMEx, contract number FP7-HEALTH-2007-223411</li><li>The Rhone Alpes Complex Systems Institute</li></ul></div><div class=\"span3\" style = \"padding : 5px 5px 5px 5px\"><a target=\"_blank\" href=\"http://www.ixxi.fr\"><img width=\"120px\" style=\"float:right\" src=\"$ENV{ IDN_URL }/img/ixxi.png\" /></a><a target=\"_blank\" href=\"http://www.rhonealpes.fr\"><img width=\"90px\" style=\"float:right;margin-right:15px\" src=\"$ENV{ IDN_URL }/img/logo_region_footer.png\"/></a></div></div>" .
+#"</div></body></html>\n";
 
 $htmlContent .= defined ($customJSlib->{ $query->{ type }->[0] }) 
   ? $customJSlib->{ $query->{ type }->[0] } : '';

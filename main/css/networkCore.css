@@ -16,3 +16,26 @@ circle:hover {
 .nodeTooltip {
     z-index : 100;
 }
+
+.nodeTooltipInner {
+    
+
+//    background :orange!important;
+}
+.nodeTooltip .tooltip-inner {
+    max-width: 100%!important;
+}
+
+.nodeTooltipInner .head {
+    font-weight: bold;
+    font-size: 1.15em;
+}
+.nodeTooltipInner div.tooltipAttr {
+    display: inline-block;
+    text-align: left !important;
+}
+
+.nodeTooltipInner div.tooltipAttr span {
+    float: left;
+    
+}

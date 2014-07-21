@@ -47,7 +47,7 @@ sub get {
 	    pfam => undef,
 	    interpro => undef,
 	    pdb => undef,
-	    gene => undef,
+	    gene => getGene($aceObject),
 	    type => undef,
 	    relationship => undef,
 	    location => undef,

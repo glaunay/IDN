@@ -88,13 +88,20 @@ function vizObjectInit (opt) {
 					    ajaxSearch : function (data) {
 						vizObject.core.setStatus("fetching");
 						networkExpand(data, function (networkData, request) {
-								  vizObject.networkID = networkData.id;
-								  vizObject.core.add(networkData);
-								  vizObject.core.addCenter(networkData.newCenters);	
-								  var keywordDistrib = vizObject.core.getKeywordDistribution();
-								  vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);
-							          vizObject.tabular.setNeighbourhoods();
-							      });
+							vizObject.networkID = networkData.id;
+							if (!vizObject.core.add(networkData)) {
+							    //console.log("Empty pool here");
+							    vizObject.idleDiv.erase();
+							    vizObject.core.bubbleCriterionNodes({}, 'stop');
+							    vizObject.core.dispatchLinkData();
+							    vizObject.core.setStatus("complete");
+							} else {
+						  		vizObject.core.addCenter(networkData.newCenters);	
+							    var keywordDistrib = vizObject.core.getKeywordDistribution();
+								vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);
+							        vizObject.tabular.setNeighbourhoods();
+							}	
+						});
 					    },
 					    jobExhaustion : function () {
 						var tabularDomElemSelector = vizObject.tabular.getSelector("maxi");
@@ -232,7 +239,7 @@ function vizObjectInit (opt) {
 							    },
 							    upmark :  {
 								width: "251px",overflow : "visible",  position : "absolute",
-								top : "-60px",right:"-1px",
+								top : "-59px",right:"-1px",
 							    }
 							};
    						    },
@@ -323,20 +330,13 @@ function vizObjectInit (opt) {
      * 
      */
 
-
- /* dataOut = [{ 
-  *         type : "expressionTag" OR "detectionMethod", 
-  *         criterions : { 
-  *                        "monTissu" : value, ... },
-  *         strict : boolean 
-  * }, ... ] */
     var dataOut = vizObject.networkFilter.getActive('node');
-
-    //networkFilter.getActive expects 'node' or 'link' argument and returns the approriate Robot
-    vizObject.core.registerCom({tabular : vizObject.tabular.getTabularSelector(),
-			        filter : vizObject.networkFilter 
-				? vizObject.networkFilter
-				: null });
+    vizObject.core
+	.registerCom({
+			 tabular : vizObject.tabular.getTabularSelector(),
+			 filter : vizObject.networkFilter 
+			     ? vizObject.networkFilter
+			     : null });
 
     $(vizObject.tabular.target)
     	.on('tickToggle', function (event,d){
@@ -360,13 +360,12 @@ function vizObjectInit (opt) {
 			var humanNode = vizObject.core.getNodePerSpecie("9606");
 			vizObject.tabular.tickNodes({data : humanNode,setToGlow : 'check'});
 			vizObject.core.setGlowyNodes({nodeNameList : humanNode});
-		}
-		else if(data.type === "orphans"){
+		} else if(data.type === "orphans"){
 			vizObject.tabular.tickNodes({data : []});
 			var orphanNode = vizObject.core.getOrphanNodes();
 			vizObject.tabular.tickNodes({data : orphanNode, setToGlow : 'check'});
 			vizObject.core.setGlowyNodes({nodeNameList : orphanNode});
-		}else{
+		} else {
 			console.dir('this type is wrong');
 			console.dir(data.type);
 		}
@@ -375,32 +374,7 @@ function vizObjectInit (opt) {
 		    var nodeSelection = vizObject.core.getGlowyNodes();
 		    vizObject.tabular.tickNodes({ data : nodeSelection, setToGlow : true });
 	});
-	 
 
-    /*    $(vizObject.core.target).on('networkChangeStart', function(event,d) {
-     vizObject.networkFilter.blockAll();
-     });
-     */
-    /*   $(vizObject.core.target).on('networkNodeChangeComplete', function(event,dataIn) {*/
-    /* dataIn {
-     * type : nodes, 
-     * expressionTag : { 
-     * toAdd :{ expressionTag : nbNodes , .. }, 
-     * toDel []}*/	
-    /*
-     vizObject.networkFilter.update(dataIn);
-     vizObject.networkFilter.unblock(data);
-     
-     
-     vizObject.core.hideNodes(dataOut);
-     
-     });
-     $(vizObject.core.target).on('networkLinkChangeComplete', function(event,d) {
-     
-    });
-  */
-
-    // , elementInfo : vizObject.elementInfo
     $(vizObject.core.target).on('mouseOverElement', function(event, d) {
 				    vizObject.historicHover.add(d);
 				});
@@ -412,12 +386,20 @@ function vizObjectInit (opt) {
 				    vizObject.scheduler.add(d);
 				    vizObject.tabular.setWait({nodeTab : "wait", linkTab : "wait"});			
 				});
-	        
+    $(vizObject.core.target).on('linkClick', function(event, d){
+				    vizObject.elementInfo.draw(d);
+				    event.preventDefault();
+				});
+ 
     $(vizObject.cartCtrl.target)
 	.on('databaseQuery', function (event,data) {
 		vizObject.idleDiv.draw({type : 'databaseQuery', opt : 'blocker'});
 		vizObject.core.bubbleCriterionNodes(data, 'start');		
-	    });    
+	    })
+	.on('cartShowNode', function (event,d){
+		vizObject.core.setGlowyNodes({nodeNameList : [d]});
+		//event.stopPropagation();
+	    });   
     $(vizObject.core.target)
 	.on('startMonitor', function (event, data){		
 		vizObject.monitor.start(data);
@@ -492,7 +474,7 @@ function litteralLoader (searchCrit) {
 
 function jsonLoader (jsonLocation) {
     var networkData;
-    console.log("reading json from " + jsonLocation);
+//    console.log("reading json from " + jsonLocation);
 
     $.ajax({
                type: 'GET',

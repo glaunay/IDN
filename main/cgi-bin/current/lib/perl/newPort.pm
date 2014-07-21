@@ -53,7 +53,9 @@ sub getData {
   }
 
  if ($p->{ type } eq "experiment") {
-    $dataContainer = newPort::experiment::get({name => $p->{ value }, DB => $p->{ DB }});
+     my $param = { name => $p->{ value }, DB => $p->{ DB } };
+     if ($p->{ cvSocket }) {$param->{ cvSocket } = $p->{ cvSocket };}
+    $dataContainer = newPort::experiment::get($param);
     $dataContainer->{ type } = $p->{ type };
   }
 

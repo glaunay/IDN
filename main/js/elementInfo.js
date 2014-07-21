@@ -104,13 +104,11 @@ function initElementInfo(opt) {
 	},
 	draw : function (data) {
 	    this.setUrl();
-	   // console.log("lets draw " + this.targetSuffix);
 	    this.data = data;
-	 //   console.dir(data);
 	    if (data.defaultSel){
 	    	this.defaultSel = data.defaultSel;
 	    }
-	    
+	    $(this.target + ' div[id*="elementInfo"]').remove();
 	    var divId = this.targetSuffix ? "elementInfo" +  this.targetSuffix : "elementInfo";
 	  //  console.log(divId);
 	    $(this.target).append('<div id="' + divId + '"><div class="upmark"></div><div class="ei-main"><div class="ei-header"></div><div class="ei-body"></div></div><div>');
@@ -119,7 +117,7 @@ function initElementInfo(opt) {
 	   
 	//    console.log(this.data);
 	    if (this.data.details) {
-	    	this.generateLinkContent()
+	    	this.generateLinkContent();
 	    } else {
 			this.generateNodeContent();
 	    }
@@ -536,7 +534,7 @@ function initElementInfo(opt) {
 		var self = this;
 		var index = index + 1;
 		if(!xpData){
-			return "waiting for data..";
+			return "<div>waiting for data..</div>";
 		}
 		var divReturn = '<div class  = "contentXp" index = "' + index + '"><div class = "generalInfo"><dl>'+
 		self._xpModif(xpData) +

@@ -61,7 +61,7 @@ function initCart (options){
 		},
 		_tickPulse : function(){//refresh
 			var self = this;
-			self._hrefNetWork()
+		//	self._hrefNetWork()
 			var newData = this._isDataChanged();
 			if (!newData) {
 				return;
@@ -102,7 +102,8 @@ function initCart (options){
 				event.stopPropagation();
 				});
 			$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul').click(function(){event.stopPropagation();});
-			self._hrefNetWork()
+		
+//			self._hrefNetWork()
 		},
 		delItem : function(item,icoclick){//supprime un item du cart
 			var self = this;
@@ -118,7 +119,7 @@ function initCart (options){
     		$.cookie('cartCookie',{type : 'cartCookie', data : self.data});
 			self.draw();
 			if(icoclick){self._clickDrop();}
-			self._hrefNetWork()
+			//self._hrefNetWork()
 
 		},
 		_clear : function(){// supprime tout les items
@@ -126,7 +127,7 @@ function initCart (options){
 			$.cookie("cartCookie",{type : "cartCookie", data : []});
 			self.data = [];
 			self.draw();
-			self._hrefNetWork()
+			//self._hrefNetWork()
 			return ;
 		},
 		draw : function(){// dessine le composant cart
@@ -141,7 +142,7 @@ function initCart (options){
 										 ' <a class ="drop" data-toggle="dropdown "><i class="fa fa-shopping-cart fa-2x icon-white dropArrow"></i></a>'+
 										 '<ul class="dropdown-menu liste "></ul></div></div></div>');
 			self._refreshCount(true)	
-			self._hrefNetWork()
+//			self._hrefNetWork()
 			self._ajoutListe(self.data);
 						$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul>li>div>div:last-child').click(function(){
 				self.delItem({value : $(this).parent().parent().attr('name')},true);
@@ -163,6 +164,12 @@ function initCart (options){
 			if (!this.tick) {
 				this._startTick();
 			}
+
+			$(self.targetDomElem).find('a.linkToNetwork')
+				.on('click', function(event){
+					self._doCartPost();
+					event.preventDefault();
+				});
 			
 		},
 		_clickDrop : function(){ // devoile la liste
@@ -211,15 +218,35 @@ function initCart (options){
 				$(self.targetDomElem).find('div.cartDraw >div> div.drop > ul').toggle();}
 			$(self.targetDomElem).find('div.cartDraw > div.clearDiv > ul').toggle();
 			$.fx.off = false;
-		},
+		},//following method is deprecated
 		_hrefNetWork : function(){
 			var self = this;
 			var suiteOfUrl = "?"
 			for (var i=0; i < self.data.length; i++) {
 			  suiteOfUrl += self.data[i].type + "=" + self.data[i].value +"&";
 			};
-			suiteOfUrl = suiteOfUrl.substring(0,suiteOfUrl.length-1)
-			$(self.targetDomElem).find('a.linkToNetwork').attr("href", self.rootUrlForNetwork + suiteOfUrl);
+			suiteOfUrl = suiteOfUrl.substring(0,suiteOfUrl.length-1)		
+		},
+		_doCartPost : function (){
+				if (!this.data) return;
+				if (this.data.length === 0) return;				
+				console.log("here we are");
+				var self = this;
+				var scaffold = '<form id="ghostCart" action="' + 
+	                         self.rootUrlForNetwork
+	                         + '" method="post" target="_blank">'
+				 + '</form>';
+    				 $(self.targetDomElem).find("#ghostCart").remove();
+				 $(self.targetDomElem).append(scaffold);	
+				 self.data.forEach(function(elem, i){
+					 $(self.targetDomElem).find('#ghostCart')
+					 .append('<input id="item_' + i + '" name="' + elem.type + '" type="hidden" ' + 
+					         'value="' + elem.value  + '">');
+				});
+					$('#ghostCart').submit();
 		}
+
 	}
 }
+
+

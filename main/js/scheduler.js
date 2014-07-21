@@ -120,7 +120,6 @@ function schedulerInit (opt) {
 	/*Initialize the threads pool*/
 	start : function () { // start and listen 
 	    var self = this;
-	    console.log("Starting pool of " + this.nThread + " threads");	    
 	    for (var iThread = 0; iThread < this.nThread; iThread++) {		
 		var fn = function (iThread) {
 		    var thread = {

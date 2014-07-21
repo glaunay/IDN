@@ -5,7 +5,7 @@ use Data::Dumper;
 
 use common;
 use newPort::partnerDetails;
-
+use localSocket;
 use Log::Log4perl qw(get_logger);
 our $logger = get_logger ("newPort::experiment");
 
@@ -31,9 +31,9 @@ sub get {
     return {};
   }
 
-  return {
+ my $datum = {
 	  name => $p->{ name },	   
-	  partnerDetails => getPartnerDetails($aceObject),
+	  partnerDetails => getPartnerDetails($aceObject, $p->{ cvSocket }),
 	  association => getAssociation($aceObject),
 	  interactionDetectionMethod => getInteractionDetectionMethod($aceObject),
 	  experimentModification => getExperimentModification($aceObject),
@@ -58,13 +58,34 @@ sub get {
 	  updateDate => getUpdateDate($aceObject),
 	  database => getSourceDatabase($aceObject)
 	 };
-  
+
+  defined ($p->{ cvSocket }) && cvRefit ($datum, $p->{ cvSocket });
+  return $datum;
 }
+
+
+sub cvRefit {
+    my ($datum, $cvSocket) = @_;
+
+    foreach my $tag (qw/interactionDetectionMethod interactionType/) {
+	defined($datum->{ $tag }) || next;
+	my $cvTerm = localSocket::runCvRequest (with => $cvSocket, from => 'matrixDB',
+						askFor => 'id', selectors => { name => $datum->{ $tag } });
+#	$logger->error("REFITING $tag " . $datum->{ $tag } . " to " . $cvTerm);
+	defined($cvTerm) || next;
+	$datum->{ $tag } .= "[$cvTerm]";
+    }
+}
+
+
 
 sub getPartnerDetails {
   my $aceObject = shift;
-  my $data = newPort::partnerDetails::get($aceObject);
-  
+  my $cvSocket = shift;
+  if (defined($cvSocket)) {$logger->error("i have something here");
+		       }
+  my $data = newPort::partnerDetails::get($aceObject, $cvSocket);
+
   return $data;
 }
 

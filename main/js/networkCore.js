@@ -433,7 +433,6 @@ function coreInit (opt) {
 	    for (var tag in this.detectionMethod) {
 		data[tag] = this.detectionMethod[tag].length;
 	    }
-	    
 	    filterComponent.update({type : "detectionMethod", data : data, action : "init"});		    
 	},
 	_setLinkData : function (){
@@ -611,6 +610,8 @@ function coreInit (opt) {
 					    options for later development needs
 					   */
 
+	if (datum.nodeData.length == 0 && datum.linksData.length == 0) return false;
+
 	/* Custom network startup patch 
 	Check that all nodes and links are not already part of the network
 	*/	
@@ -767,9 +768,43 @@ function coreInit (opt) {
 			   $(self.target).trigger('nodeDataToFetch',d);			   
 			   var node = this;
 			   $(this).tooltip({
-					       title : function (){ 
-						   var text = '<div>' + d3.select(this).datum().name + '</div>';
-						   return text;
+					       title : function (){
+						   var htmlString;
+						   var datum = d3.select(this).datum();
+						   var nList = getPropByKey(datum, 'common.anyNames');
+						   if ($.isArray(nList)) {
+						       if (nList.length > 0)
+							   htmlString = '<div class="head">'+ nList[0] + '</div>';
+						   }
+						   if (!htmlString)
+						       htmlString = '<div class="head">'+ datum.name + '</div>';
+						   var gName = getPropByKey(datum, 'GeneName');
+						  /* if (gName)
+						       htmlString += '<div class="row-fluid">'
+						       + '<div class="span3">gene:</div>'
+						       + '<div class="span9" style="color:yellow;">' + gName + '</div>'
+						       + '</div>';*/
+						   var species = getPropByKey(datum, 'specie.names');
+						   var specie;
+						   if ($.isArray(species)) {
+						       if (species.length > 0)
+							   specie = species[0];
+/*							   htmlString += '<div class="row-fluid">'
+							   + '<div class="span3">specie:</div>'
+							   + '<div class="span9" style="color:blue;">' 
+							   + species[0] + '</div>'
+							   + '</div>';*/
+						   }
+						   if (specie || gName){
+						       if(specie)
+							   htmlString += '<div class="tooltipAttr"><span>Specie</span>'
+							   + '<span>:   ' + specie + '</span></br>';
+						       if(gName)
+							   htmlString += '<div class="tooltipAttr"><span>Gene</span>'
+							   + '<span>:   ' + gName + '</span>';
+						   }
+						   
+						   return '<div class="nodeTooltipInner">' + htmlString + '</div>'; 
 					       },
 					       template: '<div class="tooltip nodeTooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
 					       html : true,
@@ -822,7 +857,6 @@ function coreInit (opt) {
 		    })
 		.on ('mouseup', function(d){
 			 if (self.tooltipForced) {
-			     console.log("i should redisplay node");
 			     $(this).tooltip('show');
 			 }
 		//	 d3.event.stopPropagation();		
@@ -902,7 +936,11 @@ function coreInit (opt) {
 				    timeout : 500,
 				    out : function (){}
 				});	
-			});
+			})
+		.on('click',function () {
+			var d = d3.select(this).datum();
+			$(self.target).trigger('linkClick', d);
+		    });
 	    //.attr('display', 'none');				      
 	    link.exit().remove();				     
 	    
@@ -1799,7 +1837,6 @@ function coreInit (opt) {
 	    //console.dir(nodes);
 	    if (data === "show") {
 		this.tooltipForced = true;
-		console.log("setting node label to " + data );
 		d3.selectAll('.node').each(function(d){ 
 					       $(this).tooltip('show');
 						   //.tooltip('disable');
@@ -1807,7 +1844,6 @@ function coreInit (opt) {
 	    }
 	    else if (data === "hide") {
 		this.tooltipForced = false;
-		console.log("setting node label to " + data );		
 		d3.selectAll('.node').each(function(d){
 					       $(this).tooltip('hide');
 					      // $(this).tooltip('enable');

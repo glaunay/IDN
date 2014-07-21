@@ -67,11 +67,9 @@ function tabularInit (opt) {
 	    $(this.target + ' #nodeLabelToggler').on('click', function () {
 							 var status =  $(this).hasClass('active') 
 							     ? 'hide'
-							     : 'show';
-							 console.log('click ' + status);
+							     : 'show';						
 							 $(self.target)					
 							     .trigger('nodeLabelToggle', status);
-							 
 						     });
 							    
 	    
@@ -229,7 +227,7 @@ function tabularInit (opt) {
 			   container : 'body'})
 		.on('click', function(){
 			var data = self._getTickedNodes();
-			console.log(data);
+//			console.log(data);
 			var nodeList = data.map(function(elem, i, array){
 						    return elem.extID;
 						});
@@ -379,10 +377,8 @@ function tabularInit (opt) {
 		this._toggleToNodeTab();
 		
 		if(this.nodeBuffer){
-			console.dir(this.nodeBuffer)
-			
-			this.tickNodes(this.nodeBuffer);
-			this.nodeBuffer = null;
+		    this.tickNodes(this.nodeBuffer);
+		    this.nodeBuffer = null;
 		}
 			    
 	},
@@ -509,7 +505,7 @@ function tabularInit (opt) {
 	 * */
 	_toggleToLinkTab : function () {
 	    var self = this;
-	    console.log("toggling to link tab");
+//	    console.log("toggling to link tab");
 	    this.activePanel = "link";
 	    
 	    // inactivate the add to cart operator
@@ -655,8 +651,8 @@ function tabularInit (opt) {
 	},
 	_createLinkTable : function () {
 	    var self = this;
-	    console.log("create link table for " + self.linkTableData.length + " elements");
-	    console.dir(self.linkTableData);
+//	    console.log("create link table for " + self.linkTableData.length + " elements");
+//	    console.dir(self.linkTableData);
 	    this.linkDT = $(this.target + ' .tabularNetworkBodyLinkTable table')
 		.dataTable({
 			       aaData : self.linkTableData,
@@ -667,11 +663,11 @@ function tabularInit (opt) {
 			       "sScrollY": "300px",
 			       "fnDrawCallback": function( oSettings ) {},			       
 			       "fnInitComplete": function( oSettings ) {
-				   console.log("fnComplete");
+//				   console.log("fnComplete");
 			       	   this.$('tr').each(function(){ // Warning aaSorting is mandatory, otherwise row order differ
 							 var id = $(this).find('td:nth-child(2)').text();
 							 id += "--" + $(this).find('td:nth-child(3)').text();
-							 console.log("looking for " + id);
+	//						 console.log("looking for " + id);
 							 $(this).attr('extID', id)
 							     .addClass('s_'+ self.linkRawData[id].source.name)
 							     .addClass('t_'+ self.linkRawData[id].target.name);
@@ -681,7 +677,7 @@ function tabularInit (opt) {
 	    $(this.target + ' .tabularNetworkBodyLinkTable')
 		.tooltip({selector: "span[rel=tooltip]"});
 
-	    console.dir(this.linkDT);
+//	    console.dir(this.linkDT);
 	    
 	},
 	_createNodeTable : function () {
@@ -785,8 +781,8 @@ function tabularInit (opt) {
 	    if(this.linkDT) {	
 		var target = tNode.name.replace(":", "\\:"),
 		source = sNode.name.replace(":", "\\:");
-		console.log(target);
-		console.log(source);
+//		console.log(target);
+//		console.log(source);
 		//var sel = this.linkDT.$('tr.t_' + target + '.s_' + source);
 		var oTable = $(this.linkDT).DataTable();
 		    oTable.$('tr[extID=' + source + '--' + target + ']')
@@ -800,8 +796,8 @@ function tabularInit (opt) {
 								       return content;
 								   });
 			      //var val = oTable.rows( this ).indexes();
-			      console.log("ABLE TO TOUCH AT");
-			      console.log(linkDatum);
+//			      console.log("ABLE TO TOUCH AT");
+//			      console.log(linkDatum);
 			 //     oTable.cell( 0, 0 ).data( 'U' ).draw();
 			  //    var tdElem = 
 			   //   var cell = table.cell( this );
@@ -913,13 +909,13 @@ function tabularInit (opt) {
 			     scrollTop: scrollTo.offset().top - scroller.offset().top + scroller.scrollTop()},
 			 {
 			     complete : function () {
-				 console.log(this);  // this is dataTAble_scrollBody we want the tr
-				 console.log($(this).offset());
+//				 console.log(this);  // this is dataTAble_scrollBody we want the tr
+		//		 console.log($(this).offset());
 				 /*$(self.target +  ' .tabularNetworkBodyContent .dataTables_scrollBody')
 				     .on('click', function () {
 					     self.unFocus();
 					 });*/
-				console.log(selector);
+	//			console.log(selector);
 	        		 $(selector + ' td').addClass(function(){
 							 return $(this).hasClass('odd')
 							      ? "rowFocusOdd" 
@@ -970,7 +966,7 @@ function tabularInit (opt) {
 	    // console.dir(rawIndex);
 	    rawIndex.reverse();
 	    rawIndex.forEach(function(elem) {
-				 console.log("splicing out element " + elem);
+//				 console.log("splicing out element " + elem);
 				 self.linkRawData.splice(elem,1);
 				 self.linkTableData.splice(elem,1);
 			     });

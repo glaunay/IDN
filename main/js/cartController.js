@@ -176,7 +176,7 @@ function initCartCtrl (opt) {
 		$(this.miniSel + " .plusNotification").show();
 		$(this.miniSel + " .plusNotification")
 		    .on('click', function(event){							      
-			    console.dir(event.currentTarget);
+			 //   console.dir(event.currentTarget);
 			    var critObjList = self.callback.getGlowyAsCriterionList();
 			    self.addCriterion(critObjList);							      
 			    event.stopPropagation();
@@ -304,15 +304,23 @@ function initCartCtrl (opt) {
 		/*if (this.size === "magnified")
 		    //if (!this.jsScrollApi) this._startJsScroll();*/
 	    }
-
+	    var self = this;
+	    
 	    var string = data.name.replace("Free text search on ", "");
 	    var scaffold = '<li class="cartCriterion" id="testSearch_' + string + '">' + symbolTable[data.type].icon 
 		+ '<div class="row-fluid"><div class="span10 litteral">' + string + '</div>'
 		+ '<div class="span2"><i class="fa fa-times-circle"></i>' + '</div></div></li>';
 	    this.criterionList.push(data);
 	    
-	    $(this.target + ' .cartBody ul').append(scaffold);	
-	    var self = this;
+	    $(this.target + ' .cartBody ul').append(scaffold);
+	    $(this.target + ' li.cartCriterion:last').has('i.fa-spinner').css('cursor','pointer')
+		.on('click', function(e){
+			var name = $(this).find('div.litteral').text();
+			$(self.target).trigger('cartShowNode', name);
+			e.stopPropagation();
+		    });
+	    
+	    
 	    
 	    $(this.target + ' .cartBody ul li:last')
 		.on('mouseover',

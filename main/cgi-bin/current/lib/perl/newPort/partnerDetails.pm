@@ -8,7 +8,7 @@ use newPort::bindingSite;
 use newPort::pointMutation;
 use newPort::postTranslationalModification;
 use newPort::miscellaneousFeatures;
-
+use localSocket;
 use Log::Log4perl qw(get_logger);
 our $logger = get_logger ("newPort::partnerDetails");
 
@@ -28,6 +28,7 @@ our $logger = get_logger ("newPort::partnerDetails");
 
 sub get {
   my $aceExperimentObject = shift;
+  my $cvSocket = shift;
   if ($aceExperimentObject->class() ne "Experiment") {
     $logger->error("supplied object is not of Ace Experiment class" . Dumper($aceExperimentObject));
     return undef;
@@ -70,12 +71,29 @@ sub get {
     $datum->{ feature } = getFeature($acePartnerObject);
     $datum->{ isoform } = getIsoform($acePartnerObject);
     
+    defined ($cvSocket) && cvRefit($datum, $cvSocket);
+     
+
+
     $logger->info("Pushing partnerDetail of " .  $datum->{ name });
     push @data, $datum;
   }
 
   $logger->info($aceExperimentObject->name . " :returning following data container:\n" . Dumper(@data));
   return \@data;
+}
+
+sub cvRefit {
+    my ($datum, $cvSocket) = @_;
+
+    foreach my $tag (qw/detectionMethod experimentalRole/) {
+	defined($datum->{ $tag }) || next;
+	my $cvTerm = localSocket::runCvRequest (with => $cvSocket, from => 'matrixDB',
+						askFor => 'id', selectors => { name => $datum->{ $tag } });
+#	$logger->error("REFITING $tag " . $datum->{ $tag } . " to " . $cvTerm);
+	defined($cvTerm) || next;
+	$datum->{ $tag } .= "[$cvTerm]";
+    }
 }
 
 sub getCommonName {

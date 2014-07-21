@@ -36,7 +36,7 @@ $logger->trace($html);
 $url =~ s/^"//;
 $url =~ s/"$//;
 
-my ($cnt) = $html =~ /<span id="totalResults" style="font-weight: bold;">([\d]+)<\/span>/;
+my ($cnt) = $html =~ /<span id="totalResults" style="font-weight: bold;">([^>]+)<\/span>/;
 $logger->trace("psicquic hit number : $cnt");
 my $data = { number => $cnt,
 	     url => $url

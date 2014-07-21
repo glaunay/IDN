@@ -64,7 +64,6 @@ function networkExpand (data, callback) {
 	    success : function (data, textStatus, jqXHR){
 		vizObject.networkID = data.id;
 		callback(data,requestObject);
-		//callback(data);
 	    }
 	});	
 }

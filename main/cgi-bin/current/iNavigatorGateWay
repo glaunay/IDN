@@ -16,14 +16,28 @@ use JSON;
 
 Log::Log4perl->init("$ENV{ IDN_CONF }/iNavigatorGateWay.conf");
 my $logger = get_logger();
-
+$logger->info("WTFF");
 # retrieving get parameters
 my $query = CGI->new();
 my %params = $query->Vars;
-#my $queryData = decode_json($params{'POSTDATA'});
-$logger->info("query content:\n" . Dumper(%params));
+#my $queryData = $params{'POSTDATA'};
+$logger->info(Dumper($query));
+#my $itemList = decode_json($params{ keywords });
+#$logger->info("query content:\n" . Dumper($itemList));
+#print $query->header('text/html');
+#print "TOOT";
+#exit;
+#$logger->info("query content:\n" . Dumper(%params));
+#exit;
 
 my $dataContainer = {};
+#foreach my $item (@{ $itemList }) {
+#    if (defined ($dataContainer->{ $item->{ type } })) {
+#	push @{ $dataContainer->{ $item->{ type } } }, $item->{ value };
+#    } else {
+#	$dataContainer->{ $item->{ type } } = [$item->{ value }];
+#    }
+#}
 foreach my $tag (qw / biomolecule publication goTerm keyword /) {
   my @array = $query->param($tag);
   (@array == 0) && next;
