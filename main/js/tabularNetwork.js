@@ -878,7 +878,6 @@ function tabularInit (opt) {
 	    var idRow;
 	    var selector, scroller;
 	    if (data.type === 'node') {
-		console.dir(data);
 		var string = new String(data.name);
 		var name = string.replace(":", "\\:");	
 		selector = this.target + 

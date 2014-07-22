@@ -1436,8 +1436,6 @@ function coreInit (opt) {
 	},
 	previewFilter : function (filterData, strict) {
 	    var self = this;
-	    
-	    console.log("recomputing preview with strict " + strict);
 
 	    if (filterData.hasOwnProperty('expressionLevel')) 
 		this._setNodeBasedPreviewFilter(filterData, strict);

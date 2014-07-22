@@ -453,7 +453,7 @@ sub getLocation {
 		      };
   #
   # Get General tissue comment from uniprot
-  my $aceBuffer = $aceObject->get('Tissue_Specificity', 1);
+  my $aceBuffer = $aceObject->get('Tissue_specificity', 1);
   if (defined($aceBuffer)) {
     $dataContainer->{ comments } = $aceBuffer->name;
   }

@@ -62,7 +62,7 @@ function initNetworkFilter (opt) {
 		    				   '<i class="fa fa-question-circle pull-right fa-2x"></i></div>';
 		    var checkAll = '';
 		    var test = '<ul class="nav nav-tabs">'
-			+'<li class="active"><a href="#expTableDiv" data-toggle="tab">Expression Filter</a></li>'
+			+'<li class="active"><a href="#expTableDiv" data-toggle="tab">Expression filter</a></li>'
 	  		+'<li><a href="#detectionTableDiv" data-toggle="tab">Detection method filter</a></li>'
   			/*+'<li><a href="#messages" data-toggle="tab">Messages</a></li>'
   			+'<li><a href="#settings" data-toggle="tab">Settings</a></li>'*/
@@ -347,7 +347,7 @@ function initNetworkFilter (opt) {
    	  	 			"aoColumns": [
    	  	 	 	  		{ "sTitle": '<i class="fa fa-square-o"></i>',"sWidth": "15px"},
      			 	  	{ "sTitle": "Expression filter", "sClass": "center","sWidth": "150px" },
-      				  	{ "sTitle": "Biomolecule Number", "sClass": "center" ,"sWidth": "80px"},
+      				  	{ "sTitle": "Biomolecule number", "sClass": "center" ,"sWidth": "80px"},
        					],
   			 	 	"sDom": '<"top"f>rt<"bottom"p><"clear">',
   			 	 	"sPaginationType": "bootstrap",

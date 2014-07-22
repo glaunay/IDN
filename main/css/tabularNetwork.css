@@ -253,6 +253,11 @@
     text-align:center;
 }
 
+.tabularNetworkBodyContent table tbody td:nth-child(4){
+    padding-left: 2.0em;
+    font-weight: bold;
+}
+
 .tabularNetworkBodyContent .tabularNetworkBodyLinkTable table tbody td {
     text-align : center;
 }

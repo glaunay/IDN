@@ -522,7 +522,7 @@ function initMyReport (options){
   		},
   		_ftGenerateDivHtml : function(barchart){
   			var self = this;
-  			if(!self.jsonData.biofunc && !self.jsonData.comments /*&& !self.jsonData.location*/){return false;}
+  			if(!self.jsonData.biofunc && !self.jsonData.comments && !self.jsonData.location && !self.jsonData.location.comments && !self.jsonData.location.compartiment){return false;}
   			self.nbDiv++;
   			var divCible = self._newRow(barchart);
   			var content = "<div class ='divTitre'>Biological function and location</div><div class = 'divers postitContent'><dl>";
@@ -684,6 +684,9 @@ function initMyReport (options){
 			};
 			line = line.substring(0,line.length - 2);
 			line += '</dd>'
+			if(self.jsonData.location.comments){
+				line += "<dt class ='hReport'>Comment:</dt><dd>" + self.jsonData.location.comments + "</dd>";
+			}
   			return line;
   		},
   		_process : function(){

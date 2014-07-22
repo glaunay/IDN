@@ -230,7 +230,6 @@ function initCart (options){
 		_doCartPost : function (){
 				if (!this.data) return;
 				if (this.data.length === 0) return;				
-				console.log("here we are");
 				var self = this;
 				var scaffold = '<form id="ghostCart" action="' + 
 	                         self.rootUrlForNetwork

@@ -29,7 +29,6 @@ $logger->info(Dumper($queryData));
 my $url = "\"http://www.ebi.ac.uk/Tools/webservices/psicquic/view/main.xhtml?query=id:"
     . $queryData->{ biomolecule } . "\"";
 
-my $cnt;
 my $html = `curl $url`;
 $logger->trace($url);
 $logger->trace($html);

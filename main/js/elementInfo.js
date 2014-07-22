@@ -168,7 +168,6 @@ function initElementInfo(opt) {
 	},
 	toggleMoleculeLoader : function (opt) {
 	    var html = '<div class="molLoader"><i class="fa fa-spin fa-rotate-right"></i></div>';
-	    console.dir(opt);
 	    var actualTargetId = this.targetSuffix  ? '#glmolWidget' + this.targetSuffix : '#glmolWidget';
 	    var errorRescue = undefined;
 	    
