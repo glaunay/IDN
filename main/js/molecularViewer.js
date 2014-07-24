@@ -111,6 +111,7 @@ function GLmolInit (opt) {
 		       success : function (data, textStatus, jqXHR){	
 			   console.dir(data);
 			   if (!data.atomRecord) {
+			       console.log("ERROR!!!");
 			       self.callbackLoadError();
 			   }
 			   

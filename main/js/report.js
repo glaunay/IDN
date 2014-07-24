@@ -558,14 +558,23 @@ function initMyReport (options){
 			geneString = geneString + '</dd>'
 			return geneString;
 		},
-		_specie : function(){
+		_specie : function(data){
 			var self = this;
-			if(!self.jsonData.specie.name){return "";}
-			var nom =  self.jsonData.specie.names[0];
-			for (var i = 1; i <  self.jsonData.specie.names.length; i++) {
-			   nom += ', ' + self.jsonData.specie.names[i];
-			};
-			var specieString ="<dt class ='hReport'>Specie:</dt><dd> <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + self.jsonData.specie.value + "'>" + nom + " <i class='fa fa-external-link'></i></a></dd>";
+			if(data){
+				var specieString =  data[0];
+				for (var i = 1; i <  data.length; i++) {
+				   specieString += ', ' + data[i];
+				};
+				
+			}else{
+				if(!self.jsonData.specie.name){return "";}
+				var nom =  self.jsonData.specie.names[0];
+				for (var i = 1; i <  self.jsonData.specie.names.length; i++) {
+				   nom += ', ' + self.jsonData.specie.names[i];
+				};
+				var specieString ="<dt class ='hReport'>Specie:</dt><dd> <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + self.jsonData.specie.value + "'>" + nom + " <i class='fa fa-external-link'></i></a></dd>";
+				
+			}
 			return specieString;
 		},
 		_domainAnnot : function(){
@@ -1413,7 +1422,6 @@ function initMyReport (options){
   			
 			
   			self._addCheckSel(data.aaData,"biomAdd");
-			console.dir(data)
 			 $(this).ready(function() {
 			 	var anOpen = [];
     			var table = $( 'table.interact' ).dataTable( {
@@ -1474,7 +1482,7 @@ function initMyReport (options){
    				  		$(this).popover("hide");
    				 	})
    				});
-   				table.$('td:first-child>span').tooltip();		
+   				table.$('td span').tooltip();		
    				
    				
 			});
@@ -1505,10 +1513,11 @@ function initMyReport (options){
 						xpObject.name = info.id;
 						commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + id + '">'+
 									 '<a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
-						if(!info.specie){
-							speci = '<i class="fa fa-ban"></i>';
+						if(!info.specie.names){
+							console.dir('here')
+							speci = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title = "Universal"><img ' + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img></span>";
 						}else{
-							speci = "<img " + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img>";
+							speci = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + self._specie(info.specie.names) + '"><img ' + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img>";
 						}
 						
 						

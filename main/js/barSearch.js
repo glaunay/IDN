@@ -54,7 +54,7 @@ function initBarSearch (options){
 	currentStringForGraphSearch : false,
 	clickOnListElement : clickOnListElement, //callback sur un click d'un élément de la liste
 	stopTime : undefined,//utile pour la latence entre frappe et recherche
-	humanOnly : true,
+	humanOnly : false,
 	nameColumn : {
 		"biomolecule" : {
 			id: "Biomolecule",

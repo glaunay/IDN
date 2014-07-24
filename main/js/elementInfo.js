@@ -181,7 +181,7 @@ function initElementInfo(opt) {
 		if (opt.type == "error"){
 		    html =  '<div class="molLoader"><i class="fa fa-times fa-2x"></i></div>' ;
 		    errorRescue = true;
-		    }
+		}
 	    }
 
 	    if ($(this.selector + ' .molLoader').length === 0) {				    
@@ -202,11 +202,10 @@ function initElementInfo(opt) {
 		if (errorRescue) {			
 			$(this.selector + ' .pdbBanner').show();	    
 			$(this.selector + ' .molLoader').css({"background-color"  : 'rgb(240, 143, 162)',
-			  									  "-moz-border-radius": "5px 5px 5px 5px",  
-   												  "border-radius"     : "5px 5px 5px 5px",
-    											  "border"            : "solid white 1px"});
-			}		
-
+			  				      "-moz-border-radius": "5px 5px 5px 5px",  
+   							      "border-radius"     : "5px 5px 5px 5px",
+    							      "border"            : "solid white 1px"});
+		}				
 	    } else {
 		console.log("i shall remove");
 		$(this.selector + ' .molLoader').remove();
