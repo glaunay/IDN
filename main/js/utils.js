@@ -477,4 +477,18 @@ speciUrl = function (speci,rootUrl){
 			};
 			return "alt ='.'";
 			
+	}
+_linkMi = function(string){
+			var self = this;
+			var regExpMi = /\[MI:[0-9]{4}\]/;
+			var debutUrl = "https://www.ebi.ac.uk/ontology-lookup/?termId=";
+			if (regExpMi.test(string)) {
+				var listeString = string.split("[");
+				var name = listeString[0];
+				var finUrl = listeString[1].substring(0,listeString[1].length - 1);
+				var returnString = "<a target = '_blank' href = '" + debutUrl + finUrl + "'>" + name + "</a>";
+				return returnString;
+			}else{
+				return string;
+			}
 		}

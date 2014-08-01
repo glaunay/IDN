@@ -553,37 +553,37 @@ function initElementInfo(opt) {
 		var self = this;
 		
 		if(!xpData.Experiment_modification || xpData.Experiment_modification == "N/A"){return ''}
-		return '<dt class ="hReport">Experiment modification:</dt><dd> ' + self._linkMi(xpData.Experiment_modification) + "</dd>";
+		return '<dt class ="hReport">Experiment modification:</dt><dd> ' + _linkMi(xpData.Experiment_modification) + "</dd>";
 	},
 	_database : function(xpData){
 		var self = this;
 		if(!xpData.sourceDatabase || xpData.Experiment_modification == "N/A"){return ''}
-		return '<dt class ="hReport">Database:</dt><dd> ' + self._linkMi(xpData.sourceDatabase) + "</dd>";
+		return '<dt class ="hReport">Database:</dt><dd> ' + _linkMi(xpData.sourceDatabase) + "</dd>";
 	},
 	_host : function(xpData){
 		var self = this;
 		if(!xpData.Host_System || xpData.Host_System == "N/A"){return ''}
-		return '<dt class ="hReport">Host System:</dt><dd> ' + self._linkMi(xpData.Host_System) + "</dd>";
+		return '<dt class ="hReport">Host System:</dt><dd> ' + _linkMi(xpData.Host_System) + "</dd>";
 	},
 	_interactDetectMethod : function(xpData ){
 		var self = this;
 		if(!xpData.Interaction_Detection_Method || xpData.Interaction_Detection_Method == "N/A"){return ''}
-		return '<dt class ="hReport">Interaction detection method:</dt><dd> ' + self._linkMi(xpData.Interaction_Detection_Method) + "</dd>";
+		return '<dt class ="hReport">Interaction detection method:</dt><dd> ' + _linkMi(xpData.Interaction_Detection_Method) + "</dd>";
 	},
 	_interactionType : function(xpData){
 		var self = this;
 		if(!xpData.Interaction_Type || xpData.Interaction_Type == "N/A"){return ''}
-		return '<dt class ="hReport">Interaction type:</dt><dd> ' + self._linkMi(xpData.Interaction_Type) + "</dd>";
+		return '<dt class ="hReport">Interaction type:</dt><dd> ' + _linkMi(xpData.Interaction_Type) + "</dd>";
 	},
 	_knowledgeSupport : function(xpData){
 		var self = this;
 		if(!xpData.knowledgeSupport || xpData.knowledgeSupport == "N/A"){return ''}
-		return '<dt class ="hReport">Knowledge Support:</dt><dd> ' + self._linkMi(xpData.knowledgeSupport) + "</dd>";
+		return '<dt class ="hReport">Knowledge Support:</dt><dd> ' + _linkMi(xpData.knowledgeSupport) + "</dd>";
 	},
 	_kinetic : function(xpData){
 		var self = this;
 		if(!xpData.Kinetics || xpData.Kinetics == "N/A"){return ''}
-		return '<dt class ="hReport">Kinetics details:</dt><dd> ' + self._linkMi(xpData.Kinetics) + "</dd>";
+		return '<dt class ="hReport">Kinetics details:</dt><dd> ' + _linkMi(xpData.Kinetics) + "</dd>";
 	},
 	_publication : function(xpData){
 		var self = this;
@@ -602,7 +602,7 @@ function initElementInfo(opt) {
 	_figure : function(xpData){
 		var self = this;
 		if(!xpData.Figure || xpData.Experiment_modification == "N/A"){return ''}
-		return '<dt class ="hReport">Figure:</dt><dd> ' + self._linkMi(xpData.Figure) + "</dd>";
+		return '<dt class ="hReport">Figure:</dt><dd> ' + _linkMi(xpData.Figure) + "</dd>";
 	},
 	_imexId : function(xpData){
 		var self = this;
@@ -612,7 +612,7 @@ function initElementInfo(opt) {
 	_accessNumber : function(partnerData){
 		var self = this;
 		if(!partnerData.Accession_Number || partnerData.Accession_Number == "N/A"){return ''}
-		return '<dt class ="hReport">Accession number:</dt><dd> ' + self._linkMi(partnerData.Accession_Number) + "</dd>";
+		return '<dt class ="hReport">Accession number:</dt><dd> ' + _linkMi(partnerData.Accession_Number) + "</dd>";
 	},
 	_bioRole : function(partnerData){
 		var self = this;
@@ -622,42 +622,29 @@ function initElementInfo(opt) {
 	_detectMeth : function(partnerData){
 		var self = this;
 		if(!partnerData.Detect_Meth || partnerData.Detect_Meth == "N/A"){return ''}
-		return '<dt class ="hReport">Detection method:</dt><dd> ' + self._linkMi(partnerData.Detect_Meth) + "</dd>";
+		return '<dt class ="hReport">Detection method:</dt><dd> ' + _linkMi(partnerData.Detect_Meth) + "</dd>";
 	},
 	_expRole : function(partnerData){
 		var self = this;
 		if(!partnerData.ExpRole || partnerData.ExpRole == "N/A"){return ''}
-		return '<dt class ="hReport">Experiment role:</dt><dd> ' + self._linkMi(partnerData.ExpRole) + "</dd>";
+		return '<dt class ="hReport">Experiment role:</dt><dd> ' + _linkMi(partnerData.ExpRole) + "</dd>";
 	},
 	_isoform : function(partnerData){
 		var self = this;
 		if(!partnerData.Isoform || partnerData.Isoform == "N/A"){return ''}
-		return '<dt class ="hReport">Isoform:</dt><dd> ' + self._linkMi(partnerData.Isoform) + "</dd>";
+		return '<dt class ="hReport">Isoform:</dt><dd> ' + _linkMi(partnerData.Isoform) + "</dd>";
 	},
 	_species : function(partnerData){
 		var self = this;
 		if(!partnerData.Species || partnerData.Species == "N/A"){return ''}
-		return '<dt class ="hReport">Species:</dt><dd> ' + self._linkMi(partnerData.Species) + "</dd>";
+		return '<dt class ="hReport">Species:</dt><dd> ' + _linkMi(partnerData.Species) + "</dd>";
 	},
 	_nameOfPartner : function(partnerData){
 		var self = this;
 		if(!partnerData.name || partnerData.name == "N/A"){return ''}
 		return '<dt class ="hReport">Id:</dt><dd> ' + partnerData.name + "</dd>";
 	},
-	_linkMi : function(string){
-		var self = this;
-		var regExpMi = /\[MI:[0-9]{4}\]/;
-		var debutUrl = "https://www.ebi.ac.uk/ontology-lookup/?termId=";
-		if (regExpMi.test(string)) {
-			var listeString = string.split("[");
-			var name = listeString[0];
-			var finUrl = listeString[1].substring(0,listeString[1].length - 1);
-			var returnString = "<a target = '_blank' href = '" + debutUrl + finUrl + "'>" + name + "</a>";
-			return returnString;
-		}else{
-			return string;
-		}
-	}
+
   };
    
     

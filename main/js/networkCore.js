@@ -1303,9 +1303,11 @@ function coreInit (opt) {
 							      if (tempY < Ylo) return;
 							      nodeArrayGlow.push(this);
 							      data.push(d);
-							  });				
-						self._glowToggle(nodeArrayGlow, {type : "forced"});
-						$(self.target).trigger('glowingTouch', {data : data, setToGlow : true});
+							  });	
+						if (nodeArrayGlow.length > 0) {
+						    self._glowToggle(nodeArrayGlow, {type : "forced"});
+						    $(self.target).trigger('glowingTouch', {data : data, setToGlow : true});
+						}
 					    });
 			      
 			  });

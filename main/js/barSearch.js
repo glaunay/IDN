@@ -58,7 +58,7 @@ function initBarSearch (options){
 	nameColumn : {
 		"biomolecule" : {
 			id: "Biomolecule",
-			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of biomolecule(s) found in Matrixdb</div>" +
+			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of biomolecule(s) found in MatrixDB</div>" +
 					  "<p>Biomolecule can be protein, bioactive fragment, complex, glycosaminoglycan, ion, lipid or inorganic.</p>"+
 					  "<ul class ='fa-ul'><li><i class='fa fa-hand-o-right'></i>"+
 					  " Hits are ranked according to their number of known interactions within the database.</li>"+
@@ -70,18 +70,18 @@ function initBarSearch (options){
 			},
 		"keywrd" : {
 			id:"UniProtKB keyword",
-			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of annotation terms found in Matrixdb</div>"+
+			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of annotation terms found in MatrixDB</div>"+
 					  "<p>Annotation terms are part of <a target='_blank' href='help uni'>UniprotKB controlled vocabulary</a></p></div>"
 
 			},
 		"publication" : {
 			id:"Publication",
-			tooltip : '<div class = "postitSearchContent"><div class="postitTitle">List of publication(s) found in Matrixdb</div>'+
+			tooltip : '<div class = "postitSearchContent"><div class="postitTitle">List of publication(s) found in MatrixDB</div>'+
 					  '<p>Yellow stars highlight publications with an imex identifier</p><p><i class="fa fa-hand-o-right"></i> The number of interactions reported in each publication is also mentioned</p></div>'
 			},
 		"author" : {
 			id:"Author",
-			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of publication author(s) found in Matrixdb</div>"+
+			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of publication author(s) found in MatrixDB</div>"+
 					  "<p>For each author, a number indicates the total of interactions reported in all his/her publication(s)</p></div>"
 			},
 	},

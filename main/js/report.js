@@ -311,6 +311,9 @@ function initMyReport (options){
   			if (self.jsonData.type == 'experiment'){
   				self._infoOrganisatorXp();
   				self._partnerOrganisator();
+  				$(self.targetDomElem).find('dd').each(function(){
+  					$(this).html(_linkMi($(this).html()));
+  				})
   			}
   			if (self.jsonData.type == 'association'){
   				self._associationOrganisator();
@@ -2295,6 +2298,8 @@ bandeau keywrd
 				return string;
 			}
 		},
+		
+  
 		_errMessPdb : function(){
 			var self = this;
 			$(self.targetDomElem).find("div.pdb.postitContent").remove();

@@ -303,17 +303,6 @@ function initNetworkFilter (opt) {
 			}
 			return true;
 		},
-		applyFilter : function(listeData){
-			var self = this;
-			//previousStatus == état check ou uncheck pour le noeud au moment de l'appel sauf si statue == shaddy
-			for (var data=0; data < listeData.length; data++) {
-			  if(self._testFilter(listeData[data])){
-			  	/* idée si shaggy on met en visible si disable on shaggy si visible reste visible*/
-			  }else{
-			  	/* idée si shaggy on disable si visible on shaggy si disable reste disable*/
-			  }
-			};
-		},
 		update : function(data){//data{action : "init", type : expressionsTags, data : {tag : nbNode , ... }}type : expressionsTags utile pr tab
 			/*call by maestro on any network content change*/
 			var self = this;
@@ -431,12 +420,9 @@ function initNetworkFilter (opt) {
   			var rootXp = "https://www.ebi.ac.uk/ontology-lookup/?termId="
   			
   			$.each(data,function(expressIn , nbNode){
-  				if(expressIn.length >= 30){
-					stringCut = expressIn.substring(0,26) + "...";
-					expressIn = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + expressIn + '">' + stringCut + '</span>';	
-				}else{
-					expressIn = '<span title="' + expressIn + '">' + expressIn + '</span>'
-				}
+  		
+				expressIn = '<span title="'+ expressIn + '">' + _linkMi(expressIn) + '</span>';
+				
 				lineTable = [uncheckBox,expressIn,nbNode]
 				aaData.push(lineTable);
 			  });
@@ -519,6 +505,7 @@ function initNetworkFilter (opt) {
 		},
 		getSelectors : function(){
 	    	return {maxi : this.maxiSel, mini: this.miniSel};
-   		}
+   		},
+   		
 	}
 }
