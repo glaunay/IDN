@@ -116,10 +116,8 @@ function coreInit (opt) {
 						       onClickCallback : function () {
 							   //console.dir(self);
 							   if (self.tooltipForced) {
-							       console.log("yeahh");
 							       d3.selectAll('.node')
 								   .each(function(){
-									     console.log("Interact");
 									     if(d3.select(this).style("visibily") === "hidden"){
 										 return;
 									     }
