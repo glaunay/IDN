@@ -157,7 +157,7 @@ function initNetworkFilter (opt) {
 		    var defaultCss = self.computeBookmarkPosition();	 	  
 		    $(this.miniSel).css(defaultCss);
 		    defaultCss.left = "20%";
-		    defaultCss.top = "30%";
+		    defaultCss.top = "10%";
 		    $(this.maxiSel).css(defaultCss);
 		    $(self.target).find('div.footerFilter div.mdeCheck span.clickBox')
 			.click(function(){

@@ -8,6 +8,27 @@
   ---------------------------------------------------------------------------------------
   initialisation
  */
+
+
+/* Custom sorting function for images */
+jQuery.fn.dataTableExt.oSort['species-asc']  = function(x,y) {
+
+    var xAsString = $(x).attr('title'); 
+    var yAsString = $(y).attr('title'); 
+    
+    return ((xAsString < yAsString) ? -1 : ((xAsString > yAsString) ?  1 : 0));
+};
+ 
+jQuery.fn.dataTableExt.oSort['species-desc'] = function(x,y) {
+    var xAsString = $(x).attr('title'); 
+    var yAsString = $(y).attr('title'); 
+    
+    return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
+};
+
+
+
+
 var tmp = $.fn.popover.Constructor.prototype.show;
 $.fn.popover.Constructor.prototype.show = function () {
   tmp.call(this);
@@ -635,10 +656,14 @@ function initMyReport (options){
   			if(!self.jsonData.biofunc){return "";}
   			return "<dt class ='hReport'>Biological function:</dt><dd> " + self.jsonData.biofunc + "</dd>";
   		},
+	       // GL comments are disabled if dealing with multimeric complex
   		_commentsName : function(){
   			var self = this;
-  			if(!self.jsonData.comments){return "";}
-  			var line = "<dt class ='hReport'>Comments:</dt><dd>";
+  			if(!self.jsonData.comments)
+			    return "";
+  			if(self.jsonData.subType ===  "multimeric complex")
+			    return "";
+		        var line = "<dt class ='hReport'>Comments:</dt><dd>";
   			for (var i=0; i < self.jsonData.comments.data.length; i++) {
 			 	line +=  self.jsonData.comments.data[i] + ", ";
 			};
@@ -896,7 +921,7 @@ function initMyReport (options){
 		_assoLink : function(){
 			var self = this;
 			if(!self.jsonData.association){return}
-			var returnString = '<dt class ="hReport">Support following interaction:</dt>';
+			var returnString = '<dt class ="hReport">Supports the following interaction:</dt>';
 			for (var i=0; i < self.jsonData.association.length; i++) {
 			 returnString+= '<dd><a target = "_blank" href ="' + this.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + self.jsonData.association[i] + '">' + self.jsonData.association[i] + "</a></dd>";
 			};
@@ -1170,7 +1195,7 @@ function initMyReport (options){
 		_role : function(index){
 			var self = this;
 			if(!self.jsonData.partnerDetails[index].experimentalRole){return '';}
-			return '<dt class ="hReport">Role in experiment:</dt><dd> ' + self.jsonData.partnerDetails[index].experimentalRole + "</dd>";
+			return '<dt class ="hReport">Experimental role:</dt><dd> ' + self.jsonData.partnerDetails[index].experimentalRole + "</dd>";
 		},
 		_expression : function(index){
 			var self = this;
@@ -1410,40 +1435,48 @@ function initMyReport (options){
   			if(!self.jsonData.interactions[0]){return;}
   			var data = self._interactionGenerateTableData();
   			var nbXp = 0
-  			for (var i=0; i < data.aaData.length; i++) {
-				nbXp += data.aaData[i][1];
-				data.aaData[i][1] ='<span index = "' + i + '">'+ data.aaData[i][1] + '</span> <i class="fa fa-info-circle"></i>';
-			  };
-  			var plural =  data.aaData.length > 1 ? 's' : ''; 
-  			var titre = "<div class='divTitre'> This molecule has <span class = 'niceRed'>" 
-  						+ data.aaData.length + "</span> partner" + plural + " described in <span style = 'color : green; font-weight : bold'>" 
-  						+ nbXp + "</span> experiments </div>";
-  			var tableForm = "<table class='interact'><thead></thead><tbody></tbody></table>";
-  			var interactDiv = $(self.targetDomElem).find("div.tableInteract");
+   		    for (var i=0; i < data.aaData.length; i++) {
+			// nbXp += data.aaData[i][1];
+			data.aaData[i][1] ='<span index = "' + i + '">'+ data.aaData[i][1] + '</span> <i class="fa fa-info-circle"></i>';
+		    };
+  		    var plural =  data.aaData.length > 1 ? 's' : ''; 
+  		    var titre = "<div class='divTitre'> <div>This molecule has <span class = 'niceRed'>" 
+  			+ data.aaData.length + "</span> partner" + plural + ' '
+			+ ' described in ' + (data.xpTotal.inferred  + data.xpTotal.genuine) + 
+			' experiments:<ul class="xpPool">'
+			+ '<li><span class="headGenCount">' 
+  			+ data.xpTotal.genuine + '</span> with this biomolecule</li>'
+			+ '<li><span class="headInfCount">' 
+			+ data.xpTotal.inferred + '</span> with one of its homolog </li></ul></div>';
+  		    var tableForm = "<table class='interact'><thead></thead><tbody></tbody></table>";
+  		    var interactDiv = $(self.targetDomElem).find("div.tableInteract");
   			interactDiv.append(titre)
   			interactDiv.append(tableForm);
   			
 			
   			self._addCheckSel(data.aaData,"biomAdd");
-			 $(this).ready(function() {
-			 	var anOpen = [];
-    			var table = $( 'table.interact' ).dataTable( {
-      		 		"aaData": data.aaData,
-      		 		sScrollY: "100%",
-   		  	 		"aoColumns": [
-   		  	 	   		{ "sTitle": "Partner name", "sClass": "center","sWidth": "350px"},
-       			   		{ "sTitle": "Number of experiments", "sClass": "center" },
-       			   		{ "sTitle": "Species", "sClass": "center","sWidth": "auto" },
-       			   		{ "sTitle": "", "sClass": "center"},],
-    				"oLanguage": {
-    				 	"sSearch": "Filter:"
-  				  	},
-  				  	"sDom": '<"top"<"row"<"span6"f><"span6 pull-right"i>>>rt<"bottom"p><"clear">',
-  				  	"sPaginationType": "bootstrap",
-  					"bLengthChange": false,
-  					"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 3 ] }],
-  					
- 		  		});
+		    $(this).ready(function() {
+			 	      var anOpen = [];
+      				      var table = $( 'table.interact' )
+					  .dataTable( {
+      		 					  "aaData": data.aaData,
+      		 					  sScrollY: "100%",
+   		  	 				  "aoColumns": [
+   		  	 	   			      { "sTitle": "Partner name", "sClass": "center","sWidth": "350px"},
+       			   				      { "sTitle": "Number of experiments", "sClass": "center" },
+       			   				      { "sTitle": "Species", "sClass": "center","sWidth": "auto", sType : "species"},
+       			   				      { "sTitle": "", "sClass": "center"}],
+    							  "oLanguage": {
+    				 			      "sSearch": "Filter:"
+  				  			  },
+  				  			  "sDom": '<"top"<"row"<"span6"f><"span6 pull-right"i>>>rt<"bottom"p><"clear">',
+  				  			  "sPaginationType": "bootstrap",
+  							  "bLengthChange": false,
+  							  "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 3 ] }]
+						      });
+					   
+				//	   globTable = table;
+
  		  		 $(window).bind('resize', function () {
   			 		table.fnAdjustColumnSizing();
   				 } );
@@ -1490,61 +1523,95 @@ function initMyReport (options){
    				
 			});
   		},
-  		_interactionGenerateTableData : function(){
-  			var self = this;
-  			var dataForTable = [];
-  			var xpData = [];
-  			var cnt = -1;
-  			var rootLink = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
-  			for (var i = 0; i < self.jsonData.interactions.length; i++) {
-  				var lineTable = [];
-				var speci = '';
-				var nb = 0;
-				var commonName = '';
-				var xpObject = {};
-				xpObject.experiments = [];
-				jQuery.each(self.jsonData.interactions[i],function(name,info){
-					if(name == "supportingExperiments"){
-						nb +=   info.length ;
-						$.merge(xpObject.experiments,info);
-						
-					}
-					if(name == "partner"){
-						
-						var id = info.id;
-						var common = info.common.anyNames[0];
-						xpObject.name = info.id;
-						commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + id + '">'+
-									 '<a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
-						if(!info.specie.names){
-							console.dir('here')
-							speci = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title = "Universal"><img ' + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img></span>";
-						}else{
-							speci = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + self._specie(info.specie.names) + '"><img ' + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img>";
-						}
-						
-						
-					}
-					if(name == "id"){
-						xpObject.id = "Association : <a target = '_blank' "+
-									  "href = '" + self.rootUrl + "/cgi-bin/current/newPort?type=association&value=" + info +"'>" + 
-									  info +"</a>";
+  	    _interactionGenerateTableData : function(){
+  		var self = this;
+  		var dataForTable = [];
+  		var xpData = [];
+  		var cnt = -1;
+  		var rootLink = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value=";
+
+		var xpPool = {
+		    genuine : {},
+		    inferrence : {}
+		};
+		
+		
+  		for (var i = 0; i < self.jsonData.interactions.length; i++) {
+		    console.log("i vaut " + i);
+  		    var lineTable = [];
+		    var speci = '';
+		    var nbGenuine = 0;
+		    var nbInferred = 0;
+		    var commonName = '';
+		    var xpObject = {
+			genuineExperiments : [],
+			inferrenceExperiments: [],
+			name : null,
+			id : null
+		    };
+//		    xpObject.experiments = [];
+		    jQuery.each(self.jsonData.interactions[i],function(name,info){
+				    if(name == "supportingExperiments"){
+					nbGenuine +=   info.length ;
+					$.merge(xpObject.genuineExperiments,info);
+				    }
+				    if(name == "inferrenceExperiments"){
+					//console.log("nb vaut 0 , at " + i + " , pour " + commonName);
+					nbInferred +=   info.length;
+					$.merge(xpObject.inferrenceExperiments,info);
+				    }
+				    if(name == "partner"){
+					var id = info.id;
+					var common = info.common.anyNames[0];
+					xpObject.name = info.id;
+					commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' 
+					    + id + '">'+ '<a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
+					if(!info.specie.names){					    
+					    speci = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title = "Universal">'
+						+ '<img ' + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img></span>";
+					} else {
+					    speci = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="'
+						+ self._specie(info.specie.names) + '"><img ' + speciUrl(info.specie.value,self.rootUrl) 
+						+ ' alt = "human"></img>';
 					}
 					
-								
-						
 					
+				    }
+				    if(name == "id"){
+					xpObject.id = "Association : <a target = '_blank' "+
+					    "href = '" + self.rootUrl + "/cgi-bin/current/newPort?type=association&value=" + info +"'>" + 
+					    info +"</a>";
+				    }
 				});
-				lineTable = [commonName, nb, speci];
-				if(nb>0){
-					xpData.push(xpObject);
-					dataForTable.push(lineTable);
-				}
-				
-			  };
-			 return {aaData :dataForTable, supportingXpData : xpData};
-  		},
-/*fin de bandeau interactions
+		    lineTable = [commonName, '<span class="nbGen">' + nbGenuine + '</span>'
+				 + '<span class="nbInf">  (' + nbInferred + ')</span>', speci];
+		    //				if(nb > 0){
+		    xpData.push(xpObject);
+		    dataForTable.push(lineTable);
+		    /*			} else {
+		     console.log("nb vaut 0 , at " + i + " , pour " + commonName);
+		     }*/
+		
+		    xpObject.genuineExperiments.forEach(function (xpDatum){
+							    xpPool.genuine[xpDatum.name] = 1;
+							});
+		    xpObject.inferrenceExperiments.forEach(function (xpDatum){
+							       xpPool.inferrence[xpDatum.name] = 1;
+							   });
+		}
+		console.dir(xpPool);
+		var xpTotalGen = 0, 
+		xpTotalInf = 0;
+		for (var key in xpPool.inferrence) {
+		    xpTotalInf++;
+		}
+		for (var key in xpPool.genuine) {
+		    xpTotalGen++;
+		}		
+		
+		return {aaData :dataForTable, supportingXpData : xpData, xpTotal : { genuine : xpTotalGen, inferred : xpTotalInf }};
+  	    },
+	    /*fin de bandeau interactions
  *---------------------------------------------------------------------------------------------------------------
  *  bandeau go
  */
@@ -1684,7 +1751,7 @@ function initMyReport (options){
 		_sourceDb : function (){
 			var self = this;
 			if(!self.jsonData.sourceDatabases[0]){return;}
-			var returnString = '<dt > Database Source:</dt>'
+			var returnString = '<dt > Source database:</dt>'
 			for (var i=0; i < self.jsonData.sourceDatabases.length; i++) {
 				returnString +="<dd>" + self.jsonData.sourceDatabases[i] + "</dd>";
 			};
@@ -1695,7 +1762,7 @@ function initMyReport (options){
 			var self = this;
 			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value=";
 			if(!self.jsonData.partnerNames[0]){return;}
-			var returnString = '<dt > Biomolecule:</dt>'
+			var returnString = '<dt > Biomolecules:</dt>'
 			for (var i=0; i < self.jsonData.partnerNames.length; i++) {
 				var logoBullet = '<div class = "bulletSpecie"><i class="fa fa-ban"></i></div>';
 				if(self.jsonData.partnerCommon[self.jsonData.partnerNames[i]].specie){
@@ -1721,9 +1788,9 @@ function initMyReport (options){
 		_supportByAssoc : function(string){
 			var self = this;
 			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=association&value="
-			if(string){var returnString = string + '<dt > Support by interaction:</dt>';}
-			else{var returnString = '<div class ="divTitre"> Inferred interaction</div><div class = "postitContent">'+
-									'<dl><dt class = "hReport"> Support by interaction:</dt>';}
+			if(string){var returnString = string + '<dt > Supported by interaction:</dt>';}
+			else{var returnString = '<div class ="divTitre"> Inferred human interaction</div><div class = "postitContent">'+
+									'<dl><dt class = "hReport"> Supported by interaction:</dt>';}
 			for (var i=0; i < self.jsonData.supportByAssociation.length; i++) {
 				returnString += "<dd><a target ='_blank' href='" + rootUrl + self.jsonData.supportByAssociation[i] + "'>" + 
 							    self.jsonData.supportByAssociation[i] + "</a></dd>";
@@ -1732,9 +1799,9 @@ function initMyReport (options){
 		},
 		_supportToAssoc : function(string){
 			var self = this;
-			if(string){var returnString = string + '<dt> Support to interaction:</dt>'}
+			if(string){var returnString = string + '<dt> Inferred human interaction:</dt>'}
 			else{var returnString = '<div class ="divTitre"> Supported interaction</div><div class = "postitContent">'+
-									'<dl><dt class = "hReport"> Support to interaction:</dt>'}
+									'<dl><dt class = "hReport"> Inferred human interaction:</dt>'}
 			for (var i=0; i < self.jsonData.supportToAssociation.length; i++) {
 				returnString +="<dd><a target ='_blank' href='" + self.rootUrl + self.jsonData.supportToAssociation[i] + "'>" + 
 							    self.jsonData.supportToAssociation[i] + "</a></dd>";
@@ -2269,24 +2336,34 @@ bandeau keywrd
 		_popThisTd : function(xpData){
 		var self = this;
 		var returnString = "";
-		if(xpData.experiments){
-			for (var j=0; j < xpData.experiments.length; j++) {	//ligne du dessous param
-				var name = xpData.experiments[j].name? xpData.experiments[j].name : xpData.experiments[j];
-				returnString += '<div class = "popoverContent"><a href="' + self.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=' + name 
-				             + '" target = "_blank">' + name + '</a>'; 
-				if(xpData.experiments[j].pmid){
-				 	returnString += '</br> PubMed&nbsp;&nbsp; <a target = "_blank" href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
-					             + xpData.experiments[j].pmid + '">' + xpData.experiments[j].pmid + '</a>';
-					if(xpData.experiments[j].imexid){
-						returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   <a target = "_blank" href = "' + self.rootUrl
-					 					+ '/cgi-bin/current/newPort?type=publication&value=' + xpData.experiments[j].pmid + '">' + xpData.experiments[j].imexid 
-										+ '</a>';  
-					}	
-				}
-				returnString += '</div>';
-			};
-		}
-		return returnString 
+		    var xpTypes = ['genuineExperiments', 'inferrenceExperiments' ];
+		    xpTypes.forEach(function (xpType) {
+					if (!xpData[xpType]) return;
+					if (!xpData[xpType].length === 0 ) return;
+					var style = xpType === 'genuineExperiments' ? "genuineTD" : "inferrenceTD";
+					xpData[xpType].forEach(function(xpDatum) { 
+								    var name = xpDatum.name ? xpDatum.name : xpDatum;
+								    returnString += '<div class = "popoverContent ' + style 
+									+ '"><a href="' + self.rootUrl 
+									+ '/cgi-bin/current/newPort?type=experiment&value=' + name 
+									+ '" target = "_blank">' + name + '</a>'; 
+								    if(xpDatum.pmid){
+									returnString += '</br> PubMed&nbsp;&nbsp; <a target = "_blank" href = "' 
+									    + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
+									    + xpDatum.pmid + '">' + xpDatum.pmid + '</a>';
+								    }
+								    if(xpDatum.imexid){
+									returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   '
+									    + '<a target = "_blank" href = "' + self.rootUrl
+									    + '/cgi-bin/current/newPort?type=publication&value=' 
+									    + xpDatum.pmid + '">' + xpDatum.imexid 
+									    + '</a>';  
+								   } 
+								});
+					returnString += '</div>';
+				    });
+		    
+		    return returnString 
 		},
 		_test : function(){
 			alert('toto')

@@ -298,7 +298,6 @@ sub getMapper {
     if ($template->{ version } eq "richLink_1.0") {
 	return {
 	    associationDescriptor => sub {	
-$logger->trace("ANONY_PASS");
 		my $p = common::arg_parser(@_);
 		$logger->trace(Dumper($p));
 		
@@ -372,7 +371,7 @@ $logger->trace("ANONY_PASS");
 					   "realExp =  " . scalar(@subGenuine). "\n" .
 					   "inferredFromExp =  " . scalar(@subInferrence) . "\n"
 				);
-			    foreach my $eAceObject (@subGenuine, @subInferrence) {
+			    foreach my $eAceObject (@subGenuine) { #   foreach my $eAceObject (@subGenuine, @subInferrence) {
 				my $subContainer = 
 				    $p->{ mapper }->{ experimentDescriptor }($p->{ mapper },
 								      $p->{ template }, 

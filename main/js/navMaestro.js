@@ -143,12 +143,11 @@ function vizObjectInit (opt) {
 					      rootUrl : context.rootUrl,
 					      iNavContext : true,
 					      addCartNavCallback : function(critObj){
-						  		vizObject.cartCtrl.addCriterion(critObj);
+						  vizObject.cartCtrl.addCriterion(critObj);
 					      },
 					      graphSearchCallback : function (string){
-					      		
-					      		var result = vizObject.core.bubbleSearchedNodes(string,"start");
-					      		return result;
+					      	  var result = vizObject.core.bubbleSearchedNodes(string,"start");
+					      	  return result;
 					      }
 					  });
     vizObject.barSearch.draw();

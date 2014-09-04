@@ -3,6 +3,39 @@
  *  This is the bookmark based version with revised css
  * 
  */
+
+
+/* Custom sorting function for neighbours sorting */
+jQuery.fn.dataTableExt.oSort['neigh-asc']  = function(x,y) {
+    var xAsString = parseInt($(x).text());
+    var yAsString = parseInt($(y).text());
+    
+    return ((xAsString < yAsString) ? -1 : ((xAsString > yAsString) ?  1 : 0));
+};
+ 
+jQuery.fn.dataTableExt.oSort['neigh-desc'] = function(x,y) {
+    var xAsString = parseInt($(x).text());
+    var yAsString = parseInt($(y).text());
+    
+    return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
+};
+
+
+/* Custom sorting function for common-name sorting */
+jQuery.fn.dataTableExt.oSort['common-asc']  = function(x,y) {
+    var xAsString = $(x).text();
+    var yAsString = $(y).text();
+    return ((xAsString < yAsString) ? -1 : ((xAsString > yAsString) ?  1 : 0));
+};
+
+jQuery.fn.dataTableExt.oSort['common-desc'] = function(x,y) {    
+    var xAsString = $(x).text();
+    var yAsString = $(y).text();
+    return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
+};
+
+
+
 function tabularInit (opt) {
     if ($(opt.target).length == 0)
 	alert ("unable to initialize tabular component at location " + opt.target);
@@ -109,8 +142,8 @@ function tabularInit (opt) {
 	    
 	    var bodyHtml = '<div class="tabularNetworkBody">'
 		+ '<div class="tabularNetworkBodyHead"><ul class="nav nav-pills">'
-		+ '<li class="active" id="nodeTab">Nodes</li>'
-		+ '<li id="linkTab">Links</li>'
+		+ '<li class="active" id="nodeTab">Biomolecules</li>'
+		+ '<li id="linkTab">Associations</li>'
 	    //	+ '<li>Action<i class="fa fa-sort-down fa-large pull-right"></i></li>'
 		+ '</ul></div>'
 		+ '<div class="tabularNetworkBodyContent">'
@@ -687,7 +720,9 @@ function tabularInit (opt) {
 		.dataTable({
 			       aaData : self.nodeTableData,
 			       aoColumnDefs : [
-				   { bSortable : false, "aTargets": [ 0 ] }
+				   { bSortable : false, "aTargets": [ 0 ] },
+				   { sType : 'neigh', "aTargets" :[ 3 ] },
+				   { sType : 'common', "aTargets" :[ 2 ] }
 			       ], 
 			       bDeferRender : true, // useless when using fnAddData
 			       sDom : "tS",

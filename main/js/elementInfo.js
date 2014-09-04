@@ -91,6 +91,8 @@ function initElementInfo(opt) {
 	setUrl : function () {
 	    this.urlReport.association = this.rootUrl + '/cgi-bin/current/newPort?type=association&value=';
 	    this.urlReport.biomolecule = this.rootUrl + '/cgi-bin/current/newPort?type=biomolecule&value=';
+	    this.urlReport.experiment = this.rootUrl + '/cgi-bin/current/newPort?type=experiment&value=';
+	    this.urlReport.publication = this.rootUrl + '/cgi-bin/current/newPort?type=publication&value=';	    
 	},
 	urlReport : {
 	    "association" : null,
@@ -262,7 +264,8 @@ function initElementInfo(opt) {
 						 '<div class = "titreInfoElem">Interaction</div>'+
 						 '<i class ="fa fa-angle-double-right closerElemInfo fa-3x pull-right"></i></div>'
 										);
-	    var commonInfo = "<div class = 'commonInfo' ><div class = 'compteur'></div><div class = 'type'>" + self.data.details.knowledge + "</div></div>";
+	    var commonInfo = "<div class = 'commonInfo' ><div class = 'compteur'></div><div class = 'type'>"
+		+ self.data.details.knowledge + "</div></div>";
 	    if(self.data.details.Experiments.length > 1){
 		var header = "<div class = 'caroussel'><i class='fa fa-chevron-left pull-left fa-2x'></i>"+
 					 "<div class='titleAsso' style = 'width: 81%;'><a  target = '_blank'"+
@@ -273,12 +276,12 @@ function initElementInfo(opt) {
 				listeDiv.push(self._divXpGenerator(self.data.details.Experiments[i],i));
 			};
 			
-			var taille = listeDiv.length
-		}else{
-			var header = "<div class='titleAsso' style = 'width: 81%;'><a  target = '_blank'"+
-						 " href = '" + self.urlReport.association + self.data.details.name + "'>"+ name + "</a></div>"+
-			listeDiv.push(self._divXpGenerator(self.data.details.Experiments[0],0))
-			var taille = 1
+			var taille = listeDiv.length;
+		} else {
+		    var header = "<div class='titleAsso' style = 'width: 81%;'><a  target = '_blank'"+
+			" href = '" + self.urlReport.association + self.data.details.name + "'>"+ name + "</a></div>";
+		    listeDiv.push(self._divXpGenerator(self.data.details.Experiments[0],0));
+		    var taille = 1
 		}
 		$(this.selector + ' .ei-header').append(header);
 		$(this.selector + ' .ei-body').append(commonInfo);
@@ -544,8 +547,11 @@ function initElementInfo(opt) {
 		self._kinetic(xpData) +
 		self._publication(xpData) +
 		self._figure(xpData) +
-		self._imexId(xpData) +
-		'</dl></div></div>';
+		self._imexId(xpData) +		
+		'</dl>'
+		+ '<div style="font-size:1.2em;"><a href="' + self.urlReport.experiment + xpData.name + '" target="_blank">Link to experiment page   '
+		+ '<i class="fa fa-external-link-square"></i></a></div>'
+		+ '</div></div>';
 		
 		return divReturn;
 	},
@@ -582,12 +588,13 @@ function initElementInfo(opt) {
 	},
 	_kinetic : function(xpData){
 		var self = this;
-		if(!xpData.Kinetics || xpData.Kinetics == "N/A"){return ''}
-		return '<dt class ="hReport">Kinetics details:</dt><dd> ' + _linkMi(xpData.Kinetics) + "</dd>";
+	    if(!xpData.Kinetics || xpData.Kinetics == "N/A"){return '';}
+	    //		return '<dt class ="hReport">Kinetics details:</dt><dd> ' + _linkMi(xpData.Kinetics) + "</dd>";
+	    return '<dt class ="hReport">Kinetics data</dt><dd>Available</dd>';
 	},
 	_publication : function(xpData){
 		var self = this;
-		var rootUrl = "http://matrixdb.ibcp.fr:9999/cgi-bin/current/newPort?type=publication&value="
+		var rootUrl = this.urlReport.publication;
 		if(!xpData.Publication || xpData.Publication == "N/A"){return ''}
 		if (xpData.Publication instanceof Array) {
 			var returnString = '<dt class ="hReport">Pubmed reference:</dt><dd>';

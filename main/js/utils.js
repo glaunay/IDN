@@ -34,7 +34,7 @@ getPropByKey = function( obj, key ) {
         obj = getPropByKey( obj, ns[0] );
         key = ns[1];
     }
-
+    if (! obj) return false;
     // Look for a property in the object
     if ( key in obj ) {
         return obj[key];

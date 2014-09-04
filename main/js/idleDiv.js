@@ -16,7 +16,7 @@ function startIdle (opt) {
 	    //console.log(oT + ' ' + oL);
 	    if (data.type === "networkRenderer") {			    	    
 		$(this.target).append('<div class="idleDiv queryMsg">'
-				      + '<div class = "message">Rendering network <i class="fa fa-cog fa-spin"></i></div></div>');
+				      + '<div class = "message">Building the network <i class="fa fa-cog fa-spin"></i></div></div>');
 		//<img src="../img/psicquic_loading.gif" ></img>
 		$(this.target + ' .idleDiv')
 		    .css({

@@ -590,6 +590,40 @@ div.noMatch{
 	padding: 0;
 	max-height: 350px;
 }
+
+.popover-content div.popoverContent.genuineTD {
+    background-color : rgb(173, 248, 173);
+}
+
+.popover-content div.popoverContent.inferrenceTD {
+    background-color : orange
+}
+
+#reportDiv div.divTitre span.headGenCount {
+    color : rgb(1, 179, 1);
+    font-weight : bold;
+}
+#reportDiv div.divTitre span.headInfCount {
+    color : orange;
+    font-weight : bold;
+}
+#reportDiv div.divTitre ul.xpPool {
+    list-style: none;
+}
+#reportDiv div.divTitre ul.xpPool li{
+    text-align : left;
+    margin-left : 15px;
+    font-weight : normal;
+}
+table.interact span.nbGen {
+    color : rgb(1, 179, 1);
+    font-size : 1.2em
+}
+table.interact span.nbInf {
+    color : orange;
+    font-size : 1.0em;
+}
+
 div.popoverContent:nth-child(even){
 	background: rgb(212, 210, 216);
 }

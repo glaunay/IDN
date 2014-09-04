@@ -112,8 +112,22 @@ function coreInit (opt) {
 	    /* Drag and drop and unselect events */ 
 	    this._setDrawDragBox();
 
-	    this.vpController = startPanZoomControler ({svgElement : '#networkWindow svg'});
-	    
+	    this.vpController = startPanZoomControler ({svgElement : '#networkWindow svg',
+						       onClickCallback : function () {
+							   //console.dir(self);
+							   if (self.tooltipForced) {
+							       console.log("yeahh");
+							       d3.selectAll('.node')
+								   .each(function(){
+									     console.log("Interact");
+									     if(d3.select(this).style("visibily") === "hidden"){
+										 return;
+									     }
+									     //$(this).tooltip('hide');
+									     $(this).tooltip('show');
+									 });
+							   }
+						       }});
 	    return;
 	},
 
@@ -207,36 +221,48 @@ function coreInit (opt) {
 	bubbleSearchedNodes : function(string, type){
 		var self = this;
 	    if (type === "start") {
-			console.log("bubbling node digger");
 			var regexp = new RegExp(string,"i");
-			console.dir(regexp);
-			var tableOfSearch = [];
 			self.hotNodes = [];		
 			var nodesForce = self.force.nodes();
 			var nodeFound = [];
-			
-			nodesForce.forEach(function (node) {
-				
-				    tableOfSearch = getPropByKey(node,"common.anyNames");
-				    var temp = getPropByKey(node, "aceAccessor");
-				    
-				    if(temp){tableOfSearch.push(temp);};
-				    var temp2 = getPropByKey(node, "name");
-				    if(temp2){tableOfSearch.push(temp2);};
-					
-					if(!self._searchString(regexp,tableOfSearch)){return;}
-					nodeFound.push(node);
-					var svg =  self.nodeToSvg[node.name];
-					if (svg) {
-						 self.hotNodes.push(svg);
-						 console.log('search in network =>' + node.name)
-						 self.bubbleNode ({name : node.name, rFactor : 2.5, 
-								   style : {'stroke-width' : '5px', stroke : 'orange', fill : 'red'} 
-								  },'start');
-					     }
-					 
-			});
-			return nodeFound;
+		// Set the attributes inspected by the search bar
+               // requires knowledge of the node data structure
+		var searchScalarPath = [
+		    "name", "aceAccessor", "biofunc"		    
+		];
+		var searchListPath = [
+		    "common.anyNames",
+                    "comments.data",
+		    "uniprotKW"
+		];
+
+		nodesForce.forEach(function (node) {
+				       var tableOfSearch = [];				       
+				       searchScalarPath.forEach(function(elem) {
+								    var string = getPropByKey(node, elem);    
+								    if (string) 
+									tableOfSearch.push (string); 
+								});
+				       searchListPath.forEach(function(elem) {
+								  var array = getPropByKey(node, elem);    
+								  if (array) 
+								      Array.prototype.push.apply(tableOfSearch, array); 
+							      });
+				       
+				       if(!self._searchString(regexp,tableOfSearch)) 
+					   return;
+				       nodeFound.push(node);
+				       var svg =  self.nodeToSvg[node.name];
+				       if (svg) {
+					   self.hotNodes.push(svg);
+					   //console.log('search in network =>' + node.name)
+					   self.bubbleNode ({name : node.name, rFactor : 2.5, 
+							     style : {'stroke-width' : '5px', stroke : 'orange', fill : 'red'} 
+							    },'start');
+				       }
+				       
+				   });
+		return nodeFound;
 	    } else {
 		
 		self.hotNodes.forEach(function(node) {
@@ -797,7 +823,7 @@ function coreInit (opt) {
 						   }
 						   if (specie || gName){
 						       if(specie)
-							   htmlString += '<div class="tooltipAttr"><span>Specie</span>'
+							   htmlString += '<div class="tooltipAttr"><span>Species</span>'
 							   + '<span>:   ' + specie + '</span></br>';
 						       if(gName)
 							   htmlString += '<div class="tooltipAttr"><span>Gene</span>'

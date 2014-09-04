@@ -73,7 +73,8 @@ function startPanZoomControler(opt) {
     //console.log("PanZoom Component init");      
     var self = function ()
     {	  
-	return {	    	
+	return {
+	    callback : opt.onClickCallback ? opt.onClickCallback : function (){},	    
 	    svgElement : opt.svgElement,
 	    docWidth : w,
 	    docHeight : h,
@@ -94,38 +95,41 @@ function startPanZoomControler(opt) {
 	    },
 	    pan : function (dx, dy)
 	    {
-	    this._releaseMatrix();
+		this._releaseMatrix();
 		this.transMatrix[4] += dx;
 		this.transMatrix[5] += dy;
 		
 		var newMatrix = "matrix(" +  this.transMatrix.join(' ') + ")";
 		
-		$(this.svgElement + ' g#network').attr("transform", newMatrix);	      
+		$(this.svgElement + ' g#network').attr("transform", newMatrix);	     
+		this.callback();
 	    },
 	    zoom : function (scale)
 		{
 		    this._releaseMatrix();
 		    //console.log('from ' +  this.transMatrix);
-			for (var i=0; i<this.transMatrix.length; i++)
-			{
-			    
-			    this.transMatrix[i] *= scale;
-			  	//console.log('to ' +  this.transMatrix[i]);
-			}
-			//console.log((1-scale)*this.docWidth/2 + " " + (1-scale)*this.docHeight/2);
-			this.transMatrix[4] += (1-scale)*this.docWidth/2;
-			this.transMatrix[5] += (1-scale)*this.docHeight/2;
-			//console.log('to ' +  this.transMatrix);
-			var newMatrix = "matrix(" +  this.transMatrix.join(' ') + ")";
-			$(this.svgElement + ' g#network').attr("transform", newMatrix);	   	      
+		    for (var i=0; i<this.transMatrix.length; i++)
+		    {
+			
+			this.transMatrix[i] *= scale;
+			//console.log('to ' +  this.transMatrix[i]);
+		    }
+		    //console.log((1-scale)*this.docWidth/2 + " " + (1-scale)*this.docHeight/2);
+		    this.transMatrix[4] += (1-scale)*this.docWidth/2;
+		    this.transMatrix[5] += (1-scale)*this.docHeight/2;
+		    //console.log('to ' +  this.transMatrix);
+		    var newMatrix = "matrix(" +  this.transMatrix.join(' ') + ")";
+		    $(this.svgElement + ' g#network').attr("transform", newMatrix);
+	   	    this.callback();
 		}, 
-		setViewPoint : function (data) { // x,y coor and an option to encompass all displayed element
-			var xOffset = this.docWidth / 2 - data.x,
-			yOffset = this.docHeight / 2 - data.y;
-			//console.log(this.docWidth + " x "  + this.docHeight);
-			//console.log("bary : " + data.x + "  " + data.y);
-			this.pan(xOffset, yOffset);
-			//console.log(xOffset, yOffset);
+	    setViewPoint : function (data) { // x,y coor and an option to encompass all displayed element
+		var xOffset = this.docWidth / 2 - data.x,
+		yOffset = this.docHeight / 2 - data.y;
+		//console.log(this.docWidth + " x "  + this.docHeight);
+		//console.log("bary : " + data.x + "  " + data.y);
+		this.pan(xOffset, yOffset);
+		//console.log(xOffset, yOffset);
+		this.callback();
 	    }
 	};
     } ();
@@ -135,7 +139,7 @@ function startPanZoomControler(opt) {
 
     $(opt['svgElement'] + ' #controler g#autofocus')
     	.on('click', function (event) {
-		      
+		
 		      vizObject.core.centrum();
 		      event.stopPropagation();
 		  });

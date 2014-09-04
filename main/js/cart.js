@@ -134,7 +134,7 @@ function initCart (options){
 			var self = this ;
 			$(self.targetDomElem).find('div.cartDraw').remove();//ligne du dessous a la fin rajouter le link ver le constructeur
 			$(self.targetDomElem).append('<div class = "cartDraw"><div class = "clearDiv "><a class ="drop cog" data-toggle="dropdown ">'+
-										 '<i class="fa fa-cog  fa-2x"></i></a><ul class="dropdown-menu liste">'+
+										 '<i class="fa fa-share-alt  fa-2x"></i></a><ul class="dropdown-menu liste">'+
 										 '<li class = "liCart"><a class = "leftalign linkToNetwork" target = "_blank"><i class="fa fa-gavel"></i> Build items interactions network</a></li>'+
 										 '<li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li>'+
 										 '<li class="divider"></li><li class="liCart"><a class = "leftalign" href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg"><i class ="fa fa-question"></i> Help</a></li></ul></div>'+
