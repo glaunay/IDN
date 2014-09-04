@@ -28,115 +28,130 @@ function initCart (options){
 		return;
 	}
 	
-	return {
-		targetDomElem : elem,
-		wrapperClass : 'mycart',
-		wrapperSel : '.mycart',	
-		data : defaultEaten.data,//data générer depuis le cookie
-		tick : undefined,//clock
-		
-		rootUrlForNetwork : options.rootUrl + "/cgi-bin/current/iNavigatorGateWay",
-		registerItem : {
-			'biomolecule' : '<i class="fa fa-spinner"></i>',
-			'publication' : '<i class="fa fa-book"></i>',
-			'goTerm' : '<i class="fa fa-pencil"></i>',
-			'keyword' : '<i class="fa fa-pencil"></i>'
-		},
-		_startTick : function () {//demarre le refresh
-			var self = this;
-			this.tick = window.setInterval(function(){self._tickPulse(self.data)},1000);
-		},
-		_stopTick : function () {//stop le refresh
-			var self = this;
-			window.clearInterval(self.tick);
-			self.tick = undefined;
-		},		
-		_isDataChanged : function () {//test chagement dans data
-			var eaten = $.cookie('cartCookie');
-			
-			var dataToCompare = eaten.data;
-			if (dataToCompare.length != this.data.length) { return dataToCompare;}
-			// Complete comprarison process here
-			return false;
-		},
-		_tickPulse : function(){//refresh
-			var self = this;
-		//	self._hrefNetWork()
-			var newData = this._isDataChanged();
-			if (!newData) {
-				return;
-			}
-			this.data = newData;
-			self.draw();
-
-		},
-		_refreshCount : function (alert) {//alert booléen true or undef => change la pastille
-			var self = this;
-			$(self.targetDomElem).find('div>div.ico:first>div').remove();
-			$(self.targetDomElem).find('div>div.ico:first').append('<div id= "pastille" >' + self.data.length + '</div>');
-			if( self.data.length < 1){
-				$(self.targetDomElem).find('div>div.ico:first>div').addClass('noData');
-				$(self.targetDomElem).find('div.leftThing').removeClass("active")		
-			}else{
-				$(self.targetDomElem).find('div.leftThing').addClass("active")
-			}
-		},
-		addItem : function(item){//ajoute un item au cart item {type : "type" :value : "name"}
-			var self = this;
-			
-			for (var i=0; i < self.data.length; i++) {
-			  if(self.data[i].value == item.value){return;}
-			};
-			var eaten = $.cookie('cartCookie');
-			self.data = eaten ? eaten.data : self.data;
-			self.data.push(item);
-			$.cookie('cartCookie',{type : 'cartCookie',  data : self.data});
-			self._refreshCount(true);
-			if($(self.targetDomElem).find('div>div.drop>ul').is(':visible')){self._clickDrop();}
-			$(self.targetDomElem).find('div>div.drop>ul').remove();		
-			$(self.targetDomElem).find('div>div.drop').append('<ul class="dropdown-menu liste "></ul>');
-			self._ajoutListe(self.data);			
+    return {
+	targetDomElem : elem,
+	wrapperClass : 'mycart',
+	wrapperSel : '.mycart',	
+	data : defaultEaten.data,//data générer depuis le cookie
+	tick : undefined,//clock
+	rootUrl : options.rootUrl,
+	rootUrlForNetwork : options.rootUrl + "/cgi-bin/current/iNavigatorGateWay",
+	registerItem : {
+	    'biomolecule' : '<i class="fa fa-spinner"></i>',
+	    'publication' : '<i class="fa fa-book"></i>',
+	    'goTerm' : '<i class="fa fa-pencil"></i>',
+	    'keyword' : '<i class="fa fa-pencil"></i>'
+	},
+	_startTick : function () {//demarre le refresh
+	    var self = this;
+	    this.tick = window.setInterval(function(){self._tickPulse(self.data)},1000);
+	},
+	_stopTick : function () {//stop le refresh
+	    var self = this;
+	    window.clearInterval(self.tick);
+	    self.tick = undefined;
+	},		
+	_isDataChanged : function () {//test chagement dans data
+	    var eaten = $.cookie('cartCookie');
+	    
+	    var dataToCompare = eaten.data;
+	    if (dataToCompare.length != this.data.length) { return dataToCompare;}
+	    // Complete comprarison process here
+	    return false;
+	},
+	_tickPulse : function(){//refresh
+	    var self = this;
+	     if(this.data.length > 0) {
+		 this.setAlert("on");
+	     }
+	    //	self._hrefNetWork()
+	    var newData = this._isDataChanged();
+	    if (!newData) {
+		return;
+	    }
+	    this.data = newData;
+	    self.draw();
+	    
+	},
+	_refreshCount : function (alert) {//alert booléen true or undef => change la pastille
+	    var self = this;
+	    $(self.targetDomElem).find('div>div.ico:first>div').remove();
+	    $(self.targetDomElem).find('div>div.ico:first').append('<div id= "pastille" >' + self.data.length + '</div>');
+	    if( self.data.length < 1){
+		$(self.targetDomElem).find('div>div.ico:first>div').addClass('noData');
+		$(self.targetDomElem).find('div.leftThing').removeClass("active")		
+	    }else{
+		$(self.targetDomElem).find('div.leftThing').addClass("active")
+	    }
+	},
+	addItem : function(item){//ajoute un item au cart item {type : "type" :value : "name"}
+	    var self = this;
+	    
+	    for (var i=0; i < self.data.length; i++) {
+		if(self.data[i].value == item.value){return;}
+	    };
+	    var eaten = $.cookie('cartCookie');
+	    self.data = eaten ? eaten.data : self.data;
+	    self.data.push(item);
+	    $.cookie('cartCookie',{type : 'cartCookie',  data : self.data});
+	    self._refreshCount(true);
+	    if($(self.targetDomElem).find('div>div.drop>ul').is(':visible')){self._clickDrop();}
+	    $(self.targetDomElem).find('div>div.drop>ul').remove();		
+	    $(self.targetDomElem).find('div>div.drop').append('<ul class="dropdown-menu liste "></ul>');
+	    self._ajoutListe(self.data);			
 			$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul>li>div>div:last-child').click(function(){
-				self.delItem({value : $(this).parent().parent().attr('name')},true);
-				$(this).parent().remove();
-				event.stopPropagation();
-				});
+														   self.delItem({value : $(this).parent().parent().attr('name')},true);
+														   $(this).parent().remove();
+														   event.stopPropagation();
+													       });
 			$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul').click(function(){event.stopPropagation();});
-		
-//			self._hrefNetWork()
-		},
-		delItem : function(item,icoclick){//supprime un item du cart
-			var self = this;
-			
-			var valueList = [];
-			for (var i=0; i < self.data.length; i++) {
+	    
+	    //			self._hrefNetWork()	    
+	    self.setAlert("on");
+	},
+	setAlert : function (status) {
+	  if (status === "on")
+	      $(this.targetDomElem).find('i.fa-share-alt').addClass('alertNetwork');
+	    if (status === "off") {
+	      $(this.targetDomElem).find('i.fa-share-alt').removeClass('alertNetwork');
+	  }
+	},
+	delItem : function(item,icoclick){//supprime un item du cart
+	    var self = this;
+	    
+	    var valueList = [];
+	    for (var i=0; i < self.data.length; i++) {
 			  valueList.push(self.data[i].value);
-			};
-			var indexItem = valueList.indexOf(item.value);
-			if(indexItem<0){return}
-          	self.data.splice(indexItem,1);
-    		
-    		$.cookie('cartCookie',{type : 'cartCookie', data : self.data});
-			self.draw();
-			if(icoclick){self._clickDrop();}
-			//self._hrefNetWork()
-
-		},
-		_clear : function(){// supprime tout les items
-			var self = this;
-			$.cookie("cartCookie",{type : "cartCookie", data : []});
-			self.data = [];
-			self.draw();
-			//self._hrefNetWork()
-			return ;
-		},
-		draw : function(){// dessine le composant cart
-			var self = this ;
-			$(self.targetDomElem).find('div.cartDraw').remove();//ligne du dessous a la fin rajouter le link ver le constructeur
-			$(self.targetDomElem).append('<div class = "cartDraw"><div class = "clearDiv "><a class ="drop cog" data-toggle="dropdown ">'+
-										 '<i class="fa fa-share-alt  fa-2x"></i></a><ul class="dropdown-menu liste">'+
-										 '<li class = "liCart"><a class = "leftalign linkToNetwork" target = "_blank"><i class="fa fa-gavel"></i> Build items interactions network</a></li>'+
-										 '<li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li>'+
+	    };
+	    var indexItem = valueList.indexOf(item.value);
+	    if(indexItem<0){return}
+            self.data.splice(indexItem,1);
+    	    $.cookie('cartCookie',{type : 'cartCookie', data : self.data});
+	    self.draw();
+	    if(icoclick){self._clickDrop();}
+	    //self._hrefNetWork()
+	    if(this.data.length === 0) {
+		this.setAlert("off");
+	    }
+	},
+	_clear : function(){// supprime tout les items
+	    var self = this;
+	    $.cookie("cartCookie",{type : "cartCookie", data : []});
+	    self.data = [];
+	    self.draw();
+	    //self._hrefNetWork()
+	    return ;
+	},
+	draw : function(){// dessine le composant cart
+	    var self = this ;
+	    $(self.targetDomElem).find('div.cartDraw').remove();//ligne du dessous a la fin rajouter le link ver le constructeur
+	    $(self.targetDomElem).append('<div class = "cartDraw"><div class = "clearDiv ">' 
+					 + '<a class ="drop cog" data-toggle="dropdown ">'
+					 // + '<div class="butWrap"><div class="networkBut"></div></div>'+ '<ul class="dropdown-menu liste">'+
+					 //+ '<img id="networkBut" src="' + self.rootUrl + '/img/networkFont.png"></img>'  + '<ul class="dropdown-menu liste">'
+					  + '<i class="fa fa-share-alt  fa-2x"></i></a><ul class="dropdown-menu liste">'
+					 + '<li class = "liCart"><a class = "leftalign linkToNetwork" target = "_blank"><i class="fa fa-gavel"></i> Build items interactions network</a></li>'+
+					 '<li class="liCart clearClick"><a class = "leftalign"><i class="fa fa-power-off"></i> Clear items list</a></li>'+
 										 '<li class="divider"></li><li class="liCart"><a class = "leftalign" href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg"><i class ="fa fa-question"></i> Help</a></li></ul></div>'+
 										 '<div class = "leftThing"><div class = "ico"><div id= "pastille" >' + self.data.length + '</div></div><div class = "drop ">'+
 										 ' <a class ="drop" data-toggle="dropdown "><i class="fa fa-shopping-cart fa-2x icon-white dropArrow"></i></a>'+

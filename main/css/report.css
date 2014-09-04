@@ -759,3 +759,45 @@ i.helpMe{
 #reportDiv div.publicationContent table.assoTable td:nth-child(2){
 	width: 250px !important;
 }
+
+.alertNetwork {
+    animation-name: networkCycle; 
+    animation-duration:1.5s; 
+    animation-direction:alternate; 
+    animation-iteration-count:infinite; 
+    
+    -webkit-animation-name: networkCycle; 
+    -webkit-animation-duration:1.5s; 
+    -webkit-animation-direction:alternate; 
+    -webkit-animation-iteration-count:infinite; }	
+}
+@keyframes networkCycle 
+{
+  /*  0% {color:#FFFFFF;} 
+    25% {color:#B1E7A4;} 
+    50% {color:#22AC00;} 
+    75% {color:#B1E7A4;} */
+    0% {color:#FFFFFF;} 
+    25% {color:#A5DAEB;} 
+    50% {color:#4CB9DB;} 
+    75% {color:#A5DAEB;}
+} 
+
+@-webkit-keyframes networkCycle 
+{ 
+    0% {color:#FFFFFF;} 
+    25% {color:#A5DAEB;} 
+    50% {color:#4CB9DB;} 
+    75% {color:#A5DAEB;}
+/*    0% {color:#FFFFFF;} 
+    25% {color:#B1E7A4;} 
+    50% {color:#22AC00;} 
+    75% {color:#B1E7A4;} */
+}
+
+i.fa-share-alt {
+font-size : 3em;
+}
+a.drop.cog {
+margin-top : -5px;
+}
