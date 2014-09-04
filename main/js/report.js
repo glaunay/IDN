@@ -22,7 +22,17 @@ jQuery.fn.dataTableExt.oSort['species-asc']  = function(x,y) {
 jQuery.fn.dataTableExt.oSort['species-desc'] = function(x,y) {
     var xAsString = $(x).attr('title'); 
     var yAsString = $(y).attr('title'); 
-    
+    return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
+};
+jQuery.fn.dataTableExt.oSort['xpCount-asc']  = function(x,y) {
+    var xAsString = parseInt($(x).find("span.nbGen").attr('totCount')); 
+    var yAsString = parseInt($(y).find("span.nbGen").attr('totCount'));  
+    return ((xAsString < yAsString) ? -1 : ((xAsString > yAsString) ?  1 : 0));
+};
+ 
+jQuery.fn.dataTableExt.oSort['xpCount-desc'] = function(x,y) {
+    var xAsString = parseInt($(x).find("span.nbGen").attr('totCount')); 
+    var yAsString = parseInt($(y).find("span.nbGen").attr('totCount'));  
     return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
 };
 
@@ -244,143 +254,141 @@ function initMyReport (options){
 	},	
 
   		_draw : function(){//dessine les composant en fonction du type de data
-  			var self = this;
-  			var data = data;
-  			console.log('v data for this page v')
-  			console.dir(self.jsonData);
-  			var imgPath = self.rootUrl === 'HTML' ? 'img' : '../../img';
-	    	imgPath += '/matrixdb_logo_medium.png';
-  			var navBar = '<nav class="navbar header navbar-fixed-top" role="navigation"><div class=" header">'+
-  						 '<span id ="topLogo"><a style = "float:left;" href = "' + self.rootUrl + '">'+
-  						 '<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a> '+ 
-  						 self.navBarTypeIcons[self.jsonData.type] + '</span><i class = "fa fa-question-circle helpMe"></i></div></nav>';
-  			$(self.targetDomElem).append(navBar);
-  			var header = $(self.targetDomElem).find("nav.header>div");
-  			header.append('<div id="testCart" class = "cart"></div>');
-  			if(!self.jsonData.type){
-  				$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry this type is wrong</h4><a href  ='" +
-  											  self.rootUrl + "'> Click here to go to index </a></div>");
-  				return;
-  			}
-  			if(!self.jsonData.name){
-  				$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry no result with this " + 
-  											 self.jsonData.type + " in Matrix DB</h4><a href  ='" + self.rootUrl +
-  											 "'> Click here to go to index </a></div>");
-  				return;
-  			}
-  			$(self.targetDomElem).find('i.helpMe').popover(self.helpLink[self.jsonData.type])
-			   .on("mouseenter", function () {
-		        var _this = this;
-		        $(_this).popover('show');
-		        $(".popover").on("mouseleave", function () {
-		            $(_this).popover('hide');
-		        });
-		    }).on("mouseleave", function () {
-		    	if(!window.showHelp){return;}
-		        var _this = this;
-		        setTimeout(function () {
-		            if (!$(".popover:hover").length) {
-		                $(_this).popover("hide")
-		            }
-		        }, 100);
-		       })
-  			if (self.jsonData.type == 'biomolecule'){
-  				self._infoOrganisatorBiomol();
-  				self._barchartOrganisator();
-				self._interactionOrganisator();
-				self._uniprotKewrdOrganisator();
-				self._goOrganisator();
-				if(self.jsonData.pdb){
-					var pdbList = []
-					for (var i=0; i < self.jsonData.pdb.data.length; i++) {
-					  pdbList.push(self.jsonData.pdb.data[i].id);
-					};
-					var nodeTest = {
-						pdb : pdbList,
-    				};    
-    				widget = initElementInfo({
-				    	 width : '100%', height : '100%',
-				     	 target : '#molView',
-				     	 callback : {
-				     		computeCss : function(jqueryNode){
-				     			var top = $(jqueryNode).position().top ;
-								var left = $(jqueryNode).position().left ;
-								return {main : {top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
-										upmark :  { display : 'none'}
-								};
-				     		}
-				     	}				  
-				 	});
-					$(self.targetDomElem).find("i.startMolView").click(function(){
-						$(this).remove();
-						try {
-							widget.draw(nodeTest);
-							$("#elementInfo").addClass("reportEi");
-							$("#elementInfo").children('*').addClass("reportEi");
-
-
-					            }
-						catch (err) {
-							self._errMessPdb();
-							console.dir("error num = " + err)
-						}
-
-					});
-    				
-				}
-  			}
-  			if (self.jsonData.type == 'experiment'){
-  				self._infoOrganisatorXp();
-  				self._partnerOrganisator();
-  				$(self.targetDomElem).find('dd').each(function(){
-  					$(this).html(_linkMi($(this).html()));
-  				})
-  			}
-  			if (self.jsonData.type == 'association'){
-  				self._associationOrganisator();
-  			}
-  			if (self.jsonData.type == 'publication'){
-  				self._publicationOrganisator();
-  			}
-  			if (self.jsonData.type == 'author'){
-  				self._authorOrganisator();
-  			}
-  			if(self.jsonData.type == 'keywrd'){
-  				self._uniProtWord();
-  			}
-  			$(self.targetDomElem).find('a.pdb').click(function(){$( $(self.targetDomElem).find('ul.pdb') ).toggle()})
+  		    var self = this;
+  		    var data = data;
+  		    var imgPath = self.rootUrl === 'HTML' ? 'img' : '../../img';
+	    	    imgPath += '/matrixdb_logo_medium.png';
+  		    var navBar = '<nav class="navbar header navbar-fixed-top" role="navigation"><div class=" header">'+
+  			'<span id ="topLogo"><a style = "float:left;" href = "' + self.rootUrl + '">'+
+  			'<img src="' + imgPath + '" alt="Smiley face" height="40px" width="40px"></a> '+ 
+  			self.navBarTypeIcons[self.jsonData.type] + '</span><i class = "fa fa-question-circle helpMe"></i></div></nav>';
+  		    $(self.targetDomElem).append(navBar);
+  		    var header = $(self.targetDomElem).find("nav.header>div");
+  		    header.append('<div id="testCart" class = "cart"></div>');
+  		    if(!self.jsonData.type){
+  			$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry this type is wrong</h4><a href  ='" +
+  						     self.rootUrl + "'> Click here to go to index </a></div>");
+  			return;
+  		    }
+  		    if(!self.jsonData.name){
+  			$(self.targetDomElem).append("<div class = 'noMatch'><h4> Sorry no result with this " + 
+  						     self.jsonData.type + " in Matrix DB</h4><a href  ='" + self.rootUrl +
+  						     "'> Click here to go to index </a></div>");
+  			return;
+  		    }
+  		    $(self.targetDomElem).find('i.helpMe').popover(self.helpLink[self.jsonData.type])
+			.on("mouseenter", function () {
+				var _this = this;
+				$(_this).popover('show');
+				$(".popover").on("mouseleave", function () {
+						     $(_this).popover('hide');
+						 });
+			    }).on("mouseleave", function () {
+		    		      if(!window.showHelp){return;}
+				      var _this = this;
+				      setTimeout(function () {
+						     if (!$(".popover:hover").length) {
+							 $(_this).popover("hide")
+						     }
+						 }, 100);
+				  })
+  		    if (self.jsonData.type == 'biomolecule'){
+  			self._infoOrganisatorBiomol();
+  			self._barchartOrganisator();
+			self._interactionOrganisator();
+			self._uniprotKewrdOrganisator();
+			self._goOrganisator();
+			if(self.jsonData.pdb){
+			    var pdbList = []
+			    for (var i=0; i < self.jsonData.pdb.data.length; i++) {
+				pdbList.push(self.jsonData.pdb.data[i].id);
+			    };
+			    var nodeTest = {
+				pdb : pdbList,
+    			    };    
+    			    widget = initElementInfo({
+				    			 width : '100%', height : '100%',
+				     			 target : '#molView',
+				     			 callback : {
+				     			     computeCss : function(jqueryNode){
+				     				 var top = $(jqueryNode).position().top ;
+								 var left = $(jqueryNode).position().left ;
+								 return {main : {top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
+									 upmark :  { display : 'none'}
+									};
+				     			     }
+				     			 }				  
+				 		     });
+			    $(self.targetDomElem).find("i.startMolView").click(function(){
+										   $(this).remove();
+										   try {
+										       widget.draw(nodeTest);
+										       $("#elementInfo").addClass("reportEi");
+										       $("#elementInfo").children('*').addClass("reportEi");
+										       
+										       
+										   }
+										   catch (err) {
+										       self._errMessPdb();
+										       console.dir("error num = " + err)
+										   }
+										   
+									       });
+    			    
+			}
+  		    }
+  		    if (self.jsonData.type == 'experiment'){
+  			self._infoOrganisatorXp();
+  			self._partnerOrganisator();
+  			$(self.targetDomElem).find('dd').each(function(){
+  								  $(this).html(_linkMi($(this).html()));
+  							      })
+  		    }
+  		    if (self.jsonData.type == 'association'){
+  			self._associationOrganisator();
+  		    }
+  		    if (self.jsonData.type == 'publication'){
+  			self._publicationOrganisator();
+  		    }
+  		    if (self.jsonData.type == 'author'){
+  			self._authorOrganisator();
+  		    }
+  		    if(self.jsonData.type == 'keywrd'){
+  			self._uniProtWord();
+  		    }
+  		    $(self.targetDomElem).find('a.pdb').click(function(){$( $(self.targetDomElem).find('ul.pdb') ).toggle()})
   			$(self.targetDomElem).find('div.pdb').click(function(event){
-    			event.stopPropagation();
-				});
-			$('html').click(function() {
-				$(self.targetDomElem).find('ul.pdb').hide()
-				});
-			
-			$(self.targetDomElem).find('i.pdbView').click(function(event){self.callbackPdbView(this)});
-			$(self.targetDomElem).find("span.addCart.biom").click(function(){self.addCartCallback({type : "biomolecule" , value : $( this ).attr("name")})});
-			$(self.targetDomElem).find("span.addCart.kewrd").click(function(){self.addCartCallback({type : "keyword" , value : $( this ).attr("name")})});
-			$(self.targetDomElem).find("span.addCart.publi").click(function(){self.addCartCallback({type : "publication" , value : $( this ).attr("name")})});
-			//$(self.targetDomElem).find("div.featureDrop").click(function(){self._showFeature(this)});
-  			$(self.targetDomElem).find("nav div.navigueBar a").click(function() {
-  				var contentCible = $(this).attr("cible");
-    			$('html, body').animate({
-      			 scrollTop: $(self.targetDomElem).find(contentCible).offset().top-20
-    			}, 750);
-			});
-			//$(self.targetDomElem).find("i.pdbView").click(function() {
-			//	console.log('click')
-			//	console.log($(this).attr("id"))
-				
-		//	})
-			$(self.targetDomElem).find("span.cartBio").click(function(){self.addCartCallback({type : "biomolecule" , value : self.jsonData.name})});
-  		
-			this.psicquicViewHotPatch();
+    									event.stopPropagation();
+								    });
+		    $('html').click(function() {
+					$(self.targetDomElem).find('ul.pdb').hide()
+				    });
+		    
+		    $(self.targetDomElem).find('i.pdbView').click(function(event){self.callbackPdbView(this)});
+		    $(self.targetDomElem).find("span.addCart.biom").click(function(){self.addCartCallback({type : "biomolecule" , value : $( this ).attr("name")})});
+		    $(self.targetDomElem).find("span.addCart.kewrd").click(function(){self.addCartCallback({type : "keyword" , value : $( this ).attr("name")})});
+		    $(self.targetDomElem).find("span.addCart.publi").click(function(){self.addCartCallback({type : "publication" , value : $( this ).attr("name")})});
+		    //$(self.targetDomElem).find("div.featureDrop").click(function(){self._showFeature(this)});
+  		    $(self.targetDomElem).find("nav div.navigueBar a").click(function() {
+  										 var contentCible = $(this).attr("cible");
+    										 $('html, body').animate({
+      													     scrollTop: $(self.targetDomElem).find(contentCible).offset().top-20
+    													 }, 750);
+									     });
+		    //$(self.targetDomElem).find("i.pdbView").click(function() {
+		    //	console.log('click')
+		    //	console.log($(this).attr("id"))
+		    
+		    //	})
+		    $(self.targetDomElem).find("span.cartBio").click(function(){self.addCartCallback({type : "biomolecule" , value : self.jsonData.name})});
+  		    
+		    this.psicquicViewHotPatch();
 		},
 /*fin event onload
  * ___________________________________________________________________________________________________________________________________
  * bandeau info biomol
  */
-  		_infoOrganisatorBiomol : function(){//traite les données du bandeau info
+  	    _infoOrganisatorBiomol : function(){//traite les données du bandeau info
   			var self = this;
   			self.tailleHeader++
   			$(self.targetDomElem).append("<div class='content infoBio' ></div>");
@@ -1463,7 +1471,7 @@ function initMyReport (options){
       		 					  sScrollY: "100%",
    		  	 				  "aoColumns": [
    		  	 	   			      { "sTitle": "Partner name", "sClass": "center","sWidth": "350px"},
-       			   				      { "sTitle": "Number of experiments", "sClass": "center" },
+       			   				      { "sTitle": "Number of experiments", "sClass": "center", sType : "xpCount" },
        			   				      { "sTitle": "Species", "sClass": "center","sWidth": "auto", sType : "species"},
        			   				      { "sTitle": "", "sClass": "center"}],
     							  "oLanguage": {
@@ -1537,8 +1545,7 @@ function initMyReport (options){
 		
 		
   		for (var i = 0; i < self.jsonData.interactions.length; i++) {
-		    console.log("i vaut " + i);
-  		    var lineTable = [];
+		    var lineTable = [];
 		    var speci = '';
 		    var nbGenuine = 0;
 		    var nbInferred = 0;
@@ -1583,8 +1590,9 @@ function initMyReport (options){
 					    info +"</a>";
 				    }
 				});
-		    lineTable = [commonName, '<span class="nbGen">' + nbGenuine + '</span>'
-				 + '<span class="nbInf">  (' + nbInferred + ')</span>', speci];
+		    lineTable = [commonName,'<span class="nbGen" totCount="' 
+				 + (nbGenuine + nbInferred) + '">' + nbGenuine + '</span>'
+				 + '<span class="nbInf">  (' + nbInferred + ')</span></div>', speci];
 		    //				if(nb > 0){
 		    xpData.push(xpObject);
 		    dataForTable.push(lineTable);
@@ -1599,7 +1607,6 @@ function initMyReport (options){
 							       xpPool.inferrence[xpDatum.name] = 1;
 							   });
 		}
-		console.dir(xpPool);
 		var xpTotalGen = 0, 
 		xpTotalInf = 0;
 		for (var key in xpPool.inferrence) {
