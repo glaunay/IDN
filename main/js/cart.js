@@ -86,7 +86,7 @@ function initCart (options){
 	},
 	addItem : function(item){//ajoute un item au cart item {type : "type" :value : "name"}
 	    var self = this;
-	    
+	   // console.dir(item);
 	    for (var i=0; i < self.data.length; i++) {
 		if(self.data[i].value == item.value){return;}
 	    };
@@ -99,12 +99,12 @@ function initCart (options){
 	    $(self.targetDomElem).find('div>div.drop>ul').remove();		
 	    $(self.targetDomElem).find('div>div.drop').append('<ul class="dropdown-menu liste "></ul>');
 	    self._ajoutListe(self.data);			
-			$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul>li>div>div:last-child').click(function(){
-														   self.delItem({value : $(this).parent().parent().attr('name')},true);
-														   $(this).parent().remove();
-														   event.stopPropagation();
-													       });
-			$(self.targetDomElem).find('div.cartDraw>div>div.drop>ul').click(function(){event.stopPropagation();});
+	    $(self.targetDomElem).find('div.cartDraw>div>div.drop>ul>li>div>div:last-child').click(function(){
+												       self.delItem({value : $(this).parent().parent().attr('name')},true);
+												       $(this).parent().remove();
+												       event.stopPropagation();
+												   });
+	    $(self.targetDomElem).find('div.cartDraw>div>div.drop>ul').click(function(){event.stopPropagation();});
 	    
 	    //			self._hrefNetWork()	    
 	    self.setAlert("on");

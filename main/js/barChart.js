@@ -52,7 +52,7 @@ function initBarChart (options){
 			var self = this; 
 			
 			var divBarChart = $(self.targetDomElem);
-			var line = '<div class = "row-fluid"><div class = "span3 offset1"><div class= "divTitre">Unigene transcriptome data</div><dl>'
+			var line = '<div class = "row-fluid"><div class = "span3 offset1"><div class= "divTitre">UniGene data set</div><dl>'
 			var expressionLevel = self.data.expressionLevels;
 			var compartiment = self.data.compartiment;
 			if(expressionLevel.data){

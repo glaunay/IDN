@@ -203,16 +203,22 @@ function initMyReport (options){
 			var self = this;
 			var name;
 			if (this.jsonData.xref){
-				this.jsonData.xref.forEach(function(elem){
-					if(elem.hasOwnProperty('EBI_xref')) {
-						console.dir(elem.EBI_xref);
-						name = elem.EBI_xref;							
-					}	
-					if(elem.hasOwnProperty('CheBI_identifier')) {
-						console.dir(elem.CheBI_identifier);
-						name = elem.CheBI_identifier;							
-					}	
-	
+			    var dataRoot = this.jsonData;
+			    this.jsonData.xref
+				.forEach(function(elem){
+					     if(elem.hasOwnProperty('EBI_xref')) {						
+						 name = elem.EBI_xref;							
+					     }	
+					     if(elem.hasOwnProperty('CheBI_identifier')) {
+						 name = elem.CheBI_identifier;							
+					     }
+					     if(elem.hasOwnProperty('Molecule_Processing')) {
+						 name = elem.Molecule_Processing;					
+						 if (dataRoot.relationship.Belongs_to) {
+						     name = dataRoot.relationship.Belongs_to[0] + '-' + name;
+						 }
+					     }
+					     
 				})
 			}
 			name = name ? name : this.jsonData.name;
@@ -365,9 +371,19 @@ function initMyReport (options){
 				    });
 		    
 		    $(self.targetDomElem).find('i.pdbView').click(function(event){self.callbackPdbView(this)});
-		    $(self.targetDomElem).find("span.addCart.biom").click(function(){self.addCartCallback({type : "biomolecule" , value : $( this ).attr("name")})});
-		    $(self.targetDomElem).find("span.addCart.kewrd").click(function(){self.addCartCallback({type : "keyword" , value : $( this ).attr("name")})});
-		    $(self.targetDomElem).find("span.addCart.publi").click(function(){self.addCartCallback({type : "publication" , value : $( this ).attr("name")})});
+		    $(self.targetDomElem).find("span.addCart.biom")
+			.click(function(){
+				   self.addCartCallback({type : "biomolecule" , value : $( this ).attr("name")})
+			       });
+		    $(self.targetDomElem).find("span.addCart.kewrd")
+			.click(function(){
+				   self.addCartCallback({type : "keyword" , value : $( this ).attr("name")})
+			       });
+		    $(self.targetDomElem)
+			.find("span.addCart.publi")
+			.click(function(){
+				   console.dir(this);
+				   self.addCartCallback({type : "publication" , value : $( this ).attr("name")})});
 		    //$(self.targetDomElem).find("div.featureDrop").click(function(){self._showFeature(this)});
   		    $(self.targetDomElem).find("nav div.navigueBar a").click(function() {
   										 var contentCible = $(this).attr("cible");
@@ -1020,10 +1036,13 @@ function initMyReport (options){
 					if(self.jsonData.publication[i].imexId){
 						star = '<i class="fa fa-star" style = "color:yellow;"></i>';
 					}
-					returnString += '<dd> <a target = "_blank" href ="' + rootUrl  + self.jsonData.publication[i].name + '">' + 
-									self.jsonData.publication[i].name + '</a> '+ star +
-									'<span class = "addCart publi pull-right" name ="' + self.jsonData.publication[i] + '">' + 
-									self.cartButton.publiAdd + '</span></dd>';
+				    console.log(self.jsonData.publication[i]);
+					returnString += '<dd> <a target = "_blank" href ="' 
+					+ rootUrl  + self.jsonData.publication[i].name + '">'
+					+ self.jsonData.publication[i].name + '</a> '+ star
+					+ '<span class = "addCart publi pull-right" name ="' 
+					+ self.jsonData.publication[i].name + '">'
+					+ self.cartButton.publiAdd + '</span></dd>';
 				};
 				return returnString;
 			}
@@ -1448,14 +1467,16 @@ function initMyReport (options){
 			data.aaData[i][1] ='<span index = "' + i + '">'+ data.aaData[i][1] + '</span> <i class="fa fa-info-circle"></i>';
 		    };
   		    var plural =  data.aaData.length > 1 ? 's' : ''; 
-  		    var titre = "<div class='divTitre'> <div>This molecule has <span class = 'niceRed'>" 
+  		    var titre = "<div class='divTitre'> <div class='interactBannerSup'>" 
+			+ this.jsonData.name 
+			+ " has <span class = 'niceRed'>" 
   			+ data.aaData.length + "</span> partner" + plural + ' '
 			+ ' described in ' + (data.xpTotal.inferred  + data.xpTotal.genuine) + 
-			' experiments:<ul class="xpPool">'
+			' experiments:</div><div class="interactBannerBot"><ul class="xpPool">'
 			+ '<li><span class="headGenCount">' 
-  			+ data.xpTotal.genuine + '</span> with this biomolecule</li>'
+  			+ data.xpTotal.genuine + '</span> involving ' + this.jsonData.name + '</li>'
 			+ '<li><span class="headInfCount">' 
-			+ data.xpTotal.inferred + '</span> with one of its homolog </li></ul></div>';
+			+ data.xpTotal.inferred + '</span> involving one of its homologs </li></ul></div>';
   		    var tableForm = "<table class='interact'><thead></thead><tbody></tbody></table>";
   		    var interactDiv = $(self.targetDomElem).find("div.tableInteract");
   			interactDiv.append(titre)
@@ -1789,31 +1810,49 @@ function initMyReport (options){
 			}if(self.jsonData.supportToAssociation){
 				returnString = self._supportToAssoc(returnString);
 			}
-			if(returnString){returnString+= self._assocPartner() + "</dl></div>";}
+//			if(returnString){returnString+= self._assocPartner() + "</dl></div>";}
 			return returnString;
 		},
 		_supportByAssoc : function(string){
-			var self = this;
-			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=association&value="
-			if(string){var returnString = string + '<dt > Supported by interaction:</dt>';}
-			else{var returnString = '<div class ="divTitre"> Inferred human interaction</div><div class = "postitContent">'+
-									'<dl><dt class = "hReport"> Supported by interaction:</dt>';}
-			for (var i=0; i < self.jsonData.supportByAssociation.length; i++) {
-				returnString += "<dd><a target ='_blank' href='" + rootUrl + self.jsonData.supportByAssociation[i] + "'>" + 
-							    self.jsonData.supportByAssociation[i] + "</a></dd>";
+		    var self = this;
+		    var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=association&value="
+		    var returnString;
+		    if(string){
+			returnString = string;
+			//    var returnString = string + '<dt > Supported by interaction:</dt>';
+		    } else {
+			returnString = '<div class ="divTitre">Interaction of homologous ' 
+			    + 'biomolecule(s)</div><div class = "postitContent">';
+//			    + '<dl><dt class = "hReport"> Supported by interaction:</dt>';
+		    }
+		    for (var i=0; i < self.jsonData.supportByAssociation.length; i++) {
+			/*returnString += "<dd><a target ='_blank' href='" + rootUrl 
+			    + self.jsonData.supportByAssociation[i] + "'>" + 
+			    self.jsonData.supportByAssociation[i] + "</a></dd>";*/
+			returnString += "<div class='suppAssoc'><a target ='_blank' href='" + rootUrl 
+			    + self.jsonData.supportByAssociation[i] + "'>" + 
+			    self.jsonData.supportByAssociation[i] + "</a></div>";
+			
 			};
 			return returnString;
 		},
-		_supportToAssoc : function(string){
-			var self = this;
-			if(string){var returnString = string + '<dt> Inferred human interaction:</dt>'}
-			else{var returnString = '<div class ="divTitre"> Supported interaction</div><div class = "postitContent">'+
-									'<dl><dt class = "hReport"> Inferred human interaction:</dt>'}
-			for (var i=0; i < self.jsonData.supportToAssociation.length; i++) {
-				returnString +="<dd><a target ='_blank' href='" + self.rootUrl + self.jsonData.supportToAssociation[i] + "'>" + 
-							    self.jsonData.supportToAssociation[i] + "</a></dd>";
-							    }
-			return returnString;
+	    _supportToAssoc : function(string){
+		var self = this;
+		var returnString;
+		if(string) {
+		    returnString = string;
+		} else {
+		    returnString = '<div class ="divTitre"> Inferred human interaction </div>'
+			+ '<div class = "postitContent">';
+		    //  '<dl><dt class = "hReport"> Inferred human interaction:</dt>'}
+		    for (var i = 0 ; i < self.jsonData.supportToAssociation.length ; i++) {
+			returnString += "<div class='suppAssoc'><a target ='_blank' href='" 
+			    + self.rootUrl + self.jsonData.supportToAssociation[i] + "'>" 
+			    + self.jsonData.supportToAssociation[i] + "</a></ddiv>";
+		    }
+		}
+		
+		return returnString;
 		},
 /*fin de bandeau association
  ---------------------------------------------------------------------------------------------------------------

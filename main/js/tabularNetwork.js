@@ -20,20 +20,34 @@ jQuery.fn.dataTableExt.oSort['neigh-desc'] = function(x,y) {
     return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
 };
 
-
 /* Custom sorting function for common-name sorting */
 jQuery.fn.dataTableExt.oSort['common-asc']  = function(x,y) {
     var xAsString = $(x).text();
     var yAsString = $(y).text();
+   
     return ((xAsString < yAsString) ? -1 : ((xAsString > yAsString) ?  1 : 0));
 };
 
 jQuery.fn.dataTableExt.oSort['common-desc'] = function(x,y) {    
     var xAsString = $(x).text();
     var yAsString = $(y).text();
+    
     return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
 };
-
+/* Custom sorting function for experiment number sorting */
+jQuery.fn.dataTableExt.oSort['xpType-asc']  = function(x,y) {
+    var xAsString = $(x).attr('src');
+    var yAsString = $(y).attr('src');  
+    
+    return ((xAsString < yAsString) ? -1 : ((xAsString > yAsString) ?  1 : 0));
+};
+ 
+jQuery.fn.dataTableExt.oSort['xpType-desc'] = function(x,y) {
+    var xAsString = $(x).attr('src');
+    var yAsString = $(y).attr('src');    
+    
+    return ((xAsString < yAsString) ?  1 : ((xAsString > yAsString) ? -1 : 0));
+};
 
 
 function tabularInit (opt) {
@@ -157,7 +171,7 @@ function tabularInit (opt) {
 		+ '<tbody></tbody></table>'
 		+ '</div>'
 		+ '<div class="tabularNetworkBodyLinkTable" style="display:none">'
-		+ '<table class="table table-stripped"><thead><th>Type</th><th>Partner "A"</th><th>Partner "B"</th><th>Data</th></thead>'
+		+ '<table class="table table-stripped"><thead><th>Type</th><th>Partner "A"</th><th>Partner "B"</th><th>Number of experiments</th></thead>'
 		+ '<tbody></tbody></table>'
 		+ '</div></div></div>'
 		+ '<div class="tabularNetworkFooter">'
@@ -689,6 +703,11 @@ function tabularInit (opt) {
 	    this.linkDT = $(this.target + ' .tabularNetworkBodyLinkTable table')
 		.dataTable({
 			       aaData : self.linkTableData,
+			       aoColumnDefs : [
+				   { sType : 'xpType', "aTargets" : [ 0 ] },
+				   { sType : 'neigh', "aTargets" : [ 3 ] }
+				//   { sType : 'common', "aTargets" :[ 2 ] }
+			       ], 
 			       aaSorting: [], 
 			       bDeferRender : true, // useless when using fnAddData
 			       sDom : "tS",

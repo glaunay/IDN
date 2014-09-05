@@ -25,7 +25,7 @@ function runReportMaestro (options) {
     
     if(options.cart){
 	var optionsCart = {targetDiv :  '#testCart',
-						rootUrl:options.rootUrl
+			   rootUrl:options.rootUrl
 					};
 	cart = initCart(optionsCart);
 	cart.draw();

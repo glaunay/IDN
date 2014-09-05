@@ -362,8 +362,10 @@ function vizObjectInit (opt) {
 		} else if(data.type === "orphans"){
 			vizObject.tabular.tickNodes({data : []});
 			var orphanNode = vizObject.core.getOrphanNodes();
+		    if (orphanNode.length > 0) {			    			
 			vizObject.tabular.tickNodes({data : orphanNode, setToGlow : 'check'});
 			vizObject.core.setGlowyNodes({nodeNameList : orphanNode});
+		    }
 		} else {
 			console.dir('this type is wrong');
 			console.dir(data.type);
