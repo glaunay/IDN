@@ -63,7 +63,7 @@ function initNetworkFilter (opt) {
 		    var checkAll = '';
 		    var test = '<ul class="nav nav-tabs">'
 			+'<li class="active"><a href="#expTableDiv" data-toggle="tab">Expression level</a></li>'
-	  		+'<li><a href="#detectionTableDiv" data-toggle="tab">Detection method filter</a></li>'
+	  		+'<li><a href="#detectionTableDiv" data-toggle="tab">Interaction detection method</a></li>'
   			/*+'<li><a href="#messages" data-toggle="tab">Messages</a></li>'
   			+'<li><a href="#settings" data-toggle="tab">Settings</a></li>'*/
 			+'</ul>'

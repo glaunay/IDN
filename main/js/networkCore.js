@@ -1807,7 +1807,7 @@ function coreInit (opt) {
 		function() {
 		    var symbol = list[inner];
 		    if (!symbol) return;
-		    var text = symbol === "biomolecule" ? "others" : symbol;
+		    var text = symbol === "biomolecule" ? "others (synthetic peptides and inorganic compounds)" : symbol;
 		    text = text.replace(/^./, function (letter) {
 					    return letter.toUpperCase();
 					});

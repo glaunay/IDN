@@ -196,7 +196,7 @@ function initMyReport (options){
 	psicquicViewHotPatch : function () {
 		var scaffold = '<div id="psicquicView" class="row-fluid"><div class="span2 psqLogo"><img class="pull-left" src="' + this.rootUrl + 
 			'/img/psicquic.png"></img></div>'
-			+ '<div class="psqStatus span8"><div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div class="span12">Expanding to non-ECM partners</div></div></div>' 
+			+ '<div class="psqStatus span8"><div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div class="span12">Expanding to partners found in PSICQUIC-enabled databases</div></div></div>' 
 			+'<div class="psqFont span2"><i class="fa fa-spinner fa-spin fa-2x"></i></div>' 
 			+'</div>';	
 			$('.tableInteract').append(scaffold);
@@ -237,7 +237,7 @@ function initMyReport (options){
 					if (data.number) {
 					$(".psqStatus").empty()
 							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div><a href="' + data.url + '" target="_blank">'
-								+ data.number + ' interactions found in psicquic</a></div></div>');
+								+ data.number + ' experiments found in PSICQUIC</a></div></div>');
 						$(".psqFont").empty()
 							.append('<i class="fa fa-2x fa-check-circle"></i>');
 					} else {
@@ -487,7 +487,7 @@ function initMyReport (options){
   			if(!self.jsonData.relationship.In_multimer[0] && !self.jsonData.relationship.Component[0]){return false;}
   			self.nbDiv++
   			var divCible = self._newRow(barchart);
-  			var content ="<div class = 'divTitre'> Complex information</div><div class = 'infoComplex postitContent'><dl>";
+  			var content ="<div class = 'divTitre'> Complex composition</div><div class = 'infoComplex postitContent'><dl>";
   			content += self._moreInfo() + self._multmer() +self._stoichiometrie()  + "</dl></div>"
   			if(self.nbDiv == 0 || self.nbDiv == 3 || self.nbDiv==4){var classSpan = "odd"}
   			else{var classSpan = "even"}
@@ -1074,20 +1074,20 @@ function initMyReport (options){
 		_associationRate : function(){
 			var self = this;
 			if(!self.jsonData.affinityKinetic.AssociationRate1){return '';}
-			var string = '<dt class ="hReport">Association rate (ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate1 + ' <span class="unit">M-1s-1</span></dd>';
+			var string = '<dt class ="hReport">Association rate (ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate1 + ' <span class="unit">M<sup>-1</sup>s<sup>-1</sup></span></dd>';
                         if(self.jsonData.affinityKinetic.AssociationRate2_MS){
-				string += '<dt class ="hReport">Association rate 2(ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate2_MS + ' <span class="unit">M-1s-1</span></dd>';
+				string += '<dt class ="hReport">Association rate 2(ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate2_MS + ' <span class="unit">M<sup>-1</sup>s<sup>-1</sup></span></dd>';
 			} else if(self.jsonData.affinityKinetic.AssociationRate2_S) {
-				string += '<dt class ="hReport">Association rate 2(ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate2_S + ' <span class="unit">s-1</span></dd>';
+				string += '<dt class ="hReport">Association rate 2(ka):</dt><dd> ' + self.jsonData.affinityKinetic.AssociationRate2_S + ' <span class="unit">s<sup>-1</sup></span></dd>';
 			}	
 			return string;
 		},
 		_dissociation : function(){
 			var self = this;
 			if(!self.jsonData.affinityKinetic.DissociationRate1){return '';}
-			var string = '<dt class ="hReport">Dissociation rate (kd):</dt><dd> ' + self.jsonData.affinityKinetic.DissociationRate1 + ' <span class="unit">s-1</span></dd>';
+			var string = '<dt class ="hReport">Dissociation rate (kd):</dt><dd> ' + self.jsonData.affinityKinetic.DissociationRate1 + ' <span class="unit">s<sup>-1</sup></dd>';
 			if(self.jsonData.affinityKinetic.DissociationRate2){
-				string += '<dt class ="hReport">Dissociation rate 2 (kd):</dt><dd> ' + self.jsonData.affinityKinetic.DissociationRate2 + ' <span class="unit">s-1</span></dd>';
+				string += '<dt class ="hReport">Dissociation rate 2 (kd):</dt><dd> ' + self.jsonData.affinityKinetic.DissociationRate2 + ' <span class="unit">s<sup>-1</sup></dd>';
 			}	 
 			return string;
 		},

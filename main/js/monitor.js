@@ -42,10 +42,10 @@ function initMonitor (opt) {
 		d3.select(self.selector).append("line").attr("x1",35).attr("y1", 20)
 			.attr("x2", 35).attr("y2",self.height *0.66 + 20).style("stroke-width",2).style("stroke","black");
 			
-		d3.select(self.selector).append("text").text("nodes").attr('width',50).attr("x",self.width * 0.33 + 5)
+		d3.select(self.selector).append("text").text("biomolecules").attr('width',20).attr("x",self.width * 0.15 + 5)
 	        .attr("y", 10);
 	        
-	   	d3.select(self.selector).append("text").text("links").attr('width',50).attr("x",self.width * 0.66 + 10)
+	   	d3.select(self.selector).append("text").text("experiments").attr('width',20).attr("x",self.width * 0.55 + 10)
 	    	.attr("y", 10);
 	    	
 	    d3.select(self.selector).append("rect").attr("id","nodeStack")
