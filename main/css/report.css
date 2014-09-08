@@ -587,16 +587,20 @@ div.noMatch{
 	text-align: center;
 }
 .popover-content{
-	padding: 0;
+	padding: 0px  0px  0px  0px;
 	max-height: 350px;
+	overflow-y : scroll;
 }
+
 
 .popover-content div.popoverContent.genuineTD {
     background-color : rgb(173, 248, 173);
+    padding-left: 5px;
 }
 
 .popover-content div.popoverContent.inferrenceTD {
-    background-color : orange
+    background-color : orange;
+    padding-left: 5px;
 }
 
 #reportDiv div.divTitre div.interactBannerSup {
@@ -637,7 +641,7 @@ div.popoverContent:nth-child(even){
 	background: rgb(212, 210, 216);
 }
 div.popoverContent{
-	padding: 5px;
+//	padding: 5px;
 }
 div#reportDiv div.author{
 	margin-top: 40px;

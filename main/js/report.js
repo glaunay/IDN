@@ -2405,8 +2405,8 @@ bandeau keywrd
 									    + xpDatum.pmid + '">' + xpDatum.imexid 
 									    + '</a>';  
 								   } 
-								});
 					returnString += '</div>';
+														});
 				    });
 		    
 		    return returnString 
