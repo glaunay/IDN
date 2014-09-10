@@ -157,7 +157,7 @@ function tabularInit (opt) {
 	    var bodyHtml = '<div class="tabularNetworkBody">'
 		+ '<div class="tabularNetworkBodyHead"><ul class="nav nav-pills">'
 		+ '<li class="active" id="nodeTab">Biomolecules</li>'
-		+ '<li id="linkTab">Associations</li>'
+		+ '<li id="linkTab">Interactions</li>'
 	    //	+ '<li>Action<i class="fa fa-sort-down fa-large pull-right"></i></li>'
 		+ '</ul></div>'
 		+ '<div class="tabularNetworkBodyContent">'
