@@ -1807,11 +1807,17 @@ function coreInit (opt) {
 		function() {
 		    var symbol = list[inner];
 		    if (!symbol) return;
-		    var text = symbol === "biomolecule" ? "others (synthetic peptides and inorganic compounds)" : symbol;
+		    var text = symbol === "biomolecule" ? "others" : symbol;
 		    text = text.replace(/^./, function (letter) {
 					    return letter.toUpperCase();
 					});
-		    d3.select(this).text(text); 
+		    d3.select(this).html(function(){
+			var content = text;
+			if (text === "Others") {
+				content += '</br> <span style="padding-left:15px;font-size:0.7em" >(synthetic peptides and inorganic compounds)</span>';
+			}
+			return content;
+			}); 
 		    inner++;
 		});	    
 	    $('#legend').append('<div class="legendFooter"><span class="legendSwitch">Hide</span></div>');

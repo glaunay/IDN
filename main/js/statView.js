@@ -22,7 +22,7 @@ function initStatView (options){
 	        			   url: 'cgi-bin/current/statistic',
 	        		       })
 	        	.success (function (data) {
-	           		     self._statDraw(data);
+	     self._statDraw(data);
 	    			      
 	      			  })
 			.error(function (xhr, status, error) {
