@@ -588,8 +588,9 @@ function initElementInfo(opt) {
 	},
 	_kinetic : function(xpData){
 		var self = this;
-	    if(!xpData.Kinetics || xpData.Kinetics == "N/A"){return '';}
-	    //		return '<dt class ="hReport">Kinetics details:</dt><dd> ' + _linkMi(xpData.Kinetics) + "</dd>";
+	   //	console.dir(xpData);
+		 if(!xpData.Kinetics || xpData.Kinetics == "N/A" || xpData.Kinetics == "kineticsDescriptor"){return '';}
+	 //   		return '<dt class ="hReport">Kinetics details:</dt><dd> ' + _linkMi(xpData.Kinetics) + "</dd>";
 	    return '<dt class ="hReport">Kinetics data</dt><dd>Available</dd>';
 	},
 	_publication : function(xpData){

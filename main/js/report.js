@@ -1114,7 +1114,7 @@ function initMyReport (options){
 			
 			$(self.targetDomElem).append("<div class='contentXp partner' ><div class='centralXp' ></div></div>");
   			var partnerDiv =$(self.targetDomElem).find("div.contentXp:last div.centralXp");
-  			var ancre = "<div class = 'navigueBar'><a cible = 'div.partner' >Participants features </a></div>";
+  			var ancre = "<div class = 'navigueBar'><a cible = 'div.partner' >Participant features </a></div>";
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			var scaffold = complexType === 'heteroDimer' 
   				? '<div class = "row-fluid"><div class = "span12  partcipants"><div class = "divTitre">Participant features</div>'+

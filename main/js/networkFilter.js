@@ -336,7 +336,7 @@ function initNetworkFilter (opt) {
    	  	 			"aoColumns": [
    	  	 	 	  		{ "sTitle": '<i class="fa fa-square-o"></i>',"sWidth": "15px"},
      			 	  	{ "sTitle": "Tissue/State", "sClass": "center","sWidth": "150px" },
-      				  	{ "sTitle": "Biomolecule number", "sClass": "center" ,"sWidth": "80px"},
+      				  	{ "sTitle": "Number of biomolecules", "sClass": "center" ,"sWidth": "80px"},
        					],
   			 	 	"sDom": '<"top"f>rt<"bottom"p><"clear">',
   			 	 	"sPaginationType": "bootstrap",
@@ -388,7 +388,7 @@ function initNetworkFilter (opt) {
    	  	 			"aoColumns": [
    	  	 	 	  	    { "sTitle": '<i class="fa fa-square-o"></i>',"sWidth": "15px"},
      			 	  	    { "sTitle": "Detection method", "sClass": "center","sWidth": "150px" },
-      				  	    { "sTitle": "Experiment Number", "sClass": "center" ,"sWidth": "80px"},
+      				  	    { "sTitle": "Number of experiments", "sClass": "center" ,"sWidth": "80px"},
        					],
   			 	 	"sDom": '<"top"f>rt<"bottom"p><"clear">',
   			 	 	"sPaginationType": "bootstrap",

@@ -272,14 +272,20 @@ function initBarSearch (options){
 		if(!results[0]){
 			var returnString = '<span><i class="fa fa-warning"></i> No match found</span>';
 		}else{
-			var returnString = "<table class = 'inTab'>"
+			var returnString = "<table class = 'inTab'>";
 			for (var i=0; i < results.length; i++) {
+			/*	var speciesTrailer = results[i].specie.name ? results[i].specie.name : null;
+				if (speciesTrailer) {
+					speciesTrailer += results[i].specie.taxon ? ' (' + results[i].specie.taxon + ')': '';
+				}*/
 				var name = results[i].aceAccessor?results[i].aceAccessor : results[i].name;
 				returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
 		 						"</td><td>" + results[i].name + "</td><td class = 'infoCart'>" +
 		 						"<a data-value = '" + name + "' data-type = 'biomolecule' target = '_blank' "+
 		 						"href ='/cgi-bin/current/newPort?type=biomolecule&value=" + name + "'>" +
-		 						results[i].common.anyNames[0] + "</a></td></tr>";
+		 						results[i].common.anyNames[0] 
+					//			+ " " + speciesTrailer
+								+ "</a></td></tr>";
 			};
 			returnString += "</table>";
 		}
@@ -306,7 +312,7 @@ function initBarSearch (options){
 		   		    if(type == "biomolecule" || type =="publication"){
 		   			for (var i = 0; i < val.length; i++) {
 					    if (val[i].count === "0") 
-						continue;				    
+						continue;		
 					    listeMapper[type].push(self._resultNav(val[i]));
 					}; 
 				}
@@ -341,6 +347,7 @@ function initBarSearch (options){
 		/* Rajout des tab si contenu*/
 			var widjet = $(self.targetDomElem).find('div.afficheResult.dbStyle');
 			if(listeMapper.biomolecule.length > 0){
+		//		console.dir(listeMapper.biomolecule);
 				var listeBio = self._tableHtmlCreator(listeMapper.biomolecule)
 				widjet.find('ul.nav').append(' <li class="active"><a href="#biomol">Biomolecule (' + listeMapper.biomolecule.length+ ')</a></li>')
 				widjet.find('div.tab-content').append('<div class="tab-pane active" id="biomol">' + listeBio + '</div>')
@@ -393,6 +400,8 @@ function initBarSearch (options){
 		if(data.name){
 			var longText = data.name
 			var type = "biomolecule"
+			if(data.specie.name)
+				longText += '<span class="spMini" >(' + data.specie.name + ')</span>';
 		}
 		if(data.count){
 			if(data.count>0){ newString = "(" + data.count + ")";}
@@ -405,6 +414,8 @@ function initBarSearch (options){
 		
 	},
 	_tableHtmlCreator : function(listeElem){
+	//	console.log("CU");
+	//	console.dir(listeElem);
 		var self = this;
 		var littSortable = {}
 		for (var i=0; i < listeElem.length; i++) {
@@ -430,6 +441,7 @@ function initBarSearch (options){
 		var returnString = "<table class = 'inTab'>";
 		var addRow = function (liste){
 			for (var i=0; i < liste.length; i++) {
+//				console.dir(liste[i]);
 		 		returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
 		 						"</td><td>" + liste[i] + "</td><td class = 'infoCart'>" + littSortable[liste[i]] + "</td></tr>";
 			};

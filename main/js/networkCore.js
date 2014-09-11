@@ -463,6 +463,10 @@ function coreInit (opt) {
 	    this.detectionMethod = {};
 	    this.detectionMethodLess = [];
 	    var self = this;
+
+		var linkNamePerMethodMemory = {};
+
+	
 	    d3.selectAll('.link').each(
 		function(d){
 		    var link = this;
@@ -475,7 +479,12 @@ function coreInit (opt) {
 				};
 				var method = experiment.Interaction_Detection_Method;
 				if (self.detectionMethod[method]) {
-				    self.detectionMethod[method].push(d);
+				    	var isKnown = "no";
+					self.detectionMethod[method].forEach(function (kLink){
+						if (kLink.details.name === d.details.name) isKnown = "yes";
+					});
+					if(isKnown === "no")
+						self.detectionMethod[method].push(d);
 				} else {
 				    self.detectionMethod[method] = [d];
 				}
@@ -1430,6 +1439,7 @@ function coreInit (opt) {
 			  });
 	},
 	_setLinkBasedPreviewFilter : function (filterData, strict) {
+//	    console.dir(filterData);
 	    var links = this.force.links();
 	    if (isEmpty(filterData.detectionMethod)) {
 		links.forEach(function(link) {link.nearVanish = "no";});
@@ -1456,8 +1466,8 @@ function coreInit (opt) {
 			      link.nearVanish = link.fCount >= dTagTot
 				  ? "no" : "yes";
 			      
-			   //   console.log(link.fCount + " " 
-			//		  + dTagTot + " --> " + link.nearVanish);
+			 /*     console.log(link.source.aceAccessor + " --" + link.target.name + " ; " + link.fCount + " >= " 
+				  + dTagTot + " --> " + link.nearVanish);*/
 			  });
 	},
 	previewFilter : function (filterData, strict) {

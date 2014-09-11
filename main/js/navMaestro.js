@@ -98,7 +98,7 @@ function vizObjectInit (opt) {
 							} else {
 						  		vizObject.core.addCenter(networkData.newCenters);	
 							    var keywordDistrib = vizObject.core.getKeywordDistribution();
-								vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);
+//								vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);
 							        vizObject.tabular.setNeighbourhoods();
 							}	
 						});
@@ -125,13 +125,13 @@ function vizObjectInit (opt) {
      * 
      */  
     
-	vizObject.statComp = initMyStatWidjet({
+/*	vizObject.statComp = initMyStatWidjet({
 							target : 'body',
 							rootUrl : context.rootUrl,
 							"draggable" : true,	
 						});
 	vizObject.statComp.loadRessource();
-	
+*/
 	
     /*
      * barSearch Component 
@@ -469,7 +469,7 @@ function litteralLoader (searchCrit) {
 		      vizObject.core.add(networkData);
 		      vizObject.core.addCenter(networkData.newCenters);	
 		      var keywordDistrib = vizObject.core.getKeywordDistribution();
-		      vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);		      
+//		      vizObject.statComp.makeStatUniprotKeywrd(keywordDistrib);		      
 		  });
 }
 

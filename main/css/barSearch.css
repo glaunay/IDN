@@ -102,6 +102,11 @@
 	margin-top : 5px;
 	width: 60%
 }
+#searchBarNav span.spMini{
+	color : grey;
+	font-size : 0.65em;
+	padding-left : 5px;
+}
 #searchBarNav input.inputBar{
 	
 	-webkit-border-radius: 0 0 0 0;

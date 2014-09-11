@@ -413,6 +413,12 @@ div#reportDiv .popover-title, div#reportDiv .popover-content,div#reportDiv .bott
 	color : white;
 	
 }
+
+div.helpMeContent {
+    width : 100%;
+    overflow : hidden;
+}
+
 div#reportDiv .popover a{
 	color:yellow;
 }
