@@ -274,17 +274,16 @@ function initBarSearch (options){
 		}else{
 			var returnString = "<table class = 'inTab'>";
 			for (var i=0; i < results.length; i++) {
-			/*	var speciesTrailer = results[i].specie.name ? results[i].specie.name : null;
-				if (speciesTrailer) {
-					speciesTrailer += results[i].specie.taxon ? ' (' + results[i].specie.taxon + ')': '';
-				}*/
+				console.dir(results[i]);
+				var speciesTrailer = results[i].specie.names ? '<span class="spMini">' 
+							+ results[i].specie.names[0] + '</span>' : '';
 				var name = results[i].aceAccessor?results[i].aceAccessor : results[i].name;
 				returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
 		 						"</td><td>" + results[i].name + "</td><td class = 'infoCart'>" +
 		 						"<a data-value = '" + name + "' data-type = 'biomolecule' target = '_blank' "+
 		 						"href ='/cgi-bin/current/newPort?type=biomolecule&value=" + name + "'>" +
 		 						results[i].common.anyNames[0] 
-					//			+ " " + speciesTrailer
+								+ speciesTrailer
 								+ "</a></td></tr>";
 			};
 			returnString += "</table>";
