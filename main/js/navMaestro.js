@@ -542,7 +542,7 @@ function bindWidgetTooltips (){
 	    //delay : { show : 1000, hide : 1000 },
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
-		+ '<div class = "titreHelp">Cart network widget</div><div class = "bodyHelp">'
+		+ '<div class = "titreHelp">Cart widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can add new node to the current graph</p>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/playlist?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0">Help<a/></p>'
 		+ '</div></div>',
@@ -567,7 +567,7 @@ function bindWidgetTooltips (){
 	    //delay : { show : 1000, hide : 1000 },
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
-		+ '<div class = "titreHelp">Palette network widget</div><div class = "bodyHelp">'
+		+ '<div class = "titreHelp">Palette widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can change the color of the selected node </p>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/watch?v=hjmxXDj08j4&list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0&index=5">Help<a/></p>'
 		+ '</div></div>',
