@@ -400,7 +400,7 @@ function initBarSearch (options){
 			var longText = data.name
 			var type = "biomolecule"
 			if(data.specie.name)
-				longText += '<span class="spMini" >(' + data.specie.name + ')</span>';
+				longText += '<span class="spMini">' + data.specie.name + '</span>';
 		}
 		if(data.count){
 			if(data.count>0){ newString = "(" + data.count + ")";}
@@ -532,8 +532,7 @@ function initBarSearch (options){
 						}
 						arrayItem = liste[numList].length;
 						var plural = '';
-						if(arrayItem>1){plural = 's'}
-						console.dir(i)
+						if(arrayItem>1){plural = 's'}			
 						widjet.append('<div class = "afficheBiom" name="' + i +'">'+
 									  '<h4 class = "nomListe"> <div class ="humanOnly">' + checkBox + ' Human only</div>'+ 
 									  self.nameColumn[i].id + plural + ' (' + arrayItem + ')'+

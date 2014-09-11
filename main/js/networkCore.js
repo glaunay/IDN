@@ -1824,7 +1824,7 @@ function coreInit (opt) {
 		    d3.select(this).html(function(){
 			var content = text;
 			if (text === "Others") {
-				content += '</br> <span style="padding-left:15px;font-size:0.7em" >(synthetic peptides and inorganic compounds)</span>';
+	//			content += '</br> <span style="padding-left:15px;font-size:0.7em" >(synthetic peptides and inorganic compounds)</span>';
 			}
 			return content;
 			}); 
@@ -1845,6 +1845,21 @@ function coreInit (opt) {
 			    $('div.legendFooter span').text("Hide");
 			}
 		    });
+
+		$('#legend div.legendText')
+			.each(function(){
+			if($(this).text() == "Others"){
+				var anchorPos = $(this).position();  
+				var offset = $(this).width();   
+				var scaff = '<div class="othersAddOn">(synthetic peptides and inorganic compounds)</div>';
+				$('#legend').append(scaff);	
+				$('#legend div.othersAddOn').css('position', 'absolute').css({
+					top : anchorPos.top + 'px',
+					left : (anchorPos.left + offset + 15) + 'px',
+					"font-size" : '0.6em'
+				})
+				
+			}})
 	},
 	serialize : function (opt) {
 	    var data = {

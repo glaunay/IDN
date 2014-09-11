@@ -56,8 +56,6 @@ function initBarSearchMapper (){
 			var newString = "";
 			if(count>0){ newString =  count;}
 			var dataAttr = 'data-type="biomolecule" data-value="' + data.id + '"';
-			console.log("HERE");
-			console.dir(data);
 			if (data.specie.name)
 				dataAttr += 'data-specie="' + data.specie.name + '"';
 
