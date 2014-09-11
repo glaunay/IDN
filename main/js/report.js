@@ -119,7 +119,7 @@ function initMyReport (options){
 		helpLink : {
 			"experiment"  : {
 								title :"Here you can browse all data related to an experiment.",
-								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
+								content : '<div class="helpMeContent"><i class="fa fa-hand-o-right"></i> additional help can be found <a href = "http://www.youtube.com/watch?v=_QBWC2-GSgE" target = "_blank">Here</a></div>',
 							 	html  : true,
 							 	placement : "bottom",
 							 	container : "div#reportDiv",
@@ -127,7 +127,7 @@ function initMyReport (options){
 							 },
 			"association" : {
 								title :"Here you can browse all data related to an association.",
-								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
+								content : '<div class="helpMeContent"><i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/playlist?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0" target = "_blank">Here</a></div>',
 							 	html  : true,
 							 	placement : "bottom",
 							 	container : "div#reportDiv",
@@ -135,15 +135,15 @@ function initMyReport (options){
 							 },
 			"publication" : {
 								title :"Here you can browse all data related to a publication.",
-								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
+								content : '<div class="helpMeContent"><i class="fa fa-hand-o-right"></i> additional help can be found <a href = "http://www.youtube.com/watch?v=ziA4O8mfGrw" target = "_blank">Here</a></div>',
 							 	html  : true,
 							 	placement : "bottom",
 							 	container : "div#reportDiv",
 							 	trigger : "manual"
 							 },
 			"biomolecule" : {
-								title :"Here you can browse all data related to a biomolecule.",
-								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
+								title :"Here you can browse all data related to a biomolecule.</div>",
+								content : '<div class="helpMeContent"><i class="fa fa-hand-o-right"></i> additional help can be found <a href = "http://www.youtube.com/watch?v=yT8pglPVR3w" target = "_blank">Here</a></div>',
 							 	html  : true,
 							 	placement : "bottom",
 							 	container : "div#reportDiv",
@@ -151,7 +151,7 @@ function initMyReport (options){
 							 },
 			"author"      : {
 								title :"Here you can browse all data related to an author.",
-								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
+								content : '<div class="helpMeContent"><i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/playlist?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0" target = "_blank">Here</a></div>',
 							 	html  : true,
 							 	placement : "bottom",
 							 	container : "div#reportDiv",
@@ -159,7 +159,7 @@ function initMyReport (options){
 							 },
 			"keywrd"	  : {
 								title :"Here you can browse all data related to a UniprotKB keyword.",
-								content : '<i class="fa fa-hand-o-right"></i> additional help can be found <a href = "http://youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" target = "_blank">Here</a>',
+								content : '<div class="helpMeContent"><i class="fa fa-hand-o-right"></i> additional help can be found <a href = "https://www.youtube.com/playlist?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0" target = "_blank">Here</a></div>',
 							 	html  : true,
 							 	placement : "bottom",
 							 	container : "div#reportDiv",
@@ -286,6 +286,7 @@ function initMyReport (options){
 			.on("mouseenter", function () {
 				var _this = this;
 				$(_this).popover('show');
+				$('.popover').find('div.helpMeContent').parent().css('overflow', 'hidden');
 				$(".popover").on("mouseleave", function () {
 						     $(_this).popover('hide');
 						 });

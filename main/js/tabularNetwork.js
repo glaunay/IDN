@@ -214,7 +214,7 @@ function tabularInit (opt) {
 	    $(this.target + ' i.helpMe').popover({ 
 	    	   html : true,
 	    	   placement : 'right', 
-			   title : 'For advanced usage see our <a target = "_blank" href = "https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg" >help</a>', 
+			   title : 'For advanced usage see our <a target = "_blank" href = "http://www.youtube.com/watch?v=hq85jOhYz2Y" >help</a>', 
 			   container : 'body',
 			   trigger : "manual"
 			   })

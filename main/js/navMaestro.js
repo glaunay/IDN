@@ -532,7 +532,7 @@ function bindWidgetTooltips (){
 	    title : '<div class="bookmarkTooltip">'
 		+ '<div class = "titreHelp">Tabular network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can manage node and link selections</p>'
-		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg">Help<a/> </p>'
+		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/watch?v=hq85jOhYz2Y">Help<a/> </p>'
 		+ '</div></div>',
 	    placement : 'right' ,
 	    trigger : 'manual'
@@ -544,7 +544,7 @@ function bindWidgetTooltips (){
 	    title : '<div class="bookmarkTooltip">'
 		+ '<div class = "titreHelp">Cart network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can add new node to the current graph</p>'
-		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg">Help<a/></p>'
+		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/playlist?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0">Help<a/></p>'
 		+ '</div></div>',
 	    placement : 'right' ,
 	    trigger : 'manual'
@@ -557,7 +557,7 @@ function bindWidgetTooltips (){
 		+ '<div class = "titreHelp">Filter network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can filter element out of the network based on:</p>'
 	       +'<ul><li>Expression Level of biomolecules</li><li>Experimental detection method of association</li></ul>'
-		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg">Help<a/> </p>'
+		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/watch?v=Db1tLUz8IAo&index=4&list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0">Help<a/> </p>'
 		+ '</div></div>',
 	   placement : 'right' ,
 	    trigger : 'manual'
@@ -569,7 +569,7 @@ function bindWidgetTooltips (){
 	    title : '<div class="bookmarkTooltip">'
 		+ '<div class = "titreHelp">Palette network widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can change the color of the selected node </p>'
-		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg">Help<a/></p>'
+		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/watch?v=hjmxXDj08j4&list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0&index=5">Help<a/></p>'
 		+ '</div></div>',
 	    placement : 'right' ,
 	    trigger : 'manual'
@@ -577,7 +577,7 @@ function bindWidgetTooltips (){
     };    
     
     var button = "<div class = 'help'><div id = 'showHelp' class = 'showHelp'><i class = 'fa fa-check-square-o'></i> Show help</div>"+
-    			 "<div class = 'linkToHelp'> <a target = '_blank' href = 'https://www.youtube.com/channel/UCIVhIpz93GZkbWvSlK8KeWg' >Online tutorial</a></div></div>";
+    			 "<div class = 'linkToHelp'> <a target = '_blank' href = 'https://www.youtube.com/playlist?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0' >Online tutorial</a></div></div>";
      $('div.container').append(button);
     // 1ST bind toggle check box w/ this.helpActive boolean.
 	$('#showHelp').click(function(){
