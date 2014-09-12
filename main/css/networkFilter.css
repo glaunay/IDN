@@ -162,6 +162,9 @@ div.expressionTempMess, div.detectionTempMess{
 div.expressionTempMess:nth-child(2), div.detectionTempMess:nth-child(2){
 	padding-top: 20px;
 }
+#loopLargeWrapper .tab-content {
+	overflow : hidden !important;
+}
 #loopLargeWrapper .apply{
 	margin-left: 20px;
 	margin-top: -50px;
