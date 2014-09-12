@@ -1834,6 +1834,7 @@ function coreInit (opt) {
 	    $('.legendFooter span')
 		.on('click',function (){
 			$('#legend table').toggle();
+			$('#legend div.othersAddOn').toggle();
 			if( $('#legend table').css("display") == "none" ){
 			    $('#legend').removeClass("full");
 			    $('#legend').addClass("label");
