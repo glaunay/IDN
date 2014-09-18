@@ -1,6 +1,6 @@
 function setBanner () {
 var scaffold = '<div class="topBanner"><div class="bannerBox">'
-	+ 'During <b>20 September</b>, our services be will shut down for infrastructure maintenance purposes.'
+	+ 'During <b>20 September</b>, our services will be shut down for infrastructure maintenance purposes.'
 	+ ' We apologize for the inconvenience.'
 	+ '<button class="btn btnTopBanner" type="button"><i class="fa fa-times"></i></button>'
 	+ '</div>';
