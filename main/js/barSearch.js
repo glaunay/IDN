@@ -63,7 +63,7 @@ function initBarSearch (options){
 					  "<ul class ='fa-ul'><li><i class='fa fa-hand-o-right'></i>"+
 					  " Hits are ranked according to their number of known interactions within the database.</li>"+
 					  "<li><v"+
-					  " For each hit, gene name(s) and specie as a logo are provided.</li>"+
+					  " For each hit, gene name(s) and species as a logo are provided.</li>"+
 					  "<li><i class='fa fa-hand-o-right'></i>"+
 					  " Please note the check box to restrict hits to human only.</li></div>"
 

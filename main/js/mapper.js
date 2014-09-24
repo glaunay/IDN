@@ -61,7 +61,7 @@ function initBarSearchMapper (){
 
 			var tooltip = '<div  class =inTooltip>Id : ' + data.id + '</div><div class =inTooltip>Name : ' + data.name + '</div>';
 			if(data.specie){
-				tooltip += '<div class =inTooltip>Specie : ' + specie + '</div>';
+				tooltip += '<div class =inTooltip>Species : ' + specie + '</div>';
 			}
 			var geneName = '';
 			
