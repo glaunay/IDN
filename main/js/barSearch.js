@@ -71,7 +71,7 @@ function initBarSearch (options){
 		"keywrd" : {
 			id:"UniProtKB keyword",
 			tooltip : "<div class = 'postitSearchContent'><div class='postitTitle'>List of annotation terms found in MatrixDB</div>"+
-					  "<p>Annotation terms are part of <a target='_blank' href='help uni'>UniprotKB controlled vocabulary</a></p></div>"
+					  "<p>Annotation terms are part of <a target='_blank' href='http://www.uniprot.org/help/keywords'>UniprotKB controlled vocabulary</a></p></div>"
 
 			},
 		"publication" : {

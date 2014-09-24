@@ -557,7 +557,7 @@ function initMyReport (options){
   			var subtype = self.jsonData.subType.charAt(0).toUpperCase() + self.jsonData.subType.slice(1);
   			var specie = self.jsonData.specie.names ? self.jsonData.specie.names[1] : "Universal";
   			var taxonId = self.jsonData.specie.value ? self.jsonData.specie.value : "NA";
-  			var tooltip = "<div>Specie : " + specie + "</div><div> Taxon id : " + taxonId + "</div>"; 
+  			var tooltip = "<div>Species : " + specie + "</div><div> Taxon id : " + taxonId + "</div>"; 
   			var linkSpeci = self.jsonData.specie.value ? 
   							'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=' + self.jsonData.specie.value :
   							'http://www.ncbi.nlm.nih.gov/Taxonomy';
@@ -621,7 +621,7 @@ function initMyReport (options){
 				for (var i = 1; i <  self.jsonData.specie.names.length; i++) {
 				   nom += ', ' + self.jsonData.specie.names[i];
 				};
-				var specieString ="<dt class ='hReport'>Specie:</dt><dd> <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + self.jsonData.specie.value + "'>" + nom + " <i class='fa fa-external-link'></i></a></dd>";
+				var specieString ="<dt class ='hReport'>Species:</dt><dd> <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + self.jsonData.specie.value + "'>" + nom + " <i class='fa fa-external-link'></i></a></dd>";
 				
 			}
 			return specieString;
@@ -1880,11 +1880,11 @@ bandeau keywrd
       		 	sScrollX: "100%",
    		  	 	"aoColumns": [
    		  	 		{ "sTitle": "Biomolecule", "sWidth": "450px", "sClass": "center"},
-   		  	 		{ "sTitle": "Specie", "sClass": "center","sWidth": "150px"},
+   		  	 		{ "sTitle": "Species <i class='fa fa-external-link'></i>", "sClass": "center","sWidth": "150px"},
        			    { "sTitle": "Add biomolecule", "sWidth": "150px", "sClass": "center"}],
     			"oLanguage": {
     				 	"sSearch": "Filter:",
-						"sInfo": "<div class = 'title'>This Keyword annote <span class = 'niceRed '>_TOTAL_</span> biomolecule(s)</div>"
+						"sInfo": "<div class = 'title'>This Keyword annotates <span class = 'niceRed '>_TOTAL_</span> biomolecule(s)</div>"
   				  	},
   				 "sDom": '<"topHead"f><"topBody"i>rt<"bottom"p><"clear">',
   				 "sPaginationType": "bootstrap",
@@ -1907,10 +1907,11 @@ bandeau keywrd
   			for (var i = 0; i < self.jsonData.biomolecules.length; i++) {
   				var name = self.jsonData.biomolecules[i].name;
   				var nom =   self.jsonData.biomolecules[i].specie.names[0];
-				for (var j = 1; i <  self.jsonData.biomolecules[i].specie.names.length; i++) {
-			  		nom += ', ' + self.jsonData.biomolecules[i].specie.names.length;
+				for (var j = 1; j <  self.jsonData.biomolecules[i].specie.names.length; j++) {
+//			  		nom += ', ' + self.jsonData.biomolecules[i].specie.names.length;
+			  		nom += ', ' + self.jsonData.biomolecules[i].specie.names[j];
 				};
-				var specieString =" <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + self.jsonData.biomolecules[i].specie.value + "'>" + nom + " <i class='fa fa-external-link'></i></a>";
+				var specieString =" <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + self.jsonData.biomolecules[i].specie.value + "'>" + nom + "</a>";
   				var biom = "<a target = '_blank' href='" + rootUrl + name + "' name ='" + name + "'>" + self.jsonData.biomolecules[i].common.anyNames[0] + "</a>";
   				
 				aaData.push([biom, specieString,self.cartButton.biomAdd]);
