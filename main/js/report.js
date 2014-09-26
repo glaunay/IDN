@@ -1885,7 +1885,7 @@ bandeau keywrd
     			"oLanguage": {
     				 	"sSearch": "Filter:",
 						"sInfo": "<div class = 'title'>This Keyword annotates <span class = 'niceRed '>_TOTAL_</span> biomolecule(s)     " + 
-						"<span  style='font-size:0.7em'><i class='fa fa-warning'></i> Due to limited resources, below table may temporarily be limited to 100 entries</span></div>"
+						"<span  style='font-size:0.7em'><i class='fa fa-warning'></i> Due to limited resources, below table may be temporarily limited to 100 entries</span></div>"
   				  	},
   				 "sDom": '<"topHead"f><"topBody"i>rt<"bottom"p><"clear">',
   				 "sPaginationType": "bootstrap",
