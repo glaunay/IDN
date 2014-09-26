@@ -87,15 +87,21 @@ sub getCategory {
   return $string;
 }
 
+# GL -- 2014/09/26 , setting nb biomolecule hard limit to 100 elements
 sub getBiomolecules {
     my $aceObject = shift;
     my $DB = shift;
+    
+    my $hardLimit = 100;
+    
     my @biomoleculeObjectList;
     my $aceBuffer = $aceObject->at('BioMolecule');
     defined($aceBuffer) || return undef;
     $aceBuffer = $aceBuffer->right();
     while (defined $aceBuffer) {
-      my $biomolecule = newPort::biomolecule::get({name => $aceBuffer->name, DB => $DB, size => "veryShort"});
+	@biomoleculeObjectList == $hardLimit && last;
+	
+	my $biomolecule = newPort::biomolecule::get({name => $aceBuffer->name, DB => $DB, size => "veryShort"});
       if ( !defined($biomolecule) ){
 	$logger->error($aceBuffer->name . " returned no biomolecule data container");
 	next;

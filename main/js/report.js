@@ -1884,7 +1884,8 @@ bandeau keywrd
        			    { "sTitle": "Add biomolecule", "sWidth": "150px", "sClass": "center"}],
     			"oLanguage": {
     				 	"sSearch": "Filter:",
-						"sInfo": "<div class = 'title'>This Keyword annotates <span class = 'niceRed '>_TOTAL_</span> biomolecule(s)</div>"
+						"sInfo": "<div class = 'title'>This Keyword annotates <span class = 'niceRed '>_TOTAL_</span> biomolecule(s)     " + 
+						"<span  style='font-size:0.7em'><i class='fa fa-warning'></i> Due to limited resources, above table is temporarily limited to 100 entries</span></div>"
   				  	},
   				 "sDom": '<"topHead"f><"topBody"i>rt<"bottom"p><"clear">',
   				 "sPaginationType": "bootstrap",
