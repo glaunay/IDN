@@ -224,7 +224,7 @@ function initBarSearch (options){
 	    // Look for changes in the value
 	    elem.bind("propertychange  input paste", function(event){ //recherche effectuer	
 			  var string = elem.val().toLowerCase();
-			  
+			  string = string.latinise();
 			  if(self.iNavContext){
 			  	vizObject.core.bubbleNodeClear();
 			  }
