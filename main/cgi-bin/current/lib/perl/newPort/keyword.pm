@@ -30,7 +30,8 @@ sub get {
 	  definition   => getDefinition($aceObject),
 	  synonym      => getSynonym($aceObject),
 	  category   => getCategory($aceObject),
-	  biomolecules => getBiomolecules($aceObject, $p->{ DB })
+	  biomolecules => getBiomolecules($aceObject, $p->{ DB }),
+	  biomoleculeNumber => cntBiomolecule ($aceObject, $p->{ DB })
 	 };
 } 
 
@@ -86,6 +87,15 @@ sub getCategory {
   
   return $string;
 }
+
+sub cntBiomolecule {
+    my $aceObject = shift;
+    my $DB = shift;
+    my @biomoleculeObjectList = $aceObject->follow('BioMolecule');
+ 
+    return scalar(@biomoleculeObjectList);
+}
+
 
 # GL -- 2014/09/26 , setting nb biomolecule hard limit to 100 elements
 sub getBiomolecules {

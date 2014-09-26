@@ -225,8 +225,13 @@ sub getCommonName {
       push @stack, $val;
     }
   }
+  
+  if (@stack == 0) {
+      push @stack, $aceObject->name;
+  }
   $dataContainer->{ anyNames } = \@stack; 
   $logger->trace(Dumper($dataContainer));
+  
   
   return $dataContainer;
 }

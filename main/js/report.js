@@ -661,7 +661,8 @@ function initMyReport (options){
   		_names : function(){//return les différents noms de maniére lisible
   			var self = this;
   			if(!self.jsonData.common){return ""}
-  			var lineNames = "<dt class ='hReport'>Names:</dt><dd>";
+			if(self.jsonData.common.anyNames.length === 0){return ""}
+  			var lineNames = "<dt class ='hReport'>Name:</dt><dd>";
   			for (var i = 0; i < self.jsonData.common.anyNames.length; i++) {
 				lineNames += self.jsonData.common.anyNames[i] + ", "
 			  
@@ -1884,7 +1885,8 @@ bandeau keywrd
        			    { "sTitle": "Add biomolecule", "sWidth": "150px", "sClass": "center"}],
     			"oLanguage": {
     				 	"sSearch": "Filter:",
-						"sInfo": "<div class = 'title'>This Keyword annotates <span class = 'niceRed '>_TOTAL_</span> biomolecule(s)     " + 
+						"sInfo": "<div class = 'title'>This Keyword annotates <span class = 'niceRed '>" + self.jsonData.biomoleculeNumber  
+						+  "</span> biomolecule(s)     " + 
 						"<span  style='font-size:0.7em'><i class='fa fa-warning'></i> Due to limited resources, the table below may be temporarily limited to 100 entries</span></div>"
   				  	},
   				 "sDom": '<"topHead"f><"topBody"i>rt<"bottom"p><"clear">',
@@ -1905,7 +1907,8 @@ bandeau keywrd
   			var aaData = [];
   			
   			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value=";
-  			for (var i = 0; i < self.jsonData.biomolecules.length; i++) {
+  			if(!self.jsonData.biomolecules) return aaData;
+			for (var i = 0; i < self.jsonData.biomolecules.length; i++) {
   				var name = self.jsonData.biomolecules[i].name;
   				var nom =   self.jsonData.biomolecules[i].specie.names[0];
 				for (var j = 1; j <  self.jsonData.biomolecules[i].specie.names.length; j++) {
