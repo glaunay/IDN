@@ -144,19 +144,19 @@ function startPanZoomControler(opt) {
 		      event.stopPropagation();
 		  });
     $(ctrl[0]).on('click', function (event) {		      
-		      self.pan(0,50);
-		      event.stopPropagation();
-		  });
-    $(ctrl[1]).on('click', function (event){
-		      self.pan(50,0);
-		      event.stopPropagation();
-		  });
-    $(ctrl[2]).on('click', function (event){ 
 		      self.pan(0,-50);
 		      event.stopPropagation();
 		  });
-    $(ctrl[3]).on('click', function (event){
+    $(ctrl[1]).on('click', function (event){
 		      self.pan(-50,0);
+		      event.stopPropagation();
+		  });
+    $(ctrl[2]).on('click', function (event){ 
+		      self.pan(0,50);
+		      event.stopPropagation();
+		  });
+    $(ctrl[3]).on('click', function (event){
+		      self.pan(50,0);
 		      event.stopPropagation();
 		  });
     $(ctrl[4]).on('click', function (event){
