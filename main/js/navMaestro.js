@@ -41,8 +41,8 @@ function vizObjectInit (opt) {
 		context.from = 'HTML';	    
 	    }
 	    
-	    var publicPattern = /matrixdb-new.ibcp.fr/;
-	    context.rootUrl = publicPattern.test(location) ? 'http://matrixdb-new.ibcp.fr' : 'http://matrixdb.ibcp.fr:9999'; 
+	    var develPattern = /matrixdb.ibcp.fr:9999/;
+	    context.rootUrl = develPattern.test(location) ? 'http://matrixdb.ibcp.fr:9999' : 'http://matrixdb.ibcp.fr'; 
 	    
 	    return context;
 	}
