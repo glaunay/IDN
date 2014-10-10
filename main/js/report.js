@@ -234,6 +234,7 @@ function initMyReport (options){
 				url : self.rootUrl + "/cgi-bin/current/psicquicRelay"					
 				})
   				.success(function (data) {
+					self.psqViewData = data;
 					if (data.number) {
 					$(".psqStatus").empty()
 							.append('<div class="row-fluid"><div class="psqTitle span12">Psicquic remote querying</div><div><a href="' + data.url + '" target="_blank">'
@@ -571,7 +572,7 @@ function initMyReport (options){
   		},
   		_ftGenerateDivHtml : function(barchart){
   			var self = this;
-  			if(!self.jsonData.biofunc && !self.jsonData.comments && !self.jsonData.location && !self.jsonData.location.comments && !self.jsonData.location.compartiment){return false;}
+  			if(!self.jsonData.biofunc && !self.jsonData.comments && !self.jsonData.location.comments && !self.jsonData.location.compartiment){return false;}
   			self.nbDiv++;
   			var divCible = self._newRow(barchart);
   			var content = "<div class ='divTitre'>Biological function and location</div><div class = 'divers postitContent'><dl>";

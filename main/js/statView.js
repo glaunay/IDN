@@ -60,8 +60,8 @@ function initStatView (options){
 							  '<tr><td>MIMIx-level curated publications</td><td>' + pub + '</td></tr>'+
 							  '<tr><td>IMEx-level curated publications</td><td>' + data.publications.imex + '</td></tr>' ;
 				tableFinal += '</tbody></table>';
-				var date = "<div>Update on " + data.localDate[1] + "/" + data.localDate[2] + "/" + data.localDate[0] +
-						   " at " + data.localDate[3] + "h" + data.localDate[4] +" min</div>";
+				var date = "<div>Updated on " + data.localDate[1] + "/" + data.localDate[2] + "/" + data.localDate[0] +
+						   " at " + data.localDate[3] + "h" + data.localDate[4] +"min</div>";
 				$(self.targetDomElem).append( date + scaffold);
 				$(self.targetDomElem).find("div.firstPart").append(tableFinal);
 				$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
