@@ -16,7 +16,7 @@ use CHI;
 #custom
 use common;
 
-our $CACHE_ADDRESS = "/tmp/networkCache_DVL2";
+our $CACHE_ADDRESS = "/tmp/recentNetworkCache";
 Log::Log4perl->init("$ENV{ IDN_CONF }/storeNetwork.conf");
 my $logger = get_logger(); 
 
