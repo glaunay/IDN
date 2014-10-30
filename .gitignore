@@ -7,6 +7,8 @@ dependencies/batik-1.7/
 main/data/molecularData/*
 # cgi-bin log files
 main/cgi-bin/current/log/*
+# cgi-bin log configuration files
+main/cgi-bin/current/conf/*
 # deprecated file to delete
 main/html/toDel
 main/cgi-bin/current/toDel
