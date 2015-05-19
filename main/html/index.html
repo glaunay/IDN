@@ -1,1 +1,752 @@
-index_v11.html
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!---
+    HTML CODE OF MATRIX DB HOMEPAGE see for footer   http://twitter.github.io/bootstrap/examples/sticky-footer.html-->
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=windows-1252" />
+    <!--- <title>MatrixDB : Database of extracellular molecular interactions</title>  -->
+    <link rel="stylesheet" href="dependencies/css/bootstrap.min.css" />
+    <link href="dependencies/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/statView.css" />
+    <link href="img/favicon.ico" type="image/x-icon" rel="shortcut icon" />
+    <link href="../css/barSearch.css" rel="stylesheet"/>
+    
+    <!--<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>-->
+    <script type="text/javascript" src="../../dependencies/js/jquery-1.7.2.min.js"></script>
+    <script src="dependencies/js/d3.v3.min.js" charset="utf-8"></script>
+    
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/barSearch.js"></script>
+    <script type="text/javascript" src="js/mapper.js"></script>
+    <script type="text/javascript" src="js/statView.js"></script>
+    <script type="text/javascript" src="js/formContact.js"></script>
+    <script type="text/javascript" src="dependencies/js/bootstrap.js"></script>  
+    <script type="text/javascript" src="js/latinise.js"></script>  
+    <script type="text/javascript" src="js/index.js"></script>	
+    <script type="text/javascript">    
+	$(  
+			<!-- page onload event -->
+        		function(){
+        			var options = {
+						targetDiv:'#searchBar',
+						staticHref : 'cgi-bin/current/newPort'
+					}
+        		barSearch = initBarSearch(options); 
+        		barSearch.draw();
+        		var statOption = {
+        			statDiv : 'div#statDiv'
+        		};
+        		stat = initStatView(statOption);
+        		stat.start();
+			
+        		});
+
+	</script>
+   
+    <script> $(function () {
+      mainPageSet();
+      });</script>
+    <title>MatrixDB</title>
+  </head>
+  <body>
+    <!-- Part 1: Wrap all page content here -->
+    <div class="wrap">
+      <div id="main" class="clearfix">
+    	<div id="mainHeader" class="row-fluid">
+          <div class="span3 topHead"><img class="logoLeft" src="img/matrixdb_logo_medium.png" /></div>
+          <div class="span6 topHead"><div class="row-fluid">
+	      <div class="span12 mainAlias"><img src="img/mainTitleIndex.png"/></div>
+	      <div class="span10 offset2 bsContainer"><div id='searchBar'></div></div>
+	    </div>
+	  </div>
+          <div class="span3" style="margin-left:0;" > <!--topHead -->
+	    <a href="./iNavigator.html" target="_blank"><img class="logoRight" style="float: right" src="img/network_link.png"/></a>
+	  </div>
+	</div>
+	<div style="padding-right:50px" class="container-fluid">
+          <div class="row-fluid">
+            <div id="mainSideBar" class="span2">
+              <!--Sidebar content-->
+              <div id="sideMenu" class="accordion">
+
+              <!-- Home collapsible 1-->
+              <div id="top-accordion" class="accordion-group">
+                <div id="toggleOne" class="accordion-heading"> <a href="#collapseOne"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    Home </a> </div>
+                <div class="accordion-body collapse in" id="collapseOne">
+                  <div class="accordion-inner"> The Extracellular Matrix
+                    Interaction DataBase </div>
+                </div>
+              </div>
+	      <!-- Database and statistics collapsible 2-->
+              <div class="accordion-group">
+                <div id="toggleTwo" class="accordion-heading"> <a href="#collapseTwo"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    MatrixDB download & statistics</a> </div>
+                <div class="accordion-body collapse" id="collapseTwo">
+                  <div class="accordion-inner">
+                    <ul class="fa-ul">
+                      <li><i class="fa fa-li fa-caret-right"></i>Statistics</li>
+		      <li><i class="fa fa-li fa-caret-right"></i>Download data</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+	      <!-- Tools collapsible 3-->
+              <div class="accordion-group">
+                <div id="toggleThree" class="accordion-heading blockOneAccordeonBottom">
+		  <a href="#collapseThree"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    Explore interaction networks</a> </div>
+                <div class="accordion-body collapse blockOneAccordeonBottom" id="collapseThree">
+                  <div class="accordion-inner">
+                    <ul class="accordionSubList">
+                      <li>Build your interactome with our
+			<a target="_blank" href="./iNavigator.html">Network
+                          Navigator</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+	      
+	      
+	      
+	      <div class="accordion-separator">
+		<b>E</b>xtra<b>C</b>ellular <b>M</b>atrix ressources
+	      </div>
+	      
+              <!-- Matrisome and matrixDB dataset4-->
+              <div class="accordion-group accHeader">
+                <div id="toggleFour" class="accordion-heading"> <a href="#collapseFour"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    ECM biomolecules </a> </div>
+                <div class="accordion-body collapse" id="collapseFour">
+                  <div class="accordion-inner">
+                    <ul class="fa-ul">
+		      <li><i class="fa-li fa fa-caret-right"></i>MatrixDB biomolecules</li>
+                      <li><i class="fa-li fa fa-caret-right"></i>MatrixDB annotated sets</li>
+		      <li><i class="fa-li fa fa-caret-right"></i>The matrisome project</li>					    
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+	      <!-- Extracellular matrix related databases 5-->
+              <div class="accordion-group">
+                <div id="toggleFive" class="accordion-heading"> <a href="#collapseFive"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    ECM related databases</a> </div>
+                <div class="accordion-body collapse" id="collapseFive">
+                  <div class="accordion-inner">
+                    <ul class="fa-ul">
+                      <li><i class="fa-li fa fa-caret-right"></i>
+			Laminin</li>
+                      <li><i class="fa-li fa fa-caret-right"></i>
+			Osteogenesis imperfecta</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            
+              <!-- Extracellular interaction networks 6-->
+              <div class="accordion-group">
+                <div id="toggleSix" class="accordion-heading"> <a href="#collapseSix"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    ECM interaction networks </a> </div>
+                <div class="accordion-body collapse" id="collapseSix">
+                  <div class="accordion-inner">
+                    <ul class="fa-ul">
+		      <li><i class="fa fa-li fa-caret-right"></i>Specific subnetworks</li>
+		      <li><i class="fa fa-li fa-caret-right"></i>Collagen maps</li>
+                      <li><i class="fa fa-li fa-caret-right"></i>Adhesomes</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- Societies for Matrix Biology 7-->
+              <div class="accordion-group">
+                <div id="toggleSeven" class="accordion-heading blockTwoAccordeonBottom">
+		  <a href="#collapseSeven"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    Societies for Matrix Biology </a> </div>
+                <div class="accordion-body collapse blockTwoAccordeonBottom" id="collapseSeven">
+                  <div class="accordion-inner">
+                    <ul class="fa-ul">
+		      <li><i class="fa-li fa fa-caret-right"></i>European</li>
+		      <li><i class="fa-li fa fa-caret-right"></i>International</li>
+		    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- Tutorial and FAQ 8-->
+              <div class="accordion-group blockTwoAccordeonHead">
+                <div id="toggleEight" class="accordion-heading"> <a href="#collapseEight"
+                    data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
+                    Help </a> </div>
+                <div class="accordion-body collapse" id="collapseEight">
+                  <div class="accordion-inner">
+                    <ul class="fa-ul">
+                      <li><i class="fa fa-li fa-caret-right"></i>Video Tutorials</li>
+                      <li><i class="fa fa-li fa-caret-right"></i>FAQ</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- Contact and citation 9-->
+              <div class="accordion-group">
+                <div id="toggleNine" class="accordion-heading accordion-base">
+                  <a href="#collapseNine" data-parent="#sideMenu" data-toggle="collapse"
+                     class="accordion-toggle">Contact and citations</a></div>
+                <div class="accordion-body collapse accordion-base" id="collapseNine">
+                  <div class="accordion-inner">
+                    <ul class="fa-ul">
+		      <li><i class="fa fa-li fa-caret-right"></i>Email us</li>
+		      <li><i class="fa fa-li fa-caret-right"></i>References</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="mainCentral" class="span10">
+            <!--Body content-->
+            <!-- content One -->
+            <div class="mainContent" id="contentOne">
+              <p style="margin-bottom:9px; text-align: center;font-size:1.2em;margin-bottom:1.5em"><b>MatrixDB is
+                  a freely available database focused on interactions
+                  established by extracellular proteins and polysaccharides</b></p>
+              <dd style="margin-bottom:9px">
+                <div style="text-align: justify;">MatrixDB stores experimental
+                  data established by full-length proteins, matricryptins,
+                  glycosaminoglycans, lipids and cations.</div>
+              </dd>
+              <dd style="margin-bottom:9px">
+                <div style="text-align: justify;margin-bottom:1.5em;">MatrixDB reports interactions
+                  with individual polypeptide chains or with multimers (e.g.
+                  collagens, laminins, thrombospondins) when appropriate.
+                  Multimers are treated as permanent complexes, referencing EBI
+                  identifiers when possible. Human interactions were inferred from non-human 
+		  homologous interactions when available.</div>
+              </dd>
+              <div> <a href="http://www.imexconsortium.org/" target="_blank"><img
+                    width="100" src="img/IMEx_logo_webmedium.png" style="float: left; margin: 0px 15px 15px 0px" /></a>
+                <br />
+                <div style="text-align: justify;margin-top:0.5em"> MatrixDB is an active member
+                  of the <a href="http://www.imexconsortium.org/" target="_blank">International
+                    Molecular Exchange (IMEx)</a> consortium.
+		  
+		  Experiments are reported according to the Minimum Information required for reporting a Molecular Interaction experiment 
+		  (MIMIx, Orchard et al. 2007 Nat Biotechnol. <a
+                  href="http://www.ncbi.nlm.nih.gov/pubmed/17687370" target="_blank"
+                  class="pubmedLink">PubMed</a>) or to the International Molecular Exchange curation rules
+		  (IMEx, Orchard et al. 2012 Nat Methods. <a
+                  href="http://www.ncbi.nlm.nih.gov/pubmed/22453911" target="_blank"
+                  class="pubmedLink">PubMed</a>). 
+		  As an IMEx member, MatrixDB uses the <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI" target="_blank" > 
+		    PSI-MI controlled vocabulary</a>.
+		  
+		  <!--and has adopted the
+                  <a target="_blank" href="http://psidev.sourceforge.net/molecular_interactions//xml/doc/user/#mi-purpose">
+                    PSI-MI standards</a> for annotating and exchanging
+                  interaction data. -->
+
+		</div>
+              </div>
+              <br style="clear:both" />
+              <div> <a href="https://code.google.com/p/psicquic/" target="_blank"><img
+                    src="img/psicquic.png" style="float: left; margin: 0px 15px 15px 0px; width: 100px; height: 98px;" /></a>
+                <br />
+		<div style="text-align: justify;margin-top:0.5em">The MatrixDB web-interface provides an interactive access to a core of 
+		  data curated in-house, enriched with ECM-associated interactions provided by IMEx partners (DIP, InnateDB, IntAct, MINT).
+		</div>
+		      <div style="text-align: justify;">Additionaly, all the data curated by MatrixDB are provided for programmatic access 
+			through a <a target="_blank" href="http://www.ebi.ac.uk/Tools/webservices/psicquic/view/main.xhtml">
+			  PSICQUIC</a> webservice. </div>
+
+              </div>
+              <br style="clear:both" />
+              <div style="text-align: center;font-size:1.2em;"> MatrixDB is in charge of the
+                curation of papers published in <a href="http://www.journals.elsevier.com/matrix-biology"
+                  target="_blank">Matrix Biology</a> since January 2009. </div>
+              <br />
+              <br />
+              <div><b>If you use these data, please cite the following reference:</b></div>
+              <div>MatrixDB, the extracellular matrix interaction database.
+                Chautard E et al. 2011 Nucleic Acids Res. (Database issue) <a
+                  href="http://www.ncbi.nlm.nih.gov/pubmed/20852260" target="_blank"
+                  class="pubmedLink">PubMed</a></div>
+            </div>
+            <!-- content Two -->
+           <div class="mainContent" id="contentTwo">
+             <div class="subContent">
+	       <div class="statContent">
+                 <h4>Statistics</h4>
+                 <div id = "statDiv">
+                 </div>
+               </div>  
+               <div class="downloadContent">
+                 <h4>Downloads</h4>
+                 <ul class="fa-ul">
+                   <li>
+		     <a href="download/matrixdb_CORE.tab.gz">
+		       <i class="fa fa-li fa-download fa-large"></i>
+		       <b>Core</b> MatrixDB dataset as PSI-MI TAB 2.7 file :</a> data curated in-house.		    
+		   </li>
+		   <li>
+		     <a href="download/matrixdb_FULL.tab.gz">
+		       <i class="fa fa-li fa-download fa-large"></i>
+		       <b>Psicquic extended</b> MatrixDB dataset as PSI-MI TAB 2.7 file :</a> this is the core dataset
+		      enriched with additional extracellular interactions from IMEx partners (DIP, InnateDB, IntAct, MINT).
+		   </li>
+                 </ul>                 
+	       </div>
+	     </div>
+	   </div>
+	   <!-- content Three,  -->
+           <div class="mainContent" id="contentThree">
+             <h4>Building and exploring interaction networks</h4>
+             <div class="subContent">             
+               <a style="font-size:1.1em"
+                  href="./iNavigator.html" target="_blank">iNavigator, our 
+                 new interaction network browser</a>, allows to construct networks using as entry point any publication, 
+	       biomolecule or annotation term. iNavigator runs in your browser and communicates with the MatrixDB server. Interaction 
+	       and biomolecule data are retrieved on the fly and incrementally added to your network. 
+	     </div>
+             <div class="row-fluid">
+	       <div class="offset6 span6 browser"  style="margin-bottom: -10px;">
+		 <div class="row-fluid">
+		   <div class="span12">
+		     <img src="img/browserLogo.png"></img>
+		   </div>
+		   <div class="span12 figCaption">
+		     The network navigator is compatible with these web browsers
+		   </div>
+		 </div>
+	       </div>
+	     </div>
+	     <h4 style="margin-top:0px">Getting started: play with selected interactomes</h4>
+		<div class="subContent" style="margin-bottom:70px;padding-left: 20px;">
+		  <ul class="fa-ul custom">
+		    <li class="custom"><a target="_blank" href="cgi-bin/current/iNavigatorLoader?network=endostatin&">
+			<i class="fa-li fa fa-play-circle fa-2x"></i></a>
+		      The endostatin interaction network. Faye et al. 2009 J Biol Chem.
+		      <a class="pubmedLink"
+			 href="http://www.ncbi.nlm.nih.gov/pubmed/19542224" target="_blank">PubMed</a>
+		    </li>
+		    <li class="custom"><a target="_blank" href="cgi-bin/current/iNavigatorLoader?network=PCPE1&">
+			<i class="fa-li fa fa-play-circle fa-2x"></i></a>
+		      The procollagen C-proteinase enhancer-1 extracellular interaction network. Salza et al. 2014 Biochem. J.
+		      <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/24117177" 
+			 target="_blank">PubMed</a>
+		    </li> 
+		    <li class="custom"><a target="_blank" href="cgi-bin/current/iNavigatorLoader?network=ELASTIC&">
+			<i class="fa-li fa fa-play-circle fa-2x"></i></a>
+		      The elastic fiber interactome. Cain et al. 2009 Mol Cell Proteomics. 
+		      <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/19755719" 
+			 target="_blank">PubMed</a>
+		    </li> 		    
+		  </ul>
+		</div>	    
+		<h4>Beyond iNavigator</h4>		  
+		<div class="subContent" style="margin-bottom : 75px;margin-top:20px">
+                  <a href="http://www.cytoscape.org/"
+		     target="_blank"><img width="100" src="img/cytoscape_small.png"
+					  style="float: left;  margin: 0px 15px 15px 0px;" /></a>
+                  iNavigator can export your network at any time in the widely used sif format. You can then leverage 
+		  the full power of tools such as <a href="http://www.cytoscape.org" target="_blank">Cytoscape</a> 
+		  to further analyse your network.
+		</div>
+           </div>
+           <!-- content three-->
+           <div class="mainContent" id="contentFour">
+             <h4>MatrixDB biomolecule entries</h4>
+	       <div class="subContent" style="margin-bottom: 40px;">
+		 <dl>
+		   <dt>Proteins</dt>
+		   <dd>
+		     They are identified by their UniProtKB/Swiss-Prot 
+		     primary Accession Number (Example: P98160). 
+		     This is the most stable identifier of 
+		     UniProtKB/Swiss-Prot (when a protein entry is modified,
+		     the previous accession number is retained in a secondary
+		     accession number list).
+		   </dd>
+		   <dt>Multimers</dt>
+		   <dd>
+		   They are identified by a MatrixDB-specific identifier 
+		   "MULT_x_species" or "MULT_x_VARy_species" for molecular 
+		   isoforms where x and y are numbers. A cross-reference 
+		   to EBI complexes is provided when available.
+		 </dd>
+		 <dt>Glycosaminoglycans</dt>
+		 <dd>
+		   They are identified by a MatrixDB-specific identifier 
+		   "GAG_x" where x is a number. A cross-reference 
+		   to ChEBI (Chemical Entities of Biological Interest) is provided when available.
+		 </dd>
+		 <dt>Protein fragments</dt>
+		   <dd>
+		     PFRAG in short-form, they 
+		     are identified by a MatrixDB-specific identifier "PFRAG_x_species" 
+		     where x is a number. A cross-reference to the PRO 
+		     feature of UniProtKB is provided when available.
+		   </dd>
+		   <dt>Cations</dt> 
+		   <dd>
+		     They are identified by a MatrixDB-specific identifier 
+		     "CAT_x" where x is a number. A cross-reference 
+		     to ChEBI (Chemical Entities of Biological Interest) is provided when available.
+		   </dd>
+		   <dt>Lipidic molecules</dt>
+		   <dd>
+		     Fatty-acid related biomolecules are identified by a 
+		     MatrixDB-specific identifier "LIP_x" where x is a 
+		     number. A cross-reference to ChEBI (Chemical Entities of Biological Interest)
+		     is provided when available.
+		   </dd>
+		   <dt>Synthetic peptides</dt>
+		   <dd>
+		     Engineered peptides are identified by a 
+		     MatrixDB-specific identifier "SPEP_x" where x is a 
+		     number. A cross-reference to ChEBI (Chemical Entities of Biological Interest)
+		     or an EBI identifier is provided when available.
+		   </dd>
+		   <dt>Others</dt>
+		   <dd>    
+		     Remaining molecules are identified by a MatrixDB-specific identifier 
+		     "INORG_x" where x is a number. A cross-reference 
+		     to ChEBI (Chemical Entities of Biological Interest)
+		     is provided when available.
+		   </dd>
+		   <ul class="fa-ul" style="font-size:1.2em;margin-top:15px">
+		     <li>
+		       <a href="download//MatrixDB_entries_catalog.tsv"><i class="fa fa-li fa-download"></i>
+			 Catalog of MatrixDB special entries</a>
+		     </li>
+		   </ul>
+		 </div>
+		 
+	     <h4>MatrixDB annotated sets</h4>
+	     <div class="subContent listBiomol">
+	       <b>Lists</b> of human <b>extracellular matrix</b>, <b>secreted</b> 
+	       and <b>membrane</b> proteins stored in MatrixDB are provided here. 
+	       They are built based on <a href="http://web.mit.edu/hyneslab/matrisome/">
+		 the Matrisome Project</a> as well as relevant
+               <a href="http://www.uniprot.org">UniProt</a> keywords and 
+	       <a href="http://www.geneontology.org">Gene Ontology</a> terms.
+	       Interactions involving these proteins are extracted using psicquic to enrich the MatrixDB core dataset.	       
+
+	       <ul class="fa-ul">
+		 <li><a href="http://matrixdb.ibcp.fr/download//proteins_ECM.csv">
+		     Extracellular matrix proteins 
+                     <i class="fa fa-li fa-download"></i></a>
+		 </li>
+		 <li>
+		   <a href="http://matrixdb.ibcp.fr/download//proteins_Secreted.csv">
+		     <i class="fa fa-li fa-download"></i>Secreted proteins</a>
+		 </li>
+		 <li>
+		   <a href="http://matrixdb.ibcp.fr/download//proteins_Membrane.csv">
+		   <i class="fa fa-li fa-download"></i>
+		     Membrane proteins</a>
+		 </li>
+	       </ul>
+             </div>
+
+	       <div class="subContent">
+               <h4>The matrisome</h4>
+               <ul class="fa-ul">
+		 <li><i class="fa fa-li fa-caret-right"></i></span>
+		   Overview of the matrisome - an inventory of extracellular matrix 
+		   constituents and functions. Hynes et al. 2012 Cold Spring Harb Perpsect Biol.
+		   <a class="pubmedLink"
+		      href="http://www.ncbi.nlm.nih.gov/pubmed/21937732" target="_blank">PubMed</a>.
+		 </li>
+		 <li><i class="fa fa-li fa-caret-right"></i>Towards definition of an ECM parts list: An advance on GO
+                   categories. Naba et al. 2012 Matrix Biology. <a class="pubmedLink"
+		      href="http://www.ncbi.nlm.nih.gov/pubmed/23199376" target="_blank">PubMed</a>.
+                 </li>
+		 <li><i class="fa fa-li fa-caret-right"></i>The matrisome: in silico definition and in vivo
+                   characterization by proteomics of normal and tumor
+                   extracellular matrices. Naba et al. 2012 Mol Cell
+                   Proteomics. <a href="http://www.ncbi.nlm.nih.gov/pubmed/22159717"
+					target="_blank" class="pubmedLink">PubMed</a></li>
+                 <li><i class="fa fa-li fa-download"></i>Download the human and murine matrisomes from 
+		   the <a href="http://web.mit.edu/hyneslab/matrisome/" target="_blank">Hynes Lab</a>
+		 </li>
+               </ul>
+               <br style="clear:both" />
+	     </div>
+
+
+	   </div>
+	   
+           <!-- content five -->
+           <div class="mainContent" id="contentFive">
+             <div class="subContent">
+	       <h4>ECM-related databases</h4>
+                <ul class="fa-ul">
+                  <li><a target="_blank" href="http://www.lm.lncc.br/"><i class="fa fa-li fa-database"></i></a><a target="_blank" href="http://www.lm.lncc.br/">Laminin
+                      Database</a>: A database of the laminins, a family of
+                    extracellular matrix proteins. Golbert DC et al. 2011 Nucleic Acids Res. Database issue. 
+		    <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/21087995"
+                      target="_blank">PubMed</a> </li>
+                  <li><a target="_blank" href="http://www.oiprogram.nichd.nih.gov/dominant.html"><i class="fa fa-li fa-database"></i></a> <a target="_blank" href="http://www.oiprogram.nichd.nih.gov/dominant.html">Osteogenesis
+                      imperfecta Mutation Consortium</a>. Marini JC et al. 2007 Hum. Mutat.  
+		      <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/17078022"
+                      class="pubmedLink">PubMed</a> </li>
+                  <li> <a target="_blank" href="http://www.le.ac.uk/genetics/collagen/"><i class="fa fa-li fa-database"></i></a> <a target="_blank" href="http://www.le.ac.uk/genetics/collagen/">Osteogenesis
+                      imperfecta &amp; Ehlers-Danlos syndrome variant databases</a>. Mackay K. et al 1996 Clin. Genet.
+                    <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/8884076"
+                      class="pubmedLink">PubMed</a> </li>
+                </ul>
+              </div>
+            </div>
+            <!-- content four -->
+            <div class="mainContent" id="contentSix">
+              <div class="subContent">
+                <h4>Specific extracellular interactomes</h4>
+                <ul>
+                  <li>Extended interaction network of Procollagen C-Proteinase
+                    Enhancer-1 in the extracellular matrix. Salza et al. 2013 Biochem
+                    J. <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/24117177"
+                      target="_blank">PubMed</a></li>
+                  <li>Interaction networks as a tool to investigate the
+                    mechanisms of aging. Chautard et al. 2010 Biogerontology.
+                      <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/20213321"
+                      target="_blank">PubMed</a></li>
+                  <li>Interaction networks: from protein functions to drug
+                    discovery, A review. Chautard et al. 2009 Pathol Biol. <a
+                      class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/19070972"
+                      target="_blank">PubMed</a></li>
+                  <li>The first draft of the endostatin network. Faye et al. 2009 J. 
+                    Biol Chem. <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/19542224"
+                      target="_blank">PubMed</a></li>
+                  <li>The elastic fiber interactome. Cain et al. 2009 Mol Cell
+                    Proteomics. <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/19755719"
+                      target="_blank">PubMed</a> </li>
+                  <li>A cell surface interaction network of neural leucine-rich
+                    repeat receptors. S&ouml;llner et al. 2009 Genome Biol. <a class="pubmedLink"
+                      href="http://www.ncbi.nlm.nih.gov/pubmed/19765300" target="_blank">PubMed</a></li>
+                  <li>The extracellular LRR and IgSF neuroreceptor interaction
+                    network. Bushell et al. 2008 Genome Res. <a class="pubmedLink"
+                      href="http://www.ncbi.nlm.nih.gov/pubmed/18296487" target="_blank">PubMed</a></li>
+                </ul>
+                <br />
+              </div>
+              <div class="subContent">
+                <h4> Interaction maps of collagens</h4>
+                <ul>
+                  <li>Molecular and structural mapping of collagen fibril
+                    interactions. Orgel JP et al. 2011 Connect Tissue Res. <a
+                      href="http://www.ncbi.nlm.nih.gov/pubmed/21182410" target="_blank"
+                      class="pubmedLink">PubMed</a></li>
+                  <li><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2475701/figure/fig2/"
+                      target="_blank">Map of the human type I collagen fibril</a>.
+                    Sweeney SM et al. 2008 J Biol Chem. <a href="http://www.ncbi.nlm.nih.gov/pubmed/18487200"
+                      target="_blank" class="pubmedLink">PubMed</a></li>
+                  <li><a target="_blank" href="http://www.jbc.org/content/277/6/4223/F2.expansion.html">Mapping
+                      the ligand-binding sites and disease-associated mutations
+                      on the most abundant protein in the human, type I collagen</a>.
+                    Di Lullo GA et al. 2002 J Biol Chem. <a class="pubmedLink"
+                      href="http://www.ncbi.nlm.nih.gov/pubmed/11704682" target="_blank">PubMed</a></li>
+                </ul>
+                <br />
+                <h4>Adhesomes</h4>
+                <ul>
+                  <li>Proteomic analysis of &alpha;4 &beta;1 integrin adhesion
+                    complexes reveals &alpha;-subunit-dependent protein
+                    recruitment. Byron A et al. 2012 Proteomics. <a class="pubmedLink"
+                      href="http://www.ncbi.nlm.nih.gov/pubmed/22623428" target="_blank">PubMed</a></li>
+                  <li>The switchable integrin adhesome. Zaidel-Bar R 2010 J Cell Sci. <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/20410370"
+                      target="_blank">PubMed</a></li>
+                  <li>Network analysis of cell adhesion: adhesomes as
+                    context-defined subnetworks. Paris L et al. 2009 Commun Integr
+                    Biol. <a class="pubmedLink" href="http://www.ncbi.nlm.nih.gov/pubmed/19704858"
+                      target="_blank">PubMed</a></li>
+                  <li>Proteomic analysis of integrin-associated complexes
+                    identifies RCC2 as a dual regulator of Rac1 and Arf6.
+                    Humphries JD et al. 2009 Sci Signal. <a class="pubmedLink"
+                      href="http://www.ncbi.nlm.nih.gov/pubmed/19738201" target="_blank">PubMed</a></li>
+                  <li>Functional atlas of the integrin adhesome. Zaidel-Bar R et
+                    al. 2007 Nat Cell Biol. <a href="http://www.ncbi.nlm.nih.gov/pubmed/17671451"
+                      target="_blank" class="pubmedLink">PubMed</a></li>
+                </ul>
+              </div>
+            </div>
+            <!-- content five -->
+            <div class="mainContent" id="contentSeven">
+              <div style="width:100%" class="subContent">
+                <h4>Societies for Matrix Biology</h4>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <dl class="societies">
+                      <dt> <a target="_blank" href="http://www.sfbmec.fr/"> <img
+									       alt="fsmb.png" src="img/fsmb.png" /></a> <a href="http://www.sfbmec.fr/"
+															   target="_blank">French Society for Matrix Biology</a>
+                      </dt>
+                      <br />
+                      <dt>
+			<a href="http://www.bsmb.ac.uk/" target="_blank"> 
+			  <img alt="bsmb.png" src="img/bsmb.png" /></a> 
+			<a href="http://www.bsmb.ac.uk/" target="_blank">
+			  British Society for Matrix Biology</a>
+                      </dt>
+                      <dt>
+			<a href="http://www.matrixbiology.nl/" target="_blank">
+                          <img alt="nvmb.png" src="img/nvmb.png" /></a>
+			<a href="http://www.matrixbiology.nl/"
+			   target="_blank">Dutch Society for Matrix Biology</a>
+		      </dt>
+                      <dt>
+			<a href="http://www.dgbf.de/" target="_blank"> 
+			  <img alt="dgbf.png" src="img/dgbf.png" /></a>
+			<a href="http://www.dgbf.de/"
+                           target="_blank">German Society for Matrix Biology</a>
+                      </dt>
+                      <dt>
+			<a href="http://www-3.unipv.it/sisc/welcome.php" target="_blank">
+			  <img alt="sisc.png" src="img/sisc.png" /></a> 
+			<a href="http://www-3.unipv.it/sisc/welcome.php"
+                          target="_blank">Societa Italiana per lo Studio del
+                          Connettivo</a> 
+		      </dt>                      
+                    </dl>
+                  </div>
+                  <div class="span6">
+                    <dl class="societies">
+                      <dt><a href="http://www.matrixbiology.eu/" target="_blank">
+			  <img alt="eumb.png" src="img/eumb.png" /></a>
+			<a href="http://www.matrixbiology.eu/"
+                          target="_blank">Matrix Biology Europe</a>
+		      </dt>
+                      <dt>
+			<a href="https://ismb.uni-muenster.de/index-2.html" target="_blank">
+			  <img alt="ismb.gng" src="img/ismb.png" /></a>
+			<a href="https://ismb.uni-muenster.de/index-2.html"
+                           target="_blank">International Society for Matrix
+                          Biology</a>
+		      </dt>
+                      <dt> 
+			<a href="http://www.asmb.net/" target="_blank"> 
+			  <img alt="asmb.png" src="img/asmb.png" /></a> 
+			<a href="http://www.asmb.net/"
+                           target="_blank">American Society for Matrix Biology</a>
+                      </dt>
+                      <dt>
+			<a href="http://www.mbsanz.org/" target="_blank">
+			  <img alt="mbsan.png" src="img/mbsan.png" /></a>
+			<a href="http://www.mbsanz.org/"
+                          target="_blank">Matrix Biology Society of Australia
+                          and New Zealand</a> 
+		      </dt>                      
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <div class="mainContent" id="contentEight">
+            <h4>Video Tutorials</h4>
+            <div class="subContent youtubeSnipet">
+	      <iframe width="640" height="360" src="//www.youtube.com/embed/BCHp12lefK4?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0" frameborder="0" allowfullscreen></iframe>
+	    </div>
+            <h4>Frequently Asked Questions</h4>
+            <dl>
+	      <dt>What is an interaction?</dt>
+	      <dd>It refers to a molecular interaction between two molecules.
+		It is supported by a set of experimental evidences.
+		It is identified by a MatrixDB interaction identifier: 
+		identifiers (UniProtKB accession number for proteins and 
+		MatrixDB identifiers for other molecules) of the participants,
+		separated by an underscore in alphabetical order.
+	      </dd>
+	      <dt>How are experimental evidences indexed?</dt>
+	      <dd>MatrixDB uses the following naming convention for
+		experiments: identifiers of the biomolecules in alphabetical
+		order separated by two underscore, followed by the PMID
+		(PubMed Identifier), the name of the source database
+		and the number of the experiment (1 for the first 
+		reported experiment).
+	      </dd>
+	    </dl>
+          </div>
+
+          <div class="mainContent" id="contentNine">
+            <h4>Contact</h4>
+            Visit the <a href="http://www.ibcp.fr/bmssi/-Interactions-hote-pathogene-S-?lang=en"
+                       target="_blank">Extracellular Interaction Network Lab</a>
+	  
+          <div class="subContent"> Prof. Sylvie RICARD-BLUM <br />
+            BMSSI, UMR 5086 CNRS - University Lyon 1 <br />
+            Institut de Biologie et Chimie des Protéines <br />
+            69367 Lyon Cedex 07 - France <br />
+            <!-- protection de mail contre le spam via http://www.caspam.org/-->
+            <script type="text/javascript">
+				//<![CDATA[
+				var d="";for(var i=0;i<421;i++)d+=String.fromCharCode(("(r$1uN33Lw!$9(r$1zNALzMDCFLz<<:u<Nd&$z x?w$!~Tyr$T!uv993,7+=5-6<U?:1<-ONc)G0:-2.2dIIG7657=;-7>-:2dI<01;U220:-.d$N5)14<7aNU:-m84)+-OV2V/SIiIU;=*;<:OXPPRN5)<44:14@,4*NU:-m84)+-OV4V/SIlIU;=*;<:OXPPRz<:16/U.:75j0):j7,-O][PRN1*W+WWm8WNU:-m84)+-OVWV/S#II%#W%PRIUIRz<:16/U.:75j0):j7,-OX]`T]^SW@^YPRN$NIG7657=;-7=<dI<01;U0u:-.ud$N$NIeuj41+m3G<7G;-6u,G)6G-5)14cuV)eNU:-m84)+-OVuV/SI IU;=*;<:OXPPP3?tyr$T!uvR&9z:<EB:6JF<DC:Lv(r}9u:".charCodeAt(i)+46)%95+32);eval(d)
+				//]]>
+			</script>
+
+		</div> <br />
+              <h4>Citations</h4>
+              <ul>
+              	  <li>
+                    	The MIntAct project--IntAct as a common curation platform for 11 molecular interaction databases. Orchard S et 
+                    	al. 2014 Nucleic Acids Res. <a href="http://www.ncbi.nlm.nih.gov/pubmed/24234451"
+                    target="_blank" class="pubmedLink">PubMed</a> 
+                    	</li>
+                <li>Protein interaction data curation: the International
+                  Molecular Exchange (IMEx) consortium. Orchard S et al. 2012 Nat
+                  Methods. <a href="http://www.ncbi.nlm.nih.gov/pubmed/22453911"
+                    target="_blank" class="pubmedLink">PudMed</a></li>
+                <li>PSICQUIC and PSISCORE: accessing and scoring molecular
+                  interactions. Aranda et al. 2011 Nat Methods. <a href="http://www.ncbi.nlm.nih.gov/pubmed/21716279"
+                    target="_blank" class="pubmedLink">PubMed</a></li>
+                <li>MatrixDB, the extracellular matrix interaction database.
+                  Chautard E et al.  2011 Nucleic Acids Res. (Database issue). <a
+                    href="http://www.ncbi.nlm.nih.gov/pubmed/20852260" target="_blank"
+                    class="pubmedLink">PubMed</a></li>
+                <li>MatrixDB, a database focused on extracellular
+                  protein-protein and protein-carbohydrate interactions.
+                  Chautard E et al. 2009 Bioinformatics. <a href="http://www.ncbi.nlm.nih.gov/pubmed/19147664"
+                    target="_blank" class="pubmedLink">PubMed</a></li>
+                  
+              </ul>
+            </div>
+          	 
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+   
+    <div class="footer">
+    	<div class="push"></div>
+        <div class="container row-fluid">
+          <div class="span3" style="padding : 5px 0px 0px 5px"> 
+	    <a target="_blank" href="http://www.cnrs.fr">
+	      <img width="70px" style="float:left" src="img/logo_cnrs_footer.png" /></a>
+<!--	  </div>
+          <div class="span2">
+-->
+<a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">
+	      <img width="100px" style="float:left" src="img/SFP.png" /></a></div>
+          <div class="span5">MatrixDB is funded by:
+            <ul>
+              <li>European Commission PSIMEx grant FP7-HEALTH-2007-223411</li>
+	      <li>Institut Rh&ocirc;ne-Alpin des Syst&egrave;mes Complexes</li>
+              <li>CNRS PEPS BMI 2013</li>
+            </ul>
+          </div>
+          <div class="span4" style = "padding : 5px 5px 5px 5px">
+	    <a target="_blank" href="http://www.ixxi.fr"><img width="120px" style="float:right" src="img/ixxi.png" /></a>
+	    <a target="_blank" href="http://www.lyonbiopole.com/financer/Cluster-de-recherche-n10--Infectiologie-.html"><img width="200px" style="float:right;margin-right:15px" src="img/logoCluster.png"/></a>
+	  </div>
+         
+        </div>
+      </div>
+  </body>
+</html>

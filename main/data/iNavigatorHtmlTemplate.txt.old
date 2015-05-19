@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!---
+    HTML CODE USED TO DEVEL THE SVG RENDERING OF NETWORK
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+  <head>
+    <link href="http://matrixdb.ibcp.fr:9999/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://matrixdb.ibcp.fr:9999/css/DT_bootstrap.css" rel="stylesheet"/>
+    <link href="http://matrixdb.ibcp.fr:9999/css/panZoomControler.css" rel="stylesheet"/>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet"/>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="http://matrixdb.ibcp.fr:9999/css/tabularNetwork.css"></link>
+    <link rel="stylesheet" href="http://matrixdb.ibcp.fr:9999/css/navigator.css"></link>
+    <link rel="stylesheet" href="http://matrixdb.ibcp.fr:9999/css/networkCore.css"></link>
+    <link href="http://matrixdb.ibcp.fr:9999/css/cartController.css" rel="stylesheet"/>
+    <link href="http://matrixdb.ibcp.fr:9999/css/networkSearch.css" rel="stylesheet"/>
+    <link href="http://matrixdb.ibcp.fr:9999/css/searchBoxUnity.css" rel="stylesheet"/>
+    <link href="http://matrixdb.ibcp.fr:9999/css/palette.css" rel="stylesheet"/>
+    <link href="http://matrixdb.ibcp.fr:9999/css/idle.css" rel="stylesheet"/>
+    <link type="text/css" href="http://matrixdb.ibcp.fr:9999/css/jquery.jscrollpane.css" rel="stylesheet" media="all" />
+    <link type="text/css" href="http://matrixdb.ibcp.fr:9999/css/jquery.jscrollpane.lozenge.tweak.css" rel="stylesheet" media="all" />
+    <link href="http://matrixdb.ibcp.fr:9999/css/elementInfo.css" rel="stylesheet"/>
+    <link href="http://matrixdb.ibcp.fr:9999/css/molecularViewer.css" rel="stylesheet"/>
+    
+
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/jquery-1.7.2.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/bootstrap.js"></script>
+    <!--   <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/d3fix.popover.js"></script>-->
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/dataTableFix.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/jquery.hoverIntent.minified.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/../js/jquery.jscrollpane.min.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/colorpicker.min.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/GLMOL/Three49custom.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/dependencies/js/GLMOL/GLmol.js"></script>
+
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/utils.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/panZoomControler.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/networkCore.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/tabularNetwork.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/cartController.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/searchBoxUnity.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/networkSearch.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/palette.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/idleDiv.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/ajaxControl.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/scheduler.js"></script>
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/elementInfo.js"></script>  
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/molecularViewer.js"></script> 
+
+    <script type="text/javascript" src="http://matrixdb.ibcp.fr:9999/js/test.js"></script>
+
+    <script type="text/javascript">           
+	$(function(){	
+	      networkTest_alpha({
+        "target" : "#vizContainer",        
+	<!--    "height" : "500",-->
+	<!-- "networkState" : "data/dP98160_seed_network.json",  -->
+        <!--"data/customExtraCellularNetwork.json",-->
+        <!-- "networkState" : "data/networkTestAce.json", -->
+        "psimiMapFile" : "data/psimi_obo.json",
+	});
+	litteralLoader({});
+	});
+    </script>
+  </head>
+  
+  <body>
+
+    <div id="navbarTop" class="navbar navbar-static">
+      <div class="navbar-inner">
+	<div class="container" style="width: auto;">
+	  
+          <!-- nav bar content -->
+	  <a class="brand" href="#">Network Vizualiser</a>
+          <div class="nav-collapse">
+	    
+	    <form class="navbar-search" id="unitySearchBar"><input type="text" class="span4"/></form>	   
+	      <div class="dropdown pull-right">
+		<a class="btn dropdown-toggle" data-toggle="dropdown" href="#" id="download"> 
+		  <i class="icon-download-alt icon-large"></i>
+		</a>
+		<!-- Link or button to toggle dropdown -->
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+		  <li><a tabindex="-1" id="snapshot"><i class="icon-fixed-width icon-camera"></i>Take a snapshot</a></li>
+		  <li><a tabindex="-1" href="#" id="cytoscapeOut"><i class="icon-fixed-width icon-folder-open"></i>Export to cytoscape</a></li>		
+		  <li><a tabindex="-1" href="#" id="excelOut"><i class="icon-fixed-width icon-list-ul"></i>Export as excel</a></li>		
+		  <li class="divider"></li>
+		  <li><a tabindex="-1" href="#" id="serializeOut"><i class="icon-fixed-width icon-cloud-upload"></i>Save the network</a></li>		
+		  <li><a tabindex="-1" href="#" id="serializeIn"><i class="icon-fixed-width icon-rotate-right"></i>Reload network</a></li>		
+		</ul>		
+   	      </div>
+	  </div> <!-- collapsable -->
+	  
+	</div>
+      </div>
+    </div> <!-- /navbar-content -->
+    
+    <div id="vizContainer"></div>
+    
+    <div id="boxTest"></div>
+  </body>
+</html>
+      
+      

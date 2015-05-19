@@ -89,7 +89,8 @@ sub isUniprotID {
     common::slid($p->{ string }) || die "string parameter required";
     
     my @regExpList = ( '[A-N,R-Z][0-9][A-Z][A-Z,0-9][A-Z,0-9][0-9]',
-		   '[O,P,Q][0-9][A-Z,0-9][A-Z,0-9][A-Z,0-9][0-9]'
+		   '[O,P,Q][0-9][A-Z,0-9][A-Z,0-9][A-Z,0-9][0-9]',
+		   '[A-N,R-Z][0-9][A-Z][A-Z,0-9][A-Z,0-9][0-9][A-Z][A-Z,0-9][A-Z,0-9][0-9]'
 	);
     
     foreach my $regExp (@regExpList) {

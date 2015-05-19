@@ -23,7 +23,9 @@ my $query = CGI->new();
 my $timeStamp = time();
 
 my $fLastStat = '/tmp/statisticsLatest';
-my $maxDelay = 6048000; #weektime : 604800, set to 0 for reset
+my $maxDelay = 604800; #weektime : 604800, set to 0 for reset
+# NTM 12/05/2015: dans la version prod actuelle on a:
+#my $maxDelay = 6048000; #weektime : 604800, set to 0 for reset
 
 my $dataContainer;
 if (-e $fLastStat) {
@@ -69,17 +71,44 @@ $dataContainer = {
 		 };
 
 
-
 our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || 
   $logger->error ("Couldn't open database");
 
 my @aceAssociations = $DB->fetch(Association => '*');
-
+$logger->info("Raw association fetched count is " . scalar(@aceAssociations));
 foreach my $aceAssoc (@aceAssociations) {
-  foreach my $source ($aceAssoc->at('Source')) {
-    my $sKey = $source->name =~ /^MatrixDB$/i ? "matrixdb" : "psicquic";
-    $dataContainer->{ associations }->{ $sKey }->[0] += 1;
-    $dataContainer->{ associations }->{ total }->[0] += 1;
+   $dataContainer->{ associations }->{ total }->[0] += 1; 
+   my $bMatrixDB = 0;
+   my $bPsicquic = 0;
+   my @sources = $aceAssoc->at('Source');
+ foreach my $source (@sources) {
+     
+     if($source->name =~ /^MatrixDB$/i) {
+	 $bMatrixDB = 1;
+     } else {
+	 $bPsicquic = 1;
+     }
+     ($bPsicquic && $bMatrixDB) && last;
+  }
+   my $tag = $aceAssoc->at('Kind', 1);
+   my $bInferred = 0;
+   while(defined ($tag)) {
+     if($tag->name eq "Inferred") {
+       $bInferred = 1;
+       last;
+     }
+     $tag = $tag->down();
+   }
+   
+   if ($bInferred || $bMatrixDB) {
+    $logger->info("MatrixDB tagged " . $aceAssoc->name);
+    #    $logger->info("name is " . $tag->name);
+    #    ($tag->name eq "Inferred") && $logger->info("Inferred here!" . $aceAssoc->name);
+    $dataContainer->{ associations }->{ matrixdb }->[0] += 1;
+  }
+  if ($bPsicquic && !$bMatrixDB) {
+       $logger->info($aceAssoc->name);
+       $dataContainer->{ associations }->{ psicquic }->[0] += 1;
   }
 }
 

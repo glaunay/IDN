@@ -4,21 +4,17 @@
 dependencies/batik-1.7/
 # molecular data stores makecore protein files
 # these are database-like files (Gigabytes)
-main/data/molecularData/*
+main/data/molecularData
 # cgi-bin log files
-main/cgi-bin/current/log/*
+main/cgi-bin/current/log/
 # cgi-bin log configuration files
 main/cgi-bin/current/conf/*
-# deprecated file to delete
-main/html/toDel
-main/cgi-bin/current/toDel
-main/cgi-bin/current/lib/perl/toDel
-main/js/toDel
-main/css/toDel
-main/data/toDel/
 # development test-cases
 main/html/develPages/
 # tmp file for export
 main/html/tmp/*
 # download location
-main/html/download/*
+main/html/download/
+#emacs backup 
+*~
+

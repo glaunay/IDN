@@ -1,0 +1,109 @@
+#!/usr/bin/perl
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+use warnings;
+use diagnostics;
+
+use lib ("$ENV{ IDN_LIB }/perl");
+
+#from CPAN
+use CGI;
+use Ace 1.51;
+use Ace::Browser::AceSubs qw(:DEFAULT DoRedirect);
+use Ace::Browser::SearchSubs;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use matrixDB::interactionReport;
+use common;
+use networkMapperAce;
+use miscDataLayer;
+use psicquicQuery;
+use psimi;
+use mergedAssociation;
+
+
+Log::Log4perl->init("$ENV{ IDN_CONF }/interactomAceSingleShot.conf");
+our $logger = get_logger(); 
+
+=pod
+    Script derived from interactomAce, which delivers the interactom limited to a single publication
+    It is used to provided premade network for iNavigator start-up
+    ex: http://matrixdb.ibcp.fr:9999/cgi-bin/current/interactomAceSingleShot?1954224&
+    see /tmp/networkSingleShot.json to get the json definition of the network
+    
+=cut
+
+$logger->info("*** CGI activation at " . common::getTime());
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||$logger->error ("Couldn't open database");
+our $nameMutator = biomoleculeMapper->new (template => "$ENV{ IDN_DATA }/biomoleculeMapper.json");
+
+# retrieving get parameters
+my $query = CGI->new();
+my %params = $query->Vars;
+#my $queryData = decode_json($params{'POSTDATA'});
+#$logger->info("query content:\n" . Dumper($queryData));
+my $dataContainer = getDumbPMID(\%params);
+
+$logger->info(Dumper($dataContainer));
+
+my $networkObject = networkMapperAce->new (	
+    mappersFileDef => {
+		       'UniprotKW' => "$ENV{ IDN_DATA }/upKeywordTree.json", 
+		       'nameMutator' => "$ENV{ IDN_DATA }/biomoleculeMapper.json"
+		      },
+    mappersSocketDef => {'MI' => '/tmp/miSocket', 'GO' => '/tmp/goSocket' },  
+    DB => $DB,
+    aceBiomoleculeList => $dataContainer->{ biomolecule });
+
+my $annotationTemplate = "$ENV{ IDN_DATA }/nutshellTemplate.json";
+$logger->trace("[TS]addingLink");
+$networkObject->addLink( 
+			 template => $annotationTemplate, aceAssociationList => $dataContainer->{ association }
+			 ); 
+my $jsonObject = $networkObject->getJSON (nodeDataType => 'LOCAL');
+
+print $query->header('application/json');      # create the HTTP header
+print "$jsonObject";
+
+open TEST, ">/tmp/networkSingleShot.json";
+print TEST "$jsonObject\n";
+close TEST;
+$logger->trace("[TS](exit)");     
+
+sub getDumbPMID {
+    my $data = shift;
+    $logger->warn(Dumper($data));
+    $DB->raw_query('clear');
+    $DB->raw_query('kstore assoc');
+    $DB->raw_query('kstore biom');
+    
+    my @pmids;
+    foreach my $key(keys (%{$data})) {
+	push @pmids, $key
+    }
+
+    while(my $pmid = shift @pmids) {
+	$logger->trace("bagging associations and biomolecules from pmid $pmid");
+	my $buffer = $DB->raw_query("find Publication $pmid");
+	$DB->raw_query('follow association');
+	$DB->raw_query('spush');
+	$DB->raw_query('kget assoc');
+	$DB->raw_query('sor');
+	$DB->raw_query('spop');	
+	$DB->raw_query('kstore assoc');
+    }	
+    my $string = $DB->raw_query('kget assoc');
+    $logger->trace($string);
+    my @associationObjects = $DB->fetch(-query=>'CLASS Association');
+    $DB->raw_query("follow Biomolecule");
+    my @biomoleculeObjects = $DB->fetch(-query=>'CLASS Biomolecule');
+
+    return { association => \@associationObjects,
+	     biomolecule => \@biomoleculeObjects
+    };
+}
+
+
+
