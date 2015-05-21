@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use lib qw (../lib/perl, /var/www/matrixdb_2_dev/IDN/main/services/lib/perl);
+use lib qw (../lib/perl, ../lib/perl);
 
 =pod Local socket Server implementation of go ontology
     
