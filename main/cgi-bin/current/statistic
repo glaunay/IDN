@@ -183,7 +183,8 @@ my $r = $DB->raw_query('follow PMID');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ total } = $1;
 }
-$r = $DB->raw_query('query find Publication where IMEx_ID');
+$DB->raw_query('query find experiment matrixdb where imex_id_experiment');
+$r = $DB->raw_query('follow PMID');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ imex } = $1;
 }
