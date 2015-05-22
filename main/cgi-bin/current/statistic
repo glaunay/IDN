@@ -23,7 +23,7 @@ my $query = CGI->new();
 my $timeStamp = time();
 
 my $fLastStat = '/tmp/statisticsLatest';
-my $maxDelay = 1; #weektime : 604800, set to 0 for reset
+my $maxDelay = 604800; #weektime : 604800, set to 0 for reset
 # NTM 12/05/2015: dans la version prod actuelle on a:
 #my $maxDelay = 6048000; #weektime : 604800, set to 0 for reset
 
