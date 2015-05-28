@@ -22,8 +22,8 @@ my $query = CGI->new();
 #$logger->info(Dumper $query ));
 my $timeStamp = time();
 
-my $fLastStat = '/tmp/statisticsLatest';
-my $maxDelay = 604800; #weektime : 604800, set to 0 for reset
+my $fLastStat = '/tmp/statisticsLatest_dev';
+my $maxDelay = 60; #weektime : 604800, set to 0 for reset
 # NTM 12/05/2015: dans la version prod actuelle on a:
 #my $maxDelay = 6048000; #weektime : 604800, set to 0 for reset
 
@@ -183,8 +183,7 @@ my $r = $DB->raw_query('follow PMID');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ total } = $1;
 }
-$DB->raw_query('query find experiment matrixdb where imex_id_experiment');
-$r = $DB->raw_query('follow PMID');
+$r = $DB->raw_query('query find Publication where IMEx_ID');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ imex } = $1;
 }
