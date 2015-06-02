@@ -1,0 +1,245 @@
+#!/usr/bin/perl
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib ("$ENV{ IDN_LIB }/perl");
+
+#from CPAN
+use CGI;
+use Ace 1.51;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+#custom
+use common;
+Log::Log4perl->init("$ENV{ IDN_CONF }/statistic.conf");
+my $logger = get_logger();
+
+my $query = CGI->new();
+#$logger->info(Dumper $query ));
+my $timeStamp = time();
+
+my $fLastStat = '/tmp/statisticsLatest_dev';
+my $maxDelay = 204800; #weektime : 604800, set to 0 for reset
+# NTM 12/05/2015: dans la version prod actuelle on a:
+#my $maxDelay = 6048000; #weektime : 604800, set to 0 for reset
+
+my $dataContainer;
+if (-e $fLastStat) {
+  my $jsonString = common::readFileNameToString($fLastStat);
+  $dataContainer = decode_json($jsonString);
+  my $delay =  $timeStamp -  $dataContainer->{ timeStamp };
+  $logger->info("Time stamp check\n\tcurrent:" . $timeStamp . 
+		"\n\tlatest statistic:" . $dataContainer->{ timeStamp }. 
+	        "\n\tdelay is " . $delay ."sc");
+  if ($delay < $maxDelay) {
+    $logger->info("Returning previous statistic data");
+    print $query->header('application/json');      # create the HTTP header
+    print $jsonString;
+    exit;
+  }
+  $logger->info("Statistic found too old, computing...");
+} else {
+  $logger->info("No statistic data found, computing...");
+}
+
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+                                                localtime(time);
+$dataContainer = {
+		  localDate => [1900 + $year, 1 + $mon, $mday, $hour,$min],
+		  timeStamp => time(),
+		  interactors => {
+				  total => [],
+				  protein => [],
+				  fragment => [],
+				  multimer => [],
+				  glycosaminoglycan => [],
+				  cation => [],
+				  lipid => [],
+				  inorganic => [],
+				  synthetic => []
+				 },
+		  associations => {
+				   total => [0,0],
+				   matrixdb => [0,0],
+				   psicquic => [0,0]
+				  },
+		  publications => { total => 0, imex => 0 }
+		 };
+
+
+our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || 
+  $logger->error ("Couldn't open database");
+
+
+# queries vues ensemble
+
+# pour le tableau de droite:
+#point de depart
+find association # ou find association genuine ## ou find association matrixdb
+
+
+query find biomolecule Prot ; follow association
+kstore prots
+    query find biomolecule Protein_Fragment ; follow association
+kstore pfrags
+    query find biomolecule Glycosaminoglycan ; follow association
+kstore gags
+    query find biomolecule Multimer ; follow association
+kstore mults
+### cation? lipid? Inorganic? SyntheticPeptide?
+
+# taille des intersections
+kget prots
+spush
+kget pfrags
+sand
+spop
+
+# top of stack holds assocs with one prot and one pfrag
+
+# idem pour tous les comptages heterogenes
+kget prots
+# count and substract hetergeneous assocs, careful ignore lipids et al
+
+ 
+
+##################################"
+
+
+my @aceAssociations = $DB->fetch(Association => '*');
+$logger->info("Raw association fetched count is " . scalar(@aceAssociations));
+foreach my $aceAssoc (@aceAssociations) {
+   $dataContainer->{ associations }->{ total }->[0] += 1; 
+   my $bMatrixDB = 0;
+   my $bPsicquic = 0;
+   my @sources = $aceAssoc->at('Source');
+ foreach my $source (@sources) {
+     
+     if($source->name =~ /^MatrixDB$/i) {
+	 $bMatrixDB = 1;
+     } else {
+	 $bPsicquic = 1;
+     }
+     ($bPsicquic && $bMatrixDB) && last;
+  }
+   my $tag = $aceAssoc->at('Kind', 1);
+   my $bInferred = 0;
+   while(defined ($tag)) {
+     if($tag->name eq "Inferred") {
+       $bInferred = 1;
+       last;
+     }
+     $tag = $tag->down();
+   }
+   
+   if ($bInferred || $bMatrixDB) {
+ #      $logger->info("MatrixDB tagged " . $aceAssoc->name);
+    #    $logger->info("name is " . $tag->name);
+    #    ($tag->name eq "Inferred") && $logger->info("Inferred here!" . $aceAssoc->name);
+    $dataContainer->{ associations }->{ matrixdb }->[0] += 1;
+  }
+  if ($bPsicquic && !$bMatrixDB) {
+#      $logger->info($aceAssoc->name);
+      $dataContainer->{ associations }->{ psicquic }->[0] += 1;
+  }
+}
+
+my $labelMaker = {};
+
+my $hTags = { 
+	     Prot => 'protein',
+	     Cation => 'cation',
+	     Glycosaminoglycan => 'glycosaminoglycan',
+	     Multimer => 'multimer',
+	     Protein_Fragment => 'fragment',
+	     Lipid => 'lipid',
+	     Inorganic => 'inorganic',
+	     SyntheticPeptide => 'synthetic'
+	    };
+
+
+
+foreach my $iKey ( keys(%{ $hTags }) ) {
+  $labelMaker->{ $iKey } = {};
+  foreach my $jKey ( keys(%{ $hTags }) ) {
+    my $iValue = $hTags->{ $iKey };
+    my $jValue = $hTags->{ $jKey };
+    if ($iValue gt $jValue) {
+      $iValue = $hTags->{ $jKey };
+      $jValue = $hTags->{ $iKey };
+    }
+    if ($jValue =~ /^(.)(.+)/) {
+      $jValue = uc($1) . $2;
+    }
+    my $value =  $iValue . $jValue;
+    $labelMaker->{ $iKey }->{ $jKey } = $value;
+  
+    if (!defined($dataContainer->{ associations }->{ $value })) {
+      $dataContainer->{ associations }->{ $value } = [0, 0];
+    }
+  }
+}
+#$logger->trace(Dumper($labelMaker));
+#$logger->trace(Dumper($dataContainer));
+#exit;
+
+$logger->info("here1");
+
+
+#my $cnt = 0;
+foreach my $aceAssociation (@aceAssociations) {
+
+  #$cnt++;
+  my @biomolecules = $aceAssociation->follow('Biomolecule');
+  my @experiments = $aceAssociation->follow('Experiment');
+  if (@biomolecules == 1) { push @biomolecules, $biomolecules[0]; }
+  my @types;
+  foreach my $biomolecule (@biomolecules) {
+    my $type = $biomolecule->right(2)->name;
+    push @types, $type;
+    push @{ $dataContainer->{ interactors }->{ $hTags->{ $type } } }, $biomolecule->name;
+    push @{ $dataContainer->{ interactors }->{ total } }, $biomolecule->name;
+  }
+  $dataContainer->{ associations }->{ $labelMaker->{ $types[0] }->{ $types[1] } }->[0] += 1;
+  $dataContainer->{ associations }->{ $labelMaker->{ $types[0] }->{ $types[1] } }->[1] += scalar(@experiments);
+
+  foreach my $aceExp (@experiments) {
+    my $sKey = $aceExp->name =~ /MatrixDB/i ? "matrixdb" : "psicquic";
+    $dataContainer->{ associations }->{ $sKey }->[1] += 1;
+    $dataContainer->{ associations }->{ total }->[1] += 1;
+  }
+}
+$logger->info("here2...");
+foreach my $tag (keys (%{ $dataContainer->{ interactors } })) {
+  my $tmpList = common::uniqList($dataContainer->{ interactors }->{ $tag });
+  $dataContainer->{ interactors }->{ $tag } = scalar(@{ $tmpList });
+}
+
+
+$DB->raw_query('find Association');
+my $r = $DB->raw_query('follow PMID');
+if ($r =~ /Found ([\d]+) object/) {
+  $dataContainer->{ publications }->{ total } = $1;
+}
+$DB->raw_query('query find experiment matrixdb where imex_id_experiment');
+$r = $DB->raw_query('follow PMID');
+if ($r =~ /Found ([\d]+) object/) {
+  $dataContainer->{ publications }->{ imex } = $1;
+}
+
+$logger->trace(Dumper($dataContainer));
+$logger->info("here3...");
+
+
+
+my $jsonString = encode_json($dataContainer);
+open JS_OUT, ">$fLastStat" or $logger->info("not creat");
+print JS_OUT $jsonString;
+close JS_OUT;
+print $query->header('application/json');      # create the HTTP header
+print $jsonString;
+
