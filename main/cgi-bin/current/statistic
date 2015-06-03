@@ -18,18 +18,23 @@ use common;
 Log::Log4perl->init("$ENV{ IDN_CONF }/statistic.conf");
 my $logger = get_logger();
 my $query = CGI->new();
+my $fLastStat = '/tmp/statisticsLatest_dev';
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+    localtime(time);
 
 my $dataContainer = {
+                  localDate => [1900 + $year, 1 + $mon, $mday, $hour,$min],
 		  associations => {
-				  total => [],
-				  protein => [],
-				  fragment => [],
-				  multimer => [],
-				  glycosaminoglycan => [],
-				  cation => [],
-				  lipid => [],
-				  inorganic => [],
-				  synthetic => []
+		                  total => [0],
+				  protein => [0],
+				  fragment => [0],
+				  multimer => [0],
+				  glycosaminoglycan => [0],
+				  cation => [0],
+				  lipid => [0],
+				  inorganic => [0],
+				  synthetic => [0],
+				  #other => [0]
 				 },
 		  interactions => {
 				   matrixdb => [0,0],
@@ -42,23 +47,25 @@ my $dataContainer = {
 our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || 
   $logger->error ("Couldn't open database");
 
+
+
 #molecular interactions data
-my $r = $DB->raw_query('find association matrixdb and genuine');
+my $r = $DB->raw_query('query find association matrixdb and genuine');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ matrixdb }->[0] = $1;
 }
 
-my $r = $DB->raw_query('find experiment matrixdb');
+my $r = $DB->raw_query('query find experiment matrixdb');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ matrixdb }->[1] = $1;
 }
 
-my $r = $DB->raw_query('find association genuine');
+my $r = $DB->raw_query('query find association genuine');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ psicquic }->[0] = $1;
 }
 
-my $r = $DB->raw_query('find experiment');
+my $r = $DB->raw_query('query find experiment');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ psicquic }->[1] = $1;
 }
@@ -71,13 +78,121 @@ if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ imex } = $1;
 }
 
-my $r = $DB->raw_query('find publication association');
+my $r = $DB->raw_query('query find publication association');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ total } = $1;
 }
 
 
+#Associations
+my $hTags = { 
+              Prot => 'protein',
+	      Cation => 'cation',
+	      Glycosaminoglycan => 'glycosaminoglycan',
+	      Multimer => 'multimer',
+	      Protein_Fragment => 'fragment',
+	      Lipid => 'lipid',
+	      Inorganic => 'inorganic',
+	      SyntheticPeptide => 'synthetic'
+	      #Other => 'other'
+	      };
+
+
+$DB->raw_query('find association');
+$r = $DB->raw_query('query find biomolecule Prot ; follow association');
+if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ associations }->{ protein } = $1;
+}
+$DB->raw_query('kstore Prot');
+
+$r = $DB->raw_query('query find biomolecule Protein_fragment ; follow association');
+if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ associations }->{ fragment } = $1;
+}
+$DB->raw_query('kstore Protein_Fragment');
+
+$r = $DB->raw_query('query find biomolecule Glycosaminoglycan ; follow association');
+if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ associations }->{ glycosaminoglycan } = $1;
+}
+$DB->raw_query('kstore Glycosaminoglycan');
+
+$r = $DB->raw_query('query find biomolecule Multimer ; follow association');
+if ($r =~ /Found ([\d]+) object/) {
+    $dataContainer->{ associations }->{ multimer } = $1;
+}
+$DB->raw_query('kstore Multimer');
+
+#$r = $DB->raw_query('query find biomolecule Cation OR Lipid OR Inorganic OR SyntheticPeptide ; follow association');
+#if ($r =~ /Found ([\d]+) object/) {
+ #   $dataContainer->{ associations }->{ other } = $1;
+#}
+#$DB->raw_query('kstore Other');
+
+
+
+my $labelMaker;
+foreach my $iKey ( keys(%{ $hTags }) ) {
+    $labelMaker->{ $iKey } = {};
+    foreach my $jKey ( keys(%{ $hTags }) ) {
+	my $iValue = $hTags->{ $iKey };
+	my $jValue = $hTags->{ $jKey };
+	if ($iValue gt $jValue) {
+	    $iValue = $hTags->{ $jKey };
+	    $jValue = $hTags->{ $iKey };
+	}
+	if ($jValue =~ /^(.)(.+)/) {
+	    $jValue = uc($1) . $2;
+	}
+	my $value =  $iValue . $jValue;
+	$labelMaker->{ $iKey }->{ $jKey } = $value;
+	if (!defined($dataContainer->{ associations }->{ $value })) { 
+	    if ($iKey ne $jKey) {
+		$DB->raw_query('kget ' . $iKey);                                                                                                                                                                                  $DB->raw_query('spush');                                                                                                                                                                                          $DB->raw_query('kget ' . $jKey);    
+		$DB->raw_query('sand');                                                                                                                                                                                           $r = $DB->raw_query('spop');
+		if ($r =~ /([\d]+) Active Objects/) {
+		    $dataContainer->{ associations }->{ $value } = $1;
+		}
+	    }
+	}
+    }	  
+}
+
+foreach my $iKey ( keys(%{ $hTags }) ) {
+    my $test;
+	foreach my $jKey ( keys(%{ $hTags }) ) {
+	    if ($iKey ne $jKey) {
+		if (defined $test){
+		    $test .= " OR ". $jKey;
+		}
+		else{
+		    $test .= $jKey;
+		}
+	    }
+	}
+    $DB->raw_query('query find biomolecule '. $test . '; follow association');
+    $DB->raw_query('kstore other');
+    $DB->raw_query('kget '. $iKey);
+    $DB->raw_query('spush');
+    $DB->raw_query('kget other');
+    $DB->raw_query('sminus');
+    $r = $DB->raw_query('spop');
+  
+    my $value = $iKey.$iKey;
+    if (!defined($dataContainer->{ associations }->{ $value })) {
+	if ($r =~ /([\d]+) Active Objects/) {
+	    $dataContainer->{ associations }->{ $value } = $1;
+	}
+    }
+}
+
+#######
+my $jsonString = encode_json($dataContainer);
+open JS_OUT, ">$fLastStat" or $logger->info("not creat");
+print JS_OUT $jsonString;
+close JS_OUT;
 print $query->header('application/json');      # create the HTTP header
+print $jsonString;
 
 
 

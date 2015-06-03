@@ -34,25 +34,25 @@ function initStatView (options){
 				console.dir(data)
 				var scaffold = '<div class = "row-fluid"><div class = "span6 firstPart"></div><div class = "span6 secondPart"></div></div>';
 			 	var self = this;
-			  //  var tableInteractor ='<table bgcolor="white" class="table table-bordered" >'+
-                      		//	 '<thead><tr><th>Associations</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
-                      		//	 '</tr></thead><tbody>'+
-                      		//	 '<tr><th>GAG**</th><td>' + data.associations.glycosaminoglycanProtein[0] + '</td>'+
-	                      	//		 '<td>' + data.associations.glycosaminoglycanMultimer[0] + '</td>'+
-	                      	//		 '<td>' + data.associations.fragmentGlycosaminoglycan[0] + '</td>'+
-	                      	//		 '<td>' + data.associations.glycosaminoglycanGlycosaminoglycan[0] + '</td></tr>'+
-                      		//	 '<tr><th>PFrag*</th><td>' + data.associations.fragmentProtein[0] + '</td>'+
-                      		//	 	'<td>' + data.associations.fragmentMultimer[0] + '</td>'+
-                      		//	 	'<td>' + data.associations.fragmentFragment[0] + '</td><td></td></tr>'+
-                      		//	 '<tr><th>Multimer</th><td>' + data.associations.multimerProtein[0] + '</td>'+
-                      		//	 	'<td>' + data.associations.multimerMultimer[0] + '</td><td></td><td></td></tr>'+
-                      		//	 '<tr><th>Protein</th><td>' + data.associations.proteinProtein[0] + '</td><td></td><td></td><td></td></tr>';
+			    var tableInteractor ='<table bgcolor="white" class="table table-bordered" >'+
+                      			 '<thead><tr><th>Associations</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
+                      			 '</tr></thead><tbody>'+
+                      			 '<tr><th>GAG**</th><td>' + data.associations.glycosaminoglycanProtein + '</td>'+
+	                      			 '<td>' + data.associations.glycosaminoglycanMultimer + '</td>'+
+	                      			 '<td>' + data.associations.fragmentGlycosaminoglycan + '</td>'+
+	                      			 '<td>' + data.associations.GlycosaminoglycanGlycosaminoglycan + '</td></tr>'+
+                      			 '<tr><th>PFrag*</th><td>' + data.associations.fragmentProtein + '</td>'+
+                      			 	'<td>' + data.associations.fragmentMultimer + '</td>'+
+                      			 	'<td>' + data.associations.Protein_FragmentProtein_Fragment + '</td><td></td></tr>'+
+                      			 '<tr><th>Multimer</th><td>' + data.associations.multimerProtein + '</td>'+
+                      			 	'<td>' + data.associations.MultimerMultimer + '</td><td></td><td></td></tr>'+
+                      			 '<tr><th>Protein</th><td>' + data.associations.ProtProt + '</td><td></td><td></td><td></td></tr>';
 			    var tableFinal = '<table bgcolor="white" class="table table-bordered" >'+
                       			 '<thead><tr><th>Molecular interaction Data</th>'+
                       			 '<th class="mdbHead"><img src = "/img/icon-mdb.png" width = "15px" ></img></th>'+
                       			 '<th class="psqHead"><img src = "/img/psicquic.png" width = "20px"></img></th></tr></thead><tbody>';
-			 	//tableInteractor += '</tbody></table><div><b>  *</b> : Bioactive <b>P</b>rotein <b>frag</b>ment</br><b>**</b> : <b>G</b>lycos<b>A</b>mino<b>G</b>lycan</div>';
-			 //	var pub = data.publications.total - data.publications.imex
+			 	tableInteractor += '</tbody></table><div><b>  *</b> : Bioactive <b>P</b>rotein <b>frag</b>ment</br><b>**</b> : <b>G</b>lycos<b>A</b>mino<b>G</b>lycan</div>';
+			 	var pub = data.publications.total - data.publications.imex
 				tableFinal += '<tr><td>Associations</td><td>' + data.interactions.matrixdb[0] + '</td><td>' + data.interactions.psicquic[0] + '</td></tr>' +
 							  '<tr><td>Experiments</td><td>' + data.interactions.matrixdb[1] + '</td><td>' + data.interactions.psicquic[1] + '</td></tr>' +
 							  '</tbody></table>' +'<table bgcolor="white" class="table table-bordered" style=" max-height: 250px;">'+
@@ -60,11 +60,10 @@ function initStatView (options){
 							  '<tr><td>MIMIx-level curated publications</td><td>' + data.publications.total + '</td></tr>'+
 							  '<tr><td>IMEx-level curated publications</td><td>' + data.publications.imex + '</td></tr>' ;
 				tableFinal += '</tbody></table>';
-				//var date = "<div>Updated on " + data.localDate[1] + "/" + data.localDate[2] + "/" + data.localDate[0] +
-				//		   " at " + data.localDate[3] + "h" + data.localDate[4] +"min</div>";
-				//$(self.targetDomElem).append( date + scaffold);
+				var date = "";
+				$(self.targetDomElem).append( date + scaffold);
 				$(self.targetDomElem).find("div.firstPart").append(tableFinal);
-				//$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
+				$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
 				$("th.mdbHead").tooltip({title : "MatrixDB CORE dataset", container : 'body'});
 				$("th.psqHead").tooltip({title : "Psicquic extended dataset", container : 'body'});
 				
