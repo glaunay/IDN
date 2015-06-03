@@ -35,7 +35,7 @@ function initStatView (options){
 				var scaffold = '<div class = "row-fluid"><div class = "span6 firstPart"></div><div class = "span6 secondPart"></div></div>';
 			 	var self = this;
 			    var tableInteractor ='<table bgcolor="white" class="table table-bordered" >'+
-                      			 '<thead><tr><th>Associations</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
+                      			 '<thead><tr><th>Experimentaly supported associations</th><th>Protein</th><th>Multimer</th><th>PFrag*</th><th>GAG**</th>'+
                       			 '</tr></thead><tbody>'+
                       			 '<tr><th>GAG**</th><td>' + data.associations.glycosaminoglycanProtein + '</td>'+
 	                      			 '<td>' + data.associations.glycosaminoglycanMultimer + '</td>'+
@@ -57,7 +57,7 @@ function initStatView (options){
 							  '<tr><td>Experiments</td><td>' + data.interactions.matrixdb[1] + '</td><td>' + data.interactions.psicquic[1] + '</td></tr>' +
 							  '</tbody></table>' +'<table bgcolor="white" class="table table-bordered" style=" max-height: 250px;">'+
                       		  '<thead><tr><th>Publications</th><th>Number</th></tr></thead><tbody>' +
-							  '<tr><td>MIMIx-level curated publications</td><td>' + data.publications.total + '</td></tr>'+
+							  '<tr><td>MIMIx-level curated publications (including IMEx-level)</td><td>' + data.publications.total + '</td></tr>'+
 							  '<tr><td>IMEx-level curated publications</td><td>' + data.publications.imex + '</td></tr>' ;
 				tableFinal += '</tbody></table>';
 				var date = "";
@@ -65,7 +65,7 @@ function initStatView (options){
 				$(self.targetDomElem).find("div.firstPart").append(tableFinal);
 				$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
 				$("th.mdbHead").tooltip({title : "MatrixDB CORE dataset", container : 'body'});
-				$("th.psqHead").tooltip({title : "Psicquic extended dataset", container : 'body'});
+				$("th.psqHead").tooltip({title : "Psicquic extended dataset (including MatrixDB CORE)", container : 'body'});
 				
 		},
 		_dataPie : function(data){
