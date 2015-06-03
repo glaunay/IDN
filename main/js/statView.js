@@ -60,7 +60,7 @@ function initStatView (options){
 							  '<tr><td>MIMIx-level curated publications (including IMEx-level)</td><td>' + data.publications.total + '</td></tr>'+
 							  '<tr><td>IMEx-level curated publications</td><td>' + data.publications.imex + '</td></tr>' ;
 				tableFinal += '</tbody></table>';
-				var date = "";
+				var date = "Real-time updates";
 				$(self.targetDomElem).append( date + scaffold);
 				$(self.targetDomElem).find("div.firstPart").append(tableFinal);
 				$(self.targetDomElem).find("div.secondPart").append(tableInteractor);
