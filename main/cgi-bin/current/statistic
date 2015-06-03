@@ -18,7 +18,7 @@ use common;
 Log::Log4perl->init("$ENV{ IDN_CONF }/statistic.conf");
 my $logger = get_logger();
 my $query = CGI->new();
-my $fLastStat = '/tmp/statisticsLatest_dev';
+
 my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
     localtime(time);
 
@@ -49,7 +49,7 @@ our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  ||
 
 
 
-#molecular interactions data
+#Molecular interactions data
 my $r = $DB->raw_query('query find association matrixdb and genuine');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ matrixdb }->[0] = $1;
@@ -130,7 +130,7 @@ $DB->raw_query('kstore Multimer');
 #$DB->raw_query('kstore Other');
 
 
-
+#heterogen associations
 my $labelMaker;
 foreach my $iKey ( keys(%{ $hTags }) ) {
     $labelMaker->{ $iKey } = {};
@@ -148,8 +148,11 @@ foreach my $iKey ( keys(%{ $hTags }) ) {
 	$labelMaker->{ $iKey }->{ $jKey } = $value;
 	if (!defined($dataContainer->{ associations }->{ $value })) { 
 	    if ($iKey ne $jKey) {
-		$DB->raw_query('kget ' . $iKey);                                                                                                                                                                                  $DB->raw_query('spush');                                                                                                                                                                                          $DB->raw_query('kget ' . $jKey);    
-		$DB->raw_query('sand');                                                                                                                                                                                           $r = $DB->raw_query('spop');
+		$DB->raw_query('kget ' . $iKey);                                                                                                                                                                   
+                $DB->raw_query('spush');                                                                                                                                                                          
+                $DB->raw_query('kget ' . $jKey);    
+	        $DB->raw_query('sand');                                                                                                                                                                            
+                $r = $DB->raw_query('spop');
 		if ($r =~ /([\d]+) Active Objects/) {
 		    $dataContainer->{ associations }->{ $value } = $1;
 		}
@@ -158,19 +161,20 @@ foreach my $iKey ( keys(%{ $hTags }) ) {
     }	  
 }
 
+#non heterogen associations
 foreach my $iKey ( keys(%{ $hTags }) ) {
-    my $test;
+    my $other; #all the keys except iKey
 	foreach my $jKey ( keys(%{ $hTags }) ) {
 	    if ($iKey ne $jKey) {
-		if (defined $test){
-		    $test .= " OR ". $jKey;
+		if (!defined $other){
+		    $other .= $jKey;
 		}
 		else{
-		    $test .= $jKey;
+		    $other .= " OR ". $jKey;
 		}
 	    }
 	}
-    $DB->raw_query('query find biomolecule '. $test . '; follow association');
+    $DB->raw_query('query find biomolecule '. $other . '; follow association');
     $DB->raw_query('kstore other');
     $DB->raw_query('kget '. $iKey);
     $DB->raw_query('spush');
@@ -188,37 +192,8 @@ foreach my $iKey ( keys(%{ $hTags }) ) {
 
 #######
 my $jsonString = encode_json($dataContainer);
-open JS_OUT, ">$fLastStat" or $logger->info("not creat");
-print JS_OUT $jsonString;
-close JS_OUT;
 print $query->header('application/json');      # create the HTTP header
 print $jsonString;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
