@@ -253,7 +253,9 @@ sub getPublication {
   }
 # HOT FIX IMEX_ID is of type Text (not?Text) and cant be greped, it seems
   if ($string =~ /[\d]+$/) {
-      $DB->raw_query('query find experiment matrixdb where IMEx_ID_Experiment=*' . $string . '*; follow PMID');
+      $DB->raw_query('query find experiment matrixdb where IMEx_ID_Experiment=*' . $string . '*');
+      $DB->raw_query('follow PMID');
+      #$DB->raw_query('query find Publication where IMEX_ID=*' . $string . '*');
       my $pmidAceObjIt2 = $DB->fetch_many(-query=> '*');
       while (my $pmidObj2 = $pmidAceObjIt2->next ) {
 	  $cHit++;
