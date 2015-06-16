@@ -35,7 +35,7 @@ html, body {height: 100%;}
 div.span12.mainAlias {
     font-size : 3em;
     font-family : Verdana;
-    min-height: 75px;
+    min-height: 50px;
 }
 
 div.span10.bsContainer {
