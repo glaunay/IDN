@@ -240,12 +240,18 @@ div.topHead{
 	margin: 5px 5px 0px 5px;
 }
 .logoRight {
-	width : 250px;
+	width : 165px;
 	margin-right : -20px;
 }
 .logoLeft {
-    width: 250px;
+    width: 165px;
     margin-left: -22px;
+}
+.logoCenter {
+    display:block;
+    width:500px;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 .firstPart,.secondPart{
@@ -352,3 +358,4 @@ div.youtubeSnipet {
 	margin-bottom : 35px;
 	margin-top : 20px;
 }
+
