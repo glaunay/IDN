@@ -159,10 +159,12 @@ dl.societies img {
     background-color : white;
 }
 
-.accordion-inner  {
-    /*background-color : #D6EBFF;*/
+/*.accordion-inner  {
+    /*background-color : #D6EBFF;
     background-color : #FFFFF0;
-}
+}*/
+
+/*
 #top-accordion {
     -webkit-border-radius: 15px 15px 0px 0px;
     -moz-border-radius: 15px 15px 0px 0px;
@@ -175,6 +177,7 @@ dl.societies img {
     -moz-border-radius: 15px 15px 0px 0px;
     border-radius: 15px 15px 0px 0px;
 }
+*/
 ul.accordionSubList {
     list-style: none;
     margin-left : 0px;
@@ -261,11 +264,11 @@ div.downloadContent  ul{
 } 
 
 
-.bottomAccordeon {
+/*.bottomAccordeon {
     -webkit-border-radius: 0px 0px 0px 0px;
     -moz-border-radius: 0px 0px 0px 0px;
     border-radius: 0px 0px 0px 0px;
-}
+}*/
 
 .accordion-base {
     -webkit-border-radius: 0px 0px 15px 15px;
@@ -284,7 +287,7 @@ div.downloadContent  ul{
     margin-bottom : 2px;
 }
 
-
+/*
 .blockOneAccordeonBottom{
     -webkit-border-radius: 0px 0px 15px 0px;
     -moz-border-radius: 0px 0px 15px 0px;
@@ -298,16 +301,16 @@ div.downloadContent  ul{
 
 .blockTwoAccordeonHead {
     margin-top: 15px;
-}
+}*/
 
 .fa-ul li {
     margin-left : -10px;
 }
 
-#contentSeven dt {
+#contentNine dt {
     padding-top : 20px;
 }
-#contentSeven dt img {
+#contentNine dt img {
     margin-right : 20px;
 }
 
