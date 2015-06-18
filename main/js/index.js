@@ -15,6 +15,7 @@ function mainPageSet (){
     $('#toggleOne').on('click',function(event){	   
 			   $('.mainContent:not(#contentOne)').hide();
 			   $('.mainContent#contentOne').show();
+			   $('#toggleOne').addClass('CurrentToggle');
 		       });
     
     $('#toggleTwo').on('click',function(){
@@ -26,37 +27,44 @@ function mainPageSet (){
     $('#toggleThree').on('click',function(){
 			     $('.mainContent:not(#contentThree)').hide();
 			     $('.mainContent#contentThree').show();
+			     $('#toggleThree').addClass('CurrentToggle');
 			 });
     
     $('#toggleFour').on('click',function(){
 			    $('.mainContent:not(#contentFour)').hide();
 			    $('.mainContent#contentFour').show();
+			    $('#toggleFour').addClass('CurrentToggle');
 			});
     
     $('#toggleFive').on('click',function(){
 			    $('.mainContent:not(#contentFive)').hide();
 			    $('.mainContent#contentFive').show();
+			    $('#toggleFive').addClass('CurrentToggle');
 			});
     
     $('#toggleSix').on('click',function(){
 			   $('.mainContent:not(#contentSix)').hide();
 			   $('.mainContent#contentSix').show();
+			   $('#toggleSix').addClass('CurrentToggle');
 		       });
     
     $('#toggleSeven').on('click',function(){
 			     $('.mainContent:not(#contentSeven)').hide();
 			     $('.mainContent#contentSeven').show();
+			     $('#toggleSeven').addClass('CurrentToggle');
 			 });
     
     $('#toggleEight').on('click',function(){
 			     $('.mainContent:not(#contentEight)').hide();
 			     $('.mainContent#contentEight').show();
+			     $('#toggleEight').addClass('CurrentToggle');
 			     
 			 });
  
    $('#toggleNine').on('click',function(){
 			     $('.mainContent:not(#contentNine)').hide();
 			     $('.mainContent#contentNine').show();
+			     $('#toggleNine').addClass('CurrentToggle');
 
 			 });
 
