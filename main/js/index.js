@@ -20,6 +20,7 @@ function mainPageSet (){
     $('#toggleTwo').on('click',function(){
 			   $('.mainContent:not(#contentTwo)').hide();
 			   $('.mainContent#contentTwo').show();
+			   $('#toggleTwo').addClass('CurrentToggle');
 		       });
     
     $('#toggleThree').on('click',function(){
