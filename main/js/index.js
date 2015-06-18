@@ -22,6 +22,7 @@ function mainPageSet (){
 			   $('.mainContent:not(#contentTwo)').hide();
 			   $('.mainContent#contentTwo').show();
 			   $('#toggleTwo').addClass('CurrentToggle');
+			   $('#toggleOne').removeClass('CurrentToggle');
 		       });
     
     $('#toggleThree').on('click',function(){
