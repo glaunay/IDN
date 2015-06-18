@@ -169,6 +169,11 @@ dl.societies img {
     border-radius: 15px 15px 0px 0px;
 
 }
+#toggleOne {
+    -webkit-border-radius: 15px 15px 0px 0px;
+    -moz-border-radius: 15px 15px 0px 0px;
+    border-radius: 15px 15px 0px 0px;
+}
 
 #bottom-accordion {
     -webkit-border-radius: 15px 15px 0px 0px;
