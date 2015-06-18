@@ -12,12 +12,10 @@ function mainPageSet (){
     $('.mainContent').hide();
     $('#contentOne').show();
  
-    $('#toggleOne').on('click',function(event){
-			  //if(isSelected(this))
-			 //      event.stopPropagation();			   
+    $('#toggleOne').on('click',function(event){	   
 			   $('.mainContent:not(#contentOne)').hide();
 			   $('.mainContent#contentOne').show();
-			   $('#toggleThree').addClass('blockOneAccordeonBottom');
+			 //  $('#toggleThree').addClass('blockOneAccordeonBottom');
 			   $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 			   $('#toggleNine').addClass('accordion-base');
 		       });
@@ -26,7 +24,7 @@ function mainPageSet (){
 			   $('.mainContent:not(#contentTwo)').hide();
 			   $('.mainContent#contentTwo').show();
 			   
-			   $('#toggleThree').addClass('blockOneAccordeonBottom');
+			   //$('#toggleThree').addClass('blockOneAccordeonBottom');
 			   $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 			   $('#toggleNine').addClass('accordion-base');
 		       });
@@ -34,7 +32,7 @@ function mainPageSet (){
     $('#toggleThree').on('click',function(){
 			     $('.mainContent:not(#contentThree)').hide();
 			     $('.mainContent#contentThree').show();
-			     $('#toggleThree').removeClass('blockOneAccordeonBottom');
+			     //$('#toggleThree').removeClass('blockOneAccordeonBottom');
 
 			     $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 			     if (isSelected(this))
@@ -46,7 +44,7 @@ function mainPageSet (){
 			    $('.mainContent:not(#contentFour)').hide();
 			    $('.mainContent#contentFour').show();
 
-			    $('#toggleThree').addClass('blockOneAccordeonBottom');
+			    //$('#toggleThree').addClass('blockOneAccordeonBottom');
 			    $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 			    $('#toggleNine').addClass('accordion-base');
 			});
@@ -61,7 +59,7 @@ function mainPageSet (){
 			   $('.mainContent:not(#contentSix)').hide();
 			   $('.mainContent#contentSix').show();
 
-			   $('#toggleThree').addClass('blockOneAccordeonBottom');
+			   //$('#toggleThree').addClass('blockOneAccordeonBottom');
 			   $('#toggleSeven').addClass('blockTwoAccordeonBottom'); 
 			   $('#toggleNine').addClass('accordion-base');
 		       });
@@ -75,16 +73,16 @@ function mainPageSet (){
 			     else 
 				 $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 
-			     $('#toggleThree').addClass('blockOneAccordeonBottom');
+			     //$('#toggleThree').addClass('blockOneAccordeonBottom');
 			     $('#toggleNine').addClass('accordion-base');
 			 });
     
     $('#toggleEight').on('click',function(){
 			     $('.mainContent:not(#contentEight)').hide();
 			     $('.mainContent#contentEight').show();
-//			     $(this).toggleClass('bottomAccordeon');
+
 			     
-			     $('#toggleThree').addClass('blockOneAccordeonBottom');
+			    // $('#toggleThree').addClass('blockOneAccordeonBottom');
 			     $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 			     $('#toggleNine').addClass('accordion-base');			     
 			 });
@@ -92,15 +90,12 @@ function mainPageSet (){
    $('#toggleNine').on('click',function(){
 			     $('.mainContent:not(#contentNine)').hide();
 			     $('.mainContent#contentNine').show();
-//			     $(this).toggleClass('bottomAccordeon');
+
 			     
-			     $('#toggleThree').addClass('blockOneAccordeonBottom');
+			     //$('#toggleThree').addClass('blockOneAccordeonBottom');
 			     $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 			     $(this).toggleClass('accordion-base');
-			     /*
-			      * $(this).toggleClass('accordion-base');      
-			      $('#toggleEight').removeClass('accordion-base');
-			      */
+
 			 });
 
     
