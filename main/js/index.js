@@ -16,8 +16,8 @@ function mainPageSet (){
 			   $('.mainContent:not(#contentOne)').hide();
 			   $('.mainContent#contentOne').show();
 			 //  $('#toggleThree').addClass('blockOneAccordeonBottom');
-			   $('#toggleSeven').addClass('blockTwoAccordeonBottom');
-			   $('#toggleNine').addClass('accordion-base');
+			 // $('#toggleSeven').addClass('blockTwoAccordeonBottom');
+			  // $('#toggleNine').addClass('accordion-base');
 		       });
     
     $('#toggleTwo').on('click',function(){
@@ -25,8 +25,8 @@ function mainPageSet (){
 			   $('.mainContent#contentTwo').show();
 			   
 			   //$('#toggleThree').addClass('blockOneAccordeonBottom');
-			   $('#toggleSeven').addClass('blockTwoAccordeonBottom');
-			   $('#toggleNine').addClass('accordion-base');
+			 //  $('#toggleSeven').addClass('blockTwoAccordeonBottom');
+			//   $('#toggleNine').addClass('accordion-base');
 		       });
     
     $('#toggleThree').on('click',function(){
@@ -34,10 +34,10 @@ function mainPageSet (){
 			     $('.mainContent#contentThree').show();
 			     //$('#toggleThree').removeClass('blockOneAccordeonBottom');
 
-			     $('#toggleSeven').addClass('blockTwoAccordeonBottom');
-			     if (isSelected(this))
-				 $('#toggleThree').addClass('blockOneAccordeonBottom');
-			     $('#toggleNine').addClass('accordion-base');
+			//     $('#toggleSeven').addClass('blockTwoAccordeonBottom');
+			//     if (isSelected(this))
+			//	 $('#toggleThree').addClass('blockOneAccordeonBottom');
+			 //    $('#toggleNine').addClass('accordion-base');
 			 });
     
     $('#toggleFour').on('click',function(){
@@ -45,14 +45,14 @@ function mainPageSet (){
 			    $('.mainContent#contentFour').show();
 
 			    //$('#toggleThree').addClass('blockOneAccordeonBottom');
-			    $('#toggleSeven').addClass('blockTwoAccordeonBottom');
-			    $('#toggleNine').addClass('accordion-base');
+			//    $('#toggleSeven').addClass('blockTwoAccordeonBottom');
+			 //   $('#toggleNine').addClass('accordion-base');
 			});
     
     $('#toggleFive').on('click',function(){
 			    $('.mainContent:not(#contentFive)').hide();
 			    $('.mainContent#contentFive').show();
-			    $('#toggleNine').addClass('accordion-base');
+			 //   $('#toggleNine').addClass('accordion-base');
 			});
     
     $('#toggleSix').on('click',function(){
@@ -60,21 +60,21 @@ function mainPageSet (){
 			   $('.mainContent#contentSix').show();
 
 			   //$('#toggleThree').addClass('blockOneAccordeonBottom');
-			   $('#toggleSeven').addClass('blockTwoAccordeonBottom'); 
-			   $('#toggleNine').addClass('accordion-base');
+			 //  $('#toggleSeven').addClass('blockTwoAccordeonBottom'); 
+			 //  $('#toggleNine').addClass('accordion-base');
 		       });
     
     $('#toggleSeven').on('click',function(){
 			     $('.mainContent:not(#contentSeven)').hide();
 			     $('.mainContent#contentSeven').show();
 			   
-			     if(!isSelected(this))
-				 $('#toggleSeven').removeClass('blockTwoAccordeonBottom');
-			     else 
-				 $('#toggleSeven').addClass('blockTwoAccordeonBottom');
+			  //   if(!isSelected(this))
+			//	 $('#toggleSeven').removeClass('blockTwoAccordeonBottom');
+			  //   else 
+			//	 $('#toggleSeven').addClass('blockTwoAccordeonBottom');
 
 			     //$('#toggleThree').addClass('blockOneAccordeonBottom');
-			     $('#toggleNine').addClass('accordion-base');
+			   //  $('#toggleNine').addClass('accordion-base');
 			 });
     
     $('#toggleEight').on('click',function(){
@@ -83,8 +83,8 @@ function mainPageSet (){
 
 			     
 			    // $('#toggleThree').addClass('blockOneAccordeonBottom');
-			     $('#toggleSeven').addClass('blockTwoAccordeonBottom');
-			     $('#toggleNine').addClass('accordion-base');			     
+			   //  $('#toggleSeven').addClass('blockTwoAccordeonBottom');
+			   //  $('#toggleNine').addClass('accordion-base');			     
 			 });
  
    $('#toggleNine').on('click',function(){
@@ -93,8 +93,8 @@ function mainPageSet (){
 
 			     
 			     //$('#toggleThree').addClass('blockOneAccordeonBottom');
-			     $('#toggleSeven').addClass('blockTwoAccordeonBottom');
-			     $(this).toggleClass('accordion-base');
+			   //  $('#toggleSeven').addClass('blockTwoAccordeonBottom');
+			   //  $(this).toggleClass('accordion-base');
 
 			 });
 
