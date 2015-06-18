@@ -8,6 +8,8 @@ function isSelected (domElem) {
     return false;
 }
 
+
+
 function mainPageSet (){
     $('.mainContent').hide();
     $('#contentOne').show();
@@ -21,8 +23,8 @@ function mainPageSet (){
     $('#toggleTwo').on('click',function(){
 			   $('.mainContent:not(#contentTwo)').hide();
 			   $('.mainContent#contentTwo').show();
+			   $('not(#contentTwo)').removeClass('CurrentToggle');
 			   $('#toggleTwo').addClass('CurrentToggle');
-			   $('#toggleOne').removeClass('CurrentToggle');
 		       });
     
     $('#toggleThree').on('click',function(){
