@@ -248,8 +248,9 @@ div.downloadContent  ul{
 
 .CurrentToggle {
 	background-color: LightCyan;
-	color:Black;
+	color:#000000;
 	font-weight: bold;
+	font-size:4em;
 }
 
 .accordion-base {

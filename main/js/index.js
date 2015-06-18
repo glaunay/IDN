@@ -12,14 +12,15 @@ function isSelected (domElem) {
 
 function mainPageSet (){
     $('.mainContent').hide();
+//Par default, "Overview selectionne qd on arrive sur la page
     $('#contentOne').show();
     $('#toggleOne').addClass('CurrentToggle');
  
-    $('#toggleOne').on('click',function(event){	   
-			   $('.mainContent:not(#contentOne)').hide();
-			   $('.mainContent#contentOne').show();
-			   $('#toggleTwo').removeClass('CurrentToggle');$('#toggleThree').removeClass('CurrentToggle');$('#toggleFour').removeClass('CurrentToggle');$('#toggleFive').removeClass('CurrentToggle');$('#toggleSix').removeClass('CurrentToggle');$('#toggleSeven').removeClass('CurrentToggle');$('#toggleEight').removeClass('CurrentToggle');$('#toggleNine').removeClass('CurrentToggle');	
-			   $('#toggleOne').addClass('CurrentToggle');
+    $('#toggleOne').on('click',function(event){	   //si on clique sur Overview
+			   $('.mainContent:not(#contentOne)').hide(); //cache les autres pages
+			   $('.mainContent#contentOne').show(); //affiche Overview
+			   $('#toggleTwo').removeClass('CurrentToggle');$('#toggleThree').removeClass('CurrentToggle');$('#toggleFour').removeClass('CurrentToggle');$('#toggleFive').removeClass('CurrentToggle');$('#toggleSix').removeClass('CurrentToggle');$('#toggleSeven').removeClass('CurrentToggle');$('#toggleEight').removeClass('CurrentToggle');$('#toggleNine').removeClass('CurrentToggle'); //le menu d'avant n'est plus colore en bleu
+			   $('#toggleOne').addClass('CurrentToggle'); //le menu overview est colore - permet de savoir où on est dans la navig du site
 		       });
     
     $('#toggleTwo').on('click',function(){
