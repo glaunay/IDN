@@ -340,14 +340,95 @@
 
            <!-- content five -->
            <div class="mainContent" id="contentFive">
+             <h4>MatrixDB biomolecule identifiers</h4>
+	       <div class="subContent" style="margin-bottom: 40px;">
+		 <dl>
+		   <dt>Proteins</dt>
+		   <dd>
+		     They are identified by their UniProtKB/Swiss-Prot 
+		     primary Accession Number (Example: P98160). 
+		     This is the most stable identifier of 
+		     UniProtKB/Swiss-Prot (when a protein entry is modified,
+		     the previous accession number is retained in a secondary
+		     accession number list).
+		   </dd>
+		   <dt>Multimers</dt>
+		   <dd>
+		   They are identified by a MatrixDB-specific identifier 
+		   "MULT_x_species" or "MULT_x_VARy_species" for molecular 
+		   isoforms where x and y are numbers. A cross-reference 
+		   to EBI complexes is provided when available.
+		 </dd>
+		 <dt>Glycosaminoglycans</dt>
+		 <dd>
+		   They are identified by a MatrixDB-specific identifier 
+		   "GAG_x" where x is a number. A cross-reference 
+		   to ChEBI (Chemical Entities of Biological Interest) is provided when available.
+		 </dd>
+		 <dt>Protein fragments</dt>
+		   <dd>
+		     PFRAG in short-form, they 
+		     are identified by a MatrixDB-specific identifier "PFRAG_x_species" 
+		     where x is a number. A cross-reference to the PRO 
+		     feature of UniProtKB is provided when available.
+		   </dd>
+		   <dt>Cations</dt> 
+		   <dd>
+		     They are identified by a MatrixDB-specific identifier 
+		     "CAT_x" where x is a number. A cross-reference 
+		     to ChEBI (Chemical Entities of Biological Interest) is provided when available.
+		   </dd>
+		   <dt>Lipidic molecules</dt>
+		   <dd>
+		     Fatty-acid related biomolecules are identified by a 
+		     MatrixDB-specific identifier "LIP_x" where x is a 
+		     number. A cross-reference to ChEBI (Chemical Entities of Biological Interest)
+		     is provided when available.
+		   </dd>
+		   <dt>Synthetic peptides</dt>
+		   <dd>
+		     Engineered peptides are identified by a 
+		     MatrixDB-specific identifier "SPEP_x" where x is a 
+		     number. A cross-reference to ChEBI (Chemical Entities of Biological Interest)
+		     or an EBI identifier is provided when available.
+		   </dd>
+		   <dt>Others</dt>
+		   <dd>    
+		     Remaining molecules are identified by a MatrixDB-specific identifier 
+		     "INORG_x" where x is a number. A cross-reference 
+		     to ChEBI (Chemical Entities of Biological Interest)
+		     is provided when available.
+		   </dd>
+		   <ul class="fa-ul" style="font-size:1.2em;margin-top:15px">
+		     <li>
+		       <a href="download//MatrixDB_entries_catalog.tsv"><i class="fa fa-li fa-download"></i>
+			 Catalog of MatrixDB special entries</a>
+		     </li>
+		   </ul>
+		 </div>
+
+             <h4>Experiments</h4>
+	       <div class="subContent" style="margin-bottom: 40px;">
+		 <dl>
+		   <dd>MatrixDB uses the following naming convention for
+		experiments: identifiers of the biomolecules in alphabetical
+		order separated by two underscores, followed by the PMID
+		(PubMed Identifier), the name of the source database
+		and the number of the experiment (counter started at 1).</dd>
+		</dl>
+	      </div>
+	   </div>
+
+           <!-- content six -->
+           <div class="mainContent" id="contentSix">
              <h4>Video Tutorials</h4>
              <div class="subContent youtubeSnipet">
 	      <iframe width="640" height="360" src="//www.youtube.com/embed/BCHp12lefK4?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0" frameborder="0" allowfullscreen></iframe>
 	     </div>
            </div>
 
-           <!-- content six -->
-           <div class="mainContent" id="contentSix">
+           <!-- content seven -->
+           <div class="mainContent" id="contentSeven">
              <h4>Contact</h4>
                  Visit the <a href="http://www.ibcp.fr/bmssi/-Interactions-hote-pathogene-S-?lang=en" target="_blank">Extracellular Interaction Network Lab</a>
              <div class="subContent"> Prof. Sylvie RICARD-BLUM <br />
@@ -399,8 +480,8 @@
               </ul>
            </div>
 
-           <!-- content seven -->
-           <div class="mainContent" id="contentSeven">
+           <!-- content eight -->
+           <div class="mainContent" id="contentEight">
 	     <div class="subContent">
 	                     <h4>The matrisome</h4>
                <ul class="fa-ul">
@@ -528,8 +609,8 @@
               </div>
            </div>
 
-           <!-- content eight -->
-           <div class="mainContent" id="contentEight">
+           <!-- content nine -->
+           <div class="mainContent" id="contentNine">
               <div style="width:100%" class="subContent">
                 <h4>Societies for Matrix Biology</h4>
                 <div class="row-fluid">

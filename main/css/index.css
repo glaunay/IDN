@@ -286,11 +286,6 @@ div.downloadContent  ul{
     margin-bottom : 2px;
 }
 
-#toggleEight {
-    -webkit-border-radius: 10px 10px 0px 0px;
-    -moz-border-radius: 10px 10px 0px 0px;
-    border-radius: 10px 10px 0px 0px;
-}
 
 .blockOneAccordeonBottom{
     -webkit-border-radius: 0px 0px 15px 0px;
