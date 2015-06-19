@@ -30,7 +30,7 @@ html, body {height: 100%;}
 .wrap {min-height: 100%;}
 
 #main {overflow:auto;
-	padding-bottom: 130px;}  /* must be same height as the footer */
+	padding-bottom: 80px;}  
 
 div.span12.mainAlias {
     font-size : 3em;
@@ -45,12 +45,20 @@ div.span10.bsContainer {
 div.span6.topHead {
     padding-top : 20px;
 }
-
+ 
 .footer {position: relative;
-	margin-top: -130px; /* negative value of footer height */
-	height: 130px;
+	margin-top: -30px;  negative value of footer height
+	height: 30px;
 	clear:both;
 } 
+
+/*
+.footer {position: relative:
+	bottom:0;
+	left: 0; right:0;
+	-moz-box-sizing: border-box; box-sizing:border-box;
+}
+ */
 body:before {/* thanks to Maleika (Kohoutec)*/
 	content:"";
 	height:100%;
@@ -311,4 +319,5 @@ div.youtubeSnipet {
 	margin-bottom : 35px;
 	margin-top : 20px;
 }
+
 
