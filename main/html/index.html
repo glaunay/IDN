@@ -72,7 +72,7 @@
 
 	<!-- MATRIXDB-->
 	      <div class="accordion-separator">
-		<b>MatrixDB ressources</b>
+		<b>MatrixDB resources</b>
 	      </div>
 
               <!-- 1 OVERVIEW -->
@@ -111,7 +111,7 @@
               <div class="accordion-group">
                 <div id="toggleFive" class="accordion-heading"> <a href="#collapseFive"
                     data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
-                    Naming convention</a> 
+                    Naming conventions</a> 
 		</div>
               </div>
             
@@ -133,14 +133,14 @@
 
 	<!-- EXTERNAL-->
 	      <div class="accordion-separator">
-		<b>External ECM ressources</b>
+		<b>External ECM resources</b>
 	      </div>
 
-              <!-- 8 EXT DOWNLOADS-->
+              <!-- 8 EXT DB AND NET-->
               <div class="accordion-group">
                 <div id="toggleEight" class="accordion-heading"> <a href="#collapseEight"
                     data-parent="#sideMenu" data-toggle="collapse" class="accordion-toggle">
-                    Downloads </a> 
+                    Databases and networks </a> 
 		</div>
                </div>
 
@@ -300,7 +300,7 @@ ies.
 	   <!-- content Four MatrixDB dwlds -->
            <div class="mainContent" id="contentFour">
                <div class="downloadContent">
-                 <h4>MatrixDB data</h4>
+                 <h4>MatrixDB interactions</h4>
                  <ul class="fa-ul">
                    <li>
 		     <a href="download/matrixdb_CORE.tab.gz">
@@ -311,25 +311,26 @@ ies.
 		     <a href="download/matrixdb_FULL.tab.gz">
 		       <i class="fa fa-li fa-download fa-large"></i>
 		       <b>Psicquic extended</b> MatrixDB dataset as PSI-MI TAB 2.7 file :</a> this is the core dataset
-		      enriched with additional extracellular interactions from IMEx partners (DIP, InnateDB, IntAct, MINT).
+		      enriched with interactions involving at least one "ECM" or "Secreted" biomolecule (as listed below) from IMEx partners (DIP, InnateDB, IntAct, MINT).
 		   </li>
-		     <li>
-		       <a href="download//MatrixDB_entries_catalog.tsv"><i class="fa fa-li fa-download fa-large"></i>
-			 Catalog of custom MatrixDB biomolecules
                      <br>
 		     <br>
 		     </a>
-		     </li>
-                 </ul>                 
+		 </ul>                 
 
-	         <h4>MatrixDB annotated sets</h4>
+	         <h4>MatrixDB biomolecules</h4>
+		<b>List</b> of <b>custom MatrixDB biomolecules</b> (multimers, protein fragments, glycosaminoglycans, etc...), along with their <b>common names</b> and <b>external references</b> when available.
+		     <li>
+		       <a href="download//MatrixDB_entries_catalog.tsv"><i class="fa fa-li fa-download fa-large"></i>
+			 Catalog of custom MatrixDB biomolecules
+		     </li>
 	         <b>Lists</b> of human <b>extracellular matrix</b>, <b>secreted</b> 
 	         and <b>membrane</b> proteins stored in MatrixDB are provided here. 
 	         They are built based on <a href="http://web.mit.edu/hyneslab/matrisome/">
 		 the Matrisome Project</a> as well as relevant
 		 <a href="http://www.uniprot.org">UniProt</a> keywords and 
 	         <a href="http://www.geneontology.org">Gene Ontology</a> terms.
-	         Interactions involving these proteins are extracted using psicquic to enrich the MatrixDB core dataset.
+	         Interactions involving these proteins are imported from IMEx partners using psicquic to enrich the MatrixDB core dataset.
 		 <br>
 		 <br>
 		 <ul class="fa-ul">	       
@@ -352,9 +353,11 @@ ies.
 
            <!-- content five Identif -->
            <div class="mainContent" id="contentFive">
-             <h4>MatrixDB biomolecule identifiers</h4>
+             <h4>Biomolecules</h4>
 	       <div class="subContent" style="margin-bottom: 40px;">
-		 <dl>
+		 <dl>We use custom identifiers for all biomolecule types except proteins. An annotated list of these custom identifiers is available in the Downloads section. 
+			The types and identifiers are as follows.
+               <br style="clear:both" />
 		   <dt>Proteins</dt>
 		   <dd>
 		     They are identified by their UniProtKB/Swiss-Prot 
@@ -413,14 +416,27 @@ ies.
 		   </dd>
 		 </div>
 
-             <h4>Experiments</h4>
+             <h4>Interactions and experiments</h4>
 	       <div class="subContent" style="margin-bottom: 40px;">
 		 <dl>
-		   <dd>MatrixDB uses the following naming convention for
-		experiments: identifiers of the biomolecules in alphabetical
-		order separated by two underscores, followed by the PMID
-		(PubMed Identifier), the name of the source database
-		and the number of the experiment (counter started at 1).</dd>
+		   <dd>MatrixDB uses the following naming convention for interactions: identifiers of the biomolecules 
+			in alphanumerical order, separated by two underscores.
+			Experiment identifiers begin the same way, and are followed by the PMID (PubMed Identifier), 
+			the name of the source database, and a counter (starts at 1, useful when a single source database 
+			documents several experiments curated from the same publication and supporting the same interaction). 
+			These three fields are underscore-separated.
+
+			Example interactions:
+			CAT_1__P05067
+			A0AVK6__P05067
+			A4JYD4__A8BBG3
+
+			Example experiments:
+			CAT_1__P05067_7929392_MatrixDB_1
+			A0AVK6__P05067_21832049_InnateDB_1
+			A4JYD4__A8BBG3_19765300_IntAct_1
+			A4JYD4__A8BBG3_19765300_IntAct_2
+		   </dd>
 		</dl>
 	      </div>
 	   </div>
@@ -496,7 +512,7 @@ nalities. Launay G et
               </ul>
            </div>
 
-           <!-- content eight ECM dwlds-->
+           <!-- content eight DB and Net-->
            <div class="mainContent" id="contentEight">
 		<!-- databases -->
              <div class="subContent">
