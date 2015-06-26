@@ -2256,16 +2256,13 @@ bandeau keywrd
 			self.tailleHeader++
   			$(self.targetDomElem).append("<div class='content uniprot' ></div>");
   			var uniDiv =$(self.targetDomElem).find("div.content:last");
-
-  			var navigTitle = "<div class = 'navigueTitle reportTarget'>" + "UniProtKB keywords </a></div>";
   			var ancre = "<div class = 'navigueBar'><a cible = 'div.uniprot' > UniProtKB keywords</a></div>";
-
   			var titre = "<h3> This molecule is annoted by <span class = 'niceRed' >" + self.jsonData.uniprotKW.length + "</span> UniProtKB keywords</h3>";
   			var tableForm = "<table class='Uniprot'><thead></thead><tbody></tbody></table>";
   			uniDiv.append(titre);
   			uniDiv.append(tableForm)
 
-  			$(self.targetDomElem).find("nav.header>div").append(navigTitle);
+
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			var aaData = self._uniprotGenerateTableData();
   			self._addCheckSel(aaData,"defaultAdd");
