@@ -416,7 +416,8 @@ function initMyReport (options){
   			self.tailleHeader++
   			$(self.targetDomElem).append("<div class='content infoBio' ></div>");
   			var infoDiv =$(self.targetDomElem).find("div.content:last");
-  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'><a cible = 'div.infoBio'>" + self.jsonData.name + " Biomolecule</a></div>";
+			var title = "<div class = 'navigueTitle reportTarget'>" self.jsonData.name + " Biomolecule</a></div>";
+			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'><a cible = 'div.infoBio'>" + "General data and interactions</a></div>";
   			if(self.jsonData.interactions[0]){
   				var titre = "<div class ='row-fluid '><div class = 'span7 postitGeneral'></div><div class = 'span5 tableInteract'></div></div>";
   				infoDiv.append(titre);
@@ -428,7 +429,7 @@ function initMyReport (options){
   			infoDiv = $(self.targetDomElem).find("div.postitGeneral");
   			var divSpan = "<div class ='row-fluid inPostit'></div>";
   			
-  			
+  			$(self.targetDomElem).find("nav.header>div").append(title);
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			/*remplissage du bandeau
   			 */
