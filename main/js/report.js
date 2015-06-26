@@ -1111,7 +1111,7 @@ function initMyReport (options){
 		},
 /*fin de bandeau info xp
  * ----------------------------------------------------------------------------------------------------------------------------------
- * bandeau partner
+ * bandeau partner => sous-menu du bandeau XP
  */
 				_partnerOrganisator : function(){
 			var self = this;
@@ -1464,7 +1464,7 @@ function initMyReport (options){
 		
 /*fin de bandeau partner
  * ----------------------------------------------------------------------------------------------------------------------------------
- * bandeau interactions
+ * bandeau interactions => contenu de biomol
  */
   		_interactionOrganisator : function(){// organise le bandeau intéraction
   			var self = this;
@@ -1650,7 +1650,7 @@ function initMyReport (options){
   	    },
 	    /*fin de bandeau interactions
  *---------------------------------------------------------------------------------------------------------------
- *  bandeau go
+ *  bandeau go => sous menu du bandeau biomol
  */
   		_goOrganisator : function (){//traite les données du bandeau Go
   			var self = this;
