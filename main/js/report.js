@@ -416,21 +416,22 @@ function initMyReport (options){
   			self.tailleHeader++
   			$(self.targetDomElem).append("<div class='content infoBio' ></div>");
   			var infoDiv =$(self.targetDomElem).find("div.content:last");
-			var title = "<div class = 'navigueTitle reportTarget'>" self.jsonData.name + " Biomolecule</a></div>";
-			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'><a cible = 'div.infoBio'>" + "General data and interactions</a></div>";
-  			if(self.jsonData.interactions[0]){
-  				var titre = "<div class ='row-fluid '><div class = 'span7 postitGeneral'></div><div class = 'span5 tableInteract'></div></div>";
-  				infoDiv.append(titre);
-  				
-  			}else{
-  				var titre = "<div id = 'info'></div><div class ='row-fluid postitGeneral'></div>";
-  				infoDiv.append(titre);
-  			}
-  			infoDiv = $(self.targetDomElem).find("div.postitGeneral");
-  			var divSpan = "<div class ='row-fluid inPostit'></div>";
-  			
-  			$(self.targetDomElem).find("nav.header>div").append(title);
-  			$(self.targetDomElem).find("nav.header>div").append(ancre);
+                        var navigTitle = "<div class = 'navigueTitle reportTarget'>" + self.jsonData.name + " Biomolecule</a></div>";
+                        var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'><a cible = 'div.infoBio'>" + "General data and interactions</a></div>";
+                        if(self.jsonData.interactions[0]){
+                                var titre = "<div class ='row-fluid '><div class = 'span7 postitGeneral'></div><div class = 'span5 tableInteract'></div></div>";
+                                infoDiv.append(titre);
+
+                        }else{
+                                var titre = "<div id = 'info'></div><div class ='row-fluid postitGeneral'></div>";
+                                infoDiv.append(titre);
+                        }
+                        infoDiv = $(self.targetDomElem).find("div.postitGeneral");
+                        var divSpan = "<div class ='row-fluid inPostit'></div>";
+
+                        $(self.targetDomElem).find("nav.header>div").append(navigTitle);
+                        $(self.targetDomElem).find("nav.header>div").append(ancre);
+
   			/*remplissage du bandeau
   			 */
   			var nameDivHtml = self._nameGenerateDivHtml();
@@ -827,11 +828,10 @@ function initMyReport (options){
 			$(self.targetDomElem).append("<div class='contentXp infoXp' ><div class='centralXp' ></div></div>");
   			var infoDiv =$(self.targetDomElem).find("div.contentXp:last div.centralXp");
   			
-  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'><a cible = 'div.infoXp' >" + navTitle + "</a></div>";
-  			//var titre = "<div id = 'infoXp'></div><h3> Information on " + self.jsonData.name + " experiment</h3>";
-  			//titre = titre.replace(/__/,' & ')
-  			//titre = titre.replace(/_/g, ' ');
-  			
+			var navigTitle = "<div class = 'navigueTitle reportTarget'>" + navTitle + "</a></div>";
+			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'><a cible = 'div.infoXp'>" + "General data</a></div>";
+
+  			$(self.targetDomElem).find("nav.header>div").append(navigTitle);
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			self._xpWithKinetic(infoDiv);
 
@@ -1738,7 +1738,11 @@ function initMyReport (options){
 			self.tailleHeader++
 			$(self.targetDomElem).append("<div class ='associationContent row-fluid'></div>");
   			var assocDiv =$(self.targetDomElem).find("div.associationContent" );
-  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'>" + self.jsonData.name + " association</div>";
+
+  			var navigTitle = "<div class = 'navigueTitle reportTarget'>" + self.jsonData.name + " association</a></div>";
+  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'>" + "General data</a></div>";
+
+  			$(self.targetDomElem).find("nav.header>div").append(navigTitle);
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			var listeForPostitGenerator = []
   			
@@ -1877,9 +1881,12 @@ bandeau keywrd
   			var publiDiv =$(self.targetDomElem).find("div.biomUni");
   			var tableForm = "<table class='biomUniTable'><thead></thead><tbody></tbody></table>";
   			var authorTableDiv =$(self.targetDomElem).find("div.biomUni");
-  			var ancre = " <div id = 'nomPage' style = 'margin-left:20px;' class = 'navigueBar'><a>" + self.jsonData.identifier + " " + 
-  						self.jsonData.name + "</a></div>";
+
+  			var navigTitle = "<div class = 'navigueTitle reportTarget'>" + self.jsonData.identifier + " " + self.jsonData.name + "</a></div>";
+  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'>" + "General data</a></div>";
+
   			authorTableDiv.append(tableForm);
+  			$(self.targetDomElem).find("nav.header div.header").append(navigTitle);
   			$(self.targetDomElem).find("nav.header div.header").append(ancre);
   			var aaData = self._unitBioKwrdGenerateTableData();
   			
@@ -1942,7 +1949,10 @@ bandeau keywrd
 										 "<div class = 'span6 postitSide'>"+
 										 "<div class ='row-fluid'></div></div><div class='span6 assocTable ' ></div></div></div>");
   			var publiDiv =$(self.targetDomElem).find("div.span6.postitSide > div.row-fluid");
-  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'>" + self.jsonData.name + " Publication</div>";
+
+  			var navigTitle = "<div class = 'navigueTitle reportTarget'>" + self.jsonData.name + " Publication</a></div>";
+  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'>" + "General data</a></div>";
+  			$(self.targetDomElem).find("nav.header>div").append(navigTitle);
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			var listeForPostitGenerator = [];
   			
@@ -2174,8 +2184,11 @@ bandeau keywrd
  			$(self.targetDomElem).append("<div class ='author Content contentXp content'><div class=' authorTable ' ></div></div>");
  			var tableForm = "<table class='authorTable'><thead></thead><tbody></tbody></table>";
   			var authorTableDiv =$(self.targetDomElem).find("div.authorTable");
-  			var ancre = " <div id = 'nomPage' style = 'margin-left:20px;' class = 'navigueBar'><a>" + self.jsonData.name + " publication(s)</a></div>";
+
+  			var navigTitle = "<div class = 'navigueTitle reportTarget'>" + self.jsonData.name + " publication(s) </a></div>";
+  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'>" + "General data</a></div>";
   			authorTableDiv.append(tableForm);
+  			$(self.targetDomElem).find("nav.header>div").append(navigTitle);
   			$(self.targetDomElem).find("nav.header div.header").append(ancre);
   			
   			var imexTable = [];
@@ -2243,12 +2256,16 @@ bandeau keywrd
 			self.tailleHeader++
   			$(self.targetDomElem).append("<div class='content uniprot' ></div>");
   			var uniDiv =$(self.targetDomElem).find("div.content:last");
-  			var ancre = "<div id = 'nomPage' class = 'navigueBar'><a cible = 'div.uniprot' > UniProtKB keywords</a></div>";
+
+  			var navigTitle = "<div class = 'navigueTitle reportTarget'>" + "UniProtKB keywords </a></div>";
+  			var ancre = "<div id = 'nomPage' class = 'navigueBar reportTarget'><a cible = 'div.uniprot'>" + "General data</a></div>";
+
   			var titre = "<h3> This molecule is annoted by <span class = 'niceRed' >" + self.jsonData.uniprotKW.length + "</span> UniProtKB keywords</h3>";
   			var tableForm = "<table class='Uniprot'><thead></thead><tbody></tbody></table>";
   			uniDiv.append(titre);
   			uniDiv.append(tableForm)
-  			
+
+  			$(self.targetDomElem).find("nav.header>div").append(navigTitle);
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			var aaData = self._uniprotGenerateTableData();
   			self._addCheckSel(aaData,"defaultAdd");
