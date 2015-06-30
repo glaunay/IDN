@@ -45,11 +45,11 @@ close SVG;
 
 my $target = $filename;
 #$target =~ s/svg$/tif/;
-$target =~ s/svg$/png/;
+#$target =~ s/svg$/png/;
 $logger->info("running: java -jar ${BATIK_PATH}/batik-rasterizer.jar  $filename");# 1&2> /dev/null"; # -m 'image/tiff'
 `java -jar ${BATIK_PATH}/batik-rasterizer.jar $filename`; #1&2> /dev/null`;
 my $response;
-my $location = "tmp/$tag.png";
+my $location = "tmp/$tag.svg";
 if (-e $target) {
    `gzip -f -c $target > $target.gz`;
    $response = {
