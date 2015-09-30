@@ -55,17 +55,17 @@ if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ matrixdb }->[0] = $1;
 }
 
-my $r = $DB->raw_query('query find experiment matrixdb');
+$r = $DB->raw_query('query find experiment matrixdb');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ matrixdb }->[1] = $1;
 }
 
-my $r = $DB->raw_query('query find association genuine');
+$r = $DB->raw_query('query find association genuine');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ psicquic }->[0] = $1;
 }
 
-my $r = $DB->raw_query('query find experiment');
+$r = $DB->raw_query('query find experiment');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ interactions }->{ psicquic }->[1] = $1;
 }
@@ -78,7 +78,7 @@ if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ imex } = $1;
 }
 
-my $r = $DB->raw_query('query find publication association');
+$r = $DB->raw_query('query find publication association');
 if ($r =~ /Found ([\d]+) object/) {
   $dataContainer->{ publications }->{ total } = $1;
 }
