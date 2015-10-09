@@ -23,12 +23,14 @@ my $logger = get_logger();
 our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || AceError ("Couldn't open database");
 
 my $query = CGI->new();
-my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/;
+
+#my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/;
+my ($string) = $query->{"param"}->{"key"}->[0] =~ /^([^\?]+)?/;
 $logger->info("search key is \"$string\"\n");
 
 my $specieRef = indexingSpecies($DB);
 $logger->trace(Dumper($specieRef));
-my $dataContainer = cacheReader($string); # trying to cache out string
+my $dataContainer ; #NTM = cacheReader($string); # trying to cache out string
 
 if (defined ($dataContainer)) {
   $logger->trace("Results object read from cache :\n" .
@@ -65,7 +67,7 @@ my $jsonString = encode_json($dataContainer);
 print $query->header('application/json');      # create the HTTP header
 print $jsonString;
 
-cacheWriter($string, $jsonString);
+#NTM cacheWriter($string, $jsonString);
 $DB->close();
 exit;
 
@@ -167,12 +169,8 @@ sub getBiomolecule {
 sub getAuthor {
    my $string = shift;
    my $cHit = 0;
-   
-   $DB->raw_query("find Author");
-   $DB->raw_query("spush");
    $DB->raw_query("kget allMatch");
-   $DB->raw_query("sand");
-   $DB->raw_query("spop");
+   $DB->raw_query("query CLASS Author");
    
    my @array;
    my $r = $DB->raw_query("show");
