@@ -15,9 +15,10 @@ use CHI;
   'all searches are cached in using searched string as key and a stringified json representation of the result as value'
 =cut
 
+#MD 09/10/2015 : suppression des caches - inutile (peu de gain de temps) et pb de compatibilité avec CentOS 7
+
 our $MAX_HITS = 200;
 
-our $CACHE_ADDRESS = "/tmp/barSearchCache";
 Log::Log4perl->init("$ENV{ IDN_CONF }/barSearch.conf");
 my $logger = get_logger();
 our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || AceError ("Couldn't open database");
@@ -30,33 +31,21 @@ $logger->info("search key is \"$string\"\n");
 
 my $specieRef = indexingSpecies($DB);
 $logger->trace(Dumper($specieRef));
-my $dataContainer ; #NTM = cacheReader($string); # trying to cache out string
+my $dataContainer ; 
 
-if (defined ($dataContainer)) {
-  $logger->trace("Results object read from cache :\n" .
-		Dumper($dataContainer) );
-  print $query->header('application/json');      # create the HTTP header
-  print $dataContainer;
-  $logger->trace("Exiting");
-  $DB->close();
-  exit;
-} else {
-  $logger->info("No results object found in cache, performing query...");
-  $DB->raw_query("grep " . $string);
-  $DB->raw_query("kstore allMatch");
-  $dataContainer = {
-		    searchString => $string,
-		    results => {
-				biomolecule => getBiomolecule($string, $specieRef),
-				author => getAuthor($string),
-				publication => getPublication($string),
-				keywrd => getKeywrd($string)
-			       }
+$DB->raw_query("grep " . $string);
+$DB->raw_query("kstore allMatch");
+$dataContainer = {
+		  searchString => $string,
+		  results => {
+			      biomolecule => getBiomolecule($string, $specieRef),
+			      author => getAuthor($string),
+			      publication => getPublication($string),
+			      keywrd => getKeywrd($string)
+			     }
 		   };
-  $logger->trace(Dumper($dataContainer));
-}
+$logger->trace(Dumper($dataContainer));
 
-#cacheWriter($string, $dataContainer);
 my $jsonString = encode_json($dataContainer);
 
 
@@ -67,51 +56,8 @@ my $jsonString = encode_json($dataContainer);
 print $query->header('application/json');      # create the HTTP header
 print $jsonString;
 
-#NTM cacheWriter($string, $jsonString);
 $DB->close();
 exit;
-
-
-sub cacheReader {
-  my $key = shift;
-  $logger->info("Read cache key is " . $key);
-  my $cache = CHI->new(
-		       serializer => 'Data::Dumper',
-		       driver     => 'File',
-		       root_dir   => $CACHE_ADDRESS,
-		       cache_size => '500m'
-		      );
-  my $dataContainer = $cache->get($key);
-  if (!defined ($dataContainer)){
-    my $cacheContent = $cache->dump_as_hash( );
-    $logger->trace("No key named \"$key\" in current cache content\n" . Dumper($cacheContent));
-    return;
-  }
-  $logger->info("Successfull Caching out of " . $key);
-  $logger->trace("CACHING OUT:\n" . Dumper($dataContainer));
-  return $dataContainer;
-}
-
-sub cacheWriter {
-  my $key = shift;
-  my $data = shift;
-  $logger->trace("cache writer : " . $key . Dumper ($data));
-  my $cache = CHI->new(
-	serializer => 'Data::Dumper',
-	driver     => 'File',
-	root_dir   => $CACHE_ADDRESS,
-	cache_size => '500m' 
-	);
-    $logger->trace("Data to store:\n" . Dumper($data));
-    $cache->set($key, $data, "1 month");
-    $logger->trace("cache writing results  '" 
-		  . $key . "' at " . $CACHE_ADDRESS
- 	);
-    my $report = $cache->dump_as_hash( );
-    $logger->trace("CHI content:\n" . Dumper($report));
-
-    return $key;
-}
 
 sub getBiomolecule {
   my $string = shift;
