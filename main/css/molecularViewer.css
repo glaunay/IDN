@@ -10,7 +10,7 @@
 
 
 
-#segid-toggle.btn-group {
+#segid-toggle.btn-group { /* Choix de la sous-unite */
     padding-top:1em;
     width : 2em;
     min-width : 2em;
@@ -69,11 +69,13 @@
 }
 .pdbBanner{
 	min-height: 35px
+
 }
 .molLoader{
 	text-align:center;
+    
 }
-.molLoader i {
+.molLoader i { /* fleche de chargement le tps d'afficher struct 3D */
 	
 	color: white;
 	font-size: 4em;
