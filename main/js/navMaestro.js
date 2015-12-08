@@ -1,6 +1,7 @@
 /* Vizualiser component declaration and settings */
 
 
+
 function vizObjectInit (opt) {
     
     
