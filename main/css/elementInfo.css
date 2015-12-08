@@ -102,6 +102,7 @@ text-shadow: 0 1px 0 #ffffff;
     border-radius: 5px 5px 5px 5px;
     border : solid white 1px;
     color : rgba(255, 255, 209, 1.0);
+
 }
 
 .pdbChange i {
@@ -121,6 +122,10 @@ text-shadow: 0 1px 0 #ffffff;
 
 #elementInfo #glmolWidget canvas:hover {
     cursor:pointer;
+}
+
+#elementInfo #glmolWidget canvas {
+    background-color : white;
 }
 
 #elementInfo .pdbChange i.icon-chevron-right {
