@@ -119,11 +119,6 @@ text-shadow: 0 1px 0 #ffffff;
     left: 15px;
     top: 145px;
 }
-
-#elementInfo #glmolWidget canvas:hover {
-    cursor:pointer;
-}
-
 #elementInfo #glmolWidget canvas {
     background-color : white;
 }
