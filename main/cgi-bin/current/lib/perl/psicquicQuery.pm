@@ -4,7 +4,7 @@ use common;
 use Data::Dumper;
 use psimi;
 use JSON;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use biomoleculeMapper;
 use base ('browserExporter');
 
@@ -19,6 +19,7 @@ use base ('browserExporter');
 our $MAX_HIT_PER_QUERY = 1000;
 
 my $logger = get_logger("psicquicQuery"); 
+$logger->level($ERROR);
 
 ## Auxilliary functions, not object methods
 sub getEligibleTags {

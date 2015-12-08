@@ -6,8 +6,9 @@ use Data::Dumper;
 use common;
 use newPort::featureSingleton;
 
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::bindingSite");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::bindingSite");
+$logger->level($ERROR);
 
 our $DATA_TYPE = "Binding_Site"; # may be able to reuse for mutation and postTradMod
 

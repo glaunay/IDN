@@ -1,7 +1,7 @@
 package mergedAssociation;
 
 use strict;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
                         weaken isvstring looks_like_number set_prototype);
 use biomoleculeMapper;
@@ -10,6 +10,7 @@ use common;
 use psimi;
 
 my $logger = get_logger("mergedAssociation"); 
+$logger->level($ERROR);
 
 =pod simplify and SPEED UP overall filtering and clustering of mitab data
     constant psimi record is kept with internal array index store for each association

@@ -6,8 +6,11 @@ use Data::Dumper;
 use common;
 use newPort::bindingSite;
 
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::biomolecule");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::biomolecule");
+$logger->level($ERROR);
+
+
 =pod
 
 =cut

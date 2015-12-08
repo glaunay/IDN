@@ -41,8 +41,11 @@ function vizObjectInit (opt) {
 		context.from = 'HTML';	    
 	    }
 	    
-	    var develPattern = /matrixdb.ibcp.fr:9999/;
-	    context.rootUrl = develPattern.test(location) ? 'http://matrixdb.ibcp.fr:9999' : 'http://matrixdb.ibcp.fr'; 
+	    //var develPattern = '/$ENV { IDN_URL }/';
+	    var develPattern = /localhost:8888/;
+	    //context.rootUrl = develPattern.test(location) ? '$ENV{ IDN_URL }' : 'http://localhost' ; 
+	    //context.rootUrl = develPattern.test(location) ? 'http://matrixdb.ibcp.fr:9999' : 'http://matrixdb.ibcp.fr'
+	    context.rootUrl = develPattern.test(location) ? 'http://localhost:8888' : 'http://localhost'; 
 	    
 	    return context;
 	}

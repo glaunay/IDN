@@ -13,8 +13,9 @@ use miscDataLayer::uniprot;
 use miscDataLayer::gxa;
 
 
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 our $logger = get_logger ("miscDataLayer");
+$logger->level($ERROR);
 
 sub newList {
     my $p = common::arg_parser (@_);

@@ -6,12 +6,12 @@ use common;
 use JSON;
 use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
                         weaken isvstring looks_like_number set_prototype);
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use localSocket;
 use customNetwork;
 
-our $logger = get_logger("matrixDB::interactionReport");
-
+my $logger = get_logger("matrixDB::interactionReport");
+$logger->level($ERROR);
 
 #    return all association ace object linked to a particular biomolecule
 #     returns : [

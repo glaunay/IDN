@@ -19,17 +19,21 @@ my $logger = get_logger();
 
 # retrieving get parameters
 my $query = CGI->new();
-my %params = $query->Vars;
-#my $queryData = decode_json($params{'POSTDATA'});
-$logger->info("query content:\n" . Dumper(%params));
-$logger->info($params{ network });
+### NTM 10/11/2015: commenting the ->Vars and logger stuff, we prefer
+### simply $query->param{'network'}
+#my %params = $query->Vars;
+##my $queryData = decode_json($params{'POSTDATA'});
+#$logger->info("query content:\n" . Dumper(%params));
+#$logger->info($params{ network });
+my $customFileName = getCustomNetworkFileName($query->param('network'));
 
-my $customFileName = getCustomNetworkFileName($params{ network });
 
 my $fTemplateLoc = "$ENV{ IDN_DATA }/iNavigatorHtmlTemplate.txt";
 open HTML, "<$fTemplateLoc" or $logger->logdie("Cant open $fTemplateLoc");
 my $htmlOut = '';
 my $urlRoot = $ENV{ IDN_URL };
+
+
 while(<HTML>) {
 
   $_ =~ s/href="css/href="$urlRoot\/css/;

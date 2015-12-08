@@ -22,6 +22,7 @@ use miscDataLayer;
 use psicquicQuery;
 use psimi;
 use mergedAssociation;
+use sockets_conf;
 
 
 Log::Log4perl->init("$ENV{ IDN_CONF }/interactomAce.conf");
@@ -58,7 +59,7 @@ my $networkObject = networkMapperAce->new (
 		       'UniprotKW' => "$ENV{ IDN_DATA }/upKeywordTree.json", 
 		       'nameMutator' => "$ENV{ IDN_DATA }/biomoleculeMapper.json"
 		      },
-    mappersSocketDef => {'MI' => '/tmp/miSocket', 'GO' => '/tmp/goSocket' },  
+    mappersSocketDef => {'MI' => "$sockets_conf::miSocket", 'GO' => "$sockets_conf::goSocket" },  
     DB => $DB,
     aceBiomoleculeList => $dataContainer->{ biomolecule }->{ new });
 $logger->trace("[TS]networkObjectCreated");

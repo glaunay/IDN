@@ -5,8 +5,9 @@ use Data::Dumper;
 use newPort::publication;
 
 use common;
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::association");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::association");
+$logger->level($ERROR);
 
 =pod
   Kind    Genuine     PMID    20138147

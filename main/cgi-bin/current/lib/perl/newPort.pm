@@ -14,8 +14,9 @@ use newPort::author;
 use newPort::keyword;
 
 
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort");
+$logger->level($ERROR);
 
 sub getData {
   my $p = shift;

@@ -7,8 +7,9 @@ use Data::Dumper;
 use common;
 use newPort::featureSingleton;
 
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::pointMutation");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::pointMutation");
+$logger->level($ERROR);
 
 =pod
     similar to bindingSite, except that several instances can be found

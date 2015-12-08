@@ -6,8 +6,9 @@ use Data::Dumper;
 use common;
 use newPort::partnerDetails;
 use localSocket;
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::experiment");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::experiment");
+$logger->level($ERROR);
 
 
 #140306 GL

@@ -10,7 +10,7 @@ use lib ("$ENV{ IDN_LIB }/perl");
 #from CPAN
 use CGI;
 use Ace 1.51;
-use CHI;
+#use CHI;
 use JSON;
 use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
@@ -19,8 +19,9 @@ use IO::Socket::UNIX qw( SOCK_STREAM );
 #custom
 use common;
 use newPort;
+use sockets_conf;
 
-our $CACHE_ADDRESS = "/tmp/newPortCache";
+#our $CACHE_ADDRESS = "/tmp/newPortCache";
 
 Log::Log4perl->init("$ENV{ IDN_CONF }/newPort.conf");
 my $logger = get_logger();
@@ -29,7 +30,8 @@ my $query = CGI->new();
 $logger->info(Dumper( $query ));
   
 my $jsonString;
-my $dataCached = cacheReader($query); # trying to cache out string
+#my $dataCached = cacheReader($query); # trying to cache out string
+my $dataCached;
 
 if (defined($dataCached)) {
   $jsonString = $dataCached;
@@ -40,19 +42,19 @@ if (defined($dataCached)) {
 
   my $socketMI = IO::Socket::UNIX->new(
     Type => SOCK_STREAM,
-    Peer => '/tmp/miSocket',
+    Peer => "$sockets_conf::miSocket",
     )
     or $logger->logdie("Can't connect to server: $!");;
 
   my $data = newPort::getData({
-			       type => $query->{ type }->[0],
-			       value => $query->{ value }->[0],
+			       type => $query->param('type'),
+			       value => $query->param('value'),
 			       DB => $DB,
 			       cvSocket => $socketMI
 			      });
   $logger->trace(Dumper( $data ));
   $jsonString = encode_json($data);
-  cacheWriter($query, $jsonString);
+ # cacheWriter($query, $jsonString);
 }
 #open LOG, ">/tmp/reportLatest.json";
 #print LOG "$jsonString\n";
@@ -100,6 +102,8 @@ my $htmlContent =
 "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/reportMaestro.js\"></script>" .
 "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/report.js\"></script>" .
 "<script type=\"text/javascript\" src=\"$ENV{ IDN_URL }/js/cart.js\"></script>";
+
+
 my $htmlTrailer = "<script type=\"text/javascript\">" .  '$(function(){'  . "runReportMaestro({rootUrl:\"$ENV{ IDN_URL }\", cart : true, reportDiv : \"#reportDiv\", jsonData : " . $jsonString . "})})</script>" .
   "<title>MatrixDB report</title></head><body><div class=\"wrap\"><div id = \"reportDiv\"></div></div>" .
    '<div class="footer">'
@@ -132,58 +136,11 @@ my $htmlTrailer = "<script type=\"text/javascript\">" .  '$(function(){'  . "run
 #  "<div class=\"footer\"><div class=\"push\"></div><div class=\"container row-fluid\"><div class=\"span3\" style=\"padding : 5px 0px 0px 5px\"><a target=\"_blank\" href=\"http://www.cnrs.fr\"><img width=\"70px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/logo_cnrs_footer.png\" /></a><a target=\"_blank\" href=\"http://cordis.europa.eu/fp7/home_en.html\"><img width=\"100px\" style=\"float:left\" src=\"$ENV{ IDN_URL }/img/SFP.png\" /></a></div><div class=\"span6\">Matrixdb Fundings: <ul><li>The European Commission under PSIMEx, contract number FP7-HEALTH-2007-223411</li><li>The Rhone Alpes Complex Systems Institute</li></ul></div><div class=\"span3\" style = \"padding : 5px 5px 5px 5px\"><a target=\"_blank\" href=\"http://www.ixxi.fr\"><img width=\"120px\" style=\"float:right\" src=\"$ENV{ IDN_URL }/img/ixxi.png\" /></a><a target=\"_blank\" href=\"http://www.rhonealpes.fr\"><img width=\"90px\" style=\"float:right;margin-right:15px\" src=\"$ENV{ IDN_URL }/img/logo_region_footer.png\"/></a></div></div>" .
 #"</div></body></html>\n";
 
-$htmlContent .= defined ($customJSlib->{ $query->{ type }->[0] }) 
-  ? $customJSlib->{ $query->{ type }->[0] } : '';
-$htmlContent .= defined ($customCSSlib->{ $query->{ type }->[0] }) 
-  ? $customCSSlib->{ $query->{ type }->[0] } : '';
+$htmlContent .= defined ($customJSlib->{ $query->param('type')}) 
+  ? $customJSlib->{ $query->param('type')} : '';
+$htmlContent .= defined ($customCSSlib->{ $query->param('type')}) 
+  ? $customCSSlib->{ $query->param('type')} : '';
 
 $logger->info ("HTML content:\n" . $htmlContent . $htmlTrailer);
 print $query->header;
 print "$htmlContent$htmlTrailer\n";
-
-
-sub cacheReader {
-  my $query = shift;
-
-  my $key = $query->{ type }->[0] . "__" . $query->{ value }->[0];
-
-  $logger->info("Read cache key is " . $key);
-  my $cache = CHI->new(
-		       serializer => 'Data::Dumper',
-		       driver     => 'File',
-		       root_dir   => $CACHE_ADDRESS,
-		       cache_size => '500m'
-		      );
-  my $dataContainer = $cache->get($key);
-  if (!defined ($dataContainer)){
-    my $cacheContent = $cache->dump_as_hash( );
-    $logger->trace("No key named \"$key\" in current cache content\n" . Dumper($cacheContent));
-    return;
-  }
-  $logger->info("Successfull Caching out of " . $key);
-  $logger->trace("CACHING OUT:\n" . Dumper($dataContainer));
-  return $dataContainer;
-}
-
-sub cacheWriter {
-  my $query = shift;
-  my $data = shift;
-  
-  my $key = $query->{ type }->[0] . "__" . $query->{ value }->[0];
-  $logger->trace("cache writer : " . $key . Dumper ($data));
-  my $cache = CHI->new(
-	serializer => 'Data::Dumper',
-	driver     => 'File',
-	root_dir   => $CACHE_ADDRESS,
-	cache_size => '500m' 
-	);
-    $logger->trace("Data to store:\n" . Dumper($data));
-    $cache->set($key, $data, "1 month");
-    $logger->trace("cache writing results  '" 
-		  . $key . "' at " . $CACHE_ADDRESS
- 	);
-    my $report = $cache->dump_as_hash( );
-    $logger->trace("CHI content:\n" . Dumper($report));
-
-    return $key;
-}

@@ -1,9 +1,10 @@
 package browserReport;
 
 use CGI 2.42 qw/:standard :html3 escape/;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 
 my $logger = get_logger("psimi"); 
+$logger->level($ERROR);
 
 =pod
     Separate package for Emilie biomolecule report html printer
@@ -28,7 +29,7 @@ sub printBiomoleculeReport {
 	{
 	    print table({-width=>"100%"},
 			TR({-valign=>"top"},
-			   th({-align=>'left',-class=>'construct',-width=>"50%"},"<a href=\"http://matrixdb.ibcp.fr/cgi-bin/interactome/default?name=".$BioMolecule."&amp;class=BioMolecule#molecule\" target=\"_blank\">Construct the interaction network of this molecule</a>"),
+			   th({-align=>'left',-class=>'construct',-width=>"50%"},"<a href=\"http://localhost:8888/cgi-bin/interactome/default?name=".$BioMolecule."&amp;class=BioMolecule#molecule\" target=\"_blank\">Construct the interaction network of this molecule</a>"),
 			   td({-width=>"50%",-align=>"right"}, b({-style=>'color:red;'},"Biomolecule added to the interaction network"),br,
 			      "<a href=\"../../cart\">Access biomolecule list</a>")
 			)
@@ -80,7 +81,7 @@ sub printBiomoleculeReport {
           hidden(name=>'$BioMolecule'),
           table({-width=>"100%"},
                 TR({-valign=>"top"},
-                   th({-align=>'left',-class=>'construct',-width=>"50%"},"<a href=\"http://matrixdb.ibcp.fr/cgi-bin/interactome/default?name=".$BioMolecule."&amp;class=BioMolecule#molecule\" target=\"_blank\">Construct the interaction network of this molecule</a>"),
+                   th({-align=>'left',-class=>'construct',-width=>"50%"},"<a href=\"$ENV{ IDN_URL }/cgi-bin/interactome/default?name=".$BioMolecule."&amp;class=BioMolecule#molecule\" target=\"_blank\">Construct the interaction network of this molecule</a>"),
                    td({-width=>"50%",-align=>"right"}, submit(-name=>'bouton',-value=>'Add this molecule to the list',-onclick=>''),br,
                        "<a href=\"../../cart\">Access biomolecule list</a>"),
                    )

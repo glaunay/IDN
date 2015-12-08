@@ -74,7 +74,8 @@ function tabularInit (opt) {
 	draggable = opt.draggable;      
     
     return {
-	staticHref : opt.staticHref ? opt.staticHref : 'http://matrixdb.ibcp.fr:9999',
+	staticHref : opt.staticHref ? opt.staticHref : '$ENV { IDN_URL }',
+	//staticHref : opt.staticHref ? opt.staticHref : 'http://localhost:8888',
 	computeBookmarkPosition : opt.computeBookmarkPosition,
 	positionSettings: positionSettings,
 	callback : opt.callback,

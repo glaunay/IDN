@@ -2,9 +2,10 @@ package browserExporter;
 use strict;
 use Data::Dumper;
 use JSON;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 
-our $logger = get_logger ("browserExporter");
+my $logger = get_logger ("browserExporter");
+$logger->level($ERROR);
 
 
 =pod

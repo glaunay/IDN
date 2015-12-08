@@ -1,9 +1,10 @@
 package pdbMetaContainer;
 use strict;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 
 use common;
-our $logger = get_logger("pdbMetaContainer");
+my $logger = get_logger("pdbMetaContainer");
+$logger->level($ERROR);
 
 sub new {
     my $self = {};

@@ -18,6 +18,7 @@ use matrixDB::interactionReport;
 use common;
 use biomoleculeMapper;
 use newPort;
+use sockets_conf;
 
 
 Log::Log4perl->init("$ENV{ IDN_CONF }/dataFetcher.conf");
@@ -36,7 +37,7 @@ $logger->trace("query content:\n" . Dumper($queryData));
 
 my $socketMI = IO::Socket::UNIX->new(
     Type => SOCK_STREAM,
-    Peer => '/tmp/miSocket',
+    Peer => "$sockets_conf::miSocket",
     )
     or $logger->logdie("Can't connect to server: $!");;
 

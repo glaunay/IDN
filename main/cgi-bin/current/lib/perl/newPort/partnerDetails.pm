@@ -9,8 +9,9 @@ use newPort::pointMutation;
 use newPort::postTranslationalModification;
 use newPort::miscellaneousFeatures;
 use localSocket;
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::partnerDetails");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::partnerDetails");
+$logger->level($ERROR);
 
 =pod
 ?PartnerDetails BioRole #B_Role_CV // PSIMI CV

@@ -1,5 +1,5 @@
 package networkMapper::aster;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
                         weaken isvstring looks_like_number set_prototype);
 use CHI;
@@ -8,7 +8,9 @@ use common;
 use strict;
 our $ASTERS_ADDRESS = "/tmp/asterStore_DVL";
 
-our $logger = get_logger ("networkMapper::aster");
+my $logger = get_logger ("networkMapper::aster");
+$logger->level($ERROR);
+
 =pod constructor
     read out the subnetwork from cache
     reindex source/target id

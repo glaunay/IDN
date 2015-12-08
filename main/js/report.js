@@ -90,7 +90,8 @@ function initMyReport (options){
  * -----------------------------------------------------------------
  */
 	return {
-	    rootUrl : options.rootUrl ? options.rootUrl : 'http://matrixdb.ibcp.fr:9999', 
+	    rootUrl : options.rootUrl ? options.rootUrl : '$ENV{ IDN_URL }' ,  
+	    //rootUrl : options.rootUrl ? options.rootUrl : 'http://localhost:8888', 
 	    targetDomElem : elem, //permet de selectionner la targetdiv
 	    barClass : 'reportDiv', // la class de la div cible
 		barSel : '.reportDiv', // le selecteur

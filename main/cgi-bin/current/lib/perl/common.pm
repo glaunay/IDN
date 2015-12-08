@@ -2,7 +2,7 @@ package common;
 use strict;
 #use Execute;
 use Cwd;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Data::Dumper;
 
 =pod All around utility librairy for perl projects
@@ -800,7 +800,8 @@ sub uniqList {
 sub del_element {
     my ($arr_data, $arr_index) = @_;
     my $logger = get_logger ("common");
-    
+    $logger->level($ERROR);
+
     # first sort index by inverse numeic
     my @index = sort {$b <=> $a} @{$arr_index};
     if ($index[0] > @{$arr_data}) {
@@ -821,7 +822,8 @@ sub deleteMatrixColumns {
     my $matrix = shift;
     my $columnsToDelete = shift;
     my $logger = get_logger ("common");
-    
+    $logger->level($ERROR);
+
     
     #my @index = sort {$b <=> $a} @{$columnsToDelete};
     my $nrow = scalar (@{$matrix});
@@ -1049,6 +1051,7 @@ sub fileWriter {
 sub writeListToFile {
     my $p = common::arg_parser (@_);
     my $logger = get_logger ("common");
+    $logger->level($ERROR);
     my $sliceLength = 1;
     
     ($p->{ ToFile } && $p->{ Array }) ||
@@ -1125,6 +1128,7 @@ sub sw_aa_code {
     my $ask = shift @_;
     my %code;
     my $logger = get_logger("common");
+    $logger->level($ERROR);
 
     $code{'A'} = "ALA";
     $code{'C'} = "CYS";
@@ -1586,6 +1590,7 @@ sub print_array_slice  {
 sub fileStringify {
     my $p = common::arg_parser(@_);
     my $logger = get_logger ("common");   
+    $logger->level($ERROR);
     (defined($p->{ fileLoc })) || die "missing argument fileLoc";
     if (! open FIN, "<$p->{ fileLoc }") {
 	$logger->error("Could not open $p->{ fileLoc }");

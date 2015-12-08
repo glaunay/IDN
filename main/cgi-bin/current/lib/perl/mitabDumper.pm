@@ -2,8 +2,10 @@ package mitabDumper;
 use Moose;
 use Data::Dumper;
 use namespace::autoclean;
+use Log::Log4perl qw(get_logger :levels);
 
-my $logger = Log::Log4perl::get_logger("mitabDumper");
+my $logger = get_logger("mitabDumper");
+$logger->level($ERROR);
 
 has 'DB' => (is => 'ro', isa => 'Object');
 has 'header'=> (is => 'ro', isa => 'ArrayRef', required => 1,

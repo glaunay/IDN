@@ -3,7 +3,6 @@ use strict;
 use warnings;
 
 use lib qw("$ENV{ IDN_LIB }/perl");
-
 use CGI;
 use Ace 1.51;
 use JSON;
@@ -25,13 +24,13 @@ our $DB = Ace->connect(-host  => 'localhost', -port  => 55555)  || AceError ("Co
 
 my $query = CGI->new();
 
-#my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/;
-my ($string) = $query->{"param"}->{"key"}->[0] =~ /^([^\?]+)?/;
+#my ($string) = $query->{ key }->[0] =~ /^([^\?]+)?/; #works with centOS 5
+my ($string) = $query->{"param"}->{"key"}->[0] =~ /^([^\?]+)?/; #works with centOS 7
 $logger->info("search key is \"$string\"\n");
 
 my $specieRef = indexingSpecies($DB);
 $logger->trace(Dumper($specieRef));
-my $dataContainer ; 
+my $dataContainer; 
 
 $DB->raw_query("grep " . $string);
 $DB->raw_query("kstore allMatch");

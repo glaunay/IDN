@@ -14,7 +14,11 @@ use CGI;
 use Data::Dumper;
 use Log::Log4perl qw(get_logger :levels);
 
-our $BATIK_PATH="$ENV{ IDN_DEP }/batik-1.7";
+# NTM 07/10/2015
+#our $BATIK_PATH="$ENV{ IDN_DEP }/batik-1.7/";
+# my $batikRast = "java -jar ${BATIK_PATH}batik-rasterizer.jar"
+my $batikRast = "rasterizer" ;
+
 
 Log::Log4perl->init("$ENV{ IDN_CONF }/exporter.conf");
 my $logger = get_logger(); 
@@ -46,8 +50,11 @@ close SVG;
 my $target = $filename;
 #$target =~ s/svg$/tif/;
 #$target =~ s/svg$/png/;
-$logger->info("running: java -jar ${BATIK_PATH}/batik-rasterizer.jar  $filename");# 1&2> /dev/null"; # -m 'image/tiff'
-`java -jar ${BATIK_PATH}/batik-rasterizer.jar $filename`; #1&2> /dev/null`;
+# NTM 07/10/2015: $batikRast is supposed to convert an SVG into PNG, but
+# GL's script doesn't use the PNG anyways. Besides, the SVG is almost empty,
+# only has SVG headers, totally broken.
+#$logger->info("running: $batikRast  $filename");# 1&2> /dev/null"; # -m 'image/tiff'
+#`$batikRast $filename`; #1&2> /dev/null`;
 my $response;
 my $location = "tmp/$tag.svg";
 if (-e $target) {

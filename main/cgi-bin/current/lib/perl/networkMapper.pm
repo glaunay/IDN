@@ -1,7 +1,7 @@
 package networkMapper;
 use IO::Socket::UNIX qw( SOCK_STREAM );
 use Data::UUID;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
                         weaken isvstring looks_like_number set_prototype);
 
@@ -12,6 +12,8 @@ our $ASTERS_ADDRESS = "/tmp/asterStore_DVL";
 
 
 our $logger = get_logger ("networkMapper");
+$logger->level($ERROR);
+
 # TO DO
 #    - Add mapperSocket to networkObject
 #    

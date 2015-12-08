@@ -4,8 +4,9 @@ use warnings;
 
 use Data::Dumper;
 
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::featureSingleton");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::featureSingleton");
+$logger->level($ERROR);
 
 #Wrap reange in larger datacontrainer 
 # replace all range call in all uper package

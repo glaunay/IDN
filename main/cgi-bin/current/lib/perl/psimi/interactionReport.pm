@@ -2,7 +2,7 @@ package psimi::interactionReport;
 use strict;
 use common;
 
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Data::Dumper;
 use JSON;
 use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
@@ -11,6 +11,7 @@ use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
 our $CV_SOCKET;
 
 my $logger = get_logger("psimi::interactionReport"); 
+$logger->level($ERROR);
 
 =pod fetchAssociation
     search in a list of psimiobject

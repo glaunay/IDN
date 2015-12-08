@@ -6,8 +6,9 @@ use Data::Dumper;
 use common;
 use newPort::publication;
 
-use Log::Log4perl qw(get_logger);
-our $logger = get_logger ("newPort::author");
+use Log::Log4perl qw(get_logger :levels);
+my $logger = get_logger ("newPort::author");
+$logger->level($ERROR);
 
 
 sub get {

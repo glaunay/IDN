@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+use strict;
+use vars qw/$DB $URL %EQUIV/;
+
+use warnings;
+use diagnostics;
+
+use lib ("$ENV{ IDN_LIB }/perl");
+
+#from CPAN
+use CGI;
+use JSON;
+use Data::Dumper;
+use Log::Log4perl qw(get_logger :levels);
+use JSON;
+
+Log::Log4perl->init("$ENV{ IDN_CONF }/iNavigatorLoader.conf");
+my $logger = get_logger();
+
+# retrieving get parameters
+my $query = CGI->new();
+my $network = $query->{"param"}->{"network"}->[0] ;
+# $logger->info("query content: network is $network\n");
+
+
+my $customFileName = getCustomNetworkFileName($network);
+
+my $fTemplateLoc = "$ENV{ IDN_DATA }/iNavigatorHtmlTemplate.txt";
+open HTML, "<$fTemplateLoc" or $logger->logdie("Cant open $fTemplateLoc");
+my $htmlOut = '';
+#my $urlRoot = $ENV{ IDN_URL };
+my $urlRoot = "localhost:8888/";
+while(<HTML>) {
+
+  $_ =~ s/href="css/href="$urlRoot\/css/;
+  $_ =~ s/href="dependencies\/css/href="$urlRoot\/dependencies\/css/;
+  $_ =~ s/src="js/src="$urlRoot\/js/;
+  $_ =~ s/src="dependencies/src="$urlRoot\/dependencies/;
+  if($_=~ /networkState/) {
+    defined($customFileName) || next;
+    $_ = "\"networkState\" : \"$urlRoot/$customFileName\",\n";
+  }
+  $htmlOut .= $_;
+}
+
+
+print $query->header('text/html');
+print $htmlOut;
+
+
+
+sub getCustomNetworkFileName {
+  my $networkAlias = shift;
+  open MAP, "<$ENV{ IDN_DATA }/customNetworks.json";
+
+  my $jsonString = '';
+  while(<MAP>){
+    $jsonString .= $_;
+  }
+  close MAP;
+  
+  my $mapper = decode_json($jsonString);
+  
+  $logger->trace(Dumper($mapper));
+
+  if (defined ($mapper->{ data }->{ $networkAlias })) {
+      $logger->info("custom network aliased $networkAlias is stored at $mapper->{ data }->{ $networkAlias }->{ fileLocation }");
+      return $mapper->{ data }->{ $networkAlias }->{ fileLocation };
+  }
+
+  $logger->error("No location found for network aliased $networkAlias");
+  return undef;
+}

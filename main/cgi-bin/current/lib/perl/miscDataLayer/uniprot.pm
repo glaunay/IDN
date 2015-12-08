@@ -16,9 +16,10 @@ use JSON;
 use XML::LibXML;
 use Data::Dumper;
 use Scalar::Util qw(tainted);
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 
 my $logger = get_logger("miscDataLayer::uniprot"); 
+$logger->level($ERROR);
 
 our $BASE_URL='http://www.uniprot.org/uniprot'; 
 

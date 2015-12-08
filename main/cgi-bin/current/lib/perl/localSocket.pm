@@ -2,14 +2,15 @@ package localSocket;
 use strict;
 use common;
 use JSON;
-use Sereal qw (encode_sereal decode_sereal);
+#use Sereal qw (encode_sereal decode_sereal);
 use Data::Dumper;
 use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
                         weaken isvstring looks_like_number set_prototype);
-use Log::Log4perl qw (get_logger);
-our $logger = get_logger("localSocket");
+use Log::Log4perl qw (get_logger :levels);
+my $logger = get_logger("localSocket");
+$logger->level($ERROR);
 
-
+#MD 12/10/2015:commenting everything about Sereal - seems to be an experimental module. 
 
 
 =pod Local Socket DIALOG MANAGER
@@ -72,7 +73,8 @@ sub runCvRequest {
 		$request->{ content }->{ isSonOf } = $p->{ isSonOf };
     }
     
-    my $jsonRequest = encode_sereal ($request);
+   # my $jsonRequest = encode_sereal ($request);
+    my $jsonRequest = encode_json($request);
     my $socketIO = $p->{ with };
     $logger->trace("socket request content:$jsonRequest\n####\n");
     print $socketIO $jsonRequest . "\n";
@@ -89,8 +91,9 @@ sub runCvRequest {
 
     
     $logger->trace("About to decode\n##\n$answer\n##\n");
-    my $response = decode_sereal ($answer);
-    
+    #my $response = decode_sereal ($answer);
+    my $response = decode_json($answer);
+
     if ($response->{ status } eq "processed") {
 	if (exists ($response->{ content }->{ dataValue })) {
 	    my $dataValue = $response->{ content }->{ dataValue }->[0];			
@@ -125,7 +128,8 @@ sub runGoRequest {
 	  }
       };
       # GO request
-      my $string  = encode_sereal ($request);
+      #my $string  = encode_sereal ($request);
+      my $string = encode_json($request);
       $logger->trace("socket request content:$string\n####\n");      
       print $socketIO $string . "<EOMSG>\n";
       my $answer;
@@ -140,8 +144,9 @@ sub runGoRequest {
 #      chomp $answer;
       $logger->trace("socket buffer conten for DECODING:\n$answer\n####\n");
       
-      my $response = decode_sereal ($answer);
-      
+     # my $response = decode_sereal ($answer);
+      my $response = decode_json($answer);
+
       if ($response->{ status } eq "processed") {
 	  if (exists ($response->{ content }->{ dataValue })) {
 	      if ($p->{ type } eq 'goNodeSelector') {

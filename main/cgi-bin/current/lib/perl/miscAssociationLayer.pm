@@ -6,11 +6,12 @@ package miscAssociationLayer;
 use strict;
 use common;
 
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Data::Dumper;
 use JSON;
 
 my $logger = get_logger("miscAssociationLayer"); 
+$logger->level($ERROR);
 
 =pod
     merge "Experiments" list elements from psicquic and matrix db in a single list

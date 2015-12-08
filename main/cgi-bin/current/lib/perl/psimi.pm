@@ -2,7 +2,7 @@ package psimi;
 
 use common;
 use strict;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Data::Dumper;
 use vars qw/$MITAB_FORMATS/;
 
@@ -60,6 +60,7 @@ my $MITAB_FORMATS = {    latest => '2.7',
 
 
 my $logger = get_logger("psimi"); 
+$logger->level($ERROR);
 
 =pod psimi list methods
     get (psimiObjectList => $scalar,

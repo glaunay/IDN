@@ -8,8 +8,9 @@ use newPort::biomolecule;
 
 use common;
 
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 our $logger = get_logger ("newPort::publication");
+$logger->level($ERROR);
 
 # when called from a publication, experiment context use the argument 
 # size === 'short' to avoid circular reference

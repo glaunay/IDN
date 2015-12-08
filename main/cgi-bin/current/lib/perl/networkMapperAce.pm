@@ -1,14 +1,15 @@
 package networkMapperAce;
 use IO::Socket::UNIX qw( SOCK_STREAM );
 use Data::UUID;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
                         weaken isvstring looks_like_number set_prototype);
 
 use biomoleculeMapper;
 use strict;
 use newPort; # recent matrixdb biomolecule interface
-our $logger = get_logger ("networkMapper");
+my $logger = get_logger ("networkMapper");
+$logger->level($ERROR);
 
 use lib qw(lib/perl);
 

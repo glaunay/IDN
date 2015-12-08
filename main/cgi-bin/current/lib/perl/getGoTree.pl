@@ -8,6 +8,9 @@ use JSON;
 use Dumper::Data;
 use localSocket;
 
+use sockets_conf;
+
+
 =pod
     130622 OBJ: reduce idle time for navigator user, getGraphData runtime must be reduced.
     -> delegate the feeding of filter component to ajax.
@@ -25,7 +28,7 @@ use localSocket;
 
  my $socket = IO::Socket::UNIX->new(
      Type => SOCK_STREAM,
-     Peer => '/tmp/goServer',
+     Peer => "$sockets_conf::goSocket",
     )
     or $logger->logdie("Can't connect to server: $!");
 

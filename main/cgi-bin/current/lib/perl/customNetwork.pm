@@ -1,13 +1,14 @@
 package customNetwork;
 
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use Data::Dumper;
 =pod GL 130627
     reusing Emilie code "out of the box"
     just getting rid of the sif making    
 =cut
 
-our $logger = get_logger ("customNetwork");
+my $logger = get_logger ("customNetwork");
+$logger->level($ERROR);
 
 sub query
 {

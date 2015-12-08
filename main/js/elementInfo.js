@@ -12,34 +12,35 @@
  * 
  */
 
-function ei_test() {
 
-    var nodeTest = {
-	pdb : ["3s35", "3s35"],
-	defaultSel : [{absNum : 2 , chainNumber : 0}]
-    };    
+// NTM 17/11/2015: this looks like an old test, probably not used, commenting
+// function ei_test() {
+//     var nodeTest = {
+// 	pdb : ["3s35", "3s35"],
+// 	defaultSel : [{absNum : 2 , chainNumber : 0}]
+//     };    
     
-    var widget = initElementInfo({
-				     context : 'HTML',
-				     rootUrl : 'http://matrixdb.ibcp.fr:9999',
-				     width : '350px', height : '600px',
-				     target : 'div#molView',
-				     callback : {
-				     	 computeCss : function(jqueryNode){
-				     	     var top = $(jqueryNode).position().top ;
-					     var left = $(jqueryNode).position().left ;
+//     var widget = initElementInfo({
+// 				     context : 'HTML',
+// 				     rootUrl : 'http://localhost:8888',
+// 				     width : '350px', height : '600px',
+// 				     target : 'div#molView',
+// 				     callback : {
+// 				     	 computeCss : function(jqueryNode){
+// 				     	     var top = $(jqueryNode).position().top ;
+// 					     var left = $(jqueryNode).position().left ;
 					     
-					     return {main : {top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
-						     upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px', display : 'none',width : "100%"}
-						    };
-				     	 }
-				     }				  
-				 });
+// 					     return {main : {top : top + 'px', left : left + 'px', width : this.width, 'max-height' : this.height} ,
+// 						     upmark :  {position : 'absolute', top : top - 30 + 'px', left : left + 'px', display : 'none',width : "100%"}
+// 						    };
+// 				     	 }
+// 				     }				  
+// 				 });
     
-    widget.draw(nodeTest);
+//     widget.draw(nodeTest);
     
-    return widget;
-}
+//     return widget;
+// }
 
 
 
@@ -74,7 +75,8 @@ function initElementInfo(opt) {
     
     
     return {
-	rootUrl : opt.rootUrl ? opt.rootUrl :'http://matrixdb.ibcp.fr:9999',
+	rootUrl : opt.rootUrl ? opt.rootUrl : '$ENV{ IDN_URL }',
+        //rootUrl : opt.rootUrl ? opt.rootUrl :'http://localhost:8888',
 	targetSuffix : opt.hasOwnProperty('targetSuffix') ? opt.targetSuffix : null,
 	molViewIndex : null,
 	target : opt.hasOwnProperty('targetSuffix') ? opt.target + opt.targetSuffix : opt.target,
@@ -332,34 +334,34 @@ function initElementInfo(opt) {
 		var self = this;
 		if(dataList.length == 1){
 			var contentPartner1 = '<div class = "partnerDetail"><dl>'+
-			self._accessNumber(dataList[0]) +
+			//self._accessNumber(dataList[0]) +
 			self._bioRole(dataList[0]) +
 			self._detectMeth(dataList[0]) +
 			self._expRole(dataList[0]) +
 			self._isoform(dataList[0]) +
-			self._species(dataList[0]) +
-			self._nameOfPartner(dataList[0]) +
+			//self._species(dataList[0]) +
+			//self._nameOfPartner(dataList[0]) +
 			'<dl></div>';
 			var contentPartner2 = ''
 		}else if(dataList.length == 2){
 			var contentPartner1 = '<div class = "partnerDetail1"><dl>'+
-			self._nameOfPartner(dataList[0]) +
-			self._accessNumber(dataList[0]) +
+			//self._nameOfPartner(dataList[0]) +
+			//self._accessNumber(dataList[0]) +
 			self._bioRole(dataList[0]) +
 			self._detectMeth(dataList[0]) +
 			self._expRole(dataList[0]) +
 			self._isoform(dataList[0]) +
-			self._species(dataList[0]) +
+			//self._species(dataList[0]) +
 			'<dl></div>';
 			
 			var contentPartner2 = '<div class = "partnerDetail2"><dl>'+
-			self._nameOfPartner(dataList[1]) +
-			self._accessNumber(dataList[1]) +
+			//self._nameOfPartner(dataList[1]) +
+			//self._accessNumber(dataList[1]) +
 			self._bioRole(dataList[1]) +
 			self._detectMeth(dataList[1]) +
 			self._expRole(dataList[1]) +
 			self._isoform(dataList[1]) +
-			self._species(dataList[1]) +
+			//self._species(dataList[1]) +
 			'<dl></div>';
 		}
 		return contentPartner1 + contentPartner2;
@@ -539,11 +541,11 @@ function initElementInfo(opt) {
 		}
 		var divReturn = '<div class  = "contentXp" index = "' + index + '"><div class = "generalInfo"><dl>'+
 		self._xpModif(xpData) +
-		self._database(xpData) +
+		//self._database(xpData) +
 		self._host(xpData) +
 		self._interactDetectMethod(xpData) +
 		self._interactionType(xpData) +
-		self._knowledgeSupport(xpData) +
+		//self._knowledgeSupport(xpData) +
 		self._kinetic(xpData) +
 		self._publication(xpData) +
 		self._figure(xpData) +
@@ -561,11 +563,6 @@ function initElementInfo(opt) {
 		if(!xpData.Experiment_modification || xpData.Experiment_modification == "N/A"){return ''}
 		return '<dt class ="hReport">Experiment modification:</dt><dd> ' + _linkMi(xpData.Experiment_modification) + "</dd>";
 	},
-	_database : function(xpData){
-		var self = this;
-		if(!xpData.sourceDatabase || xpData.Experiment_modification == "N/A"){return ''}
-		return '<dt class ="hReport">Database:</dt><dd> ' + _linkMi(xpData.sourceDatabase) + "</dd>";
-	},
 	_host : function(xpData){
 		var self = this;
 		if(!xpData.Host_System || xpData.Host_System == "N/A"){return ''}
@@ -581,26 +578,32 @@ function initElementInfo(opt) {
 		if(!xpData.Interaction_Type || xpData.Interaction_Type == "N/A"){return ''}
 		return '<dt class ="hReport">Interaction type:</dt><dd> ' + _linkMi(xpData.Interaction_Type) + "</dd>";
 	},
-	_knowledgeSupport : function(xpData){
-		var self = this;
-		if(!xpData.knowledgeSupport || xpData.knowledgeSupport == "N/A"){return ''}
-		return '<dt class ="hReport">Knowledge Support:</dt><dd> ' + _linkMi(xpData.knowledgeSupport) + "</dd>";
-	},
+	// NTM 18/11/2015: following tags don't exist in model, commenting here and when they are called above
+	// _database : function(xpData){
+	// 	var self = this;
+	// 	if(!xpData.sourceDatabase || xpData.sourceDatabase == "N/A"){return ''}
+	// 	return '<dt class ="hReport">Database:</dt><dd> ' + _linkMi(xpData.sourceDatabase) + "</dd>";
+	// },
+	// _knowledgeSupport : function(xpData){
+	// 	var self = this;
+	// 	if(!xpData.knowledgeSupport || xpData.knowledgeSupport == "N/A"){return ''}
+	// 	return '<dt class ="hReport">Knowledge Support:</dt><dd> ' + _linkMi(xpData.knowledgeSupport) + "</dd>";
+	// },
 	_kinetic : function(xpData){
 		var self = this;
 	   //	console.dir(xpData);
-		 if(!xpData.Kinetics || xpData.Kinetics == "N/A" || xpData.Kinetics == "kineticsDescriptor"){return '';}
+		 if(!xpData.AffinityKinetics || xpData.AffinityKinetics == "N/A" || xpData.AffinityKinetics == "kineticsDescriptor"){return '';}
 	 //   		return '<dt class ="hReport">Kinetics details:</dt><dd> ' + _linkMi(xpData.Kinetics) + "</dd>";
 	    return '<dt class ="hReport">Kinetics data</dt><dd>Available</dd>';
 	},
 	_publication : function(xpData){
 		var self = this;
 		var rootUrl = this.urlReport.publication;
-		if(!xpData.Publication || xpData.Publication == "N/A"){return ''}
-		if (xpData.Publication instanceof Array) {
+		if(!xpData.PMID || xpData.PMID == "N/A"){return ''}
+		if (xpData.PMID instanceof Array) {
 			var returnString = '<dt class ="hReport">Pubmed reference:</dt><dd>';
-			for (var i=0; i < xpData.Publication.length; i++) {
-			returnString += '<a target = "_blank" href ="' + rootUrl  + xpData.Publication[i].pmid + '">' + xpData.Publication[i].pmid + '</a> ';
+			for (var i=0; i < xpData.PMID.length; i++) {
+			returnString += '<a target = "_blank" href ="' + rootUrl  + xpData.PMID[i] + '">' + xpData.PMID[i] + '</a> ';
 			};
 			returnString += "</dd>"
 			return returnString;
@@ -609,18 +612,13 @@ function initElementInfo(opt) {
 	},
 	_figure : function(xpData){
 		var self = this;
-		if(!xpData.Figure || xpData.Experiment_modification == "N/A"){return ''}
+		if(!xpData.Figure || xpData.Figure == "N/A"){return ''}
 		return '<dt class ="hReport">Figure:</dt><dd> ' + _linkMi(xpData.Figure) + "</dd>";
 	},
 	_imexId : function(xpData){
 		var self = this;
 		if(!xpData.IMEx_ID_Experiment || xpData.IMEx_ID_Experiment == "N/A"){return ''}
 		return '<dt class ="hReport">Imex-id for this experiment:</dt><dd> ' + xpData.IMEx_ID_Experiment + "</dd>";
-	},
-	_accessNumber : function(partnerData){
-		var self = this;
-		if(!partnerData.Accession_Number || partnerData.Accession_Number == "N/A"){return ''}
-		return '<dt class ="hReport">Accession number:</dt><dd> ' + _linkMi(partnerData.Accession_Number) + "</dd>";
 	},
 	_bioRole : function(partnerData){
 		var self = this;
@@ -642,16 +640,22 @@ function initElementInfo(opt) {
 		if(!partnerData.Isoform || partnerData.Isoform == "N/A"){return ''}
 		return '<dt class ="hReport">Isoform:</dt><dd> ' + _linkMi(partnerData.Isoform) + "</dd>";
 	},
-	_species : function(partnerData){
-		var self = this;
-		if(!partnerData.Species || partnerData.Species == "N/A"){return ''}
-		return '<dt class ="hReport">Species:</dt><dd> ' + _linkMi(partnerData.Species) + "</dd>";
-	},
-	_nameOfPartner : function(partnerData){
-		var self = this;
-		if(!partnerData.name || partnerData.name == "N/A"){return ''}
-		return '<dt class ="hReport">Id:</dt><dd> ' + partnerData.name + "</dd>";
-	},
+	// NTM 18/11/2015: following tags don't exist in model
+	// _accessNumber : function(partnerData){
+	// 	var self = this;
+	// 	if(!partnerData.Accession_Number || partnerData.Accession_Number == "N/A"){return ''}
+	// 	return '<dt class ="hReport">Accession number:</dt><dd> ' + _linkMi(partnerData.Accession_Number) + "</dd>";
+	// },
+	// _species : function(partnerData){
+	// 	var self = this;
+	// 	if(!partnerData.Species || partnerData.Species == "N/A"){return ''}
+	// 	return '<dt class ="hReport">Species:</dt><dd> ' + _linkMi(partnerData.Species) + "</dd>";
+	// },
+	// _nameOfPartner : function(partnerData){
+	// 	var self = this;
+	// 	if(!partnerData.name || partnerData.name == "N/A"){return ''}
+	// 	return '<dt class ="hReport">Id:</dt><dd> ' + partnerData.name + "</dd>";
+	// },
 
   };
    

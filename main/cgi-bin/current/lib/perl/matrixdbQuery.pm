@@ -1,11 +1,12 @@
 package matrixdbQuery;
 use strict;
 use common;
-use Log::Log4perl qw(get_logger);
+use Log::Log4perl qw(get_logger :levels);
 use psicquicQuery;
 use base ("browserExporter");
 
-our $logger = get_logger ("matrixdbQuery");
+my $logger = get_logger ("matrixdbQuery");
+$logger->level($ERROR);
 
 
 sub generateRegularBiomoleculeName {
