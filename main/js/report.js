@@ -1123,7 +1123,8 @@ function initMyReport (options){
 			
 			$(self.targetDomElem).append("<div class='contentXp partner' ><div class='centralXp' ></div></div>");
   			var partnerDiv =$(self.targetDomElem).find("div.contentXp:last div.centralXp");
-  			var ancre = "<div id = 'nomPage' class = 'navigueBar'><a cible = 'div.partner' >Participant features </a></div>";
+  			//var ancre = "<div id = 'nomPage' class = 'navigueBar'><a cible = 'div.partner' >Participant features </a></div>"			
+			var ancre = "<div class = 'navigueBar'><a cible = 'div.partner' >Participant features </a></div>";
   			$(self.targetDomElem).find("nav.header>div").append(ancre);
   			var scaffold = complexType === 'heteroDimer' 
   				? '<div class = "row-fluid"><div class = "span12  partcipants"><div class = "divTitre">Participant features</div>'+
@@ -1659,7 +1660,8 @@ function initMyReport (options){
   			self.tailleHeader++
   			$(self.targetDomElem).append("<div class='content Go' ></div>");
   			var goDiv = $(self.targetDomElem).find("div.content:last");
-  			var ancre = "<div id = 'nomPage' class = 'navigueBar'><a cible = 'div.Go' >GO Terms</a></div>";
+  			//var ancre = "<div id = 'nomPage' class = 'navigueBar'><a cible = 'div.Go' >GO Terms</a></div>";
+		        var ancre = "<div class = 'navigueBar'><a cible = 'div.Go' >GO Terms</a></div>"
   			var titre = "<h3> This molecule is annoted by <span class = 'niceRed'>" + self.jsonData.go.length + "</span> GO terms</h3>";
   			
   			var tableForm = "<table class='Go'><thead></thead><tbody></tbody></table>"
