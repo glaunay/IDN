@@ -728,7 +728,9 @@ function initMyReport (options){
   			if(!self.jsonData.relationship.In_multimer[0]){return "";}
   			var line = "<dt class ='hReport'>In multimer:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.In_multimer.length; i++) {
-			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.In_multimer[i] + "'>" + self.jsonData.relationship.In_multimer[i] + "</a>, ";
+			 // Nouvel onglet
+			 //	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.In_multimer[i] + "'>" + self.jsonData.relationship.In_multimer[i] + "</a>, ";
+			        line += "<a href = '" + rootUrl + self.jsonData.relationship.In_multimer[i] + "'>" + self.jsonData.relationship.In_multimer[i] + "</a>, ";
 			  };
 			  line = line.substring(0,line.length - 2);
 			  line += '</dd>';
@@ -741,7 +743,8 @@ function initMyReport (options){
   			var returnString = "<dt class ='hReport'>Stoichiometry:</dt><dd>" + self.jsonData.stoichiometry + "</dd>";
   			for (var i=0; i < self.jsonData.relationship.Component.length; i++) {
   				var reg = new RegExp (self.jsonData.relationship.Component[i]);
-			 	var replaceString = "<a target ='_blank' href = '" + rootUrl +self.jsonData.relationship.Component[i] + "'>" + self.jsonData.relationship.Component[i] + "</a>";
+			 //	var replaceString = "<a target ='_blank' href = '" + rootUrl +self.jsonData.relationship.Component[i] + "'>" + self.jsonData.relationship.Component[i] + "</a>";
+			        var replaceString = "<a href = '" + rootUrl +self.jsonData.relationship.Component[i] + "'>" + self.jsonData.relationship.Component[i] + "</a>";
 			 	returnString = returnString.replace(reg, replaceString);
 			 };
   			return returnString
@@ -768,7 +771,8 @@ function initMyReport (options){
   			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			var line = "<dt class ='hReport'>Cleaved in:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.ContainsFragment.length; i++) {
-			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.ContainsFragment[i] + "'>" + self.jsonData.relationship.ContainsFragment[i] + "</a>, ";
+			 //	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.ContainsFragment[i] + "'>" + self.jsonData.relationship.ContainsFragment[i] + "</a>, ";
+			        line += "<a href = '" + rootUrl + self.jsonData.relationship.ContainsFragment[i] + "'>" + self.jsonData.relationship.ContainsFragment[i] + "</a>, ";
 			};
 			line = line.substring(0,line.length - 2);
 			line += '</dd>'
@@ -782,7 +786,9 @@ function initMyReport (options){
   			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			var line = "<dt class ='hReport'>Processed from:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.Belongs_to.length; i++) {
-			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.Belongs_to[i] + "'>" + self.jsonData.relationship.Belongs_to[i] + "</a>, ";
+			        //line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.Belongs_to[i] + "'>" + self.jsonData.relationship.Belongs_to[i] + "</a>, ";
+			        line += "<a href = '" + rootUrl + self.jsonData.relationship.Belongs_to[i] + "'>" + self.jsonData.relationship.Belongs_to[i] + "</a>, "
+
 			};
 			line = line.substring(0,line.length - 2);
 			line += '</dd>'
@@ -795,7 +801,8 @@ function initMyReport (options){
   			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
   			var line = "<dt class ='hReport'>Can be found bound covalently to:</dt><dd>";
   			for (var i=0; i < self.jsonData.relationship.Bound_Coval_to.length; i++) {
-			 	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.Bound_Coval_to[i] + "'>" + self.jsonData.relationship.Bound_Coval_to[i] + "</a>, ";
+			 //	line += "<a target ='_blank' href = '" + rootUrl + self.jsonData.relationship.Bound_Coval_to[i] + "'>" + self.jsonData.relationship.Bound_Coval_to[i] + "</a>, ";
+			        line += "<a href = '" + rootUrl + self.jsonData.relationship.Bound_Coval_to[i] + "'>" + self.jsonData.relationship.Bound_Coval_to[i] + "</a>, ";
 			};
 			line = line.substring(0,line.length - 2);
 			line += '</dd>'
@@ -921,7 +928,8 @@ function initMyReport (options){
 			var lineString = '<dt class ="hReport">Interaction between:</dt><dd> '
 			var RootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
 			for (var i=0; i < assoc.length; i++) {
-			  lineString += "<a target = '_blank' href = '" + RootUrl + assoc[i] +"'>" + assoc[i] +"</a>&nbsp;&nbsp;and&nbsp;&nbsp;" 
+			//  lineString += "<a target = '_blank' href = '" + RootUrl + assoc[i] +"'>" + assoc[i] +"</a>&nbsp;&nbsp;and&nbsp;&nbsp;" 
+			    lineString += "<a href = '" + RootUrl + assoc[i] +"'>" + assoc[i] +"</a>&nbsp;&nbsp;and&nbsp;&nbsp;"
 			};
 			lineString = lineString.substring(0, lineString.length - 27)
 			 lineString += "</dd>";
@@ -957,7 +965,9 @@ function initMyReport (options){
 			if(!self.jsonData.association){return}
 			var returnString = '<dt class ="hReport">Supports the following interaction:</dt>';
 			for (var i=0; i < self.jsonData.association.length; i++) {
-			 returnString+= '<dd><a target = "_blank" href ="' + this.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + self.jsonData.association[i] + '">' + self.jsonData.association[i] + "</a></dd>";
+			// returnString+= '<dd><a target = "_blank" href ="' + this.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + self.jsonData.association[i] + '">' + self.jsonData.association[i] + "</a></dd>";
+			   returnString+= '<dd><a href ="' + this.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + self.jsonData.association[i] + '">' + self.jsonData.association[i] + "</a></dd>";
+
 			};
 			return returnString;
 		},
@@ -1047,7 +1057,8 @@ function initMyReport (options){
 						star = '<i class="fa fa-star" style = "color:yellow;"></i>';
 					}
 				    console.log(self.jsonData.publication[i]);
-					returnString += '<dd> <a target = "_blank" href ="' 
+				//	returnString += '<dd> <a target = "_blank" href ="' 
+				        returnString += '<dd> <a href ="' 
 					+ rootUrl  + self.jsonData.publication[i].name + '">'
 					+ self.jsonData.publication[i].name + '</a> '+ star
 					+ '<span class = "addCart publi pull-right" name ="' 
@@ -1057,7 +1068,8 @@ function initMyReport (options){
 				return returnString;
 			}
 			else{
-				return 'PubMed reference: <a target = "_blank" href ="' + rootUrl + self.jsonData.publication + '">' + self.jsonData.publication + "</a>, ";
+				//return 'PubMed reference: <a target = "_blank" href ="' + rootUrl + self.jsonData.publication + '">' + self.jsonData.publication + "</a>, ";
+			        return 'PubMed reference: <a href ="' + rootUrl + self.jsonData.publication + '">' + self.jsonData.publication + "</a>, ";
 			}
 		},
 		_table : function(){
@@ -1214,9 +1226,15 @@ function initMyReport (options){
 			}
 			var RootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=biomolecule&value="
 			var lineString = '<div class="divTitre feature" >';
-			lineString += logoBullet + '<a target = "_blank" href = "' + RootUrl + self.jsonData.partnerDetails[index].name + '">' + 
+
+		//	lineString += logoBullet + '<a target = "_blank" href = "' + RootUrl + self.jsonData.partnerDetails[index].name + '">' + 
+		//				  self.jsonData.partnerDetails[index].commonName +'</a>'
+		//	lineString += "</div>";
+
+			lineString += logoBullet + '<a href = "' + RootUrl + self.jsonData.partnerDetails[index].name + '">' + 
 						  self.jsonData.partnerDetails[index].commonName +'</a>'
 			lineString += "</div>";
+
 			return lineString;
 		},
 		_bioRole : function(index){
@@ -1602,8 +1620,13 @@ function initMyReport (options){
 					var id = info.id;
 					var common = info.common.anyNames[0];
 					xpObject.name = info.id;
+				//	commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' 
+				//	    + id + '">'+ '<a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
+
 					commonName = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' 
-					    + id + '">'+ '<a href ="' + rootLink + id + '" target = "_blank">' + common + '</a></span>' ;
+					    + id + '">'+ '<a href ="' + rootLink + id + '" >' + common + '</a></span>' ;
+
+
 					if(!info.specie.names){					    
 					    speci = '<span  data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title = "Universal">'
 						+ '<img ' + speciUrl(info.specie.value,self.rootUrl) + " alt = 'human'></img></span>";
@@ -1616,9 +1639,13 @@ function initMyReport (options){
 					
 				    }
 				    if(name == "id"){
-					xpObject.id = "Association : <a target = '_blank' "+
-					    "href = '" + self.rootUrl + "/cgi-bin/current/newPort?type=association&value=" + info +"'>" + 
+				//	xpObject.id = "Association : <a target = '_blank' "+
+				//	    "href = '" + self.rootUrl + "/cgi-bin/current/newPort?type=association&value=" + info +"'>" + 
+				//	    info +"</a>";
+
+					xpObject.id = "Association : <a href = '" + self.rootUrl + "/cgi-bin/current/newPort?type=association&value=" + info +"'>" + 
 					    info +"</a>";
+
 				    }
 				});
 		    lineTable = [commonName,'<span class="nbGen" totCount="' 
@@ -1786,7 +1813,8 @@ function initMyReport (options){
 			var returnString = '<dt > Direct experiment:</dt>'
 			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=experiment&value="
 			for (var i=0; i < self.jsonData.directExperiments.length; i++) {
-				returnString +="<dd><a target ='_blank' href = '" + rootUrl + self.jsonData.directExperiments[i] + "'>" + self.jsonData.directExperiments[i] +"</a></dd>"
+				//returnString +="<dd><a target ='_blank' href = '" + rootUrl + self.jsonData.directExperiments[i] + "'>" + self.jsonData.directExperiments[i] +"</a></dd>"
+			        returnString +="<dd><a href = '" + rootUrl + self.jsonData.directExperiments[i] + "'>" + self.jsonData.directExperiments[i] +"</a></dd>"
 			};
 			return returnString;
 		},
@@ -1812,7 +1840,9 @@ function initMyReport (options){
 					logoBullet = '<div class = "bulletSpecie"><img ' + speciUrl(self.jsonData.partnerCommon[self.jsonData.partnerNames[i]].specie.value,self.rootUrl) + ' width = "15px"></img></div>';
 				}
 				var name = self.jsonData.partnerCommon[self.jsonData.partnerNames[i]].anyNames[0]
-				returnString +="<dd>" + logoBullet + "<a target ='_blank' href = '" + rootUrl + self.jsonData.partnerNames[i] + "'>" + name +"</a><span class = ' addCart biom pull-right' name = '" + self.jsonData.partnerNames[i] +"'>" + self.cartButton.biomAdd + "</span></dd>"
+			//	returnString +="<dd>" + logoBullet + "<a target ='_blank' href = '" + rootUrl + self.jsonData.partnerNames[i] + "'>" + name +"</a><span class = ' addCart biom pull-right' name = '" + self.jsonData.partnerNames[i] +"'>" + self.cartButton.biomAdd + "</span></dd>"
+			        returnString +="<dd>" + logoBullet + "<a href = '" + rootUrl + self.jsonData.partnerNames[i] + "'>" + name +"</a><span class = ' addCart biom pull-right' name = '" + self.jsonData.partnerNames[i] +"'>" + self.cartButton.biomAdd + "</span></dd>"
+
 			};
 			return returnString;
 		},
@@ -1843,10 +1873,14 @@ function initMyReport (options){
 			/*returnString += "<dd><a target ='_blank' href='" + rootUrl 
 			    + self.jsonData.supportByAssociation[i] + "'>" + 
 			    self.jsonData.supportByAssociation[i] + "</a></dd>";*/
-			returnString += "<div class='suppAssoc'><a target ='_blank' href='" + rootUrl 
+//			returnString += "<div class='suppAssoc'><a target ='_blank' href='" + rootUrl 
+//			    + self.jsonData.supportByAssociation[i] + "'>" + 
+//			    self.jsonData.supportByAssociation[i] + "</a></div>";
+
+
+			returnString += "<div class='suppAssoc'><a href='" + rootUrl 
 			    + self.jsonData.supportByAssociation[i] + "'>" + 
 			    self.jsonData.supportByAssociation[i] + "</a></div>";
-			
 			};
 			return returnString;
 		},
@@ -1860,7 +1894,8 @@ function initMyReport (options){
 			+ '<div class = "postitContent">';
 		    //  '<dl><dt class = "hReport"> Inferred human interaction:</dt>'}
 		    for (var i = 0 ; i < self.jsonData.supportToAssociation.length ; i++) {
-			returnString += "<div class='suppAssoc'><a target ='_blank' href='" 
+			//returnString += "<div class='suppAssoc'><a target ='_blank' href='" 
+			returnString += "<div class='suppAssoc'><a href='" 
 			    + self.rootUrl + self.jsonData.supportToAssociation[i] + "'>" 
 			    + self.jsonData.supportToAssociation[i] + "</a></ddiv>";
 		    }
@@ -1931,7 +1966,8 @@ bandeau keywrd
 			  		nom += ', ' + self.jsonData.biomolecules[i].specie.names[j];
 				};
 				var specieString =" <a target = '_blank' href = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + self.jsonData.biomolecules[i].specie.value + "'>" + nom + "</a>";
-  				var biom = "<a target = '_blank' href='" + rootUrl + name + "' name ='" + name + "'>" + self.jsonData.biomolecules[i].common.anyNames[0] + "</a>";
+  			//	var biom = "<a target = '_blank' href='" + rootUrl + name + "' name ='" + name + "'>" + self.jsonData.biomolecules[i].common.anyNames[0] + "</a>";
+			        var biom = "<a href='" + rootUrl + name + "' name ='" + name + "'>" + self.jsonData.biomolecules[i].common.anyNames[0] + "</a>";
   				
 				aaData.push([biom, specieString,self.cartButton.biomAdd]);
 			  };
@@ -2055,9 +2091,13 @@ bandeau keywrd
 			var self = this;
 			if(!self.jsonData.firstAuthor){return ""}
 			var nom = self.jsonData.firstAuthor.replace(" ","%20");
-			return '<dt class ="hReport">First author:</dt><dd> <a target = "_blank" href = "' + 
+		//	return '<dt class ="hReport">First author:</dt><dd> <a target = "_blank" href = "' + 
+		//			self.rootUrl + '/cgi-bin/current/newPort?type=author&value=' + nom + '">' + 
+		//			self.jsonData.firstAuthor + '</a></dd>';
+			return '<dt class ="hReport">First author:</dt><dd> <a href = "' + 
 					self.rootUrl + '/cgi-bin/current/newPort?type=author&value=' + nom + '">' + 
 					self.jsonData.firstAuthor + '</a></dd>';
+
 		},
 		_author : function(){
 			var self = this;
@@ -2065,7 +2105,8 @@ bandeau keywrd
 			var returnString = '<dt class ="hReport">Author:</dt><dd>';
 			for (var i=0; i < self.jsonData.authorList.length; i++) {
 			  var nom = self.jsonData.authorList[i].replace(" ","%20");
-			  returnString +=  '<a target = "_blank" href = "' + 
+		//	  returnString +=  '<a target = "_blank" href = "' + 
+			  returnString +=  '<a href = "' +
 								self.rootUrl + '/cgi-bin/current/newPort?type=author&value=' + nom + '">' + 
 								self.jsonData.authorList[i] + '</a>, ';
 			};
@@ -2154,15 +2195,21 @@ bandeau keywrd
   			for (var i = 0; i < self.jsonData.association.length; i++) {
   				var name = self.jsonData.association[i].partners;
   				
-  				var idXp = 'Association : <a target = "_blank" '+
-  						   'href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + 
+  			//	var idXp = 'Association : <a target = "_blank" '+
+  			//			  ' href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + 
+  			//			   self.jsonData.association[i].association + '">' + self.jsonData.association[i].association + "</a>";
+
+  				var idXp = 'Association : <a href = "' + self.rootUrl + '/cgi-bin/current/newPort?type=association&value=' + 
   						   self.jsonData.association[i].association + '">' + self.jsonData.association[i].association + "</a>";
-  				
-  				var partner1 = "<a target = '_blank' href='" + rootUrl + name[0] + "'>" + 
+
+
+  			//	var partner1 = "<a target = '_blank' href='" + rootUrl + name[0] + "'>" + 
+			        var partner1 = "<a href='" + rootUrl + name[0] + "'>" + 
   				               self.jsonData.biomolecule[name[0]].common.anyNames[0] + "</a></br>"+
   				               "<span class ='biom addCart' name ='" + name[0] +"'>" + 
   				               self.cartButton.biomAdd + "</span>";
-  				var partner2 = "<a target = '_blank' href='" + rootUrl + name[1] + "'>" + 
+  			//	var partner2 = "<a target = '_blank' href='" + rootUrl + name[1] + "'>" + 
+			        var partner2 = "<a href='" + rootUrl + name[1] + "'>" + 
   				               self.jsonData.biomolecule[name[1]].common.anyNames[0] + "</a>"+
   				               "<span class ='biom addCart' name ='" + name[1] +"'>" + 
   				               self.cartButton.biomAdd + "</span>";
@@ -2239,7 +2286,8 @@ bandeau keywrd
   			var rootUrl = this.rootUrl + "/cgi-bin/current/newPort?type=publication&value=";
   			for (var i = 0; i < data.length; i++) {
   				var titre = '<a name="' + data[i].name + '" data-toggle="tooltip" data-delay=\'{"show":"500", "hide":"500"}\' title="' + 
-  							data[i].title + '" target = "_blank" '+
+  						//	data[i].title + '" target = "_blank" '+
+				                        data[i].title + 
   							'href="' + rootUrl + data[i].name + '">' + data[i].title + '</a>';
   				var asso = data[i].association ? data[i].association.length : 0;
   				var date = data[i].date ? data[i].date : "unknow";
@@ -2420,15 +2468,18 @@ bandeau keywrd
 								    returnString += '<div class = "popoverContent ' + style 
 									+ '"><a href="' + self.rootUrl 
 									+ '/cgi-bin/current/newPort?type=experiment&value=' + name 
-									+ '" target = "_blank">' + name + '</a>'; 
+								//	+ '" target = "_blank">' + name + '</a>'; 
+						                        + name + '</a>';
 								    if(xpDatum.pmid){
-									returnString += '</br> PubMed&nbsp;&nbsp; <a target = "_blank" href = "' 
+								//	returnString += '</br> PubMed&nbsp;&nbsp; <a target = "_blank" href = "' 
+									returnString += '</br> PubMed&nbsp;&nbsp; <a href = "' 
 									    + self.rootUrl + '/cgi-bin/current/newPort?type=publication&value=' 
 									    + xpDatum.pmid + '">' + xpDatum.pmid + '</a>';
 								    }
 								    if(xpDatum.imexid){
 									returnString += '</br> Imex-id&nbsp;&nbsp;&nbsp;&nbsp;   '
-									    + '<a target = "_blank" href = "' + self.rootUrl
+									  //  + '<a target = "_blank" href = "' + self.rootUrl
+									    + '<a href = "' + self.rootUrl
 									    + '/cgi-bin/current/newPort?type=publication&value=' 
 									    + xpDatum.pmid + '">' + xpDatum.imexid 
 									    + '</a>';  
