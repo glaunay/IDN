@@ -278,7 +278,9 @@ function initBarSearch (options){
 				var speciesTrailer = results[i].specie.names ? '<span class="spMini">' 
 							+ results[i].specie.names[0] + '</span>' : '';
 				var name = results[i].aceAccessor?results[i].aceAccessor : results[i].name;
-				returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
+			    //chgt du logo du cart pour eviter confusion avec celui des pages de report
+			    //	returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
+				returnString += "<tr><td><a class = 'addCart'><i class='fa fa-inbox'></i></a>"+
 		 						"</td><td>" + results[i].name + "</td><td class = 'infoCart'>" +
 		 						"<a data-value = '" + name + "' data-type = 'biomolecule' target = '_blank' "+
 		 						"href ='/cgi-bin/current/newPort?type=biomolecule&value=" + name + "'>" +
@@ -441,7 +443,10 @@ function initBarSearch (options){
 		var addRow = function (liste){
 			for (var i=0; i < liste.length; i++) {
 //				console.dir(liste[i]);
-		 		returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
+
+			    //Changement du logo pour eviter confusion avec le cart des pages de report
+		 	    //  returnString += "<tr><td><a class = 'addCart'><i class='fa fa-shopping-cart'></i></a>"+
+				returnString += "<tr><td><a class = 'addCart'><i class='fa fa-inbox'></i></a>"+
 		 						"</td><td>" + liste[i] + "</td><td class = 'infoCart'>" + littSortable[liste[i]] + "</td></tr>";
 			};
 		};

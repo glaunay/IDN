@@ -545,7 +545,9 @@ function bindWidgetTooltips (){
 	    //delay : { show : 1000, hide : 1000 },
 	    container : 'body',
 	    title : '<div class="bookmarkTooltip">'
-		+ '<div class = "titreHelp">Cart widget</div><div class = "bodyHelp">'
+	    //Changement du nom du widget pour eviter confusion avec le cart des pages de report
+	    //	+ '<div class = "titreHelp">Cart widget</div><div class = "bodyHelp">'
+		+ '<div class = "titreHelp">Box widget</div><div class = "bodyHelp">'
 		+ '<p>Here you can add new node to the current graph</p>'
 		+ '<p><i class="fa fa-hand-o-right"></i> For advanced usage see our <a target="_blank" href="https://www.youtube.com/playlist?list=PLw61Ua8TujDRLFSZMZChqmqX7yFBYLaz0">Help<a/></p>'
 		+ '</div></div>',

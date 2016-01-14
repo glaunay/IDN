@@ -53,8 +53,10 @@ function initCartCtrl (opt) {
 	    +'<div class="cartHeader"><i class="fa fa-question-circle pull-right fa-2x helpMe"></i></div>'
 		+ '<div class="cartBody"></div>'
 		+ '<div class="cartFooter"></div></div>'
-		+ '<div id="cartBookmarkWrapper"><i class="fa fa-shopping-cart fa-4x"></i><div class="plusNotification" style="display:none"><i class="fa fa-plus"></i></div></div>';
-	    
+	    //Changement du logo du cart pour eviter confusion avec celui des pages de report
+	    //	+ '<div id="cartBookmarkWrapper"><i class="fa fa-shopping-cart fa-4x"></i><div class="plusNotification" style="display:none"><i class="fa fa-plus"></i></div></div>';
+	    	+ '<div id="cartBookmarkWrapper"><i class="fa fa-inbox fa-4x"></i><div class="plusNotification" style="display:none"><i class="fa fa-plus"></i></div></div>';
+
 	    $(this.target).append(scaffold);
 	    $(this.target + ' i.helpMe').popover({ 
 	    	   html : true,
