@@ -389,7 +389,7 @@ function initMyReport (options){
 				   self.addCartCallback({type : "publication" , value : $( this ).attr("name")})});
 		    //$(self.targetDomElem).find("div.featureDrop").click(function(){self._showFeature(this)});
 
-		//    $(nomPage).css({"background-color" : "#6495ED", "height": "20px"});
+		    $(nomPage).css({"background-color" : "#6495ED", "height": "20px"});
 		    $(self.targetDomElem).find("nav div.navigueBar a").click(function() {
 									         var contentCible = $(this).attr("cible");
     										 $('html, body').animate({
