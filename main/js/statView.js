@@ -53,7 +53,7 @@ function initStatView (options){
                       			 '<th class="psqHead"><img src = "/img/psicquic.png" width = "20px"></img></th></tr></thead><tbody>';
 			 	tableInteractor += '</tbody></table><div><b>  *</b> : Bioactive <b>P</b>rotein <b>frag</b>ment</br><b>**</b> : <b>G</b>lycos<b>A</b>mino<b>G</b>lycan</div>';
 			 	var pub = data.publications.total - data.publications.imex
-				tableFinal += '<tr><td>Experimentaly supported associations</td><td>' + data.interactions.matrixdb[0] + '</td><td>' + data.interactions.psicquic[0] + '</td></tr>' +
+				tableFinal += '<tr><td>Experimentally supported associations</td><td>' + data.interactions.matrixdb[0] + '</td><td>' + data.interactions.psicquic[0] + '</td></tr>' +
 							  '<tr><td>Experiments</td><td>' + data.interactions.matrixdb[1] + '</td><td>' + data.interactions.psicquic[1] + '</td></tr>' +
 							  '</tbody></table>' +'<table bgcolor="white" class="table table-bordered" style=" max-height: 250px;">'+
                       		  '<thead><tr><th>Publications</th><th>Number</th></tr></thead><tbody>' +
